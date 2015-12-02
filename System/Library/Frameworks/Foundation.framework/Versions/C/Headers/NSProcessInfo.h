@@ -1,5 +1,5 @@
 /*	NSProcessInfo.h
- Copyright (c) 1994-2013, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2014, Apple Inc. All rights reserved.
  */
 
 #import <Foundation/NSObject.h>
@@ -13,7 +13,13 @@ enum {	/* Constants returned by -operatingSystem */
     NSMACHOperatingSystem,
     NSSunOSOperatingSystem,
     NSOSF1OperatingSystem
-};
+} NS_ENUM_DEPRECATED(10_0, 10_10, 2_0, 8_0);
+
+typedef struct {
+    NSInteger majorVersion;
+    NSInteger minorVersion;
+    NSInteger patchVersion;
+} NSOperatingSystemVersion;
 
 @class NSArray, NSString, NSDictionary;
 
@@ -28,31 +34,28 @@ enum {	/* Constants returned by -operatingSystem */
 
 + (NSProcessInfo *)processInfo;
 
-- (NSDictionary *)environment;
+@property (readonly, copy) NSDictionary *environment;
+@property (readonly, copy) NSArray *arguments;
+@property (readonly, copy) NSString *hostName;
+@property (copy) NSString *processName;
+@property (readonly) int processIdentifier;
 
-- (NSArray *)arguments;
+@property (readonly, copy) NSString *globallyUniqueString;
 
-- (NSString *)hostName;
+- (NSUInteger)operatingSystem NS_DEPRECATED(10_0, 10_10, 2_0, 8_0, "-operatingSystem always returns NSMACHOperatingSystem, use -operatingSystemVersion or -isOperatingSystemAtLeastVersion: instead");
+- (NSString *)operatingSystemName NS_DEPRECATED(10_0, 10_10, 2_0, 8_0, "-operatingSystemName always returns NSMACHOperatingSystem, use -operatingSystemVersionString instead");
 
-- (NSString *)processName;
+	/* Human readable, localized; appropriate for displaying to user or using in bug emails and such; NOT appropriate for parsing */
+@property (readonly, copy) NSString *operatingSystemVersionString;
 
-- (int)processIdentifier;
+@property (readonly) NSOperatingSystemVersion operatingSystemVersion NS_AVAILABLE(10_10, 8_0);
 
-- (void)setProcessName:(NSString *)newName;
+@property (readonly) NSUInteger processorCount NS_AVAILABLE(10_5, 2_0);
+@property (readonly) NSUInteger activeProcessorCount NS_AVAILABLE(10_5, 2_0);
+@property (readonly) unsigned long long physicalMemory NS_AVAILABLE(10_5, 2_0);
 
-- (NSString *)globallyUniqueString;
-
-- (NSUInteger)operatingSystem;
-- (NSString *)operatingSystemName;
-
-- (NSString *)operatingSystemVersionString;
-/* Human readable, localized; appropriate for displaying to user or using in bug emails and such; NOT appropriate for parsing */
-
-- (NSUInteger)processorCount NS_AVAILABLE(10_5, 2_0);
-- (NSUInteger)activeProcessorCount NS_AVAILABLE(10_5, 2_0);
-- (unsigned long long)physicalMemory NS_AVAILABLE(10_5, 2_0);
-
-- (NSTimeInterval)systemUptime NS_AVAILABLE(10_6, 4_0);
+- (BOOL) isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion)version NS_AVAILABLE(10_10, 8_0);
+@property (readonly) NSTimeInterval systemUptime NS_AVAILABLE(10_6, 4_0);
 
 /* Disable or reenable the ability to be quickly killed. The default implementations of these methods increment or decrement, respectively, a counter whose value is 1 when the process is first created. When the counter's value is 0 the application is considered to be safely killable and may be killed by the operating system without any notification or event being sent to the process first. If an application's Info.plist has an NSSupportsSuddenTermination entry whose value is true then NSApplication invokes -enableSuddenTermination automatically during application launch, which typically renders the process killable right away. You can also manually invoke -enableSuddenTermination right away in, for example, agents or daemons that don't depend on AppKit. After that, you can invoke these methods whenever the process has work it must do before it terminates. For example:
  - NSUserDefaults uses these to prevent process killing between the time at which a default has been set and the time at which the preferences file including that default has been written to disk.
@@ -76,8 +79,7 @@ enum {	/* Constants returned by -operatingSystem */
  * although the counter tracking automatic termination opt-outs is still kept up to date to ensure correctness if this is called later. Currently, passing NO has no effect.
  * This should be called during -applicationDidFinishLaunching or earlier.
  */
-- (void) setAutomaticTerminationSupportEnabled:(BOOL)flag NS_AVAILABLE(10_7, NA);
-- (BOOL) automaticTerminationSupportEnabled NS_AVAILABLE(10_7, NA);
+@property BOOL automaticTerminationSupportEnabled NS_AVAILABLE(10_7, NA);
 
 @end
 
@@ -96,17 +98,17 @@ enum {	/* Constants returned by -operatingSystem */
  
  Be aware that failing to end these activities for an extended period of time can have significant negative impacts to the performance of your user's computer, so be sure to use only the minimum amount of time required. User preferences may override your application’s request.
  
- This API can also be used to control auto termination or sudden termination.
+ This API can also be used to control auto termination or sudden termination. 
  
- id activity = [[NSProcessInfo processInfo] beginActivityWithOptions:NSActivityAutomaticTerminationDisabled reason:@"Good Reason"];
- // work
- [[NSProcessInfo processInfo] endActivity:activity];
+    id activity = [[NSProcessInfo processInfo] beginActivityWithOptions:NSActivityAutomaticTerminationDisabled reason:@"Good Reason"];
+    // work
+    [[NSProcessInfo processInfo] endActivity:activity];
  
  is equivalent to:
  
- [[NSProcessInfo processInfo] disableAutomaticTermination:@"Good Reason"];
- // work
- [[NSProcessInfo processInfo] enableAutomaticTermination:@"Good Reason"]
+    [[NSProcessInfo processInfo] disableAutomaticTermination:@"Good Reason"];
+    // work
+    [[NSProcessInfo processInfo] enableAutomaticTermination:@"Good Reason"]
  
  Since this API returns an object, it may be easier to pair begins and ends. If the object is deallocated before the -endActivity: call, the activity will be automatically ended.
  
@@ -163,7 +165,38 @@ typedef NS_OPTIONS(uint64_t, NSActivityOptions) {
 /*
  * Synchronously perform an activity. The activity will be automatically ended after your block argument returns. The reason string is used for debugging.
  */
-#if NS_BLOCKS_AVAILABLE
 - (void)performActivityWithOptions:(NSActivityOptions)options reason:(NSString *)reason usingBlock:(void (^)(void))block NS_AVAILABLE(10_9, 7_0);
-#endif
+
 @end
+
+// Describes the current thermal state of the system.
+typedef NS_ENUM(NSInteger, NSProcessInfoThermalState) {
+    // No corrective action is needed.
+    NSProcessInfoThermalStateNominal,
+    
+    // The system has reached a state where fans may become audible.
+    NSProcessInfoThermalStateFair,
+
+    // Fans are running at maximum speed, system performance maybe impacted. Recommendation: reduce application's usage of CPU, GPU and I/O, if possible. Switch to lower quality visual effects, reduce frame rates.
+    NSProcessInfoThermalStateSerious,
+    
+    // System performance is significantly impacted and the Mac needs to cool down. Recommendation: reduce application's usage of CPU, GPU, and I/O to the minimum level needed to respond to user actions. Consider stopping use of camera and other peripherals if your application is using them.
+    NSProcessInfoThermalStateCritical
+} NS_ENUM_AVAILABLE(10_10_3, NA);
+
+@interface NSProcessInfo ()
+
+// Retrieve the current thermal state of the system. On systems where thermal state is unknown or unsupported, the value returned from the thermalState property is always NSProcessInfoThermalStateNominal.
+@property (readonly) NSProcessInfoThermalState thermalState NS_AVAILABLE(10_10_3, NA);
+
+@end
+
+/*
+ This notification is posted once the thermal state of the system has changed. Once the notification is posted, use the thermalState property to retrieve the current thermal state of the system.
+ 
+ You can use this opportunity to take corrective action in your application to help cool the system down. Work that could be done in the background or at opportunistic times should be using the Quality of Service levels in NSOperation or the NSBackgroundActivityScheduler API.
+ 
+ This notification is posted on the global dispatch queue. Register for it using the default notification center. The object associated with the notification is +[NSProcessInfo processInfo].
+*/
+FOUNDATION_EXTERN NSString * const NSProcessInfoThermalStateDidChangeNotification NS_AVAILABLE(10_10_3, NA);
+

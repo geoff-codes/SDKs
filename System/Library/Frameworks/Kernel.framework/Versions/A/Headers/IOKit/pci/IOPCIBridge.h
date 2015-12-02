@@ -57,6 +57,7 @@ enum {
 class IOPCIBridge : public IOService
 {
     friend class IOPCIDevice;
+    friend class IOPCI2PCIBridge;
     friend class IOPCIConfigurator;
 
     OSDeclareAbstractStructors(IOPCIBridge)
@@ -75,6 +76,10 @@ private:
 	IOReturn restoreTunnelState(IOPCIDevice * root, IOOptionBits options);
     IOReturn restoreMachineState( IOOptionBits options, IOPCIDevice * device );
     void tunnelsWait(IOPCIDevice * device);
+    static IOReturn finishMachineState(IOOptionBits options);
+	static IOReturn systemPowerChange(void * target, void * refCon,
+										UInt32 messageType, IOService * service,
+										void * messageArgument, vm_size_t argSize);
 
     IOReturn _restoreDeviceState( IOPCIDevice * device, IOOptionBits options );
     IOReturn resolveLegacyInterrupts( IOService * provider, IOPCIDevice * nub );
@@ -120,7 +125,11 @@ private:
     ExpansionData *reserved;
 
 protected:
-	IOWorkLoop * getConfiguratorWorkLoop(void);
+	IOWorkLoop * getConfiguratorWorkLoop(void) const;
+
+public:
+	static IOPCIEventSource * createEventSource(
+			         OSObject * owner, IOPCIEventSource::Action action, uint32_t options);
 
 public:
     virtual void probeBus( IOService * provider, UInt8 busNum );
@@ -178,6 +187,10 @@ public:
     virtual bool configure( IOService * provider );
 
 	virtual IOReturn setProperties(OSObject * properties);
+
+    virtual IOReturn newUserClient(task_t owningTask, void * securityID,
+                                   UInt32 type,  OSDictionary * properties,
+                                   IOUserClient ** handler);
 
 	virtual unsigned long maxCapabilityForDomainState ( IOPMPowerFlags domainState );
 	virtual unsigned long initialPowerStateForDomainState ( IOPMPowerFlags domainState );
@@ -269,8 +282,11 @@ protected:
     OSMetaClassDeclareReservedUsed(IOPCIBridge, 4);
 	virtual IOReturn enableLTR(IOPCIDevice * device, bool enable);
 
+    OSMetaClassDeclareReservedUsed(IOPCIBridge, 5);
+    virtual IOPCIEventSource * createEventSource(IOPCIDevice * device,
+			OSObject * owner, IOPCIEventSource::Action action, uint32_t options);
+
     // Unused Padding
-    OSMetaClassDeclareReservedUnused(IOPCIBridge,  5);
     OSMetaClassDeclareReservedUnused(IOPCIBridge,  6);
     OSMetaClassDeclareReservedUnused(IOPCIBridge,  7);
     OSMetaClassDeclareReservedUnused(IOPCIBridge,  8);
@@ -303,18 +319,29 @@ protected:
 
 class IOPCI2PCIBridge : public IOPCIBridge
 {
+    friend class IOPCIEventSource;
+    friend class IOPCIDevice;
+
     OSDeclareDefaultStructors(IOPCI2PCIBridge)
 
-private:
-
-    IOPCIDevice *                  fBridgeDevice;
-
+protected:
 	IOFilterInterruptEventSource * fBridgeInterruptSource;
+
+private:
+    IOPCIDevice *                  fBridgeDevice;
 	IOTimerEventSource *	       fTimerProbeES;
 	IOWorkLoop *                   fWorkLoop;
 	IOPMDriverAssertionID 		   fPMAssertion;
-	uint32_t                       __resvA[12];
+    IOSimpleLock *                 fISRLock;
+    struct IOPCIAERRoot *          fAERRoot;
+	uint32_t                       __resvA[6];
+	int32_t                        fTunnelL1EnableCount;
 	uint32_t                       fHotplugCount;
+
+	uint8_t                        _resvA[3];
+    uint8_t                        fHotPlugInts;
+	uint8_t                        fIntsPending;
+	uint8_t                        fIsAERRoot;
 
 	uint8_t                        fPresence;
 	uint8_t                        fWaitingLinkEnable;
@@ -327,7 +354,7 @@ private:
 	uint8_t						   fLinkControlWithPM;
 	uint8_t						   fPowerState;
 	char						   fLogName[32];
-	uint8_t						   __resvB[2];
+;
 
 /*! @struct ExpansionData
     @discussion This structure will be used to expand the capablilties of the class in the future.
@@ -396,6 +423,9 @@ public:
 
 	virtual IOReturn enableLTR(IOPCIDevice * device, bool enable);
 
+    virtual IOPCIEventSource * createEventSource(IOPCIDevice * device,
+			OSObject * owner, IOPCIEventSource::Action action, uint32_t options);
+
     // Unused Padding
     OSMetaClassDeclareReservedUnused(IOPCI2PCIBridge,  0);
     OSMetaClassDeclareReservedUnused(IOPCI2PCIBridge,  1);
@@ -408,7 +438,14 @@ public:
     OSMetaClassDeclareReservedUnused(IOPCI2PCIBridge,  8);
 
 protected:
-	void startHotPlug(IOService * provider);
+    void allocateBridgeInterrupts(IOService * provider);
+	void startBridgeInterrupts(IOService * provider);
+	void enableBridgeInterrupts(void);
+	void disableBridgeInterrupts(void);
+
+private:
+    IOReturn setTunnelL1Enable(IOPCIDevice * device, IOService * client,
+    									bool l1Enable);
 
 public:
 	void startBootDefer(IOService * provider);

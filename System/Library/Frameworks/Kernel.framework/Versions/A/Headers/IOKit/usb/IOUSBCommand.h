@@ -178,6 +178,7 @@ public:
 	inline IODMACommand *		GetDMACommand(void)							{return _expansionData->_dmaCommand; }
 	inline UInt32				GetStreamID(void)							{return _expansionData->_streamID; }
 	inline IOUSBCommand *		GetBufferUSBCommand(void)					{return _expansionData->_bufferUSBCommand; }
+    inline IOUSBCommand *       GetMasterUSBCommand(void)                   {return _expansionData->_masterUSBCommand ? _expansionData->_masterUSBCommand : this;}
 };
 
 

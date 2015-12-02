@@ -2,7 +2,7 @@
 //  AVBConstants.h
 //  AudioVideoBridging
 //
-//  Copyright 2011-2012 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2014 Apple Inc. All rights reserved.
 //
 
 #ifndef AudioVideoBridging_AVBConstants_h
@@ -571,6 +571,21 @@ typedef NS_OPTIONS(uint16_t, AVB17221ACMPFlags)
 		@abstract	The IEEE Std 1722.1™-2013 ACMP STREAMING_WAIT flag.
 	 */
 	AVB17221ACMPFlagsStreamingWait										= 0x0008,
+	/*!
+	 @constant	AVB17221ACMPFlagsSupportsEncrypted
+	 @abstract	The IEEE Std 1722.1™-2013 ACMP SUPPORTS_ENCRYPTED flag.
+	 */
+	AVB17221ACMPFlagsSupportsEncrypted									= 0x0010,
+	/*!
+	 @constant	AVB17221ACMPFlagsEncryptedPDU
+	 @abstract	The IEEE Std 1722.1™-2013 ACMP ENCRYPTED_PDU flag.
+	 */
+	AVB17221ACMPFlagsEncryptedPDU										= 0x0020,
+	/*!
+	 @constant	AVB17221ACMPFlagsStreamingTalkerFailed
+	 @abstract	The IEEE Std 1722.1™-2013 ACMP TALKER_FAILED flag.
+	 */
+	AVB17221ACMPFlagsStreamingTalkerFailed								= 0x0040,
 } NS_ENUM_AVAILABLE(10_8, NA);
 
 typedef NS_ENUM(uint16_t, AVB17221AEMCommandType)

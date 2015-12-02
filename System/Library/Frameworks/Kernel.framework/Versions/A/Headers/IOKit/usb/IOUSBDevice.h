@@ -133,6 +133,9 @@ protected:
 		bool					_deviceIsOnThunderbolt;					// Will be set if all our upstream hubs are on Thunderbolt
         UInt16                  _isochDelay;
         IOUSBControllerV3 *     _controllerV3;
+        IOService *             _interfacePowerParent;                // default parent for joinPMTree for interface drivers
+        bool                    _loadingDriverAfterReEnumerate;
+        bool                    _hasMSCInterface;                   // True if any of the IOUSBInterfaces are mass storage class
     };
     ExpansionData * _expansionData;
 
@@ -165,9 +168,13 @@ public:
     virtual void		stop( IOService *provider );
     virtual bool		finalize(IOOptionBits options);
 	virtual void		free( void );	
+	virtual void        joinPMtree ( IOService * driver );
 
 	// IOUSBDevice methods
     virtual void SetProperties();
+    
+    // simple accessor methods
+    IOService       *GetInterfacePowerParent(void);
     
     static IOUSBDevice *NewDevice(void);
     
@@ -370,6 +377,7 @@ public:
     bool	IsDeviceInternal(void);
 	
 	void	SetBusPowerAvailable(UInt32 newPower);
+    IOService   *GetDevicePowerParent(void);
 
     OSMetaClassDeclareReservedUsed(IOUSBDevice,  0);
     /*!
@@ -581,7 +589,8 @@ private:
     
     UInt32              SimpleUnicodeToUTF8(UInt16 uChar, UInt8 utf8Bytes[4]);
     void                SwapUniWords (UInt16  **unicodeString, UInt32 uniSize);
-
+    void                TrimStringDescriptor(UInt16  **unicodeString, SInt32 *uniSize);
+    
     IOReturn			TakeGetConfigLock(void);
     IOReturn			ReleaseGetConfigLock(void);
     static IOReturn		ChangeGetConfigLock(OSObject *target, void *arg0, void *arg1, void *arg2, void *arg3);

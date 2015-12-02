@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2010 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2006-2014 Apple Inc. All Rights Reserved.
  * 
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -103,12 +103,14 @@ enum {
 	errSecCSResourceNotSupported =		-67016, /* unsupported resource found (something not a directory, file or symlink) */
 	errSecCSRegularFile =				-67015, /* the main executable or Info.plist must be a regular file (no symlinks, etc.) */
 	errSecCSUnsealedAppRoot	=			-67014, /* unsealed contents present in the bundle root */
-	errSecCSWeakResourceRules =			-67013, /* resource envelope is obsolete */
+	errSecCSWeakResourceRules =			-67013, /* resource envelope is obsolete (custom omit rules) */
 	errSecCSDSStoreSymlink =			-67012, /* .DS_Store files cannot be a symlink */ 
 	errSecCSAmbiguousBundleFormat =		-67011, /* bundle format is ambiguous (could be app or framework) */
 	errSecCSBadMainExecutable =			-67010, /* main executable failed strict validation */
 	errSecCSBadFrameworkVersion = 		-67009, /* embedded framework contains modified or invalid version */
 	errSecCSUnsealedFrameworkRoot =		-67008, /* unsealed contents present in the root directory of an embedded framework */
+	errSecCSWeakResourceEnvelope =		-67007, /* resource envelope is obsolete (version 1 signature) */
+	errSecCSCancelled =					-67006, /* operation was terminated by explicit cancellation */
 };
 
 
@@ -193,10 +195,12 @@ enum {
 typedef uint32_t SecCSFlags;
 
 enum {
-	kSecCSDefaultFlags = 0,					/* no particular flags (default behavior) */
+    kSecCSDefaultFlags = 0,					/* no particular flags (default behavior) */
 	
-	kSecCSConsiderExpiration = 1 << 31,		/* consider expired certificates invalid */
-	kSecCSEnforceRevocationChecks = 1 << 30,	/* force revocation checks regardless of preference settings */
+    kSecCSConsiderExpiration = 1 << 31,		/* consider expired certificates invalid */
+    kSecCSEnforceRevocationChecks = 1 << 30,	/* force revocation checks regardless of preference settings */
+    kSecCSNoNetworkAccess = 1 << 29,            /* do not use the network, cancels "kSecCSEnforceRevocationChecks"  */
+	kSecCSReportProgress = 1 << 28,			/* make progress report call-backs when configured */
 };
 
 

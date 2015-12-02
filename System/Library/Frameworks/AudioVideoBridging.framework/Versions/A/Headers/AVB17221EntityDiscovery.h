@@ -2,7 +2,7 @@
 //  AVB17221EntityDiscovery.h
 //  AudioVideoBridging
 //
-//  Copyright 2010-2012 Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2014 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -76,7 +76,7 @@ NS_CLASS_AVAILABLE(10_8, NA)
 	@param		anInterfaceName	The BSD interface name for the interface to perform discovery on.
 	@result		The initialized receiver.
  */
-- (id)initWithInterfaceName:(NSString *)anInterfaceName;
+- (instancetype)initWithInterfaceName:(NSString *)anInterfaceName;
 
 /*!
 	@method		primeIterators

@@ -490,6 +490,8 @@ extern boolean_t	upl_page_present(upl_page_info_t *upl, int index);
 extern boolean_t	upl_dirty_page(upl_page_info_t *upl, int index);
 extern boolean_t	upl_valid_page(upl_page_info_t *upl, int index);
 extern void		upl_deallocate(upl_t upl);
+extern void 		upl_mark_decmp(upl_t upl);
+extern void 		upl_unmark_decmp(upl_t upl);
 
 __END_DECLS
 

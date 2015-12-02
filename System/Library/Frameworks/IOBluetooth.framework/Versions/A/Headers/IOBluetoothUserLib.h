@@ -91,14 +91,13 @@ enum IOBluetoothDeviceSearchOptionsBits
 };
 
 //--------------------------------------------------------------------------------------------------------------------------
-/*!	@enum		IOBluetoothDeviceSearchDeviceAttributes
+/*!	@typedef	IOBluetoothDeviceSearchDeviceAttributes
 	@abstract	Structure used to search for particular devices.
 	@discussion Make sure you specify all fields! If you do not set deviceClassMajor for example, and the value is
 				0, that is mapped to kBluetoothDeviceClassMajorMiscellaneous, which is probably not what you want. To
 				search for all device types, you must pass kBluetoothDeviceClassMajorAny and its relatives. 
 */
 
-typedef	struct	IOBluetoothDeviceSearchDeviceAttributes	IOBluetoothDeviceSearchDeviceAttributes;
 struct 	IOBluetoothDeviceSearchDeviceAttributes
 {
 	BluetoothDeviceAddress				address;				// 00 08 22 44 AB 56, etc.
@@ -107,6 +106,7 @@ struct 	IOBluetoothDeviceSearchDeviceAttributes
 	BluetoothDeviceClassMajor			deviceClassMajor;		// Computer, Phone, Audio, etc.
 	BluetoothDeviceClassMinor			deviceClassMinor;		// Desktop, cordless, headset, etc.
 };
+typedef	struct	IOBluetoothDeviceSearchDeviceAttributes	IOBluetoothDeviceSearchDeviceAttributes;
 
 //--------------------------------------------------------------------------------------------------------------------------
 /*!	@struct		IOBluetoothDeviceSearchAttributes
@@ -116,7 +116,6 @@ struct 	IOBluetoothDeviceSearchDeviceAttributes
 				out block of attributes is NOT equivalent to passing in NULL!	
 */ 
 
-typedef	struct	IOBluetoothDeviceSearchAttributes	IOBluetoothDeviceSearchAttributes;
 struct 	IOBluetoothDeviceSearchAttributes
 {
 	IOBluetoothDeviceSearchOptions	options;				// Options.
@@ -125,6 +124,7 @@ struct 	IOBluetoothDeviceSearchAttributes
 
 	IOBluetoothDeviceSearchDeviceAttributes	*attributeList;	
 };
+typedef	struct	IOBluetoothDeviceSearchAttributes	IOBluetoothDeviceSearchAttributes;
 
 //--------------------------------------------------------------------------------------------------------------------------
 /*!	@typedef		IOBluetoothDeviceSearchTypes

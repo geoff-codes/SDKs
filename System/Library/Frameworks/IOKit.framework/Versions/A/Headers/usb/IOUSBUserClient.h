@@ -1,5 +1,5 @@
 /*
- * Copyright © 1998-2013 Apple Inc. All rights reserved.
+ * Copyright © 1998-2014 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -96,9 +96,31 @@ enum {
     kUSBInterfaceUserClientRegisterForNotification,
     kUSBInterfaceUserClientUnregisterNotification,
     kUSBInterfaceUserClientAcknowledgeNotification,
+    kUSBInterfaceUserClientRegisterDriver,
 	kIOUSBLibInterfaceUserClientV3NumCommands
    };
 
+// this constant is used by both IOUSBDevice and IOUSBInterface to define the location of the IOUSBLib bundle
+#define kIOUSBLibBundleName                 "IOUSBFamily.kext/Contents/PlugIns/IOUSBLib.bundle"
+
+// this is a string representation of the UUID known as kIOUSBDeviceUserClientTypeID in IOUSBLib.h
+// it should never have to change, even as we add new functions to the IOUSBDeviceInterface
+#define kIOUSBDeviceUserClientTypeIDKey     "9dc7b780-9ec0-11d4-a54f-000a27052861"
+
+// this is a string representation of the UUID known as kIOUSBInterfaceUserClientTypeID in IOUSBLib.h
+// it should never have to change, even as we add new functions to the IOUSBInterfaceInterface
+#define kIOUSBInterfaceUserClientTypeIDKey     "2d9786c6-9ef3-11d4-ad51-000a27052861"
+
+// this is the class name of the IOUSBInterfaceUserClient in the kernel
+// if we ever have to go to IOUSBInterfaceeUserClientV4, this will need to change
+#define kIOUSBInterfaceUserClientClassNameStr     "IOUSBInterfaceUserClientV3"
+
+
+// this is the class name of the IOUSBDeviceUserClient in the kernel
+// if we ever have to go to IOUSBDeviceUserClientV3, this will need to change
+#define kIOUSBDeviceUserClientClassNameStr     "IOUSBDeviceUserClientV2"
+
+#define kNeedsDeviceAccessEntitlement   "NeedsDeviceAccessEntitlement"
 
 #if KERNEL
 #include <IOKit/IOService.h>
@@ -134,6 +156,8 @@ struct IOUSBInterfaceUserClientISOAsyncParamBlock
     IOMemoryDescriptor *        dataMem;
     IOMemoryDescriptor *        countMem;
 	uint64_t					numFrames;
+	uint64_t					startFrame;
+	uint64_t					options;
     IOUSBIsocFrame              frames[0];  // Must be the last one
 };
 

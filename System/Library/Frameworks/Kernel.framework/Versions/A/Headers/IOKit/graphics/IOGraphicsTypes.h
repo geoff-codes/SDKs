@@ -31,7 +31,7 @@
 extern "C" {
 #endif
 
-#define IOGRAPHICSTYPES_REV     40
+#define IOGRAPHICSTYPES_REV     42
 
 typedef SInt32  IOIndex;
 typedef UInt32  IOSelect;
@@ -261,6 +261,7 @@ enum {
     kIOCursorControlAttribute           = 'crsc',
 
     kIOSystemPowerAttribute             = 'spwr',
+    kIOWindowServerActiveAttribute      = 'wsrv',
     kIOVRAMSaveAttribute                = 'vrsv',
     kIODeferCLUTSetAttribute            = 'vclt',
 
@@ -709,6 +710,8 @@ enum {
     kConnectionBlueGammaScale           = 'bgsc',
     kConnectionGammaScale               = 'gsc ',
     kConnectionFlushParameters          = 'flus',
+
+    kConnectionVBLMultiplier            = 'vblm',
 
     kConnectionHandleDisplayPortEvent   = 'dpir',
 

@@ -2,7 +2,7 @@
 //  AVB17221AECPInterface.h
 //  AudioVideoBridging
 //
-//  Copyright 2011-2012 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2014 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -45,7 +45,7 @@
  @typedef	AVB17221AECPInterfaceCompletion:
  @abstract	The prototype for the completion handler block for AECP command messages.
  */
-typedef void (^AVB17221AECPInterfaceCompletion)(NSError *, AVB17221AECPMessage *);
+typedef void (^AVB17221AECPInterfaceCompletion)(NSError *e, AVB17221AECPMessage *m);
 
 @class AVBInterface;
 @class AVBMACAddress;
@@ -75,6 +75,7 @@ NS_CLASS_AVAILABLE(10_8, NA)
 	id<AVB17221AECPClient> _monitorModeDelegate;
 	
 	NSMutableArray *pendingAEMResponses;
+	NSMutableArray *pendingAAResponses;
 }
 
 
