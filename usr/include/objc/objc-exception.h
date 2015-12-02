@@ -73,10 +73,8 @@ OBJC_EXPORT objc_exception_preprocessor objc_setExceptionPreprocessor(objc_excep
 OBJC_EXPORT objc_exception_matcher objc_setExceptionMatcher(objc_exception_matcher fn);
 OBJC_EXPORT objc_uncaught_exception_handler objc_setUncaughtExceptionHandler(objc_uncaught_exception_handler fn);
 
-#ifndef __arm__
-OBJC_EXPORT uintptr_t objc_addExceptionHandler(objc_exception_handler fn, void *context);
-OBJC_EXPORT void objc_removeExceptionHandler(uintptr_t token);
-#endif
+OBJC_EXPORT uintptr_t objc_addExceptionHandler(objc_exception_handler fn, void *context) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
+OBJC_EXPORT void objc_removeExceptionHandler(uintptr_t token)  __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
 
 // __OBJC2__
 #endif

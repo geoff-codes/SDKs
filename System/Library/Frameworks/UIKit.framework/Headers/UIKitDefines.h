@@ -2,7 +2,7 @@
 //  UIKitDefines.h
 //  UIKit
 //
-//  Copyright 2007-2009 Apple Inc. All rights reserved.
+//  Copyright 2007-2010 Apple Inc. All rights reserved.
 //
 
 #import <Availability.h>
@@ -14,4 +14,4 @@
 #endif
 
 #define UIKIT_STATIC_INLINE	static inline
-#define	UIKIT_EXTERN_CLASS	__attribute__((visibility("default")))
+#define UIKIT_CLASS_AVAILABLE(_iphoneIntro) __attribute__((visibility("default"))) NS_CLASS_AVAILABLE(NA, _iphoneIntro)

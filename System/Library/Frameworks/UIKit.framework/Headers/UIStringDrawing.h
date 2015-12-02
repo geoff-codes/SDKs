@@ -2,11 +2,13 @@
 //  UIStringDrawing.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#if (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR)
 #import <CoreGraphics/CoreGraphics.h>
+#endif
 
 typedef enum {		
     UILineBreakModeWordWrap = 0,            // Wrap at word boundaries
@@ -44,7 +46,7 @@ typedef enum {
 - (CGSize)drawAtPoint:(CGPoint)point forWidth:(CGFloat)width withFont:(UIFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode;
 
 // Wrapping to fit horizontal and vertical size. Text will be wrapped and truncated using the UILineBreakMode. If the height is less than a line of text, it may return
-// a vertical size that is bigger than the one passed in. You can use this to figure out how high one line of text is.
+// a vertical size that is bigger than the one passed in.
 // If you size your text using the constrainedToSize: methods below, you should draw the text using the drawInRect: methods using the same line break mode for consistency
 - (CGSize)sizeWithFont:(UIFont *)font constrainedToSize:(CGSize)size; // Uses UILineBreakModeWordWrap
 - (CGSize)sizeWithFont:(UIFont *)font constrainedToSize:(CGSize)size lineBreakMode:(UILineBreakMode)lineBreakMode; // UITextAlignment is not needed to determine size

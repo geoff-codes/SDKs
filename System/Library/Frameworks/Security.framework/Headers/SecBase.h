@@ -80,6 +80,7 @@ enum
     errSecItemNotFound           = -25300,	/* The specified item could not be found in the keychain. */
     errSecInteractionNotAllowed  = -25308,	/* User interaction is not allowed. */
     errSecDecode                 = -26275,  /* Unable to decode the provided data. */
+    errSecAuthFailed             = -25293,	/* The user name or passphrase you entered is not correct. */
 };
 
 #if defined(__cplusplus)

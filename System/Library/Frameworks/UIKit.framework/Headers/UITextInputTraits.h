@@ -2,7 +2,7 @@
 //  UITextInputTraits.h
 //  UIKit
 //
-//  Copyright 2006-2009 Apple Inc. All rights reserved.
+//  Copyright 2006-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -54,6 +54,9 @@ typedef enum {
     UIKeyboardTypePhonePad,               // A phone pad (1-9, *, 0, #, with letters under the numbers).
     UIKeyboardTypeNamePhonePad,           // A type optimized for entering a person's name or phone number.
     UIKeyboardTypeEmailAddress,           // A type optimized for multiple email address entry (shows space @ . prominently).
+#if __IPHONE_4_1 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    UIKeyboardTypeDecimalPad,             // A number pad with a decimal point.
+#endif
 
     UIKeyboardTypeAlphabet = UIKeyboardTypeASCIICapable, // Deprecated
 
@@ -70,7 +73,7 @@ typedef enum {
 //
 typedef enum {
     UIKeyboardAppearanceDefault,          // Default apperance for the current input method.
-    UIKeyboardAppearanceAlert,            // Appearance suitable for use in "alert" scenarios.
+    UIKeyboardAppearanceAlert             // Appearance suitable for use in "alert" scenarios.
 } UIKeyboardAppearance;
 
 //
@@ -105,7 +108,7 @@ typedef enum {
 
 @optional
 
-@property(nonatomic) UITextAutocapitalizationType autocapitalizationType; // default is UITextAutocapitalizationTypeNone
+@property(nonatomic) UITextAutocapitalizationType autocapitalizationType; // default is UITextAutocapitalizationTypeSentences
 @property(nonatomic) UITextAutocorrectionType autocorrectionType;         // default is UITextAutocorrectionTypeDefault
 @property(nonatomic) UIKeyboardType keyboardType;                         // default is UIKeyboardTypeDefault
 @property(nonatomic) UIKeyboardAppearance keyboardAppearance;             // default is UIKeyboardAppearanceDefault

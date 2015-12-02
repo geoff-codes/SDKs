@@ -70,56 +70,59 @@ COREDATA_EXTERN id NSOverwriteMergePolicy __OSX_AVAILABLE_STARTING(__MAC_10_4, _
 // This policy discards all state for the changed objects in conflict. The persistent store's version of the object is used.
 COREDATA_EXTERN id NSRollbackMergePolicy __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_3_0);    
 
-
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSManagedObjectContext : NSObject <NSCoding, NSLocking> {
 @private
-  int32_t _spinLock;
-  NSPersistentStoreCoordinator *_objectStore;
-  NSUndoManager *_undoManager;
-  NSMutableArray *_children;
-  struct _managedObjectContextFlags {
-      unsigned int _registeredForCallback:1;
-      unsigned int _propagatesDeletesAtEndOfEvent:1;
-      unsigned int _exhaustiveValidation:1;
-      unsigned int _processingChanges:1;
-      unsigned int _useCommittedSnapshot:1;
-      unsigned int _registeredUndoTransactionID:1;
-      unsigned int _retainsAllRegisteredObjects:1;
-      unsigned int _savingInProgress:1;
-      unsigned int _wasDisposed:1;
-      unsigned int _unprocessedChangesPending:1;
-      unsigned int _isDirty:1;
-      unsigned int _ignoreUndoCheckpoints:1;
-	  unsigned int _propagatingDeletes:1;
-	  unsigned int _isNSEditorEditing:1;
-      unsigned int _isMainThreadBlessed:1;
-      unsigned int _reservedFlags:17;
-  } _flags;
-  NSMutableSet *_unprocessedChanges;
-  NSMutableSet *_unprocessedDeletes;
-  NSMutableSet *_unprocessedInserts;
-  NSMutableSet *_insertedObjects;
-  NSMutableSet *_deletedObjects;
-  NSMutableSet *_changedObjects;
-  NSMutableSet *_lockedObjects;
-  NSMutableSet *_refreshedObjects;
-  id _infoByGID;
-  id *_cachedObsInfoByEntity;
-  short _undoTransactionID;
-  id _lock;
-  long _lockCount;
-  long _objectStoreLockCount;
-  NSTimeInterval _fetchTimestamp;
-  id _delegate;
-  id _referenceQueue;
-  long _ignoreChangeNotification;
-  id _mergePolicy;
-  int32_t _cd_rc;
-  int32_t _reserved3;
-  id _editors;
-  id* _debuggingRecords;
-  void *_reserved1;
-  void *_reserved2;
+	int32_t _spinLock;
+	id _parentObjectStore;
+	NSUndoManager *_undoManager;
+	void *_dispatchQueue;
+	struct _managedObjectContextFlags {
+		unsigned int _registeredForCallback:1;
+		unsigned int _propagatesDeletesAtEndOfEvent:1;
+		unsigned int _exhaustiveValidation:1;
+		unsigned int _processingChanges:1;
+		unsigned int _useCommittedSnapshot:1;
+		unsigned int _registeredUndoTransactionID:1;
+		unsigned int _retainsAllRegisteredObjects:1;
+		unsigned int _savingInProgress:1;
+		unsigned int _wasDisposed:1;
+		unsigned int _unprocessedChangesPending:1;
+		unsigned int _isDirty:1;
+		unsigned int _ignoreUndoCheckpoints:1;
+		unsigned int _propagatingDeletes:1;
+		unsigned int _isNSEditorEditing:1;
+		unsigned int _isMainThreadBlessed:1;
+		unsigned int _isImportContext:1;
+		unsigned int _isParentContext:1;
+		unsigned int _preflightSaveInProgress:1;
+		unsigned int _reservedFlags:14;
+	} _flags;
+	NSMutableSet *_unprocessedChanges;
+	NSMutableSet *_unprocessedDeletes;
+	NSMutableSet *_unprocessedInserts;
+	NSMutableSet *_insertedObjects;
+	NSMutableSet *_deletedObjects;
+	NSMutableSet *_changedObjects;
+	NSMutableSet *_lockedObjects;
+	NSMutableSet *_refreshedObjects;
+	id _infoByGID;
+	id *_cachedObsInfoByEntity;
+	short _undoTransactionID;
+	id _lock;
+	long _lockCount;
+	long _objectStoreLockCount;
+	NSTimeInterval _fetchTimestamp;
+	id _delegate;
+	id _referenceQueue;
+	id _userinfo;
+	id _mergePolicy;
+	int32_t _cd_rc;
+	int32_t _ignoreChangeNotification;
+	id _editors;
+	id* _debuggingRecords;
+	id _childObjectStores;
+	void *_reserved2;
 }
 
 /* coordinator which provides model and handles persistency (multiple contexts can share a coordinator) */

@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2005 Apple Inc.
+ * Copyright (c) 2005-2009 Apple Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,23 +26,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * 
+ * $P4: //depot/projects/trustedbsd/openbsm/sys/bsm/audit.h#10 $
  */
 
-#ifndef _BSM_AUDIT_H
+#ifndef	_BSM_AUDIT_H
 #define	_BSM_AUDIT_H
 
-#include <sys/queue.h>
-#include <sys/types.h>
 #include <sys/param.h>
-#include <sys/socket.h>
-#include <sys/cdefs.h>
+#include <sys/types.h>
 
 #define	AUDIT_RECORD_MAGIC	0x828a0f1b
 #define	MAX_AUDIT_RECORDS	20
 #define	MAXAUDITDATA		(0x8000 - 1)
 #define	MAX_AUDIT_RECORD_SIZE	MAXAUDITDATA
 #define	MIN_AUDIT_FILE_SIZE	(512 * 1024)
+
+/*
+ * Minimum noumber of free blocks on the filesystem containing the audit
+ * log necessary to avoid a hard log rotation. DO NOT SET THIS VALUE TO 0
+ * as the kernel does an unsigned compare, plus we want to leave a few blocks
+ * free so userspace can terminate the log, etc.
+ */
+#define	AUDIT_HARD_LIMIT_FREE_BLOCKS	4
 
 /*
  * Triggers for the audit daemon.
@@ -54,8 +59,9 @@
 #define	AUDIT_TRIGGER_CLOSE_AND_DIE	4	/* Terminate audit. */
 #define	AUDIT_TRIGGER_NO_SPACE		5	/* Below min free space. */
 #define	AUDIT_TRIGGER_ROTATE_USER	6	/* User requests rotate. */
-#define	AUDIT_TRIGGER_INITIALIZE	7	/* Initialize audit. */
-#define	AUDIT_TRIGGER_MAX		7
+#define	AUDIT_TRIGGER_INITIALIZE	7	/* User initialize of auditd. */
+#define	AUDIT_TRIGGER_EXPIRE_TRAILS	8	/* User expiration of trails. */
+#define	AUDIT_TRIGGER_MAX		8
 
 /*
  * The special device filename (FreeBSD).
@@ -66,7 +72,9 @@
 /*
  * Pre-defined audit IDs
  */
-#define	AU_DEFAUDITID	-1
+#define	AU_DEFAUDITID	(uid_t)(-1)
+#define	AU_DEFAUDITSID	 0
+#define	AU_ASSIGN_ASID	-1
 
 /*
  * IPC types.
@@ -86,20 +94,20 @@
 /*
  * auditon(2) commands.
  */
-#define	A_GETPOLICY	2
-#define	A_SETPOLICY	3
+#define	A_OLDGETPOLICY	2
+#define	A_OLDSETPOLICY	3
 #define	A_GETKMASK	4
 #define	A_SETKMASK	5
-#define	A_GETQCTRL	6
-#define	A_SETQCTRL	7
+#define	A_OLDGETQCTRL	6
+#define	A_OLDSETQCTRL	7
 #define	A_GETCWD	8
 #define	A_GETCAR	9
 #define	A_GETSTAT	12
 #define	A_SETSTAT	13
 #define	A_SETUMASK	14
 #define	A_SETSMASK	15
-#define	A_GETCOND	20
-#define	A_SETCOND	21
+#define	A_OLDGETCOND	20
+#define	A_OLDSETCOND	21
 #define	A_GETCLASS	22
 #define	A_SETCLASS	23
 #define	A_GETPINFO	24
@@ -110,6 +118,13 @@
 #define	A_GETKAUDIT	29
 #define	A_SETKAUDIT	30
 #define	A_SENDTRIGGER	31
+#define	A_GETSINFO_ADDR	32
+#define	A_GETPOLICY	33
+#define	A_SETPOLICY	34
+#define	A_GETQCTRL	35
+#define	A_SETQCTRL	36
+#define	A_GETCOND	37
+#define	A_SETCOND	38
 
 /*
  * Audit policy controls.
@@ -144,14 +159,6 @@
 #define	AU_FS_MINFREE	20
 
 /*
- * Minimum noumber of free blocks on the filesystem containing the audit
- * log necessary to avoid a hard log rotation. DO NOT SET THIS VALUE TO 0
- * as the kernel does an unsigned compare, plus we want to leave a few blocks
- * free so userspace can terminate the log, etc.  'auditd' also uses this.
- */
-#define	AUDIT_HARD_LIMIT_FREE_BLOCKS	4
-
-/*
  * Type definitions used indicating the length of variable length addresses
  * in tokens containing addresses, such as header fields.
  */
@@ -165,6 +172,7 @@ typedef	pid_t		au_asid_t;
 typedef	u_int16_t	au_event_t;
 typedef	u_int16_t	au_emod_t;
 typedef	u_int32_t	au_class_t;
+typedef	u_int64_t	au_asflgs_t __attribute__ ((aligned (8)));
 
 struct au_tid {
 	dev_t		port;
@@ -198,6 +206,7 @@ struct auditinfo_addr {
 	au_mask_t	ai_mask;	/* Audit masks. */
 	au_tid_addr_t	ai_termid;	/* Terminal ID. */
 	au_asid_t	ai_asid;	/* Audit session ID. */
+	au_asflgs_t	ai_flags;	/* Audit session flags. */
 };
 typedef	struct auditinfo_addr	auditinfo_addr_t;
 
@@ -216,8 +225,15 @@ struct auditpinfo_addr {
 	au_mask_t	ap_mask;	/* Audit masks. */
 	au_tid_addr_t	ap_termid;	/* Terminal ID. */
 	au_asid_t	ap_asid;	/* Audit session ID. */
+	au_asflgs_t	ap_flags;	/* Audit session flags. */
 };
 typedef	struct auditpinfo_addr	auditpinfo_addr_t;
+
+struct au_session {
+	auditinfo_addr_t	*as_aia_p;	/* Ptr to full audit info. */
+	au_mask_t		 as_mask;	/* Process Audit Masks. */
+};
+typedef struct au_session       au_session_t;
 
 /*
  * Contents of token_t are opaque outside of libbsm.
@@ -225,13 +241,22 @@ typedef	struct auditpinfo_addr	auditpinfo_addr_t;
 typedef	struct au_token	token_t;
 
 /*
- * Kernel audit queue control parameters.
+ * Kernel audit queue control parameters:
+ * 			Default:		Maximum:
+ * 	aq_hiwater:	AQ_HIWATER (100)	AQ_MAXHIGH (10000) 
+ * 	aq_lowater:	AQ_LOWATER (10)		<aq_hiwater
+ * 	aq_bufsz:	AQ_BUFSZ (32767)	AQ_MAXBUFSZ (1048576)
+ * 	aq_delay:	20			20000 (not used) 
  */
 struct au_qctrl {
-	size_t	aq_hiwater;
-	size_t	aq_lowater;
-	size_t	aq_bufsz;
-	clock_t	aq_delay;
+	int	aq_hiwater;	/* Max # of audit recs in queue when */
+				/* threads with new ARs get blocked. */ 
+
+	int	aq_lowater;	/* # of audit recs in queue when */
+				/* blocked threads get unblocked. */
+
+	int	aq_bufsz;	/* Max size of audit record for audit(2). */
+	int	aq_delay;	/* Queue delay (not used). */
 	int	aq_minfree;	/* Minimum filesystem percent free space. */
 };
 typedef	struct au_qctrl	au_qctrl_t;
@@ -261,8 +286,8 @@ typedef	struct audit_stat	au_stat_t;
  * Structure for the audit file statistics.
  */
 struct audit_fstat {
-	u_quad_t	af_filesz;
-	u_quad_t	af_currsz;
+	u_int64_t	af_filesz;
+	u_int64_t	af_currsz;
 };
 typedef	struct audit_fstat	au_fstat_t;
 
@@ -288,6 +313,13 @@ int	getaudit(struct auditinfo *);
 int	setaudit(const struct auditinfo *);
 int	getaudit_addr(struct auditinfo_addr *, int);
 int	setaudit_addr(const struct auditinfo_addr *, int);
+
+#ifdef __APPLE_API_PRIVATE
+#include <mach/port.h>
+mach_port_name_t audit_session_self(void);
+au_asid_t	 audit_session_join(mach_port_name_t port);
+#endif /* __APPLE_API_PRIVATE */
+
 #endif /* defined(_KERNEL) || defined(KERNEL) */
 
 __END_DECLS

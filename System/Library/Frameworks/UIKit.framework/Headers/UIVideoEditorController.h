@@ -2,10 +2,8 @@
 //  UIVideoEditorController.h
 //  UIKit
 //
-//  Copyright 2009 Apple Computer, Inc.. All rights reserved.
+//  Copyright 2009-2010 Apple Computer, Inc.. All rights reserved.
 //
-
-#if __IPHONE_3_1 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UINavigationController.h>
@@ -14,7 +12,7 @@
 
 @protocol UIVideoEditorControllerDelegate;
 
-UIKIT_EXTERN_CLASS @interface UIVideoEditorController : UINavigationController {
+UIKIT_CLASS_AVAILABLE(3_1) @interface UIVideoEditorController : UINavigationController {
   @private
     int                               _previousStatusBarMode;
     NSMutableDictionary              *_properties;
@@ -46,5 +44,3 @@ UIKIT_EXTERN_CLASS @interface UIVideoEditorController : UINavigationController {
 - (void)videoEditorControllerDidCancel:(UIVideoEditorController *)editor;
 
 @end
-
-#endif

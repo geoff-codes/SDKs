@@ -13,6 +13,7 @@
 #import <CoreData/NSAtomicStoreCacheNode.h>
 #import <CoreData/NSManagedObject.h>
 
+NS_CLASS_AVAILABLE(10_5, 3_0)
 @interface NSAtomicStore : NSPersistentStore {
 	@private
     NSMutableDictionary *_nodeCache;

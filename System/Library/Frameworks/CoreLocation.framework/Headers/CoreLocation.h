@@ -2,7 +2,7 @@
  *  CoreLocation.h
  *  CoreLocation
  *
- *  Copyright 2008 Apple Computer, Inc. All rights reserved.
+ *  Copyright (c) 2008-2010 Apple Inc. All rights reserved.
  *
  */
 
@@ -12,6 +12,7 @@
 
 #import <CoreLocation/CLErrorDomain.h>
 #import <CoreLocation/CLError.h>
+#import <CoreLocation/CLRegion.h>
 #import <CoreLocation/CLHeading.h>
 #import <CoreLocation/CLLocation.h>
 #import <CoreLocation/CLLocationManager.h>

@@ -68,18 +68,16 @@ CG_EXTERN const CGRect CGRectInfinite
 
 /* Make a point from `(x, y)'. */
 
-CG_INLINE CGPoint CGPointMake(CGFloat x, CGFloat y)
-  CG_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_2_0);
+CG_INLINE CGPoint CGPointMake(CGFloat x, CGFloat y);
 
 /* Make a size from `(width, height)'. */
 
-CG_INLINE CGSize CGSizeMake(CGFloat width, CGFloat height)
-  CG_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_2_0);
+CG_INLINE CGSize CGSizeMake(CGFloat width, CGFloat height);
 
 /* Make a rect from `(x, y; width, height)'. */
 
 CG_INLINE CGRect CGRectMake(CGFloat x, CGFloat y, CGFloat width,
-  CGFloat height) CG_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_2_0);
+  CGFloat height);
 
 /* Return the leftmost x-value of `rect'. */
 

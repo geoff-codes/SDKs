@@ -37,7 +37,32 @@
 // Retrieve functions via alGetProcAddress() by passing in strings: alcMacOSXMixerOutputRate or alcMacOSXGetMixerOutputRate
 
 // Setting the Mixer Output Rate effectively sets the samnple rate at which the mixer
-typedef ALvoid (*alcMacOSXMixerOutputRateProcPtr) (const ALdouble value);
+typedef ALvoid (*alcMacOSXRenderingQualityProcPtr) (ALint value);
+typedef ALvoid (*alMacOSXRenderChannelCountProcPtr) (ALint value);
+typedef ALvoid (*alcMacOSXMixerMaxiumumBussesProcPtr) (ALint value);
+typedef ALvoid (*alcMacOSXMixerOutputRateProcPtr) (ALdouble value);
+
+typedef ALint (*alcMacOSXGetRenderingQualityProcPtr) ();
+typedef ALint (*alMacOSXGetRenderChannelCountProcPtr) ();
+typedef ALint (*alcMacOSXGetMixerMaxiumumBussesProcPtr) ();
 typedef ALdouble (*alcMacOSXGetMixerOutputRateProcPtr) ();
 
+/* Render Quality. Used with alcMacOSXRenderingQuality() */
+	
+	#define ALC_MAC_OSX_SPATIAL_RENDERING_QUALITY_HIGH			'rqhi'
+	#define ALC_MAC_OSX_SPATIAL_RENDERING_QUALITY_LOW			'rdlo'
+	
+	// High Quality Spatial Algorithm suitable only for headphone use
+	#define ALC_IPHONE_SPATIAL_RENDERING_QUALITY_HEADPHONES		'hdph'		
+
+/*	
+	Render Channels. Used with alMacOSXRenderChannelCount()
+	Allows a user to force OpenAL to render to stereo, regardless of the audio hardware being used
+*/
+	#define ALC_MAC_OSX_RENDER_CHANNEL_COUNT_STEREO         'rcst'
+
+/* GameKit extension */
+
+	#define AL_GAMEKIT											'gksr'
+							
 #endif // __OAL_MAC_OSX_OAL_EXTENSIONS_H__

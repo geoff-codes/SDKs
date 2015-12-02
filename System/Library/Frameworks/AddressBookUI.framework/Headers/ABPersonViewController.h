@@ -2,21 +2,20 @@
 //  ABPersonViewController.h
 //  AddressBookUI
 //
-//  Copyright 2008 Apple Inc. All rights reserved.
+//  Copyright (c) 2010 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIViewController.h>
 #import <AddressBook/AddressBook.h>
 
+@class UITableViewCell;
 @protocol ABPersonViewControllerDelegate;
 
+NS_CLASS_AVAILABLE(NA, 2_0)
 @interface ABPersonViewController : UIViewController
 {
     @private
         id<ABPersonViewControllerDelegate> _personViewDelegate;
-        BOOL                               _allowsActions;
-        BOOL                               _allowsDeletion;
-        BOOL                               _animatedRight;
         
         CFArrayRef                         _displayedProperties;
         
@@ -42,10 +41,13 @@
     // Indicates whether an edit/save button should be shown.
 @property(nonatomic)           BOOL                               allowsEditing;
 
-	// Indicate whether to highlight a certain value for the displayedPerson,
+    // Indicates whether to show data from people linked to the displayedPerson, defaults to NO
+@property(nonatomic)           BOOL                               shouldShowLinkedPeople __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+	// Indicates whether to highlight a certain value for the displayedPerson,
     // if a single value property is specified, identifier will be ignored.
 - (void)setHighlightedItemForProperty:(ABPropertyID)property withIdentifier:(ABMultiValueIdentifier)identifier;
-	
+
 @end
 
 @protocol ABPersonViewControllerDelegate <NSObject>

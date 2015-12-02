@@ -2,7 +2,7 @@
 //  UIButton.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -23,7 +23,7 @@ typedef enum {
     UIButtonTypeContactAdd,
 } UIButtonType;
 
-UIKIT_EXTERN_CLASS @interface UIButton : UIControl <NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIButton : UIControl <NSCoding> {
   @private
     CFMutableDictionaryRef _contentLookup;
     UIEdgeInsets           _contentEdgeInsets;
@@ -32,6 +32,7 @@ UIKIT_EXTERN_CLASS @interface UIButton : UIControl <NSCoding> {
     UIImageView           *_backgroundView;
     UIImageView           *_imageView;
     UILabel               *_titleView;
+    BOOL                  _initialized;
     struct {
         unsigned int reversesTitleShadowWhenHighlighted:1;
         unsigned int adjustsImageWhenHighlighted:1;
@@ -50,8 +51,8 @@ UIKIT_EXTERN_CLASS @interface UIButton : UIControl <NSCoding> {
 @property(nonatomic)        UIEdgeInsets    titleEdgeInsets;                // default is UIEdgeInsetsZero
 @property(nonatomic)        BOOL            reversesTitleShadowWhenHighlighted; // default is NO. if YES, shadow reverses to shift between engrave and emboss appearance
 @property(nonatomic)        UIEdgeInsets    imageEdgeInsets;                // default is UIEdgeInsetsZero
-@property(nonatomic)        BOOL            adjustsImageWhenHighlighted;    // default is YES. if YES, image is drawn ligher when highlighted(pressed)
-@property(nonatomic)        BOOL            adjustsImageWhenDisabled;       // default is YES. if YES, image is drawn darker when disabled
+@property(nonatomic)        BOOL            adjustsImageWhenHighlighted;    // default is YES. if YES, image is drawn darker when highlighted(pressed)
+@property(nonatomic)        BOOL            adjustsImageWhenDisabled;       // default is YES. if YES, image is drawn lighter when disabled
 @property(nonatomic)        BOOL            showsTouchWhenHighlighted;      // default is NO. if YES, show a simple feedback (currently a glow) while highlighted
 
 @property(nonatomic,readonly) UIButtonType buttonType;

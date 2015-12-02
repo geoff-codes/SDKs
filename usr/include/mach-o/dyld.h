@@ -93,11 +93,9 @@ extern int _NSGetExecutablePath(char* buf, uint32_t* bufsize)                 __
 
 
 /*
- * _dyld_moninit() and _dyld_func_lookup() are private interface between 
- * dyld and libSystem.
-*/
+ * _dyld_moninit() is a private interface between dyld and libSystem.
+ */
 extern void _dyld_moninit(void (*monaddition)(char *lowpc, char *highpc))    __OSX_AVAILABLE_STARTING(__MAC_10_1, __IPHONE_2_0);
-extern int _dyld_func_lookup(const char* dyld_func_name, void **address)     __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_1,__MAC_10_6,__IPHONE_NA,__IPHONE_NA);
 
 
 

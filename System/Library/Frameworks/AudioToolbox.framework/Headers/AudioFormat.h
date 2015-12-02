@@ -3,7 +3,7 @@
 
      Contains:   API for finding things out about audio formats.
 
-     Copyright:  (c) 1985-2008 by Apple Inc., all rights reserved.
+     Copyright:  (c) 1985-2008 by Apple, Inc., all rights reserved.
 
      Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
@@ -240,6 +240,11 @@ typedef struct AudioFormatListItem AudioFormatListItem;
 	@constant	kAudioFormatProperty_FirstPlayableFormatFromList
 					The specifier is a list of 1 or more AudioFormatListItem. Generally it is the list of these items returned from kAudioFormatProperty_FormatList. The property value retrieved is an UInt32 that specifies an index into that list. The list that the caller provides is generally sorted with the first item as the best format (most number of channels, highest sample rate), and the returned index represents the first item in that list that can be played by the system. 
 					Thus, the property is typically used to determine the best playable format for a given (layered) audio stream
+	@constant   kAudioFormatProperty_ValidateChannelLayout
+					The specifier is an AudioChannelLayout. The property value and size are not used and must be set to NULL.
+					This property validates an AudioChannelLayout. This is useful if the layout has come from an untrusted source such as a file.
+					It returns noErr if the AudioChannelLayout is OK, paramErr if there is a structural problem with the layout,
+					or kAudioFormatUnknownFormatError for unrecognized layout tags or channel labels.
 	@constant   kAudioFormatProperty_ChannelLayoutForTag
 					Returns the channel descriptions for a standard channel layout.
 					The specifier is a AudioChannelLayoutTag (the mChannelLayoutTag field 
@@ -269,6 +274,12 @@ typedef struct AudioFormatListItem AudioFormatListItem;
 					is kAudioChannelLayoutTag_UseChannelBitmap and the bitmap is filled in.
     @constant   kAudioFormatProperty_ChannelLayoutName
 					Returns the a name for a particular channel layout. The specifier is
+					an AudioChannelLayout containing the layout description. The value
+					is a CFStringRef. The caller is responsible for releasing the
+					returned string.
+    @constant   kAudioFormatProperty_ChannelLayoutSimpleName
+					Returns the a simpler name for a channel layout than does kAudioFormatProperty_ChannelLayoutName. 
+					It omits the channel labels from the name. The specifier is
 					an AudioChannelLayout containing the layout description. The value
 					is a CFStringRef. The caller is responsible for releasing the
 					returned string.
@@ -352,10 +363,10 @@ enum
     kAudioFormatProperty_ChannelLayoutFromESDS          = 'escl',
 	kAudioFormatProperty_OutputFormatList				= 'ofls',
 	kAudioFormatProperty_FirstPlayableFormatFromList	= 'fpfl',
-	kAudioFormatProperty_Encoders						= 'aven',	
-	kAudioFormatProperty_Decoders						= 'avde',
 	kAudioFormatProperty_FormatIsVBR					= 'fvbr',	
 	kAudioFormatProperty_FormatIsExternallyFramed		= 'fexf',
+	kAudioFormatProperty_Encoders						= 'aven',	
+	kAudioFormatProperty_Decoders						= 'avde',
 	kAudioFormatProperty_AvailableEncodeBitRates		= 'aebr',
 	kAudioFormatProperty_AvailableEncodeSampleRates		= 'aesr',
 	kAudioFormatProperty_AvailableEncodeChannelLayoutTags = 'aecl',
@@ -370,11 +381,13 @@ enum
 	kAudioFormatProperty_MatrixMixMap					= 'mmap',
     kAudioFormatProperty_ChannelMap						= 'chmp',
 	kAudioFormatProperty_NumberOfChannelsForLayout		= 'nchm',
+	kAudioFormatProperty_ValidateChannelLayout			= 'vacl',
 	kAudioFormatProperty_ChannelLayoutForTag			= 'cmpl',
 	kAudioFormatProperty_TagForChannelLayout			= 'cmpt',
 	kAudioFormatProperty_ChannelLayoutName				= 'lonm',
 	kAudioFormatProperty_ChannelLayoutForBitmap			= 'cmpb',
 	kAudioFormatProperty_ChannelName					= 'cnam',
+	kAudioFormatProperty_ChannelLayoutSimpleName		= 'lsnm',
 	kAudioFormatProperty_ChannelShortName				= 'csnm',
 
 	kAudioFormatProperty_TagsForNumberOfChannels		= 'tagc',				

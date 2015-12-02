@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2008 Apple Inc. All rights reserved.
+ * Copyright (c) 2004-2010 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -93,7 +93,7 @@ extern const CFStringRef kSCNetworkInterfaceTypeFireWire					__OSX_AVAILABLE_STA
 extern const CFStringRef kSCNetworkInterfaceTypeIEEE80211					__OSX_AVAILABLE_STARTING(__MAC_10_4,__IPHONE_NA);	// IEEE 802.11, AirPort
 
 /*!
- @const kSCNetworkInterfaceTypeIPSec
+	@const kSCNetworkInterfaceTypeIPSec
  */
 extern const CFStringRef kSCNetworkInterfaceTypeIPSec						__OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
 
@@ -172,7 +172,6 @@ typedef SCNetworkInterfaceRef SCBondInterfaceRef;
  */
 typedef const struct __SCBondStatus *		SCBondStatusRef;
 
-#if	!TARGET_OS_IPHONE
 /*!
 	@enum Ethernet Bond Aggregation Status (kSCBondStatusDeviceAggregationStatus) codes
 	@discussion Returned status codes.
@@ -189,20 +188,19 @@ enum {
 	kSCBondStatusNotInActiveGroup	= 3,	/* We're talking to a partner, but the link aggregation group is different from the one that's active */
 	kSCBondStatusUnknown		= 999	/* Non-specific failure */
 };
-#endif	// !TARGET_OS_IPHONE
 
 /*!
-  @const kSCBondStatusDeviceAggregationStatus
+	@const kSCBondStatusDeviceAggregationStatus
  */
 extern const CFStringRef kSCBondStatusDeviceAggregationStatus	/* CFNumber */			__OSX_AVAILABLE_STARTING(__MAC_10_4,__IPHONE_NA);
 
 /*!
-  @const kSCBondStatusDeviceCollecting
+	@const kSCBondStatusDeviceCollecting
  */
 extern const CFStringRef kSCBondStatusDeviceCollecting		/* CFNumber (0 or 1) */		__OSX_AVAILABLE_STARTING(__MAC_10_4,__IPHONE_NA);
 
 /*!
-  @const kSCBondStatusDeviceDistributing
+	@const kSCBondStatusDeviceDistributing
  */
 extern const CFStringRef kSCBondStatusDeviceDistributing	/* CFNumber (0 or 1) */		__OSX_AVAILABLE_STARTING(__MAC_10_4,__IPHONE_NA);
 
@@ -506,7 +504,7 @@ SCNetworkInterfaceCopyMediaSubTypes		(CFArrayRef			available)	__OSX_AVAILABLE_ST
 	@discussion For the provided interface configuration options and specific
 		subtype, return a list of available media options.
 	@param available The available options as returned by the
-		NetworkInterfaceCopyMediaOptions function.
+		SCNetworkInterfaceCopyMediaOptions function.
 	@param subType The subtype
 	@result An array of available media options.  Each of the available options
 		is returned as an array of CFString's (e.g. <half-duplex>,

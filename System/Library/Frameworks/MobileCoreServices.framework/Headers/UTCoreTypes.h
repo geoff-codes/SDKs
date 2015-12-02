@@ -121,7 +121,7 @@ extern const CFStringRef kUTTypeDiskImage                            __OSX_AVAIL
  *
  *  kUTTypeResolvable
  *
- *    symlinks and alias files conform this UTI
+ *    symlink and alias file types conform to this UTI
  *
  *    UTI: com.apple.resolvable
  *

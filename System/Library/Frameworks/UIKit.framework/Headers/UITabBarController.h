@@ -2,7 +2,7 @@
 //  UITabBarController.h
 //  UIKit
 //
-//  Copyright 2007-2009 Apple Inc. All rights reserved.
+//  Copyright 2007-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -16,7 +16,7 @@
  To use in your application, add its view to the view hierarchy, then add top-level view controllers in order.
  Most clients will not need to subclass UITabBarController.
 
- If more than five view controllers are added to a toolbar controller, only the first four will display.
+ If more than five view controllers are added to a tab bar controller, only the first four will display.
  The rest will be accessible under an automatically generated More item.
  
  UITabBarController is rotatable if all of its view controllers are rotatable.
@@ -25,7 +25,7 @@
 @class UIView, UIImage, UINavigationController, UITabBarItem;
 @protocol UITabBarControllerDelegate;
 
-UIKIT_EXTERN_CLASS @interface UITabBarController : UIViewController <UITabBarDelegate, NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBarController : UIViewController <UITabBarDelegate, NSCoding> {
   @package
     UITabBar               *_tabBar;
     
@@ -44,6 +44,8 @@ UIKIT_EXTERN_CLASS @interface UITabBarController : UIViewController <UITabBarDel
     UIViewController       *_selectedViewControllerDuringWillAppear;
         
     UIViewController       *_transientViewController;
+    
+    NSUInteger              _maxItems;
     
     struct {
 	unsigned int isShowingMoreItem:1;
@@ -84,6 +86,6 @@ UIKIT_EXTERN_CLASS @interface UITabBarController : UIViewController <UITabBarDel
 
 @property(nonatomic,retain) UITabBarItem *tabBarItem; // Automatically created lazily with the view controller's title if it's not set explicitly.
 
-@property(nonatomic,readonly,retain) UITabBarController *tabBarController; // If the view controller has a toolbar controller as its ancestor, return it. Returns nil otheriwse.
+@property(nonatomic,readonly,retain) UITabBarController *tabBarController; // If the view controller has a tab bar controller as its ancestor, return it. Returns nil otherwise.
 
 @end

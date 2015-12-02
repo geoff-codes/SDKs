@@ -3,7 +3,7 @@
  *  CLHeading.h
  *  CoreLocation
  *
- *  Copyright 2008 Apple Computer, Inc. All rights reserved.
+ *  Copyright 2008 Apple, Inc. All rights reserved.
  *
  */
 
@@ -14,10 +14,8 @@
  *  CLHeadingComponentValue
  *  
  *  Discussion:
- *    Type represents a measured geomagnetic raw value for an axis in three dimensional space.
+ *    Type represents a geomagnetic value, measured in microteslas, relative to a device axis in three dimensional space.
  *
- *  Range:
- *    The sensor's reported value is -128 to +128 uT within the adjusted resolution window.
  */
 typedef double CLHeadingComponentValue;
 
@@ -37,6 +35,7 @@ extern const CLLocationDegrees kCLHeadingFilterNone;
  *  Discussion:
  *    Represents a vector pointing to magnetic North constructed from axis component values x, y, and z. An accuracy of the heading calculation is also provided along with timestamp information.
  */
+NS_CLASS_AVAILABLE(NA, 3_0)
 @interface CLHeading : NSObject <NSCopying, NSCoding>
 {
 @private

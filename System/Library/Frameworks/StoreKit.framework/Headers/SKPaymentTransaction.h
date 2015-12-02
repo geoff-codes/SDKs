@@ -8,8 +8,6 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKitDefines.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
 @class SKPayment;
 
 enum {
@@ -20,7 +18,7 @@ enum {
 };
 typedef NSInteger SKPaymentTransactionState;
 
-SK_EXTERN_CLASS @interface SKPaymentTransaction : NSObject {
+SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPaymentTransaction : NSObject {
 @private
     id _internal;
 }
@@ -45,5 +43,3 @@ SK_EXTERN_CLASS @interface SKPaymentTransaction : NSObject {
 @property(nonatomic, readonly) SKPaymentTransactionState transactionState __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @end
-
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2007 Apple Inc. All rights reserved.
+ * Copyright (c) 2006-2010 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -23,9 +23,11 @@
 #ifndef _SANDBOX_H_
 #define _SANDBOX_H_
 
+#include <sys/cdefs.h>
 #include <stdint.h>
 #include <unistd.h>
 
+__BEGIN_DECLS
 /*
  * @function sandbox_init
  * Places the current process in a sandbox with a profile as
@@ -118,4 +120,33 @@ extern const char kSBXProfilePureComputation[];
  */
 void sandbox_free_error(char *errorbuf);
 
+
+#ifdef __APPLE_API_PRIVATE
+
+/* The following definitions are reserved for Mac OS X.  Developers should not
+ * depend on their availability.
+ */
+
+int sandbox_init_with_parameters(const char *profile, uint64_t flags, const char *const parameters[], char **errorbuf);
+
+int sandbox_init_with_extensions(const char *profile, uint64_t flags, const char *const extensions[], char **errorbuf);
+
+enum sandbox_filter_type {
+	SANDBOX_FILTER_NONE,
+	SANDBOX_FILTER_PATH,
+	SANDBOX_FILTER_GLOBAL_NAME,
+	SANDBOX_FILTER_LOCAL_NAME
+};
+
+int sandbox_check(pid_t pid, const char *operation, enum sandbox_filter_type type, ...);
+
+int sandbox_note(const char *note);
+
+int sandbox_issue_extension(const char *path, char **ext_token);
+
+int sandbox_consume_extension(const char *path, const char *ext_token);
+
+#endif /* __APPLE_API_PRIVATE */
+
+__END_DECLS
 #endif /* _SANDBOX_H_ */

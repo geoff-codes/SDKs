@@ -9,15 +9,11 @@
 #import <MediaPlayer/MediaPlayerDefines.h>
 #import <MediaPlayer/MPMediaItem.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
-@class MPMediaItemCollectionInternal;
-
 // An MPMediaItemCollection is a collection of related MPMediaItems in a media library.
 
-MP_EXTERN_CLASS @interface MPMediaItemCollection : NSObject <NSCoding> {
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaItemCollection : MPMediaEntity {
 @private
-    MPMediaItemCollectionInternal *_internal;
+    void *_internal;
 }
 
 // Creates a media item collection by copying an array of MPMediaItems.
@@ -40,5 +36,3 @@ MP_EXTERN_CLASS @interface MPMediaItemCollection : NSObject <NSCoding> {
 @property(nonatomic, readonly) MPMediaType mediaTypes;
 
 @end
-
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

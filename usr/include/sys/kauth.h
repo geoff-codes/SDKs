@@ -106,6 +106,12 @@ struct kauth_identity_extlookup {
 #define KAUTH_EXTLOOKUP_WANT_MEMBERSHIP	(1<<12)
 #define KAUTH_EXTLOOKUP_VALID_MEMBERSHIP (1<<13)
 #define KAUTH_EXTLOOKUP_ISMEMBER	(1<<14)
+
+	__darwin_pid_t	el_info_pid;		/* request on behalf of PID */
+	u_int32_t	el_info_reserved_1;	/* reserved (APPLE) */
+	u_int32_t	el_info_reserved_2;	/* reserved (APPLE) */
+	u_int32_t	el_info_reserved_3;	/* reserved (APPLE) */
+
 	uid_t		el_uid;		/* user ID */
 	guid_t		el_uguid;	/* user GUID */
 	u_int32_t	el_uguid_valid;	/* TTL on translation result (seconds) */
@@ -175,7 +181,7 @@ struct kauth_acl {
 	u_int32_t	acl_entrycount;
 	u_int32_t	acl_flags;
 	
-	struct kauth_ace acl_ace[];
+	struct kauth_ace acl_ace[1];
 };
 
 /*

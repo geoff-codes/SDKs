@@ -2,7 +2,7 @@
 //  UIColor.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,7 +11,9 @@
 
 @class UIImage;
 
-UIKIT_EXTERN_CLASS @interface UIColor : NSObject <NSCoding>
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIColor : NSObject <NSCoding> {
+  @private
+}
 
 // Convenience methods for creating autoreleased colors
 + (UIColor *)colorWithWhite:(CGFloat)white alpha:(CGFloat)alpha;

@@ -26,7 +26,7 @@ typedef function_table_entry   *function_table_t;
 #endif /* AUTOTEST */
 
 #ifndef	mach_port_MSG_COUNT
-#define	mach_port_MSG_COUNT	30
+#define	mach_port_MSG_COUNT	31
 #endif	/* mach_port_MSG_COUNT */
 
 #include <mach/std_types.h>
@@ -385,7 +385,7 @@ kern_return_t mach_port_kernel_object
 	ipc_space_t task,
 	mach_port_name_t name,
 	unsigned *object_type,
-	vm_offset_t *object_addr
+	unsigned *object_addr
 );
 
 /* Routine mach_port_insert_member */
@@ -438,6 +438,20 @@ kern_return_t mach_port_set_context
 	ipc_space_t task,
 	mach_port_name_t name,
 	mach_vm_address_t context
+);
+
+/* Routine mach_port_kobject */
+#ifdef	mig_external
+mig_external
+#else
+extern
+#endif	/* mig_external */
+kern_return_t mach_port_kobject
+(
+	ipc_space_t task,
+	mach_port_name_t name,
+	natural_t *object_type,
+	mach_vm_address_t *object_addr
 );
 
 __END_DECLS
@@ -835,6 +849,18 @@ __END_DECLS
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
+
+#ifdef  __MigPackStructs
+#pragma pack(4)
+#endif
+	typedef struct {
+		mach_msg_header_t Head;
+		NDR_record_t NDR;
+		mach_port_name_t name;
+	} __Request__mach_port_kobject_t;
+#ifdef  __MigPackStructs
+#pragma pack()
+#endif
 #endif /* !__Request__mach_port_subsystem__defined */
 
 /* union of all requests */
@@ -871,6 +897,7 @@ union __RequestUnion__mach_port_subsystem {
 	__Request__mach_port_extract_member_t Request_mach_port_extract_member;
 	__Request__mach_port_get_context_t Request_mach_port_get_context;
 	__Request__mach_port_set_context_t Request_mach_port_set_context;
+	__Request__mach_port_kobject_t Request_mach_port_kobject;
 };
 #endif /* !__RequestUnion__mach_port_subsystem__defined */
 /* typedefs for all replies */
@@ -1207,7 +1234,7 @@ union __RequestUnion__mach_port_subsystem {
 		NDR_record_t NDR;
 		kern_return_t RetCode;
 		unsigned object_type;
-		vm_offset_t object_addr;
+		unsigned object_addr;
 	} __Reply__mach_port_kernel_object_t;
 #ifdef  __MigPackStructs
 #pragma pack()
@@ -1261,6 +1288,20 @@ union __RequestUnion__mach_port_subsystem {
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
+
+#ifdef  __MigPackStructs
+#pragma pack(4)
+#endif
+	typedef struct {
+		mach_msg_header_t Head;
+		NDR_record_t NDR;
+		kern_return_t RetCode;
+		natural_t object_type;
+		mach_vm_address_t object_addr;
+	} __Reply__mach_port_kobject_t;
+#ifdef  __MigPackStructs
+#pragma pack()
+#endif
 #endif /* !__Reply__mach_port_subsystem__defined */
 
 /* union of all replies */
@@ -1297,6 +1338,7 @@ union __ReplyUnion__mach_port_subsystem {
 	__Reply__mach_port_extract_member_t Reply_mach_port_extract_member;
 	__Reply__mach_port_get_context_t Reply_mach_port_get_context;
 	__Reply__mach_port_set_context_t Reply_mach_port_set_context;
+	__Reply__mach_port_kobject_t Reply_mach_port_kobject;
 };
 #endif /* !__RequestUnion__mach_port_subsystem__defined */
 
@@ -1330,7 +1372,8 @@ union __ReplyUnion__mach_port_subsystem {
     { "mach_port_insert_member", 3226 },\
     { "mach_port_extract_member", 3227 },\
     { "mach_port_get_context", 3228 },\
-    { "mach_port_set_context", 3229 }
+    { "mach_port_set_context", 3229 },\
+    { "mach_port_kobject", 3230 }
 #endif
 
 #ifdef __AfterMigUserHeader

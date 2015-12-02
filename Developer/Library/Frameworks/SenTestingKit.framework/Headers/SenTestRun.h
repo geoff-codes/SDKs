@@ -29,7 +29,7 @@
 // This notice may not be removed from this file.
 
 #import <Foundation/NSObject.h>
-#import "SenTest.h"
+#import <SenTestingKit/SenTest.h>
 
 /*"A TestResult collects the results of executing a test. The test framework distinguishes between %failures which are anticipated and checked for problems like a test that failed; and %{unexpected failures} which are unforeseen (catastrophic) problems, like an exception.
 "*/

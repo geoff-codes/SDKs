@@ -7,10 +7,9 @@
 
 #import <Foundation/Foundation.h>
 #import <MediaPlayer/MediaPlayerDefines.h>
+#import <MediaPlayer/MPMediaItem.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
-@class MPMediaQueryInternal, MPMediaPredicate, MPMediaPropertyPredicateInternal;
+@class MPMediaPredicate;
 
 enum {
     MPMediaGroupingTitle,
@@ -26,9 +25,9 @@ typedef NSInteger MPMediaGrouping;
 
 // MPMediaQuery represents a collection of items or playlists determined by a chain of MPMediaPredicate objects.
 
-MP_EXTERN_CLASS @interface MPMediaQuery : NSObject <NSCoding> {
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaQuery : NSObject <NSCoding, NSCopying> {
 @private
-    MPMediaQueryInternal *_internal;
+    void *_internal;
 }
 
 - (id)init;
@@ -48,6 +47,11 @@ MP_EXTERN_CLASS @interface MPMediaQuery : NSObject <NSCoding> {
 // The property used to group collections, defaults to MPMediaGroupingTitle.
 @property(nonatomic) MPMediaGrouping groupingType;
 
+// Returns an array of MPMediaQuerySection instances representing the section grouping of the query's items or collections.
+// May be nil in cases where no section grouping of the items or collections is appropriate.
+@property (nonatomic, readonly) NSArray *itemSections NS_AVAILABLE_IPHONE(4_2);
+@property (nonatomic, readonly) NSArray *collectionSections NS_AVAILABLE_IPHONE(4_2);
+
 // Base queries which can be used directly or as the basis for custom queries.
 // The groupingType for these queries is preset to the appropriate type for the query.
 + (MPMediaQuery *)albumsQuery;
@@ -66,7 +70,7 @@ MP_EXTERN_CLASS @interface MPMediaQuery : NSObject <NSCoding> {
 // MPMediaPredicate is an abstract class that allows filtering media in an MPMediaQuery.
 // See the concrete subclass MPMediaPropertyPredicate for filtering options.
 
-MP_EXTERN_CLASS @interface MPMediaPredicate : NSObject <NSCoding> {}
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPredicate : NSObject <NSCoding> {}
 @end
 
 // ------------------------------------------------------------------------
@@ -79,9 +83,9 @@ enum {
 };
 typedef NSInteger MPMediaPredicateComparison;
 
-MP_EXTERN_CLASS @interface MPMediaPropertyPredicate : MPMediaPredicate {
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPropertyPredicate : MPMediaPredicate {
 @private
-    MPMediaPropertyPredicateInternal *_internal;
+    void *_internal;
 }
 
 + (MPMediaPropertyPredicate *)predicateWithValue:(id)value forProperty:(NSString *)property; // comparisonType is MPMediaPredicateComparisonEqualTo
@@ -93,4 +97,18 @@ MP_EXTERN_CLASS @interface MPMediaPropertyPredicate : MPMediaPredicate {
 
 @end
 
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
+// ------------------------------------------------------------------------
+// Convenience methods to determine item properties corresponding to a given grouping type.
+
+@interface MPMediaItem (MPMediaQueryAdditions)
+
+// Returns the item property for a given grouping type.
+// For example, [MPMediaItem persistentIDPropertyForGroupingType:MPMediaGroupingAlbum] returns MPMediaItemPropertyAlbumPersistentID.
++ (NSString *)persistentIDPropertyForGroupingType:(MPMediaGrouping)groupingType NS_AVAILABLE_IPHONE(4_2);
+
+// Returns the item property to determine a title for a given grouping type.
+// For example, [MPMediaItem titlePropertyForGroupingType:MPMediaGroupingAlbum] returns MPMediaItemPropertyAlbumTitle.
+// Note that distinct collections will not necessarily have unique titles, e.g. an album may exist with the title "Greatest Hits" for multiple artists.
++ (NSString *)titlePropertyForGroupingType:(MPMediaGrouping)groupingType NS_AVAILABLE_IPHONE(4_2);
+
+@end

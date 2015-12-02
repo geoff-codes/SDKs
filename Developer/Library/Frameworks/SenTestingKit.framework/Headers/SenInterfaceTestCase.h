@@ -29,7 +29,7 @@
 // This notice may not be removed from this file.
 
 #import <Foundation/Foundation.h>
-#import "SenTestCase.h"
+#import <SenTestingKit/SenTestCase.h>
 
 @interface SenInterfaceTestCase : SenTestCase 
 {

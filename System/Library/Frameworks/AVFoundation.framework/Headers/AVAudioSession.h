@@ -1,11 +1,15 @@
 /*
-  AVAudioSession.h
-
-  Copyright 2009 Apple Inc. All rights reserved.
+	File:  AVAudioSession.h
+	
+	Framework:  AVFoundation
+	
+	Copyright 2009-2010 Apple Inc. All rights reserved.
+	
 */
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSDate.h>	/* for NSTimeInterval */
+#import <AvailabilityMacros.h>
 
 /* This protocol is available with iPhone 3.0 or later */
 @protocol AVAudioSessionDelegate;
@@ -19,6 +23,13 @@ extern NSString *const AVAudioSessionCategoryRecord;
 extern NSString *const AVAudioSessionCategoryPlayAndRecord;
 extern NSString *const AVAudioSessionCategoryAudioProcessing;
 
+enum {
+	AVAudioSessionInterruptionFlags_ShouldResume = 1
+};
+
+enum {	
+	AVAudioSessionSetActiveFlags_NotifyOthersOnDeactivation = 1
+};
 
 @interface AVAudioSession : NSObject {
 @private
@@ -31,6 +42,8 @@ extern NSString *const AVAudioSessionCategoryAudioProcessing;
 @property(assign) id<AVAudioSessionDelegate> delegate;
 
 - (BOOL)setActive:(BOOL)beActive error:(NSError**)outError;
+- (BOOL)setActive:(BOOL)beActive withFlags:(NSInteger)flags error:(NSError**)outError
+	 __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 - (BOOL)setCategory:(NSString*)theCategory error:(NSError**)outError;
 - (BOOL)setPreferredHardwareSampleRate:(double)sampleRate error:(NSError**)outError;
@@ -53,14 +66,11 @@ extern NSString *const AVAudioSessionCategoryAudioProcessing;
 @optional 
 
 - (void)beginInterruption;
-- (void)endInterruption;
 
-- (void)categoryChanged:(NSString*)category;
+- (void)endInterruptionWithFlags:(NSUInteger)flags /* Currently the only flag is AVAudioSessionInterruptionFlags_ShouldResume. */
+		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+		
+- (void)endInterruption; /* endInterruptionWithFlags: will be called instead if implemented. */
 
 - (void)inputIsAvailableChanged:(BOOL)isInputAvailable;
-
-- (void)currentHardwareSampleRateChanged:(double)sampleRate;
-- (void)currentHardwareInputNumberOfChannelsChanged:(NSInteger)numberOfChannels;
-- (void)currentHardwareOutputNumberOfChannelsChanged:(NSInteger)numberOfChannels;
-
 @end

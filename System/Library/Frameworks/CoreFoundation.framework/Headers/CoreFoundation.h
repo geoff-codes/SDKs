@@ -1,5 +1,5 @@
 /*	CoreFoundation.h
-	Copyright (c) 1998-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2010, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_COREFOUNDATION__)
@@ -71,23 +71,27 @@
 #ifndef CF_OPEN_SOURCE
 #include <CoreFoundation/CFAttributedString.h>
 #include <CoreFoundation/CFNotificationCenter.h>
+#include <CoreFoundation/CFURLEnumerator.h>
 #endif
 
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)) || (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)
-#include <CoreFoundation/CFFileDescriptor.h>
 #include <CoreFoundation/CFMachPort.h>
 #ifndef CF_OPEN_SOURCE
 #include <CoreFoundation/CFStringTokenizer.h>
+#include <CoreFoundation/CFFileDescriptor.h>
 #endif
 #endif
+
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 #include <CoreFoundation/CFUserNotification.h>
 #include <CoreFoundation/CFXMLNode.h>
 #include <CoreFoundation/CFXMLParser.h>
 #endif
+
+#ifndef CF_OPEN_SOURCE
 #if TARGET_OS_WIN32
-#include <CoreFoundation/CFWindowsMessageQueue.h>
 #include <CoreFoundation/CFWindowsNamedPipe.h>
+#endif
 #endif
 
 #endif /* ! __COREFOUNDATION_COREFOUNDATION__ */

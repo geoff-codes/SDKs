@@ -11,7 +11,7 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSString.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 || __IPHONE_3_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @class NSEntityDescription;
 @class NSEntityMapping;
@@ -20,6 +20,7 @@
 @class NSMappingModel;
 @class NSMigrationContext;
 
+NS_CLASS_AVAILABLE(10_5, 3_0)
 @interface NSMigrationManager : NSObject {
     @private
     NSManagedObjectModel *_sourceModel;
@@ -33,7 +34,8 @@
     NSDictionary *_userInfo;
     struct _migrationManagerFlags {
         unsigned int _migrationWasCancelled:1;
-        unsigned int _reservedMigrationManager:31;
+        unsigned int _usesStoreSpecificMigrationManager:1;
+        unsigned int _reservedMigrationManager:30;
     } _migrationManagerFlags;
 	NSError *_migrationCancellationError;
 	id _reserved1;
@@ -110,5 +112,6 @@ implementation of NSEntityMigrationPolicy's createDestinationInstancesForSourceI
 
 @end
 
-#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 */
+#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 || __IPHONE_3_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
+ */
 

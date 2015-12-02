@@ -2,7 +2,7 @@
 //  UINavigationBar.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -16,7 +16,7 @@
 @class UINavigationItem, UIBarButtonItem, UIImage, UIColor;
 @protocol UINavigationBarDelegate;
 
-UIKIT_EXTERN_CLASS @interface UINavigationBar : UIView <NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationBar : UIView <NSCoding> {
   @private
     NSMutableArray *_itemStack;
     CGFloat         _rightMargin;
@@ -28,6 +28,7 @@ UIKIT_EXTERN_CLASS @interface UINavigationBar : UIView <NSCoding> {
     UIView         *_prompt;
     UIView         *_accessoryView;
     UIColor        *_tintColor;
+    id              _appearance;
     struct {
         unsigned int animate:1;
         unsigned int animationDisabledCount:10;
@@ -45,8 +46,9 @@ UIKIT_EXTERN_CLASS @interface UINavigationBar : UIView <NSCoding> {
         unsigned int forceFullHeightInLandscape:1;
         unsigned int isLocked:1;
         unsigned int shouldUpdatePromptAfterTransition:1;
-        unsigned int roundedCorners:1;
         unsigned int crossfadeItems:1;
+        unsigned int autoAdjustTitle:1;
+        unsigned int disableCustomTint:1;
     } _navbarFlags;
 }
 
@@ -79,7 +81,7 @@ UIKIT_EXTERN_CLASS @interface UINavigationBar : UIView <NSCoding> {
 
 @end
 
-UIKIT_EXTERN_CLASS @interface UINavigationItem : NSObject <NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationItem : NSObject <NSCoding> {
  @private
     NSString        *_title;
     NSString        *_backButtonTitle;
@@ -96,6 +98,7 @@ UIKIT_EXTERN_CLASS @interface UINavigationItem : NSObject <NSCoding> {
     UIView          *_customLeftView;
     UIView          *_customRightView;
     BOOL             _hidesBackButton;
+    UIImageView     *_frozenTitleView;
 }
 
 - (id)initWithTitle:(NSString *)title;

@@ -2,7 +2,7 @@
 //  UIToolbar.h
 //  UIKit
 //
-//  Copyright 2006-2009 Apple Inc. All rights reserved.
+//  Copyright 2006-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 
 @class UIBarButtonItem, UIColor;
 
-UIKIT_EXTERN_CLASS @interface UIToolbar : UIView {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIToolbar : UIView {
   @private
     UIView*                _customizeView;
     id                     _delegate;
@@ -27,15 +27,17 @@ UIKIT_EXTERN_CLASS @interface UIToolbar : UIView {
         unsigned int wasEnabled:1;
         unsigned int customized:1;
         unsigned int downButtonSentAction:1;
-        unsigned int roundedCorners:1;
         unsigned int isTranslucent:1;
+        unsigned int forceTopBarAppearance:1;
     } _toolbarFlags;
     CFMutableDictionaryRef _groups;
     NSArray               *_buttonItems;
     NSInteger              _currentButtonGroup;
     CFMutableArrayRef      _hiddenItems;
     NSInteger              _selectedTag;
-    NSInteger              _trackingTag;    
+    NSInteger              _trackingTag;
+    CGFloat                _extraEdgeInsets;
+    id                     _appearance;
 }
 
 @property(nonatomic)        UIBarStyle barStyle;    // default is UIBarStyleDefault (blue)

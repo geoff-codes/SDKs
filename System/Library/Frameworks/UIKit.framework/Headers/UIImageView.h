@@ -2,7 +2,7 @@
 //  UIImageView.h
 //  UIKit
 //
-//  Copyright 2006-2009 Apple Inc. All rights reserved.
+//  Copyright 2006-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,7 +11,7 @@
 
 @class UIImage;
 
-UIKIT_EXTERN_CLASS @interface UIImageView : UIView {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIImageView : UIView {
   @private
     id _storage;
 }

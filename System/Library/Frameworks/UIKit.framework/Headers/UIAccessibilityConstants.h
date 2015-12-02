@@ -2,10 +2,8 @@
 //  UIAccessibilityConstants.h
 //  UIKit
 //
-//  Copyright 2009 Apple Inc. All rights reserved.
+//  Copyright 2009-2010 Apple Inc. All rights reserved.
 //
-
-#if __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
@@ -73,6 +71,18 @@ UIKIT_EXTERN UIAccessibilityTraits UIAccessibilityTraitNotEnabled;
  */
 UIKIT_EXTERN UIAccessibilityTraits UIAccessibilityTraitUpdatesFrequently;
 
+/*
+ Used when activating an element starts a media session (e.g. playing a movie, recording audio) 
+ that should not be interrupted by output from an assistive technology, like VoiceOver.
+ */
+UIKIT_EXTERN UIAccessibilityTraits UIAccessibilityTraitStartsMediaSession __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+
+/*
+ Used when an element can be "adjusted" (e.g. a slider). The element must also 
+ implement accessibilityIncrement and accessibilityDecrement.
+ */
+UIKIT_EXTERN UIAccessibilityTraits UIAccessibilityTraitAdjustable __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+
 
 /*
  Accessibility Notifications
@@ -96,4 +106,19 @@ UIKIT_EXTERN UIAccessibilityNotifications UIAccessibilityScreenChangedNotificati
  */
 UIKIT_EXTERN UIAccessibilityNotifications UIAccessibilityLayoutChangedNotification;
 
-#endif
+/*
+ Should be posted when an announcement needs to be conveyed to the assistive technology. 
+ The assistive technology will output the announcement string that is used as the argument.
+ The argument is a NSString.
+ */
+UIKIT_EXTERN UIAccessibilityNotifications UIAccessibilityAnnouncementNotification __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+
+/*
+ Should be posted after accessibilityScroll: is called and the scrolling action has completed. 
+ A string representing the status of the new scroll position should be used as the argument 
+ (e.g. "Page 2 of 5"). If the same status is used repeatedly, the assistive technology will 
+ indicate a border has been reached.
+ The argument is a NSString.
+ */
+UIKIT_EXTERN UIAccessibilityNotifications UIAccessibilityPageScrolledNotification __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_2);
+

@@ -190,6 +190,7 @@ struct vfsstatfs {
 #define	MNT_NODEV	0x00000010	/* don't interpret special files */
 #define	MNT_UNION	0x00000020	/* union with underlying filesystem */
 #define	MNT_ASYNC	0x00000040	/* file system written asynchronously */
+#define	MNT_CPROTECT	0x00000080	/* file system supports content protection */
 
 /*
  * NFS export related mount flags.
@@ -233,7 +234,7 @@ struct vfsstatfs {
 			MNT_LOCAL	| MNT_QUOTA | \
 			MNT_ROOTFS	| MNT_DOVOLFS	| MNT_DONTBROWSE | \
 			MNT_IGNORE_OWNERSHIP | MNT_AUTOMOUNTED | MNT_JOURNALED | \
-			MNT_NOUSERXATTR | MNT_DEFWRITE	| MNT_MULTILABEL | MNT_NOATIME)
+			MNT_NOUSERXATTR | MNT_DEFWRITE	| MNT_MULTILABEL | MNT_NOATIME | MNT_CPROTECT )
 /*
  * External filesystem command modifier flags.
  * Unmount can use the MNT_FORCE flag.
@@ -331,7 +332,7 @@ struct vfsquery {
 #define VQ_NOTRESPLOCK	0x0080	/* server lockd down */
 #define VQ_UPDATE	0x0100	/* filesystem information has changed */
 #define VQ_VERYLOWDISK	0x0200	/* file system has *very* little disk space left */
-#define VQ_FLAG0400	0x0400	/* placeholder */
+#define VQ_SYNCEVENT	0x0400	/* a sync just happened */
 #define VQ_FLAG0800	0x0800	/* placeholder */
 #define VQ_FLAG1000	0x1000	/* placeholder */
 #define VQ_FLAG2000	0x2000	/* placeholder */

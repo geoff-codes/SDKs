@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2008 by Apple Inc.. All rights reserved.
+ * Copyright (c) 2001-2010 by Apple Inc.. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -147,7 +147,7 @@
  */
 #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1))) && (MAC_OS_X_VERSION_MIN_REQUIRED >= 1020)
     #define WEAK_IMPORT_ATTRIBUTE __attribute__((weak_import))
-#elif defined(__MWERKS__) && (__MWERKS__ >= 0x3205) && (MAC_OS_X_VERSION_MIN_REQUIRED >= 1020)
+#elif defined(__MWERKS__) && (__MWERKS__ >= 0x3205) && (MAC_OS_X_VERSION_MIN_REQUIRED >= 1020) && !defined(__INTEL__)
     #define WEAK_IMPORT_ATTRIBUTE __attribute__((weak_import))
 #else
     #define WEAK_IMPORT_ATTRIBUTE
@@ -691,6 +691,7 @@
 #else
     #define DEPRECATED_IN_MAC_OS_X_VERSION_10_6_AND_LATER
 #endif
+
 
 #endif  /* __AVAILABILITYMACROS__ */
 

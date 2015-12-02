@@ -38,8 +38,6 @@
 extern "C" {
 #endif
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 20000
-
 /*!
     @enum Import/Export options
     @discussion Predefined key constants used to pass in arguments to the
@@ -47,7 +45,8 @@ extern "C" {
     @constant kSecImportExportPassphrase Specifies a passphrase represented by
         a CFStringRef to be used to encrypt/decrypt.
 */
-extern CFStringRef kSecImportExportPassphrase;
+extern CFStringRef kSecImportExportPassphrase
+    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
 
 /*!
     @enum Import/Export item description
@@ -65,13 +64,16 @@ extern CFStringRef kSecImportExportPassphrase;
     @constant kSecImportItemCertChain a CFArrayRef holding all relevant 
         certificates for this item's identity
 */
-extern CFStringRef kSecImportItemLabel;
-extern CFStringRef kSecImportItemKeyID;
-extern CFStringRef kSecImportItemTrust;
-extern CFStringRef kSecImportItemCertChain;
-extern CFStringRef kSecImportItemIdentity;
-
-#endif /* __IPHONE_OS_VERSION_MIN_REQUIRED >= 20000 */
+extern CFStringRef kSecImportItemLabel
+    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+extern CFStringRef kSecImportItemKeyID
+    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+extern CFStringRef kSecImportItemTrust
+    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+extern CFStringRef kSecImportItemCertChain
+    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+extern CFStringRef kSecImportItemIdentity
+    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
 
 /*!
 	@function SecPKCS12Import

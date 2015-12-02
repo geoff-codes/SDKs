@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999-2002 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 1999-2008 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -29,13 +29,18 @@
 
 #ifndef	_ARCHITECTURE_BYTE_ORDER_H_
 #define _ARCHITECTURE_BYTE_ORDER_H_
- 
+
+/*
+ * Please note that the byte ordering functions in this file are deprecated.
+ * A replacement API exists in libkern/OSByteOrder.h
+ */
+
 #include <libkern/OSByteOrder.h>
 
 typedef unsigned long NXSwappedFloat;
 typedef unsigned long long NXSwappedDouble;
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned short 
 NXSwapShort(
     unsigned short inv
@@ -44,7 +49,7 @@ NXSwapShort(
     return (unsigned short)OSSwapInt16((uint16_t)inv);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned int
 NXSwapInt(
     unsigned int inv
@@ -53,7 +58,7 @@ NXSwapInt(
     return (unsigned int)OSSwapInt32((uint32_t)inv);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long
 NXSwapLong(
     unsigned long inv
@@ -62,7 +67,7 @@ NXSwapLong(
     return (unsigned long)OSSwapInt32((uint32_t)inv);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long long
 NXSwapLongLong(
     unsigned long long inv
@@ -71,7 +76,8 @@ NXSwapLongLong(
     return (unsigned long long)OSSwapInt64((uint64_t)inv);
 }
 
-static __inline__ NXSwappedFloat
+static __inline__ __attribute__((deprecated))
+NXSwappedFloat
 NXConvertHostFloatToSwapped(float x)
 {
     union fconv {
@@ -82,7 +88,8 @@ NXConvertHostFloatToSwapped(float x)
     return u.sf;
 }
 
-static __inline__ float
+static __inline__ __attribute__((deprecated))
+float
 NXConvertSwappedFloatToHost(NXSwappedFloat x)
 {
     union fconv {
@@ -93,7 +100,8 @@ NXConvertSwappedFloatToHost(NXSwappedFloat x)
     return u.number;
 }
 
-static __inline__ NXSwappedDouble
+static __inline__ __attribute__((deprecated))
+NXSwappedDouble
 NXConvertHostDoubleToSwapped(double x)
 {
     union dconv {
@@ -104,7 +112,8 @@ NXConvertHostDoubleToSwapped(double x)
     return u.sd;
 }
 
-static __inline__ double
+static __inline__ __attribute__((deprecated))
+double
 NXConvertSwappedDoubleToHost(NXSwappedDouble x)
 {
     union dconv {
@@ -115,13 +124,15 @@ NXConvertSwappedDoubleToHost(NXSwappedDouble x)
     return u.number;
 }
 
-static __inline__ NXSwappedFloat
+static __inline__ __attribute__((deprecated))
+NXSwappedFloat
 NXSwapFloat(NXSwappedFloat x)
 { 
     return (NXSwappedFloat)OSSwapInt32((uint32_t)x);  
 }
 
-static __inline__ NXSwappedDouble   
+static __inline__ __attribute__((deprecated))
+NXSwappedDouble   
 NXSwapDouble(NXSwappedDouble x)
 {  
     return (NXSwappedDouble)OSSwapInt64((uint64_t)x);
@@ -151,7 +162,7 @@ NXHostByteOrder(void)
 #endif
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned short
 NXSwapBigShortToHost(
     unsigned short	x
@@ -160,7 +171,7 @@ NXSwapBigShortToHost(
     return (unsigned short)OSSwapBigToHostInt16((uint16_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned int
 NXSwapBigIntToHost(
     unsigned int	x
@@ -169,7 +180,7 @@ NXSwapBigIntToHost(
     return (unsigned int)OSSwapBigToHostInt32((uint32_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long
 NXSwapBigLongToHost(
     unsigned long	x
@@ -178,7 +189,7 @@ NXSwapBigLongToHost(
     return (unsigned long)OSSwapBigToHostInt32((uint32_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long long
 NXSwapBigLongLongToHost(
     unsigned long long	x
@@ -187,7 +198,7 @@ NXSwapBigLongLongToHost(
     return (unsigned long long)OSSwapBigToHostInt64((uint64_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 double
 NXSwapBigDoubleToHost(
     NXSwappedDouble	x
@@ -196,7 +207,7 @@ NXSwapBigDoubleToHost(
     return NXConvertSwappedDoubleToHost((NXSwappedDouble)OSSwapBigToHostInt64((uint64_t)x));
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 float
 NXSwapBigFloatToHost(
     NXSwappedFloat	x
@@ -205,7 +216,7 @@ NXSwapBigFloatToHost(
     return NXConvertSwappedFloatToHost((NXSwappedFloat)OSSwapBigToHostInt32((uint32_t)x));
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned short
 NXSwapHostShortToBig(
     unsigned short	x
@@ -214,7 +225,7 @@ NXSwapHostShortToBig(
     return (unsigned short)OSSwapHostToBigInt16((uint16_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned int
 NXSwapHostIntToBig(
     unsigned int	x
@@ -223,7 +234,7 @@ NXSwapHostIntToBig(
     return (unsigned int)OSSwapHostToBigInt32((uint32_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long
 NXSwapHostLongToBig(
     unsigned long	x
@@ -232,7 +243,7 @@ NXSwapHostLongToBig(
     return (unsigned long)OSSwapHostToBigInt32((uint32_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long long
 NXSwapHostLongLongToBig(
     unsigned long long	x
@@ -241,7 +252,7 @@ NXSwapHostLongLongToBig(
     return (unsigned long long)OSSwapHostToBigInt64((uint64_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 NXSwappedDouble
 NXSwapHostDoubleToBig(
     double	x
@@ -250,7 +261,7 @@ NXSwapHostDoubleToBig(
     return (NXSwappedDouble)OSSwapHostToBigInt64((uint64_t)NXConvertHostDoubleToSwapped(x));
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 NXSwappedFloat
 NXSwapHostFloatToBig(
     float	x
@@ -259,7 +270,7 @@ NXSwapHostFloatToBig(
     return (NXSwappedFloat)OSSwapHostToBigInt32((uint32_t)NXConvertHostFloatToSwapped(x));
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned short
 NXSwapLittleShortToHost(
     unsigned short	x
@@ -268,7 +279,7 @@ NXSwapLittleShortToHost(
     return (unsigned short)OSSwapLittleToHostInt16((uint16_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned int
 NXSwapLittleIntToHost(
     unsigned int	x
@@ -277,7 +288,7 @@ NXSwapLittleIntToHost(
     return (unsigned int)OSSwapLittleToHostInt32((uint32_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long
 NXSwapLittleLongToHost(
     unsigned long	x
@@ -286,7 +297,7 @@ NXSwapLittleLongToHost(
     return (unsigned long)OSSwapLittleToHostInt32((uint32_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long long
 NXSwapLittleLongLongToHost(
     unsigned long long	x
@@ -295,7 +306,7 @@ NXSwapLittleLongLongToHost(
     return (unsigned long long)OSSwapLittleToHostInt64((uint64_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 double
 NXSwapLittleDoubleToHost(
     NXSwappedDouble	x
@@ -304,7 +315,7 @@ NXSwapLittleDoubleToHost(
     return NXConvertSwappedDoubleToHost((NXSwappedDouble)OSSwapLittleToHostInt64((uint64_t)x));
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 float
 NXSwapLittleFloatToHost(
     NXSwappedFloat	x
@@ -313,7 +324,7 @@ NXSwapLittleFloatToHost(
     return NXConvertSwappedFloatToHost((NXSwappedFloat)OSSwapLittleToHostInt32((uint32_t)x));
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned short
 NXSwapHostShortToLittle(
     unsigned short	x
@@ -322,7 +333,7 @@ NXSwapHostShortToLittle(
     return (unsigned short)OSSwapHostToLittleInt16((uint16_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned int
 NXSwapHostIntToLittle(
     unsigned int	x
@@ -331,7 +342,7 @@ NXSwapHostIntToLittle(
     return (unsigned int)OSSwapHostToLittleInt32((uint32_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long
 NXSwapHostLongToLittle(
     unsigned long	x
@@ -340,7 +351,7 @@ NXSwapHostLongToLittle(
     return (unsigned long)OSSwapHostToLittleInt32((uint32_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 unsigned long long
 NXSwapHostLongLongToLittle(
     unsigned long long	x
@@ -349,7 +360,7 @@ NXSwapHostLongLongToLittle(
     return (unsigned long long)OSSwapHostToLittleInt64((uint64_t)x);
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 NXSwappedDouble
 NXSwapHostDoubleToLittle(
     double	x
@@ -358,7 +369,7 @@ NXSwapHostDoubleToLittle(
     return (NXSwappedDouble)OSSwapHostToLittleInt64((uint64_t)NXConvertHostDoubleToSwapped(x));
 }
 
-static __inline__
+static __inline__ __attribute__((deprecated))
 NXSwappedFloat
 NXSwapHostFloatToLittle(
     float	x

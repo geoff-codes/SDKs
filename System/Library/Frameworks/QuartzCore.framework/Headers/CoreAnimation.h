@@ -21,6 +21,7 @@
 #import <QuartzCore/CAReplicatorLayer.h>
 #import <QuartzCore/CAScrollLayer.h>
 #import <QuartzCore/CAShapeLayer.h>
+#import <QuartzCore/CATextLayer.h>
 #import <QuartzCore/CATiledLayer.h>
 #import <QuartzCore/CATransaction.h>
 #import <QuartzCore/CATransformLayer.h>

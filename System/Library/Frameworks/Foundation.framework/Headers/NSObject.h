@@ -1,5 +1,5 @@
 /*	NSObject.h
-	Copyright (c) 1994-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObjCRuntime.h>
@@ -76,7 +76,7 @@
 + (id)alloc;
 - (void)dealloc;
 
-- (void)finalize AVAILABLE_MAC_OS_X_VERSION_10_4_AND_LATER;
+- (void)finalize NS_AVAILABLE(10_4, 2_0);
 
 - (id)copy;
 - (id)mutableCopy;
@@ -92,7 +92,7 @@
 + (IMP)instanceMethodForSelector:(SEL)aSelector;
 - (void)doesNotRecognizeSelector:(SEL)aSelector;
 
-// - (id)forwardingTargetForSelector:(SEL)aSelector;
+- (id)forwardingTargetForSelector:(SEL)aSelector;
 - (void)forwardInvocation:(NSInvocation *)anInvocation;
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
 
@@ -100,10 +100,10 @@
 
 + (NSString *)description;
 
-+ (BOOL)isSubclassOfClass:(Class)aClass AVAILABLE_MAC_OS_X_VERSION_10_2_AND_LATER;
++ (BOOL)isSubclassOfClass:(Class)aClass NS_AVAILABLE(10_2, 2_0);
 
-+ (BOOL)resolveClassMethod:(SEL)sel AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-+ (BOOL)resolveInstanceMethod:(SEL)sel AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
++ (BOOL)resolveClassMethod:(SEL)sel NS_AVAILABLE(10_5, 2_0);
++ (BOOL)resolveInstanceMethod:(SEL)sel NS_AVAILABLE(10_5, 2_0);
 
 @end
 
@@ -120,9 +120,32 @@
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 @interface NSObject (NSDeprecatedMethods)
 
-+ (void)poseAsClass:(Class)aClass DEPRECATED_IN_MAC_OS_X_VERSION_10_5_AND_LATER;
++ (void)poseAsClass:(Class)aClass NS_DEPRECATED(10_0, 10_5, 2_0, 2_0)
+#if __OBJC2__
+UNAVAILABLE_ATTRIBUTE
+#endif
+;
 
 @end
+#endif
+
+
+#if MAC_OS_X_VERSION_10_6 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+
+/***********	Discardable Content		***********/
+
+@protocol NSDiscardableContent
+@required
+- (BOOL)beginContentAccess;
+- (void)endContentAccess;
+- (void)discardContentIfPossible;
+- (BOOL)isContentDiscarded;
+@end
+
+@interface NSObject (NSDiscardableContentProxy)
+- (id)autoContentAccessingProxy NS_AVAILABLE(10_6, 4_0);
+@end
+
 #endif
 
 /***********	Object Allocation / Deallocation		*******/

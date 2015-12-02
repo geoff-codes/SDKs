@@ -2,7 +2,7 @@
 //  ABAddressFormatting.h
 //  AddressBookUI
 //
-//  Copyright 2008 Apple Inc. All rights reserved.
+//  Copyright (c) 2010 Apple Inc. All rights reserved.
 //
 
 #import <AddressBook/AddressBook.h>

@@ -2,7 +2,7 @@
 //  UIView.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -52,16 +52,44 @@ enum {
 };
 typedef NSUInteger UIViewAutoresizing;
 
-@class UIEvent, UIWindow, UIColor, CALayer;
+#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+enum {
+    UIViewAnimationOptionLayoutSubviews            = 1 <<  0,
+    UIViewAnimationOptionAllowUserInteraction      = 1 <<  1, // turn on user interaction while animating
+    UIViewAnimationOptionBeginFromCurrentState     = 1 <<  2, // start all views from current value, not initial value
+    UIViewAnimationOptionRepeat                    = 1 <<  3, // repeat animation indefinitely
+    UIViewAnimationOptionAutoreverse               = 1 <<  4, // if repeat, run animation back and forth
+    UIViewAnimationOptionOverrideInheritedDuration = 1 <<  5, // ignore nested duration
+    UIViewAnimationOptionOverrideInheritedCurve    = 1 <<  6, // ignore nested duration
+    UIViewAnimationOptionAllowAnimatedContent      = 1 <<  7, // animate contents (applies to transitions only)
+    UIViewAnimationOptionShowHideTransitionViews   = 1 <<  8, // flip to/from hidden state instead of adding/removing
+    
+    UIViewAnimationOptionCurveEaseInOut            = 0 << 16, // default
+    UIViewAnimationOptionCurveEaseIn               = 1 << 16,
+    UIViewAnimationOptionCurveEaseOut              = 2 << 16,
+    UIViewAnimationOptionCurveLinear               = 3 << 16,
+    
+    UIViewAnimationOptionTransitionNone            = 0 << 20, // default
+    UIViewAnimationOptionTransitionFlipFromLeft    = 1 << 20,
+    UIViewAnimationOptionTransitionFlipFromRight   = 2 << 20,
+    UIViewAnimationOptionTransitionCurlUp          = 3 << 20,
+    UIViewAnimationOptionTransitionCurlDown        = 4 << 20,
+};
+typedef NSUInteger UIViewAnimationOptions;
+#endif
 
-UIKIT_EXTERN_CLASS @interface UIView : UIResponder<NSCoding> {
+@class UIEvent, UIWindow, UIViewController, UIColor, UIGestureRecognizer, CALayer;
+
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding> {
   @package
     CALayer        *_layer;
     id              _tapInfo;
     id              _gestureInfo;
     NSMutableArray *_gestureRecognizers;
+    NSArray        *_subviewCache;
     float           _charge;
     NSInteger       _tag;
+    UIViewController *_viewDelegate;
     struct {
         unsigned int userInteractionDisabled:1;
         unsigned int implementsDrawRect:1;
@@ -89,10 +117,13 @@ UIKIT_EXTERN_CLASS @interface UIView : UIResponder<NSCoding> {
         unsigned int hasViewController:1;
         unsigned int needsDidAppearOrDisappear:1;
         unsigned int gesturesEnabled:1;
-        unsigned int capturesDescendantTouches:1;
         unsigned int deliversTouchesForGesturesToSuperview:1;
         unsigned int chargeEnabled:1;
         unsigned int skipsSubviewEnumeration:1;
+        unsigned int needsDisplayOnBoundsChange:1;
+        unsigned int hasTiledLayer:1;
+        unsigned int hasLargeContent:1;
+	unsigned int alwaysScaleContent:1;
     } _viewFlags;
 }
 
@@ -115,6 +146,7 @@ UIKIT_EXTERN_CLASS @interface UIView : UIResponder<NSCoding> {
 @property(nonatomic) CGRect            bounds;      // default bounds is zero origin, frame size. animatable
 @property(nonatomic) CGPoint           center;      // center is center of frame. animatable
 @property(nonatomic) CGAffineTransform transform;   // default is CGAffineTransformIdentity. animatable
+@property(nonatomic) CGFloat           contentScaleFactor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 @property(nonatomic,getter=isMultipleTouchEnabled) BOOL multipleTouchEnabled;   // default is NO
 @property(nonatomic,getter=isExclusiveTouch) BOOL       exclusiveTouch;         // default is NO
@@ -210,5 +242,28 @@ UIKIT_EXTERN_CLASS @interface UIView : UIResponder<NSCoding> {
 
 + (void)setAnimationsEnabled:(BOOL)enabled;                         // ignore any attribute changes while set.
 + (BOOL)areAnimationsEnabled;
+
+@end
+
+@interface UIView(UIViewAnimationWithBlocks)
+
++ (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
++ (void)animateWithDuration:(NSTimeInterval)duration animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // delay = 0.0, options = 0
+
++ (void)animateWithDuration:(NSTimeInterval)duration animations:(void (^)(void))animations __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // delay = 0.0, options = 0, completion = NULL
+
++ (void)transitionWithView:(UIView *)view duration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
++ (void)transitionFromView:(UIView *)fromView toView:(UIView *)toView duration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options completion:(void (^)(BOOL finished))completion __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // toView added to fromView.superview, fromView removed from its superview
+
+@end
+
+@interface UIView (UIViewGestureRecognizers)
+
+@property(nonatomic,copy) NSArray *gestureRecognizers __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+
+- (void)addGestureRecognizer:(UIGestureRecognizer*)gestureRecognizer __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+- (void)removeGestureRecognizer:(UIGestureRecognizer*)gestureRecognizer __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
 
 @end

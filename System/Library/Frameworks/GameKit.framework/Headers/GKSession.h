@@ -2,7 +2,7 @@
  GKSession.h
  GameKit
  
- Copyright 2009 Apple, Inc. All rights reserved.
+ Copyright 2010 Apple, Inc. All rights reserved.
  
  The Game Connectivity Kit (GCK) is a framework for handling connectivity and data transport in multiplayer network games.  
  
@@ -10,66 +10,12 @@
 */
 
 #import <Foundation/Foundation.h>
-#import "GameKitDefines.h"
-
-@class GKSession;
-@protocol GKSessionDelegate;
-
-/* Delivery options for GKSession's -(BOOL)sendData... methods.
-*/
-typedef enum {
-	GKSendDataReliable,		// a.s.a.p. but requires fragmentation and reassembly for large messages, may stall if network congestion occurs
-    GKSendDataUnreliable,	// best effort and immediate, but no guarantees of delivery or order; will not stall.
-} GKSendDataMode;
-
-/* Specifies how GKSession behaves when it is made available.
-*/
-typedef enum {
-    GKSessionModeServer,    // delegate will get -didReceiveConnectionRequestFromPeer callback when a client wants to connect
-    GKSessionModeClient,    // delegate will get -session:peer:didChangeState: callback with GKPeerStateAvailable, or GKPeerStateUnavailable for discovered servers
-    GKSessionModePeer,      // delegate will get -didReceiveConnectionRequestFromPeer when a peer wants to connect, and -session:peer:didChangeState: callback with GKPeerStateAvailable, or GKPeerStateUnavailable for discovered servers
-} GKSessionMode;
-
-/* Specifies the type of peers to return in method -peersWithConnectionState:
-*/ 
-typedef enum
-{
-	GKPeerStateAvailable,    // not connected to session, but available for connectToPeer:withTimeout:
-	GKPeerStateUnavailable,  // no longer available
-	GKPeerStateConnected,    // connected to the session
-	GKPeerStateDisconnected, // disconnected from the session
-	GKPeerStateConnecting,   // waiting for accept, or deny response
-} GKPeerConnectionState;
-
-/* Callbacks to the GKSession delegate.
-*/
-@protocol GKSessionDelegate <NSObject>
-
-@optional
-
-/* Indicates a state change for the given peer.
-*/
-- (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state;
-
-/* Indicates a connection request was received from another peer. 
- 
-Accept by calling -acceptConnectionFromPeer:
-Deny by calling -denyConnectionFromPeer:
-*/
-- (void)session:(GKSession *)session didReceiveConnectionRequestFromPeer:(NSString *)peerID;
-
-/* Indicates a connection error occurred with a peer, which includes connection request failures, or disconnects due to timeouts.
-*/
-- (void)session:(GKSession *)session connectionWithPeerFailed:(NSString *)peerID withError:(NSError *)error;
-
-/* Indicates an error occurred with the session such as failing to make available.
-*/
-- (void)session:(GKSession *)session didFailWithError:(NSError *)error;
-
-@end
+#import <GameKit/GKDefines.h>
+#import <GameKit/GKPublicProtocols.h>
 
 /* The GKSession handles networking between peers for a game, which includes establishing and maintaining connections over a game network, and network data transport.
 */
+NS_CLASS_AVAILABLE(NA, 4_1)
 GK_EXTERN_CLASS @interface GKSession : NSObject {
 @private
 	id _session;
@@ -89,7 +35,7 @@ If name = nil then GKSession will use the device name.
 @property(readonly) GKSessionMode sessionMode;
 @property(readonly) NSString *peerID;			// session's peerID
 
-/* Toggle availability on the network based on session mode and search criteria.  Delegate will get a callback -seesion:didReceiveConnectionRequestFromPeer: when a peer attempts a connection.
+/* Toggle availability on the network based on session mode and search criteria.  Delegate will get a callback -session:didReceiveConnectionRequestFromPeer: when a peer attempts a connection.
 */
 @property(getter=isAvailable) BOOL available;
 

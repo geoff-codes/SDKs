@@ -2,7 +2,7 @@
 //  ABUnknownPersonViewController.h
 //  AddressBookUI
 //
-//  Copyright 2008 Apple Inc. All rights reserved.
+//  Copyright (c) 2010 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -10,6 +10,7 @@
 
 @protocol ABUnknownPersonViewControllerDelegate;
 
+NS_CLASS_AVAILABLE(NA, 2_0)
 @interface ABUnknownPersonViewController : UIViewController
 {
     @private

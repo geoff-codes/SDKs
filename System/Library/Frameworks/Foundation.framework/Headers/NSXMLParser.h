@@ -1,12 +1,13 @@
 /*	NSXMLParser.h
-        Copyright (c) 2003-2007, Apple Inc. All rights reserved.
+        Copyright (c) 2003-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @class NSData, NSDictionary, NSError, NSString, NSURL;
+@protocol NSXMLParserDelegate;
 
 @interface NSXMLParser : NSObject {
 @private
@@ -20,8 +21,8 @@
 - (id)initWithData:(NSData *)data; // create the parser from data
 
 // delegate management. The delegate is not retained.
-- (id)delegate;
-- (void)setDelegate:(id)delegate;
+- (id <NSXMLParserDelegate>)delegate;
+- (void)setDelegate:(id <NSXMLParserDelegate>)delegate;
 
 - (void)setShouldProcessNamespaces:(BOOL)shouldProcessNamespaces;
 - (void)setShouldReportNamespacePrefixes:(BOOL)shouldReportNamespacePrefixes;
@@ -62,7 +63,9 @@
  */
 
 // The parser's delegate is informed of events through the methods in the NSXMLParserDelegateEventAdditions category.
-@interface NSObject (NSXMLParserDelegateEventAdditions)
+@protocol NSXMLParserDelegate <NSObject>
+@optional
+
 // Document handling methods
 - (void)parserDidStartDocument:(NSXMLParser *)parser;
     // sent when the parser begins parsing of the document.
@@ -126,7 +129,7 @@
     // If validation is on, this will report a fatal validation error to the delegate. The parser will stop parsing.
 @end
 
-FOUNDATION_EXPORT NSString * const NSXMLParserErrorDomain	AVAILABLE_MAC_OS_X_VERSION_10_3_AND_LATER;  // for use with NSError.
+FOUNDATION_EXPORT NSString * const NSXMLParserErrorDomain	NS_AVAILABLE(10_3, 2_0);  // for use with NSError.
 
 // Error reporting
 enum {

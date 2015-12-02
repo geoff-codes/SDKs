@@ -268,6 +268,11 @@ u_int32_t
 	 arc4random(void);
 void	 arc4random_addrandom(unsigned char *dat, int datlen);
 void	 arc4random_stir(void);
+#ifdef __BLOCKS__
+int	 atexit_b(void (^)(void));
+void	*bsearch_b(const void *, const void *, size_t,
+	    size_t, int (^)(const void *, const void *));
+#endif /* __BLOCKS__ */
 
 	 /* getcap(3) functions */
 char	*cgetcap(char *, const char *, int);
@@ -291,8 +296,28 @@ const char
 
 int	 heapsort(void *, size_t, size_t,
 	    int (*)(const void *, const void *));
+#ifdef __BLOCKS__
+int	 heapsort_b(void *, size_t, size_t,
+	    int (^)(const void *, const void *));
+#endif /* __BLOCKS__ */
 int	 mergesort(void *, size_t, size_t,
 	    int (*)(const void *, const void *));
+#ifdef __BLOCKS__
+int	 mergesort_b(void *, size_t, size_t,
+	    int (^)(const void *, const void *));
+#endif /* __BLOCKS__ */
+void	 psort(void *, size_t, size_t,
+	    int (*)(const void *, const void *));
+#ifdef __BLOCKS__
+void	 psort_b(void *, size_t, size_t,
+	    int (^)(const void *, const void *));
+#endif /* __BLOCKS__ */
+void	 psort_r(void *, size_t, size_t, void *,
+	    int (*)(void *, const void *, const void *));
+#ifdef __BLOCKS__
+void	 qsort_b(void *, size_t, size_t,
+	    int (^)(const void *, const void *));
+#endif /* __BLOCKS__ */
 void	 qsort_r(void *, size_t, size_t, void *,
 	    int (*)(void *, const void *, const void *));
 int	 radixsort(const unsigned char **, int, const unsigned char *,

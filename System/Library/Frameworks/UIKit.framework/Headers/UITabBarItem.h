@@ -2,7 +2,7 @@
 //  UITabBarItem.h
 //  UIKit
 //
-//  Copyright 2008-2009 Apple Inc. All rights reserved.
+//  Copyright 2008-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -27,7 +27,7 @@ typedef enum {
 
 @class UIView, UIImage;
 
-UIKIT_EXTERN_CLASS @interface UITabBarItem : UIBarItem {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBarItem : UIBarItem {
 @private
     NSString     *_title;
     NSSet        *_possibleTitles;

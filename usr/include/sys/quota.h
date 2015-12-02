@@ -192,7 +192,7 @@ struct dqblk {
  * golden ratio to the machine's word size.
  */
 #define dqhash1(id, shift, mask)  \
-	((((id) * 2654435761UL) >> (shift)) & (mask))
+	((((id) * 2654435761U) >> (shift)) & (mask))
 
 #define dqhash2(id, mask)  \
 	(dqhash1((id), 11, (mask)>>1) | 1)

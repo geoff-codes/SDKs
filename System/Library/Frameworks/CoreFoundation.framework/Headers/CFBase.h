@@ -1,9 +1,11 @@
 /*	CFBase.h
-	Copyright (c) 1998-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2010, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFBASE__)
 #define __COREFOUNDATION_CFBASE__ 1
+
+#include <TargetConditionals.h>
 
 #if (defined(__CYGWIN32__) || defined(_WIN32)) && !defined(__WIN32__)
 #define __WIN32__ 1
@@ -29,21 +31,68 @@
 #error Both __BIG_ENDIAN__ and __LITTLE_ENDIAN__ cannot be true
 #endif
 
-#if TARGET_OS_WIN32
-#include <windows.h>
-#include <winsock2.h>
-#include <stdint.h>
-#include <stdbool.h>
-#elif defined(__GNUC__)
+#if defined(__GNUC__) || TARGET_OS_WIN32
 #include <stdint.h>
 #include <stdbool.h>
 #endif
 #include <AvailabilityMacros.h>
-#include <TargetConditionals.h>
+#include <Availability.h>
+
+#if __BLOCKS__
+#include <Block.h>
+#endif
+
+// The arguments to these availability macros is a version number, e.g. 10_7, 3_0
+#if TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)
+
+// Available on MacOS and iPhoneOS
+#define CF_AVAILABLE(_mac, _iphone) AVAILABLE_MAC_OS_X_VERSION_##_mac##_AND_LATER
+
+// Available on MacOS only
+#define CF_AVAILABLE_MAC(_mac) AVAILABLE_MAC_OS_X_VERSION_##_mac##_AND_LATER
+
+// Available on iPhoneOS only
+#define CF_AVAILABLE_IPHONE(_iphone) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_##_iphone)
+
+// Deprecated on either MacOS or iPhoneOS, or deprecated on both (check version numbers for details)
+#define CF_DEPRECATED(_macIntro, _macDep, _iphoneIntro, _iphoneDep) AVAILABLE_MAC_OS_X_VERSION_##_macIntro##_AND_LATER_BUT_DEPRECATED_IN_MAC_OS_X_VERSION_##_macDep
+
+// Deprecated on MacOS, unavailable on iPhoneOS
+#define CF_DEPRECATED_MAC(_macIntro, _macDep) AVAILABLE_MAC_OS_X_VERSION_##_macIntro##_AND_LATER_BUT_DEPRECATED_IN_MAC_OS_X_VERSION_##_macDep
+
+// Unavailable on MacOS, deprecated on iPhoneOS
+#define CF_DEPRECATED_IPHONE(_iphoneIntro, _iphoneDep) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_##_iphoneIntro, __IPHONE_##_iphoneDep)
+
+#elif (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)
+
+#define CF_AVAILABLE(_mac, _iphone) __OSX_AVAILABLE_STARTING(__MAC_##_mac, __IPHONE_##_iphone)
+#define CF_AVAILABLE_MAC(_mac) __OSX_AVAILABLE_STARTING(__MAC_##_mac, __IPHONE_NA)
+#define CF_AVAILABLE_IPHONE(_iphone) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_##_iphone)
+#define CF_DEPRECATED(_macIntro, _macDep, _iphoneIntro, _iphoneDep) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_##_macIntro, __MAC_##_macDep, __IPHONE_##_iphoneIntro, __IPHONE_##_iphoneDep)
+#define CF_DEPRECATED_MAC(_macIntro, _macDep) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_##_macIntro, __MAC_##_macDep, __IPHONE_NA, __IPHONE_NA)
+#define CF_DEPRECATED_IPHONE(_iphoneIntro, _iphoneDep) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_##_iphoneIntro, __IPHONE_##_iphoneDep)
+
+#else
+
+#define CF_AVAILABLE(_mac, _iphone)
+#define CF_AVAILABLE_MAC(_mac)
+#define CF_AVAILABLE_IPHONE(_iphone)
+#define CF_DEPRECATED(_macIntro, _macDep, _iphoneIntro, _iphoneDep)
+#define CF_DEPRECATED_MAC(_macIntro, _macDep)
+#define CF_DEPRECATED_IPHONE(_iphoneIntro, _iphoneDep)
+
+#endif
+
+#if !defined(__IPHONE_3_2)
+#define __IPHONE_3_2 30200
+#endif
+#if !defined(__IPHONE_4_0)
+#define __IPHONE_4_0 40000
+#endif
 
 #ifndef CF_OPEN_SOURCE
 #if defined(__CF_USE_FRAMEWORK_INCLUDES__) || (((TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)) || (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)) && !defined(__MWERKS__)) 
-#if (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)
+#if (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_OS_WIN32)
 #include <MacTypes.h>
 #else
 #include <CoreServices/../Frameworks/CarbonCore.framework/Headers/MacTypes.h>
@@ -84,6 +133,8 @@
     typedef SInt16                  ScriptCode;
     typedef UInt32                  FourCharCode;
     typedef FourCharCode            OSType;
+    typedef UInt8                   Byte;
+    typedef SInt8                   SignedByte;
 #endif
 #if !defined(__MACTYPES__) || (defined(UNIVERSAL_INTERFACES_VERSION) && UNIVERSAL_INTERFACES_VERSION < 0x0340)
     typedef UInt32                  UTF32Char;
@@ -99,6 +150,24 @@
 #define CF_EXTERN_C_BEGIN
 #define CF_EXTERN_C_END
 #endif
+#endif
+
+#if TARGET_OS_WIN32
+
+#if !defined(CF_EXPORT)
+#if defined(CF_BUILDING_CF) && defined(__cplusplus)
+#define CF_EXPORT extern "C" __declspec(dllexport) 
+#elif defined(CF_BUILDING_CF) && !defined(__cplusplus)
+#define CF_EXPORT extern __declspec(dllexport) 
+#elif defined(__cplusplus)
+#define CF_EXPORT extern "C" __declspec(dllimport) 
+#else
+#define CF_EXPORT extern __declspec(dllimport) 
+#endif
+#endif
+
+#else
+#define CF_EXPORT extern
 #endif
 
 CF_EXTERN_C_BEGIN
@@ -121,23 +190,6 @@ CF_EXTERN_C_BEGIN
     #define FALSE	0
 #endif
 
-#if TARGET_OS_WIN32
-    #undef CF_EXPORT
-    #if defined(CF_BUILDING_CF)
-	#define CF_EXPORT __declspec(dllexport) extern
-    #else
-	#define CF_EXPORT __declspec(dllimport) extern
-    #endif
-#elif defined(macintosh)
-    #if defined(__MWERKS__)
-        #define CF_EXPORT __declspec(export) extern
-    #endif
-#endif
-
-#if !defined(CF_EXPORT)
-    #define CF_EXPORT extern
-#endif
-
 #if !defined(CF_INLINE)
     #if defined(__GNUC__) && (__GNUC__ == 4) && !defined(DEBUG)
         #define CF_INLINE static __inline__ __attribute__((always_inline))
@@ -152,6 +204,12 @@ CF_EXTERN_C_BEGIN
     #endif
 #endif
 
+// Marks functions which return a CF type that needs to be released by the caller but whose names are not consistent with CoreFoundation naming rules. The recommended fix to this is to rename the functions, but this macro can be used to let the clang static analyzer know of any exceptions that cannot be fixed.
+#if defined(__clang__)
+#define CF_RETURNS_RETAINED __attribute__((cf_returns_retained))
+#else
+#define CF_RETURNS_RETAINED
+#endif
 
 CF_EXPORT double kCFCoreFoundationVersionNumber;
 
@@ -203,12 +261,24 @@ CF_EXPORT double kCFCoreFoundationVersionNumber;
 #define kCFCoreFoundationVersionNumber10_5_2	476.10
 #define kCFCoreFoundationVersionNumber10_5_3	476.13
 #define kCFCoreFoundationVersionNumber10_5_4	476.14
+#define kCFCoreFoundationVersionNumber10_5_5	476.15
+#define kCFCoreFoundationVersionNumber10_5_6	476.17
+#define kCFCoreFoundationVersionNumber10_5_7	476.18
+#define kCFCoreFoundationVersionNumber10_5_8	476.19
+#define kCFCoreFoundationVersionNumber10_6	550.00
+#define kCFCoreFoundationVersionNumber10_6_1	550.00
+#define kCFCoreFoundationVersionNumber10_6_2	550.13
+#define kCFCoreFoundationVersionNumber10_6_3	550.19
 #endif
 
 #if TARGET_OS_IPHONE
-#define kCFCoreFoundationVersionNumber_iPhoneOS_2_0	478.23
-#define kCFCoreFoundationVersionNumber_iPhoneOS_2_1     478.26
-#define kCFCoreFoundationVersionNumber_iPhoneOS_2_2     478.29
+#define kCFCoreFoundationVersionNumber_iPhoneOS_2_0 478.23
+#define kCFCoreFoundationVersionNumber_iPhoneOS_2_1 478.26
+#define kCFCoreFoundationVersionNumber_iPhoneOS_2_2 478.29
+#define kCFCoreFoundationVersionNumber_iPhoneOS_3_0 478.47
+#define kCFCoreFoundationVersionNumber_iPhoneOS_3_1 478.52
+#define kCFCoreFoundationVersionNumber_iPhoneOS_3_2 478.61
+#define kCFCoreFoundationVersionNumber_iOS_4_0 550.32
 #endif
 
 typedef unsigned long CFTypeID;
@@ -269,7 +339,7 @@ CF_EXPORT
 CFRange __CFRangeMake(CFIndex loc, CFIndex len);
 
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 /* Null representant */
 
 typedef const struct __CFNull * CFNullRef;
@@ -316,7 +386,7 @@ const CFAllocatorRef kCFAllocatorMalloc;
    safe to be allocated in non-scanned memory.
  */
 CF_EXPORT
-const CFAllocatorRef kCFAllocatorMallocZone AVAILABLE_MAC_OS_X_VERSION_10_4_AND_LATER;
+const CFAllocatorRef kCFAllocatorMallocZone CF_AVAILABLE(10_4, 2_0);
 
 /* Null allocator which does nothing and allocates no memory. This allocator
    is useful as the "bytesDeallocator" in CFData or "contentsDeallocator"
@@ -420,7 +490,7 @@ CF_EXPORT
 CFIndex CFGetRetainCount(CFTypeRef cf);
 
 CF_EXPORT
-CFTypeRef CFMakeCollectable(CFTypeRef cf) AVAILABLE_MAC_OS_X_VERSION_10_4_AND_LATER;
+CFTypeRef CFMakeCollectable(CFTypeRef cf) CF_AVAILABLE(10_4, 2_0);
 
 CF_EXPORT
 Boolean CFEqual(CFTypeRef cf1, CFTypeRef cf2);

@@ -1,12 +1,12 @@
 /*	NSCalendar.h
-	Copyright (c) 2004-2007, Apple Inc. All rights reserved.
+	Copyright (c) 2004-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSRange.h>
 #import <Foundation/NSDate.h>
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #include <CoreFoundation/CFCalendar.h>
 
@@ -23,13 +23,20 @@ enum {
 	NSWeekCalendarUnit = kCFCalendarUnitWeek,
 	NSWeekdayCalendarUnit = kCFCalendarUnitWeekday,
 	NSWeekdayOrdinalCalendarUnit = kCFCalendarUnitWeekdayOrdinal,
+#if MAC_OS_X_VERSION_10_6 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+	NSQuarterCalendarUnit = kCFCalendarUnitQuarter,
+#endif
+#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+        NSCalendarCalendarUnit = (1 << 20),
+        NSTimeZoneCalendarUnit = (1 << 21),
+#endif
 };
 typedef NSUInteger NSCalendarUnit;
 
 @interface NSCalendar : NSObject <NSCopying, NSCoding>
 
 + (id)currentCalendar; // users preferred calendar, tracks changes
-+ (id)autoupdatingCurrentCalendar AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
++ (id)autoupdatingCurrentCalendar NS_AVAILABLE(10_5, 2_0);
 
 - (id)initWithCalendarIdentifier:(NSString *)ident;
 
@@ -55,7 +62,7 @@ typedef NSUInteger NSCalendarUnit;
 - (NSRange)rangeOfUnit:(NSCalendarUnit)smaller inUnit:(NSCalendarUnit)larger forDate:(NSDate *)date;
 - (NSUInteger)ordinalityOfUnit:(NSCalendarUnit)smaller inUnit:(NSCalendarUnit)larger forDate:(NSDate *)date;
 
-- (BOOL)rangeOfUnit:(NSCalendarUnit)unit startDate:(NSDate **)datep interval:(NSTimeInterval *)tip forDate:(NSDate *)date AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (BOOL)rangeOfUnit:(NSCalendarUnit)unit startDate:(NSDate **)datep interval:(NSTimeInterval *)tip forDate:(NSDate *)date NS_AVAILABLE(10_5, 2_0);
 
 - (NSDate *)dateFromComponents:(NSDateComponents *)comps;
 - (NSDateComponents *)components:(NSUInteger)unitFlags fromDate:(NSDate *)date;
@@ -93,6 +100,9 @@ enum {
 };
 
 @interface NSDateComponents : NSObject <NSCopying, NSCoding>
+
+- (NSCalendar *)calendar NS_AVAILABLE(NA, 4_0);
+- (NSTimeZone *)timeZone NS_AVAILABLE(NA, 4_0);
 - (NSInteger)era;
 - (NSInteger)year;
 - (NSInteger)month;
@@ -103,7 +113,10 @@ enum {
 - (NSInteger)week;
 - (NSInteger)weekday;
 - (NSInteger)weekdayOrdinal;
+- (NSInteger)quarter NS_AVAILABLE(10_6, 4_0);
 
+- (void)setCalendar:(NSCalendar *)cal NS_AVAILABLE(NA, 4_0);
+- (void)setTimeZone:(NSTimeZone *)tz NS_AVAILABLE(NA, 4_0);
 - (void)setEra:(NSInteger)v;
 - (void)setYear:(NSInteger)v;
 - (void)setMonth:(NSInteger)v;
@@ -114,6 +127,10 @@ enum {
 - (void)setWeek:(NSInteger)v;
 - (void)setWeekday:(NSInteger)v;
 - (void)setWeekdayOrdinal:(NSInteger)v;
+- (void)setQuarter:(NSInteger)v NS_AVAILABLE(10_6, 4_0);
+
+- (NSDate *)date NS_AVAILABLE(NA, 4_0);
+
 @end
 
 #endif

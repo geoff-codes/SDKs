@@ -3,7 +3,7 @@
 
      Contains:   API for manipulating Audio Files.
 
-     Copyright:  (c) 1985 - 2008 by Apple Inc., all rights reserved.
+     Copyright:  (c) 1985 - 2008 by Apple, Inc., all rights reserved.
 
      Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
@@ -119,7 +119,15 @@ typedef UInt32			AudioFileTypeID;
     @constant   kAudioFileOperationNotSupportedError 
 		The operation cannot be performed. For example, setting kAudioFilePropertyAudioDataByteCount to increase 
 		the size of the audio data in a file is not a supported operation. Write the data instead.
-*/
+    @constant   kAudioFileNotOpenError 
+		The file is closed.
+	@constant   kAudioFileEndOfFileError 
+		End of file.
+	@constant   kAudioFilePositionError 
+		Invalid file position.
+	@constant   kAudioFileFileNotFoundError 
+		File not found.
+ */
 enum {
         kAudioFileUnspecifiedError						= 'wht?',
         kAudioFileUnsupportedFileTypeError 				= 'typ?',
@@ -133,7 +141,12 @@ enum {
         kAudioFileDoesNotAllow64BitDataSizeError		= 'off?',
         kAudioFileInvalidPacketOffsetError				= 'pck?',
         kAudioFileInvalidFileError						= 'dta?',
-		kAudioFileOperationNotSupportedError			= 0x6F703F3F // 'op??', integer used because of trigraph
+		kAudioFileOperationNotSupportedError			= 0x6F703F3F, // 'op??', integer used because of trigraph
+		// general file error codes
+		kAudioFileNotOpenError							= -38,
+		kAudioFileEndOfFileError						= -39,
+		kAudioFilePositionError							= -40,
+		kAudioFileFileNotFoundError						= -43
 };
 
 /*!
@@ -661,7 +674,7 @@ AudioFileOptimize (AudioFileID  	inAudioFile)							__OSX_AVAILABLE_STARTING(__M
     @function	AudioFileReadBytes
     @abstract   Read bytes of audio data from the audio file. 
 				
-    @discussion				Returns eofErr when read encounters end of file.
+    @discussion				Returns kAudioFileEndOfFileError when read encounters end of file.
     @param inAudioFile		an AudioFileID.
     @param inUseCache 		true if it is desired to cache the data upon read, else false
     @param inStartingByte	the byte offset of the audio data desired to be returned
@@ -704,7 +717,7 @@ AudioFileWriteBytes (	AudioFileID  	inAudioFile,
 				If the buffer is too small for the number of packets 
 				requested, ioNumPackets and ioNumBytes will be reduced 
 				to the number of packets that can be accommodated and their byte size.
-				Returns eofErr when read encounters end of file.
+				Returns kAudioFileEndOfFileError when read encounters end of file.
 
     @param inAudioFile				an AudioFileID.
     @param inUseCache 				true if it is desired to cache the data upon read, else false
@@ -935,7 +948,7 @@ AudioFileRemoveUserData ( AudioFileID			inAudioFile,
     @constant   kAudioFilePropertyChunkIDs 
 					returns an array of OSType four char codes for each kind of chunk in the file.
     @constant   kAudioFilePropertyInfoDictionary 
-					returns a CFDictionary filled with information about the data contined in the file. 
+					returns a CFDictionary filled with information about the data contained in the file. 
 					See dictionary key constants already defined for info string types. 
 					AudioFileComponents are free to add keys to the dictionaries that they return for this property...
 					caller is responsible for releasing the CFObject

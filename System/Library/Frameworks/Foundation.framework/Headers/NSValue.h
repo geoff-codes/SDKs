@@ -1,5 +1,5 @@
 /*	NSValue.h
-	Copyright (c) 1994-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -48,7 +48,7 @@
 - (float)floatValue;
 - (double)doubleValue;
 - (BOOL)boolValue;
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (NSInteger)integerValue;
 - (NSUInteger)unsignedIntegerValue;
 #endif
@@ -78,7 +78,7 @@
 - (id)initWithFloat:(float)value;
 - (id)initWithDouble:(double)value;
 - (id)initWithBool:(BOOL)value;
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (id)initWithInteger:(NSInteger)value;
 - (id)initWithUnsignedInteger:(NSUInteger)value;
 #endif
@@ -96,7 +96,7 @@
 + (NSNumber *)numberWithFloat:(float)value;
 + (NSNumber *)numberWithDouble:(double)value;
 + (NSNumber *)numberWithBool:(BOOL)value;
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 + (NSNumber *)numberWithInteger:(NSInteger)value;
 + (NSNumber *)numberWithUnsignedInteger:(NSUInteger)value;
 #endif

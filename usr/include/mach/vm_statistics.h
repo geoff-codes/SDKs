@@ -132,7 +132,7 @@ typedef struct vm_statistics	vm_statistics64_data_t;
  *	   ----
  *	rev3 - 	changed name to vm_statistics64.
  *		changed some fields in structure to 64-bit on 
- *		i386 and x86_64 architectures.
+ *		arm, i386 and x86_64 architectures.
  *
  */
 
@@ -163,7 +163,11 @@ struct vm_statistics64 {
 	 */
 	natural_t	speculative_count;	/* # of pages speculative */
 
-} __attribute__((aligned(8)));
+}
+#ifdef __arm__
+__attribute__((aligned(8)))
+#endif
+;
 
 typedef struct vm_statistics64	*vm_statistics64_t;
 typedef struct vm_statistics64	vm_statistics64_data_t;
@@ -174,7 +178,7 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
  * This is used by host_statistics() to truncate and peg the 64-bit in-kernel values from
  * vm_statistics64 to the 32-bit values of the older structure above (vm_statistics).
  */
-#define VM_STATISTICS_TRUNCATE_TO_32_BIT(value) (((value) > UINT32_MAX ) ? UINT32_MAX : (value))
+#define VM_STATISTICS_TRUNCATE_TO_32_BIT(value) ((uint32_t)(((value) > UINT32_MAX ) ? UINT32_MAX : (value)))
 
 #endif /* !(defined(__ppc__)) */
 
@@ -264,6 +268,8 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 #define VM_MEMORY_SBRK 5// uninteresting -- no one should call
 #define VM_MEMORY_REALLOC 6
 #define VM_MEMORY_MALLOC_TINY 7
+#define VM_MEMORY_MALLOC_LARGE_REUSABLE 8
+#define VM_MEMORY_MALLOC_LARGE_REUSED 9
 
 #define VM_MEMORY_ANALYSIS_TOOL 10
 
@@ -308,8 +314,29 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 /* malloc'd memory created by dyld */
 #define VM_MEMORY_DYLD_MALLOC 61
 
-/* malloc'd memory created by SQLite */
+/* Used for sqlite page cache */
 #define VM_MEMORY_SQLITE 62
+
+/* JavaScriptCore heaps */
+#define VM_MEMORY_JAVASCRIPT_CORE 63
+/* memory allocated for the JIT */
+#define VM_MEMORY_JAVASCRIPT_JIT_EXECUTABLE_ALLOCATOR 64
+#define VM_MEMORY_JAVASCRIPT_JIT_REGISTER_FILE 65
+
+/* memory allocated for GLSL */
+#define VM_MEMORY_GLSL  66
+
+/* memory allocated for OpenCL.framework */
+#define VM_MEMORY_OPENCL    67
+
+/* memory allocated for QuartzCore.framework */
+#define VM_MEMORY_COREIMAGE 68
+
+/* memory allocated for WebCore Purgeable Buffers */
+#define VM_MEMORY_WEBCORE_PURGEABLE_BUFFERS 69
+
+/* ImageIO memory */
+#define VM_MEMORY_IMAGEIO	70
 
 /* Reserve 240-255 for application */
 #define VM_MEMORY_APPLICATION_SPECIFIC_1 240

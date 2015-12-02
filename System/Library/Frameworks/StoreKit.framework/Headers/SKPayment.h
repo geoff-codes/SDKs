@@ -8,11 +8,9 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKitDefines.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
 @class SKProduct;
 
-SK_EXTERN_CLASS @interface SKPayment : NSObject <NSCopying, NSMutableCopying> {
+SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPayment : NSObject <NSCopying, NSMutableCopying> {
 @private
     id _internal;
 }
@@ -32,7 +30,7 @@ SK_EXTERN_CLASS @interface SKPayment : NSObject <NSCopying, NSMutableCopying> {
 @end
 
 
-SK_EXTERN_CLASS @interface SKMutablePayment : SKPayment {
+SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKMutablePayment : SKPayment {
 }
 
 @property(nonatomic, copy, readwrite) NSString *productIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
@@ -40,5 +38,3 @@ SK_EXTERN_CLASS @interface SKMutablePayment : SKPayment {
 @property(nonatomic, copy, readwrite) NSData *requestData __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @end
-
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

@@ -207,7 +207,7 @@
 
 /* Macros for counting and rounding. */
 #ifndef howmany
-#define	howmany(x, y)	(((x)+((y)-1))/(y))
+#define	howmany(x, y)	((((x) % (y)) == 0) ? ((x) / (y)) : (((x) / (y)) + 1))
 #endif
 #define	roundup(x, y)	((((x)+((y)-1))/(y))*(y))
 #define powerof2(x)	((((x)-1)&(x))==0)

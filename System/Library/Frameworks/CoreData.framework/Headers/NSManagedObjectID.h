@@ -20,6 +20,7 @@
 @class NSURL;
 
 // Managed object IDs are opaque identifiers for managed objects.
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSManagedObjectID : NSObject <NSCopying> {
 }
 

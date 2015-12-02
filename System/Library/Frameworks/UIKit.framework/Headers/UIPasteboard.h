@@ -2,10 +2,8 @@
 //  UIPasteboard.h
 //  UIKit
 //
-//  Copyright 2008-2009 Apple Inc. All rights reserved.
+//  Copyright 2008-2010 Apple Inc. All rights reserved.
 //
-
-#if __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
@@ -15,7 +13,7 @@ UIKIT_EXTERN NSString *const UIPasteboardNameFind;
 
 @class UIColor, UIImage;
 
-UIKIT_EXTERN_CLASS @interface UIPasteboard : NSObject { 
+UIKIT_CLASS_AVAILABLE(3_0) @interface UIPasteboard : NSObject { 
   @private
     NSString *_name;
 }
@@ -88,5 +86,3 @@ UIKIT_EXTERN NSArray *UIPasteboardTypeListColor;
 @property(nonatomic,copy) NSArray *colors;
 
 @end
-
-#endif

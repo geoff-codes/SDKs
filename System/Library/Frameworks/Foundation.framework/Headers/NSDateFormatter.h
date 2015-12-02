@@ -1,5 +1,5 @@
 /*	NSDateFormatter.h
-	Copyright (c) 1995-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1995-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSFormatter.h>
@@ -14,27 +14,19 @@
     NSUInteger _counter;
 }
 
-- (id)init;
-
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+// - (id)init; // designated initializer
 
 // Report the used range of the string and an NSError, in addition to the usual stuff from NSFormatter
 
-- (BOOL)getObjectValue:(id *)obj forString:(NSString *)string range:(inout NSRange *)rangep error:(NSError **)error;
+- (BOOL)getObjectValue:(out id *)obj forString:(NSString *)string range:(inout NSRange *)rangep error:(out NSError **)error NS_AVAILABLE(10_4, 2_0);
 
 // Even though NSDateFormatter responds to the usual NSFormatter methods,
 //   here are some convenience methods which are a little more obvious.
 
-- (NSString *)stringFromDate:(NSDate *)date;
-- (NSDate *)dateFromString:(NSString *)string;
+- (NSString *)stringFromDate:(NSDate *)date NS_AVAILABLE(10_4, 2_0);
+- (NSDate *)dateFromString:(NSString *)string NS_AVAILABLE(10_4, 2_0);
 
-#endif
-
-// Attributes of an NSDateFormatter
-
-- (NSString *)dateFormat;
-
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 enum {    // date and time format styles
     NSDateFormatterNoStyle = kCFDateFormatterNoStyle,
@@ -45,18 +37,6 @@ enum {    // date and time format styles
 };
 typedef NSUInteger NSDateFormatterStyle;
 
-- (NSDateFormatterStyle)dateStyle;
-- (void)setDateStyle:(NSDateFormatterStyle)style;
-
-- (NSDateFormatterStyle)timeStyle;
-- (void)setTimeStyle:(NSDateFormatterStyle)style;
-
-- (NSLocale *)locale;
-- (void)setLocale:(NSLocale *)locale;
-
-- (BOOL)generatesCalendarDates;
-- (void)setGeneratesCalendarDates:(BOOL)b;
-
 enum {
     NSDateFormatterBehaviorDefault = 0,
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
@@ -66,93 +46,117 @@ enum {
 };
 typedef NSUInteger NSDateFormatterBehavior;
 
-- (NSDateFormatterBehavior)formatterBehavior;
-- (void)setFormatterBehavior:(NSDateFormatterBehavior)behavior;
-
-+ (NSDateFormatterBehavior)defaultFormatterBehavior;
-+ (void)setDefaultFormatterBehavior:(NSDateFormatterBehavior)behavior;
-
-- (void)setDateFormat:(NSString *)string;
-
-- (NSTimeZone *)timeZone;
-- (void)setTimeZone:(NSTimeZone *)tz;
-
-- (NSCalendar *)calendar;
-- (void)setCalendar:(NSCalendar *)calendar;
-
-- (BOOL)isLenient;
-- (void)setLenient:(BOOL)b;
-
-- (NSDate *)twoDigitStartDate;
-- (void)setTwoDigitStartDate:(NSDate *)date;
-
-- (NSDate *)defaultDate;
-- (void)setDefaultDate:(NSDate *)date;
-
-- (NSArray *)eraSymbols;
-- (void)setEraSymbols:(NSArray *)array;
-
-- (NSArray *)monthSymbols;
-- (void)setMonthSymbols:(NSArray *)array;
-
-- (NSArray *)shortMonthSymbols;
-- (void)setShortMonthSymbols:(NSArray *)array;
-
-- (NSArray *)weekdaySymbols;
-- (void)setWeekdaySymbols:(NSArray *)array;
-
-- (NSArray *)shortWeekdaySymbols;
-- (void)setShortWeekdaySymbols:(NSArray *)array;
-
-- (NSString *)AMSymbol;
-- (void)setAMSymbol:(NSString *)string;
-
-- (NSString *)PMSymbol;
-- (void)setPMSymbol:(NSString *)string;
-
 #endif
 
-- (NSArray *)longEraSymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setLongEraSymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
++ (NSString *)localizedStringFromDate:(NSDate *)date dateStyle:(NSDateFormatterStyle)dstyle timeStyle:(NSDateFormatterStyle)tstyle NS_AVAILABLE(10_6, 4_0);
 
-- (NSArray *)veryShortMonthSymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setVeryShortMonthSymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
++ (NSString *)dateFormatFromTemplate:(NSString *)tmplate options:(NSUInteger)opts locale:(NSLocale *)locale NS_AVAILABLE(10_6, 4_0);
+	// no options defined, pass 0 for now
 
-- (NSArray *)standaloneMonthSymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setStandaloneMonthSymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+// Attributes of an NSDateFormatter
 
-- (NSArray *)shortStandaloneMonthSymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setShortStandaloneMonthSymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (NSString *)dateFormat;
 
-- (NSArray *)veryShortStandaloneMonthSymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setVeryShortStandaloneMonthSymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (NSDateFormatterStyle)dateStyle NS_AVAILABLE(10_4, 2_0);
+- (void)setDateStyle:(NSDateFormatterStyle)style NS_AVAILABLE(10_4, 2_0);
 
-- (NSArray *)veryShortWeekdaySymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setVeryShortWeekdaySymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (NSDateFormatterStyle)timeStyle NS_AVAILABLE(10_4, 2_0);
+- (void)setTimeStyle:(NSDateFormatterStyle)style NS_AVAILABLE(10_4, 2_0);
 
-- (NSArray *)standaloneWeekdaySymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setStandaloneWeekdaySymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (NSLocale *)locale NS_AVAILABLE(10_4, 2_0);
+- (void)setLocale:(NSLocale *)locale NS_AVAILABLE(10_4, 2_0);
 
-- (NSArray *)shortStandaloneWeekdaySymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setShortStandaloneWeekdaySymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (BOOL)generatesCalendarDates NS_AVAILABLE(10_4, 2_0);
+- (void)setGeneratesCalendarDates:(BOOL)b NS_AVAILABLE(10_4, 2_0);
 
-- (NSArray *)veryShortStandaloneWeekdaySymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setVeryShortStandaloneWeekdaySymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (NSDateFormatterBehavior)formatterBehavior NS_AVAILABLE(10_4, 2_0);
+- (void)setFormatterBehavior:(NSDateFormatterBehavior)behavior NS_AVAILABLE(10_4, 2_0);
 
-- (NSArray *)quarterSymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setQuarterSymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
++ (NSDateFormatterBehavior)defaultFormatterBehavior NS_AVAILABLE(10_4, 2_0);
++ (void)setDefaultFormatterBehavior:(NSDateFormatterBehavior)behavior NS_AVAILABLE(10_4, 2_0);
 
-- (NSArray *)shortQuarterSymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setShortQuarterSymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (void)setDateFormat:(NSString *)string NS_AVAILABLE(10_4, 2_0);
 
-- (NSArray *)standaloneQuarterSymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setStandaloneQuarterSymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (NSTimeZone *)timeZone NS_AVAILABLE(10_4, 2_0);
+- (void)setTimeZone:(NSTimeZone *)tz NS_AVAILABLE(10_4, 2_0);
 
-- (NSArray *)shortStandaloneQuarterSymbols AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setShortStandaloneQuarterSymbols:(NSArray *)array AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (NSCalendar *)calendar NS_AVAILABLE(10_4, 2_0);
+- (void)setCalendar:(NSCalendar *)calendar NS_AVAILABLE(10_4, 2_0);
 
-- (NSDate *)gregorianStartDate AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)setGregorianStartDate:(NSDate *)date AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (BOOL)isLenient NS_AVAILABLE(10_4, 2_0);
+- (void)setLenient:(BOOL)b NS_AVAILABLE(10_4, 2_0);
+
+- (NSDate *)twoDigitStartDate NS_AVAILABLE(10_4, 2_0);
+- (void)setTwoDigitStartDate:(NSDate *)date NS_AVAILABLE(10_4, 2_0);
+
+- (NSDate *)defaultDate NS_AVAILABLE(10_4, 2_0);
+- (void)setDefaultDate:(NSDate *)date NS_AVAILABLE(10_4, 2_0);
+
+- (NSArray *)eraSymbols NS_AVAILABLE(10_4, 2_0);
+- (void)setEraSymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+
+- (NSArray *)monthSymbols NS_AVAILABLE(10_4, 2_0);
+- (void)setMonthSymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+
+- (NSArray *)shortMonthSymbols NS_AVAILABLE(10_4, 2_0);
+- (void)setShortMonthSymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+
+- (NSArray *)weekdaySymbols NS_AVAILABLE(10_4, 2_0);
+- (void)setWeekdaySymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+
+- (NSArray *)shortWeekdaySymbols NS_AVAILABLE(10_4, 2_0);
+- (void)setShortWeekdaySymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+
+- (NSString *)AMSymbol NS_AVAILABLE(10_4, 2_0);
+- (void)setAMSymbol:(NSString *)string NS_AVAILABLE(10_4, 2_0);
+
+- (NSString *)PMSymbol NS_AVAILABLE(10_4, 2_0);
+- (void)setPMSymbol:(NSString *)string NS_AVAILABLE(10_4, 2_0);
+
+- (NSArray *)longEraSymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setLongEraSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)veryShortMonthSymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setVeryShortMonthSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)standaloneMonthSymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setStandaloneMonthSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)shortStandaloneMonthSymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setShortStandaloneMonthSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)veryShortStandaloneMonthSymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setVeryShortStandaloneMonthSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)veryShortWeekdaySymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setVeryShortWeekdaySymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)standaloneWeekdaySymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setStandaloneWeekdaySymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)shortStandaloneWeekdaySymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setShortStandaloneWeekdaySymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)veryShortStandaloneWeekdaySymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setVeryShortStandaloneWeekdaySymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)quarterSymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setQuarterSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)shortQuarterSymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setShortQuarterSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)standaloneQuarterSymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setStandaloneQuarterSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSArray *)shortStandaloneQuarterSymbols NS_AVAILABLE(10_5, 2_0);
+- (void)setShortStandaloneQuarterSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+
+- (NSDate *)gregorianStartDate NS_AVAILABLE(10_5, 2_0);
+- (void)setGregorianStartDate:(NSDate *)date NS_AVAILABLE(10_5, 2_0);
+
+- (BOOL)doesRelativeDateFormatting NS_AVAILABLE(10_6, 4_0);
+- (void)setDoesRelativeDateFormatting:(BOOL)b NS_AVAILABLE(10_6, 4_0);
 
 @end
 

@@ -2,7 +2,7 @@
 //  UIPickerView.h
 //  UIKit
 //
-//  Copyright 2006-2009 Apple Inc. All rights reserved.
+//  Copyright 2006-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 
 @protocol UIPickerViewDataSource, UIPickerViewDelegate;
 
-UIKIT_EXTERN_CLASS @interface UIPickerView : UIView <NSCoding>
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIPickerView : UIView <NSCoding>
 { 
   @private
     NSMutableArray            *_tables;
@@ -43,7 +43,7 @@ UIKIT_EXTERN_CLASS @interface UIPickerView : UIView <NSCoding>
 @property(nonatomic,assign) id<UIPickerViewDelegate>   delegate;                  // default is nil. weak reference
 @property(nonatomic)        BOOL                       showsSelectionIndicator;   // default is NO
 
-// info that was fetched and cached from the delegate
+// info that was fetched and cached from the data source and delegate
 @property(nonatomic,readonly) NSInteger numberOfComponents;
 - (NSInteger)numberOfRowsInComponent:(NSInteger)component;
 - (CGSize)rowSizeForComponent:(NSInteger)component;

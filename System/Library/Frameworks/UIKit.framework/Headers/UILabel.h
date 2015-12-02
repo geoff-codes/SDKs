@@ -2,7 +2,7 @@
 //  UILabel.h
 //  UIKit
 //
-//  Copyright 2006-2009 Apple Inc. All rights reserved.
+//  Copyright 2006-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,7 +13,7 @@
 
 @class UIColor, UIFont;
 
-UIKIT_EXTERN_CLASS @interface UILabel : UIView <NSCoding>
+UIKIT_CLASS_AVAILABLE(2_0) @interface UILabel : UIView <NSCoding>
 {
   @private
     CGSize     _size;
@@ -32,6 +32,7 @@ UIKIT_EXTERN_CLASS @interface UILabel : UIView <NSCoding>
         unsigned int lineBreakMode:3;
         unsigned int highlighted:1;
         unsigned int autosizeTextToFit:1;
+        unsigned int autotrackTextToFit:1;
         unsigned int baselineAdjustment:2;
         unsigned int alignment:2;
         unsigned int enabled:1;

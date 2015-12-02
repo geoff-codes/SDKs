@@ -13,6 +13,7 @@
 
 @class NSPersistentStoreCoordinator;
 
+NS_CLASS_AVAILABLE(10_5, 3_0)
 @interface NSPersistentStore : NSObject {
     @private
     __weak NSPersistentStoreCoordinator *_coordinator;

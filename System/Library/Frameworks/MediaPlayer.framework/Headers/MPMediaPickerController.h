@@ -11,15 +11,13 @@
 #import <MediaPlayer/MPMediaItem.h>
 #import <MediaPlayer/MPMediaItemCollection.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
 @class MPMediaPickerControllerInternal;
 @protocol MPMediaPickerControllerDelegate;
 
 // MPMediaPickerController is a UIViewController for visually selecting media items.
 // To display it, present it modally on an existing view controller.
 
-MP_EXTERN_CLASS @interface MPMediaPickerController : UIViewController {
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPickerController : UIViewController {
 @private
     MPMediaPickerControllerInternal *_internal;
 }
@@ -45,5 +43,3 @@ MP_EXTERN_CLASS @interface MPMediaPickerController : UIViewController {
 - (void)mediaPickerDidCancel:(MPMediaPickerController *)mediaPicker;
 
 @end
-
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

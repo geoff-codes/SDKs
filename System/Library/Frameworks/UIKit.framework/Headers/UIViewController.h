@@ -2,7 +2,7 @@
 //  UIViewController.h
 //  UIKit
 //
-//  Copyright 2007-2009 Apple Inc. All rights reserved.
+//  Copyright 2007-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,21 +15,35 @@
  
  Subclasses can override -loadView to create their custom view hierarchy, or specify a nib name to be loaded automatically.
  This class is also a good place for delegate & datasource methods, and other controller stuff.
-*/
+ */
 
 @class UIView, UIImage;
 @class UINavigationItem, UIBarButtonItem, UITabBarItem;
 @class UITabBarController, UINavigationController, UISearchDisplayController;
 @class NSHashTable;
+@class UIPopoverController, UIDimmingView, UIDropShadowView;
 
 typedef enum {
-	UIModalTransitionStyleCoverVertical = 0,
-	UIModalTransitionStyleFlipHorizontal,
-    UIModalTransitionStyleCrossDissolve
+    UIModalTransitionStyleCoverVertical = 0,
+    UIModalTransitionStyleFlipHorizontal,
+    UIModalTransitionStyleCrossDissolve,
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_2
+    UIModalTransitionStylePartialCurl,
+#endif
 } UIModalTransitionStyle;
 
-UIKIT_EXTERN_CLASS @interface UIViewController : UIResponder <NSCoding> {
-  @package
+typedef enum {
+    UIModalPresentationFullScreen = 0,
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_2
+    UIModalPresentationPageSheet,
+    UIModalPresentationFormSheet,
+    UIModalPresentationCurrentContext,
+#endif
+} UIModalPresentationStyle;
+
+
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIViewController : UIResponder <NSCoding> {
+    @package
     UIView           *_view;
     UITabBarItem     *_tabBarItem;
     UINavigationItem *_navigationItem;
@@ -43,22 +57,32 @@ UIKIT_EXTERN_CLASS @interface UIViewController : UIResponder <NSCoding> {
     NSHashTable      *_childViewControllers; // Nonretained
     
     UIViewController *_childModalViewController;
+    UIViewController *_parentModalViewController; // This may be vestigal.
     UIView           *_modalTransitionView;
     UIResponder		 *_modalPreservedFirstResponder;
-    UIView           *_dimmingView;
+    UIResponder      *_defaultFirstResponder;
+    UIDimmingView    *_dimmingView;
+    UIDropShadowView *_dropShadowView;
     UIView           *_presentationSuperview;
+    UIView           *_sheetView;
     id                _currentAction;
     
     UIView           *_savedHeaderSuperview;
     UIView           *_savedFooterSuperview;
-        
+    
     UIBarButtonItem  *_editButtonItem;
     
     UISearchDisplayController   *_searchDisplayController;
     
+    UIPopoverController*    _popoverController;
+
+    
     UIModalTransitionStyle _modalTransitionStyle;
+    UIModalPresentationStyle _modalPresentationStyle;
     
     UIInterfaceOrientation _lastKnownInterfaceOrientation;
+    CGSize _contentSizeForViewInPopover;
+    CGSize _formSheetSize;
     
     struct {
         unsigned int appearState:2;
@@ -68,18 +92,26 @@ UIKIT_EXTERN_CLASS @interface UIViewController : UIResponder <NSCoding> {
         unsigned int autoresizesArchivedViewToFullSize:1;
         unsigned int viewLoadedFromControllerNib:1;
         unsigned int isRootViewController:1;
+        unsigned int isSheet:1;
         unsigned int isSuspended:1;
         unsigned int wasApplicationFrameAtSuspend:1;
         unsigned int wantsFullScreenLayout:1;
         unsigned int shouldUseFullScreenLayout:1;
         unsigned int allowsAutorotation:1;
         unsigned int searchControllerRetained:1;
+	unsigned int oldModalInPopover:1;
+	unsigned int isModalInPopover:1;
+        unsigned int restoreDeepestFirstResponder:1;
+        unsigned int isInWillRotateCallback:1;
+        unsigned int disallowMixedOrientationPresentations:1;        
     } _viewControllerFlags;
 }
 
 // The designated initializer. If you subclass UIViewController, you must call the super implementation of this method, even if you aren't using a NIB.
-// In the specified NIB, the File's Owner proxy should have its class set to your view controller subclass, with the view outlet connected to the main view.
-// If you pass in a nil nib name, then you must either call -setView: before -view is invoked, or override -loadView to set up your views.
+// (As a convenience, the default init method will do this for you, and specify nil for both of this methods arguments.) In the specified NIB, the File's Owner proxy should
+// have its class set to your view controller subclass, with the view outlet connected to the main view. If you invoke this method with a nil nib name, then this class' -loadView 
+// method will attempt to load a NIB whose name is the same as your view controller's class. If no such NIB in fact exists then you must either call -setView: before -view is 
+// invoked, or override the -loadView method to set up your views programatically.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 
 @property(nonatomic,retain) UIView *view; // The getter first invokes [self loadView] if the view hasn't been set yet. Subclasses must call super if they override the setter or getter.
@@ -102,23 +134,24 @@ UIKIT_EXTERN_CLASS @interface UIViewController : UIResponder <NSCoding> {
 
 - (void)presentModalViewController:(UIViewController *)modalViewController animated:(BOOL)animated; // Display another view controller as a modal child. Uses a vertical sheet transition if animated.
 - (void)dismissModalViewControllerAnimated:(BOOL)animated; // Dismiss the current modal child. Uses a vertical sheet transition if animated.
+
 @property(nonatomic,readonly) UIViewController *modalViewController;
 
 // Defines the transition style that will be used for this view controller when it is presented modally. Set this property on the view controller to be presented, not the presenter.
-// Defaults to UIModalTransitionStyleSlideVertical.
+// Defaults to UIModalTransitionStyleCoverVertical.
 @property(nonatomic,assign) UIModalTransitionStyle modalTransitionStyle __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property(nonatomic,assign) UIModalPresentationStyle modalPresentationStyle __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
 
 @property(nonatomic,assign) BOOL wantsFullScreenLayout __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @property(nonatomic,readonly) UIViewController *parentViewController; // If this view controller is inside a navigation controller or tab bar controller, or has been presented modally by another view controller, return it.
-
 @end
 
 // To make it more convenient for applications to adopt rotation, a view controller may implement the below methods.
 // Your UIWindow's frame should use [UIScreen mainScreen].bounds as its frame.
 @interface UIViewController (UIViewControllerRotation)
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation; // Override to allow rotation. Default returns YES only for UIDeviceOrientationPortrait
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation; // Override to allow rotation. Default returns YES only for UIInterfaceOrientationPortrait
 
 // The rotating header and footer views will slide out during the rotation and back in once it has completed.
 - (UIView *)rotatingHeaderView;     // Must be in the view hierarchy. Default returns nil.

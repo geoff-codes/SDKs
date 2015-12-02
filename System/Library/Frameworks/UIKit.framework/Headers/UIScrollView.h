@@ -2,7 +2,7 @@
 //  UIScrollView.h
 //  UIKit
 //
-//  Copyright 2007-2009 Apple Inc. All rights reserved.
+//  Copyright 2007-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -23,7 +23,7 @@ UIKIT_EXTERN const float UIScrollViewDecelerationRateFast __OSX_AVAILABLE_STARTI
 @class UIEvent, UIImageView;
 @protocol UIScrollViewDelegate;
 
-UIKIT_EXTERN_CLASS @interface UIScrollView : UIView <NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
   @package
     CGSize       _contentSize;
     UIEdgeInsets _contentInset;
@@ -34,7 +34,10 @@ UIKIT_EXTERN_CLASS @interface UIScrollView : UIView <NSCoding> {
     struct {
         unsigned int tracking:1;
         unsigned int dragging:1;
-        unsigned int bounceEnabled:1;
+        unsigned int verticalBounceEnabled:1;
+        unsigned int horizontalBounceEnabled:1;
+        unsigned int verticalBouncing:1;
+        unsigned int horizontalBouncing:1;
         unsigned int bouncesZoom:1;
         unsigned int zoomBouncing:1;
         unsigned int alwaysBounceHorizontal:1;
@@ -43,6 +46,7 @@ UIKIT_EXTERN_CLASS @interface UIScrollView : UIView <NSCoding> {
         unsigned int delaysContentTouches:1;
         unsigned int programmaticScrollDisabled:1;
         unsigned int scrollDisabled:1;
+        unsigned int zoomDisabled:1;
         unsigned int scrollTriggered:1;
         unsigned int scrollDisabledOnTouchBegan:1;
         unsigned int ignoreNextTouchesMoved:1;
@@ -68,27 +72,50 @@ UIKIT_EXTERN_CLASS @interface UIScrollView : UIView <NSCoding> {
         unsigned int horizontalIndicatorShrunk:1;
         unsigned int contentFitDisableScrolling:1;
         unsigned int pagingEnabled:1;
+        unsigned int pagingLeft:1;
+        unsigned int pagingRight:1;
+        unsigned int pagingUp:1;
+        unsigned int pagingDown:1;
+        unsigned int lastHorizontalDirection:1;
+        unsigned int lastVerticalDirection:1;
         unsigned int dontScrollToTop:1;
         unsigned int scrollingToTop:1;
-        unsigned int useGestures:1;
+        unsigned int useGestureRecognizers:1;
         unsigned int autoscrolling:1;
         unsigned int automaticContentOffsetAdjustmentDisabled:1;
+        unsigned int skipStartOffsetAdjustment:1;
         unsigned int delegateScrollViewDidScroll:1;
+        unsigned int delegateScrollViewDidZoom:1;
+        unsigned int delegateContentSizeForZoomScale:1;
+        unsigned int preserveCenterDuringRotation:1;
+        unsigned int delaysTrackingWhileDecelerating:1;
+        unsigned int pinnedZoomMin:1;
+        unsigned int pinnedXMin:1;
+        unsigned int pinnedYMin:1;
+        unsigned int pinnedXMax:1;
+        unsigned int pinnedYMax:1;
+        unsigned int skipLinkChecks:1;
+        unsigned int wasIgnoringTapsInDimmingView:1;
+        unsigned int isAnimatingScroll:1;
+        unsigned int isAnimatingZoom:1;
+        unsigned int staysCenteredDuringPinch:1;
     } _scrollViewFlags;
-    CGFloat           _scrollHysteresis;
     CGFloat           _farthestDistance;
     CGPoint           _initialTouchPosition;
     CGPoint           _startTouchPosition;
     CFTimeInterval    _startTouchTime;
-    CGPoint           _startOffset;
+    double            _startOffsetX;
+    double            _startOffsetY;
+    double            _lastUpdateOffsetX;
+    double            _lastUpdateOffsetY;
     CGPoint           _lastTouchPosition;
     CFTimeInterval    _lastTouchTime;
     CFTimeInterval    _lastUpdateTime;
-    CGPoint           _lastUpdateOffset;
+    CGPoint           _zoomAnchorPoint;
     UIView           *_contentView;
     float             _minimumZoomScale;
     float             _maximumZoomScale;
-    float             _unadjustedZoomScale;
+    int               _zoomRubberBandHysteresisCount;
     UIView           *_zoomView;
     double            _horizontalVelocity;
     double            _verticalVelocity;
@@ -96,18 +123,29 @@ UIKIT_EXTERN_CLASS @interface UIScrollView : UIView <NSCoding> {
     double            _previousVerticalVelocity;
     CGPoint           _stopOffset;
     CFTypeRef         _scrollHeartbeat;
+    CGPoint           _pageDecelerationTarget;
     CGSize            _decelerationFactor;
     double            _decelerationLnFactorH;
     double            _decelerationLnFactorV;
     NSArray*          _deferredBeginTouchesInfo;
     UIImageView     **_shadows;
     id                _scrollNotificationViews;
-    CGSize            _gridBounceLnFactor;
     CFTimeInterval    _contentOffsetAnimationDuration;
+    id                _animation;
+    id                _pinch;
+    id                _pan;
+    id                _swipe;
+    CGFloat           _pagingSpringPull;
+    CGFloat           _pagingFriction;
     NSInteger         _fastScrollCount;
     CGFloat           _fastScrollMultiplier;
     CGFloat           _fastScrollStartMultiplier;
     CFTimeInterval    _fastScrollEndTime;
+    CGPoint           _parentAdjustment;
+    CGPoint           _rotationCenterPoint;
+    CGFloat           _accuracy;
+    CGFloat           _hysteresis;
+    NSUInteger        _zoomAnimationCount;
 }
 
 @property(nonatomic)         CGPoint                      contentOffset;                  // default CGPointZero
@@ -182,7 +220,8 @@ UIKIT_EXTERN_CLASS @interface UIScrollView : UIView <NSCoding> {
 
 @optional
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView;               // any offset changes
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView;                                               // any offset changes
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // any zoom scale changes
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;                              // called on start of dragging (may require some time and or distance to move)
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate; // called on finger up if user dragged. decelerate is true if it will continue moving afterwards
@@ -193,6 +232,7 @@ UIKIT_EXTERN_CLASS @interface UIScrollView : UIView <NSCoding> {
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView; // called when setContentOffset/scrollRectVisible:animated: finishes. not called if not animating
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView;     // return a view that will be scaled. if delegate returns nil, nothing happens
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // called before the scroll view begins zooming its content
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale; // scale between minimum and maximum. called after any 'bounce' animations
 
 - (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView;   // return a yes if you want to scroll to the top. if not defined, assumes YES

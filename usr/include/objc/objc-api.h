@@ -78,7 +78,7 @@
 #endif
 
 #if !defined(OBJC_INLINE)
-#   define OBJC_INLINE __inline
-#endif
+#       define OBJC_INLINE __inline
+#   endif
 
 #endif

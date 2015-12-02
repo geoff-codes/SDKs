@@ -36,7 +36,7 @@
  * one. Each LOD is half the resolution of the previous level. If too
  * many levels are specified for the current size of the layer, then
  * the number of levels is clamped to the maximum value (the bottom
- * most LOD must contain at least a single pixel in each dimension.) */
+ * most LOD must contain at least a single pixel in each dimension). */
 
 @property size_t levelsOfDetail;
 

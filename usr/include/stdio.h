@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2005, 2007 Apple Inc. All rights reserved.
+ * Copyright (c) 2000, 2005, 2007, 2009 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  *
@@ -206,11 +206,6 @@ __END_DECLS
 #define	BUFSIZ	1024		/* size of buffer used by setbuf */
 #define	EOF	(-1)
 
-/*
- * FOPEN_MAX is a minimum maximum, and is the number of streams that
- * stdio can provide without attempting to allocate further resources
- * (which could fail).  Do not use this for anything.
- */
 				/* must be == _POSIX_STREAM_MAX <limits.h> */
 #define	FOPEN_MAX	20	/* must be <= OPEN_MAX <sys/syslimits.h> */
 #define	FILENAME_MAX	1024	/* must be <= PATH_MAX <sys/syslimits.h> */
@@ -254,7 +249,11 @@ int	 fflush(FILE *);
 int	 fgetc(FILE *);
 int	 fgetpos(FILE * __restrict, fpos_t *);
 char	*fgets(char * __restrict, int, FILE *);
-FILE	*fopen(const char * __restrict, const char * __restrict);
+#if defined(__DARWIN_10_6_AND_LATER) && (defined(_DARWIN_UNLIMITED_STREAMS) || defined(_DARWIN_C_SOURCE))
+FILE	*fopen(const char * __restrict, const char * __restrict) __DARWIN_EXTSN(fopen);
+#else /* < 10.6 || !_DARWIN_UNLIMITED_STREAMS && !_DARWIN_C_SOURCE */
+FILE	*fopen(const char * __restrict, const char * __restrict) __DARWIN_10_6_AND_LATER_ALIAS(__DARWIN_ALIAS(fopen));
+#endif /* >= 10.6 &&_(DARWIN_UNLIMITED_STREAMS || _DARWIN_C_SOURCE) */
 int	 fprintf(FILE * __restrict, const char * __restrict, ...) __DARWIN_LDBL_COMPAT(fprintf);
 int	 fputc(int, FILE *);
 int	 fputs(const char * __restrict, FILE * __restrict) __DARWIN_ALIAS(fputs);
@@ -309,7 +308,11 @@ char	*ctermid(char *);
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
 char	*ctermid_r(char *);
 #endif /* not POSIX */
-FILE	*fdopen(int, const char *);
+#if defined(__DARWIN_10_6_AND_LATER) && (defined(_DARWIN_UNLIMITED_STREAMS) || defined(_DARWIN_C_SOURCE))
+FILE	*fdopen(int, const char *) __DARWIN_EXTSN(fdopen);
+#else /* < 10.6 || !_DARWIN_UNLIMITED_STREAMS && !_DARWIN_C_SOURCE */
+FILE	*fdopen(int, const char *) __DARWIN_10_6_AND_LATER_ALIAS(__DARWIN_ALIAS(fdopen));
+#endif /* >= 10.6 &&_(DARWIN_UNLIMITED_STREAMS || _DARWIN_C_SOURCE) */
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
 char	*fgetln(FILE *, size_t *);
 #endif /* not POSIX */
@@ -330,7 +333,11 @@ int	 getchar_unlocked(void);
 int	 getw(FILE *);
 #endif /* not POSIX */
 int	 pclose(FILE *);
-FILE	*popen(const char *, const char *);
+#if defined(__DARWIN_10_6_AND_LATER) && (defined(_DARWIN_UNLIMITED_STREAMS) || defined(_DARWIN_C_SOURCE))
+FILE	*popen(const char *, const char *) __DARWIN_EXTSN(popen);
+#else /* < 10.6 || !_DARWIN_UNLIMITED_STREAMS && !_DARWIN_C_SOURCE */
+FILE	*popen(const char *, const char *) __DARWIN_10_6_AND_LATER_ALIAS(__DARWIN_ALIAS(popen));
+#endif /* >= 10.6 &&_(DARWIN_UNLIMITED_STREAMS || _DARWIN_C_SOURCE) */
 int	 putc_unlocked(int, FILE *);
 int	 putchar_unlocked(int);
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)

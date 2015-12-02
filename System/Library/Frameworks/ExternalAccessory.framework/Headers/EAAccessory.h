@@ -13,8 +13,6 @@
 //  Copyright 2008 Apple, Inc. All rights reserved.
 //
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
 @class EAAccessoryInternal;
 @protocol EAAccessoryDelegate;
 
@@ -22,7 +20,7 @@ enum {
     EAConnectionIDNone = 0,
 };
 
-EA_EXTERN_CLASS @interface EAAccessory : NSObject {
+EA_EXTERN_CLASS_AVAILABLE(3_0) @interface EAAccessory : NSObject {
 @private
     EAAccessoryInternal *_internal;
 }
@@ -47,5 +45,3 @@ EA_EXTERN_CLASS @interface EAAccessory : NSObject {
 @optional
 - (void)accessoryDidDisconnect:(EAAccessory *)accessory __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 @end
-
-#endif // #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

@@ -2,7 +2,7 @@
 //  UIApplication.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -19,6 +19,14 @@ typedef enum {
     UIStatusBarStyleBlackOpaque
 } UIStatusBarStyle;
 
+typedef enum {
+    UIStatusBarAnimationNone,
+#if __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    UIStatusBarAnimationFade,
+    UIStatusBarAnimationSlide,
+#endif
+} UIStatusBarAnimation;
+
 // Note that UIInterfaceOrientationLandscapeLeft is equal to UIDeviceOrientationLandscapeRight (and vice versa).
 // This is because rotating the device to the left requires rotating the content to the right.
 typedef enum {
@@ -32,17 +40,31 @@ typedef enum {
 #define UIInterfaceOrientationIsPortrait(orientation)  ((orientation) == UIInterfaceOrientationPortrait || (orientation) == UIInterfaceOrientationPortraitUpsideDown)
 #define UIInterfaceOrientationIsLandscape(orientation) ((orientation) == UIInterfaceOrientationLandscapeLeft || (orientation) == UIInterfaceOrientationLandscapeRight)
 
+#if __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 typedef enum {
     UIRemoteNotificationTypeNone    = 0,
     UIRemoteNotificationTypeBadge   = 1 << 0,
     UIRemoteNotificationTypeSound   = 1 << 1,
     UIRemoteNotificationTypeAlert   = 1 << 2
 } UIRemoteNotificationType;
+#endif
 
-@class UIView, UIWindow;
+#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+typedef enum {
+    UIApplicationStateActive,
+    UIApplicationStateInactive,
+    UIApplicationStateBackground
+} UIApplicationState;
+
+typedef NSUInteger UIBackgroundTaskIdentifier;
+UIKIT_EXTERN const UIBackgroundTaskIdentifier UIBackgroundTaskInvalid  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+UIKIT_EXTERN const NSTimeInterval UIMinimumKeepAliveTimeout  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+#endif
+
+@class UIView, UIWindow, UIStatusBar, UIStatusBarWindow, UILocalNotification;
 @protocol UIApplicationDelegate;
 
-UIKIT_EXTERN_CLASS @interface UIApplication : UIResponder <UIActionSheetDelegate>
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheetDelegate>
 {
   @package
     id <UIApplicationDelegate>  _delegate;
@@ -51,38 +73,44 @@ UIKIT_EXTERN_CLASS @interface UIApplication : UIResponder <UIActionSheetDelegate
     UIEvent                    *_event;
     UIEvent                    *_touchesEvent;
     UIEvent                    *_motionEvent;
+    UIEvent                    *_remoteControlEvent;
+    NSInteger                   _remoteControlEventObservers;
     NSArray                    *_topLevelNibObjects;
-    NSInteger                   _orientation;
     NSInteger                   _networkResourcesCurrentlyLoadingCount;
     NSTimer                    *_hideNetworkActivityIndicatorTimer;
     id                          _editAlertView;
+    UIStatusBar                *_statusBar;
+    UIStatusBarWindow          *_statusBarWindow;
     struct {
         unsigned int isActive:1;
         unsigned int isSuspended:1;
         unsigned int isSuspendedEventsOnly:1;
         unsigned int isLaunchedSuspended:1;
+        unsigned int calledNonSuspendedLaunchDelegate:1;
         unsigned int isHandlingURL:1;
         unsigned int isHandlingRemoteNotification:1;
-        unsigned int statusBarMode:8;
+        unsigned int isHandlingLocalNotification:1;
         unsigned int statusBarShowsProgress:1;
+        unsigned int statusBarRequestedStyle:4;
+        unsigned int statusBarHidden:1;
         unsigned int blockInteractionEvents:4;
-        unsigned int forceExit:1;
         unsigned int receivesMemoryWarnings:1;
         unsigned int showingProgress:1;
         unsigned int receivesPowerMessages:1;
         unsigned int launchEventReceived:1;
         unsigned int isAnimatingSuspensionOrResumption:1;
+        unsigned int isResuming:1;
         unsigned int isSuspendedUnderLock:1;
+        unsigned int isRunningInTaskSwitcher:1;
         unsigned int shouldExitAfterSendSuspend:1;
+        unsigned int shouldExitAfterTaskCompletion:1;
         unsigned int terminating:1;
         unsigned int isHandlingShortCutURL:1;
         unsigned int idleTimerDisabled:1;
-        unsigned int statusBarStyle:4;
-        unsigned int statusBarHidden:1;
-        unsigned int statusBarOrientation:3;
         unsigned int deviceOrientation:3;
         unsigned int delegateShouldBeReleasedUponSet:1;
         unsigned int delegateHandleOpenURL:1;
+        unsigned int delegateOpenURL:1;
         unsigned int delegateDidReceiveMemoryWarning:1;
         unsigned int delegateWillTerminate:1;
         unsigned int delegateSignificantTimeChange:1;
@@ -94,9 +122,11 @@ UIKIT_EXTERN_CLASS @interface UIApplication : UIResponder <UIActionSheetDelegate
         unsigned int delegateDeviceChangedOrientation:1;
         unsigned int delegateDidBecomeActive:1;
         unsigned int delegateWillResignActive:1;
-        unsigned int idleTimerDisableActive:1;
+        unsigned int delegateDidEnterBackground:1;
+        unsigned int delegateWillEnterForeground:1;
+        unsigned int delegateWillSuspend:1;
+        unsigned int delegateDidResume:1;
         unsigned int userDefaultsSyncDisabled:1;
-        unsigned int doubleHeightMode:4;
         unsigned int headsetButtonClickCount:4;
         unsigned int isHeadsetButtonDown:1;
         unsigned int isFastForwardActive:1;
@@ -104,7 +134,16 @@ UIKIT_EXTERN_CLASS @interface UIApplication : UIResponder <UIActionSheetDelegate
         unsigned int disableViewGroupOpacity:1;
         unsigned int disableViewEdgeAntialiasing:1;
         unsigned int shakeToEdit:1;
+        unsigned int isClassic:1;
+        unsigned int zoomInClassicMode:1;
         unsigned int ignoreHeadsetClicks:1;
+        unsigned int touchRotationDisabled:1;
+        unsigned int taskSuspendingUnsupported:1;
+        unsigned int isUnitTests:1;
+        unsigned int requiresHighResolution:1;
+        unsigned int disableViewContentScaling:1;
+        unsigned int singleUseLaunchOrientation:3;
+        unsigned int defaultInterfaceOrientation:3;
     } _applicationFlags;
 }
 
@@ -129,10 +168,12 @@ UIKIT_EXTERN_CLASS @interface UIApplication : UIResponder <UIActionSheetDelegate
 - (BOOL)sendAction:(SEL)action to:(id)target from:(id)sender forEvent:(UIEvent *)event;
 
 @property(nonatomic,getter=isNetworkActivityIndicatorVisible) BOOL networkActivityIndicatorVisible; // showing network spinning gear in status bar. default is NO
+
 @property(nonatomic) UIStatusBarStyle statusBarStyle; // default is UIStatusBarStyleDefault
 - (void)setStatusBarStyle:(UIStatusBarStyle)statusBarStyle animated:(BOOL)animated;
+
 @property(nonatomic,getter=isStatusBarHidden) BOOL statusBarHidden;
-- (void)setStatusBarHidden:(BOOL)hidden animated:(BOOL)animated;
+- (void)setStatusBarHidden:(BOOL)hidden withAnimation:(UIStatusBarAnimation)animation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
 
 // Rotate to a specific orientation.  This only rotates the status bar and updates the statusBarOrientation property.
 // This does not change automatically if the device changes orientation.
@@ -146,6 +187,17 @@ UIKIT_EXTERN_CLASS @interface UIApplication : UIResponder <UIActionSheetDelegate
 
 @property(nonatomic) BOOL applicationSupportsShakeToEdit __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
+@property(nonatomic,readonly) UIApplicationState applicationState __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic,readonly) NSTimeInterval backgroundTimeRemaining __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+- (UIBackgroundTaskIdentifier)beginBackgroundTaskWithExpirationHandler:(void(^)(void))handler  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)endBackgroundTask:(UIBackgroundTaskIdentifier)identifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+- (BOOL)setKeepAliveTimeout:(NSTimeInterval)timeout handler:(void(^)(void))keepAliveHandler __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)clearKeepAliveTimeout __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+@property(nonatomic,readonly,getter=isProtectedDataAvailable) BOOL protectedDataAvailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
 @end
 
 @interface UIApplication (UIRemoteNotifications)
@@ -158,6 +210,24 @@ UIKIT_EXTERN_CLASS @interface UIApplication : UIResponder <UIActionSheetDelegate
 
 @end
 
+@interface UIApplication (UILocalNotifications)
+
+- (void)presentLocalNotificationNow:(UILocalNotification *)notification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+- (void)scheduleLocalNotification:(UILocalNotification *)notification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);  // copies notification
+- (void)cancelLocalNotification:(UILocalNotification *)notification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)cancelAllLocalNotifications __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic,copy) NSArray *scheduledLocalNotifications __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);         // setter added in iOS 4.2
+
+@end
+
+@interface UIApplication (UIRemoteControlEvents)
+
+- (void)beginReceivingRemoteControlEvents __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)endReceivingRemoteControlEvents __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+@end
+
 @protocol UIApplicationDelegate<NSObject>
 
 @optional
@@ -167,7 +237,8 @@ UIKIT_EXTERN_CLASS @interface UIApplication : UIResponder <UIActionSheetDelegate
 
 - (void)applicationDidBecomeActive:(UIApplication *)application;
 - (void)applicationWillResignActive:(UIApplication *)application;
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url;  // no equiv. notification. return NO if the application can't open for some reason
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url;  // Will be deprecated at some point, please replace with application:openURL:sourceApplication:annotation:
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2); // no equiv. notification. return NO if the application can't open for some reason
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application;      // try to clean up as much memory as possible. next step is to terminate app
 - (void)applicationWillTerminate:(UIApplication *)application;
@@ -184,12 +255,20 @@ UIKIT_EXTERN_CLASS @interface UIApplication : UIResponder <UIActionSheetDelegate
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+- (void)applicationDidEnterBackground:(UIApplication *)application __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)applicationWillEnterForeground:(UIApplication *)application __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+- (void)applicationProtectedDataWillBecomeUnavailable:(UIApplication *)application __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)applicationProtectedDataDidBecomeAvailable:(UIApplication *)application    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 @end
 
 @interface UIApplication(UIApplicationDeprecated)
 
 @property(nonatomic,getter=isProximitySensingEnabled) BOOL proximitySensingEnabled __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0); // default is NO. see UIDevice for replacement
+- (void)setStatusBarHidden:(BOOL)hidden animated:(BOOL)animated __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2); // use -setStatusBarHidden:withAnimation:
 
 @end
 
@@ -200,6 +279,8 @@ UIKIT_EXTERN int UIApplicationMain(int argc, char *argv[], NSString *principalCl
 UIKIT_EXTERN NSString *const UITrackingRunLoopMode;
 
 // These notifications are sent out after the equivalent delegate message is called
+UIKIT_EXTERN NSString *const UIApplicationDidEnterBackgroundNotification       __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+UIKIT_EXTERN NSString *const UIApplicationWillEnterForegroundNotification      __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 UIKIT_EXTERN NSString *const UIApplicationDidFinishLaunchingNotification;
 UIKIT_EXTERN NSString *const UIApplicationDidBecomeActiveNotification;
 UIKIT_EXTERN NSString *const UIApplicationWillResignActiveNotification;
@@ -212,6 +293,12 @@ UIKIT_EXTERN NSString *const UIApplicationStatusBarOrientationUserInfoKey;      
 UIKIT_EXTERN NSString *const UIApplicationWillChangeStatusBarFrameNotification;       // userInfo contains NSValue with new frame
 UIKIT_EXTERN NSString *const UIApplicationDidChangeStatusBarFrameNotification;        // userInfo contains NSValue with old frame
 UIKIT_EXTERN NSString *const UIApplicationStatusBarFrameUserInfoKey;                  // userInfo dictionary key for status bar frame
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsURLKey                __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // userInfo constains NSURL with launch URL
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsSourceApplicationKey  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // userInfo constains NSString with launch app bundle ID
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsRemoteNotificationKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // userInfo constains NSDictionary with launch information
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsURLKey                __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // userInfo contains NSURL with launch URL
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsSourceApplicationKey  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // userInfo contains NSString with launch app bundle ID
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsRemoteNotificationKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // userInfo contains NSDictionary with payload
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocalNotificationKey  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // userInfo contains a UILocalNotification
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsAnnotationKey         __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // userInfo contains object with annotation property list
+UIKIT_EXTERN NSString *const UIApplicationProtectedDataWillBecomeUnavailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+UIKIT_EXTERN NSString *const UIApplicationProtectedDataDidBecomeAvailable    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocationKey           __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // app was launched in response to a CoreLocation event.
+

@@ -1,5 +1,5 @@
 /*	NSCompoundPredicate.h
-	Copyright (c) 2004-2009, Apple Inc. All rights reserved.
+	Copyright (c) 2004-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSPredicate.h>

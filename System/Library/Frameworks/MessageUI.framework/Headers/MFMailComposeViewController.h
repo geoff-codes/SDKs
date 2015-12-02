@@ -3,7 +3,7 @@
     @abstract   The MFMailComposeViewController class provides an interface for editing and sending email.
     @discussion MFMailComposeViewController is used for implementing a simple interface for users to enter
                 and send email.
-    @copyright  Copyright 2008, 2009 Apple Inc. All rights reserved.
+    @copyright  Copyright 2008-2010 Apple Inc. All rights reserved.
 */
 #import <UIKit/UIKit.h>
 
@@ -92,6 +92,7 @@ typedef enum MFMailComposeErrorCode MFMailComposeErrorCode;     // available in 
     @method     setSubject:
     @abstract   This method sets the Subject header for the email message.
     @discussion This method will set the Subject header for the email message.  This should be called prior to display.
+                Newlines are removed from the parameter.
                 </p>After the view has been presented to the user, this method will no longer change the value.
     @param      subject  A NSString specifying the message's Subject header.
 */
@@ -101,7 +102,7 @@ typedef enum MFMailComposeErrorCode MFMailComposeErrorCode;     // available in 
     @method     setToRecipients:
     @abstract   This method sets the To header for the email message to the specified email addresses.
     @discussion This method will set the To header for the email message.  This should be called prior to display.
-                </p>Recipient addresses should be specified as per RFC2822.
+                </p>Recipient addresses should be specified as per RFC5322.
                 </p>After the view has been presented to the user, this method will no longer change the value.
     @param      toRecipients  A NSArray of NSString instances specifying the email addresses of recipients.
 */
@@ -111,7 +112,7 @@ typedef enum MFMailComposeErrorCode MFMailComposeErrorCode;     // available in 
     @method     setCcRecipients:
     @abstract   This method sets the CC header for the email message to the specified email addresses.
     @discussion This method will set the CC header for the email message.  This should be called prior to display.
-                </p>Recipient addresses should be specified as per RFC2822.
+                </p>Recipient addresses should be specified as per RFC5322.
                 </p>After the view has been presented to the user, this method will no longer change the value.
     @param      ccRecipients  A NSArray of NSString instances specifying the email addresses of recipients.
  */
@@ -121,7 +122,7 @@ typedef enum MFMailComposeErrorCode MFMailComposeErrorCode;     // available in 
     @method     setBccRecipients:
     @abstract   This method sets the BCC header for the email message to the specified email addresses.
     @discussion This method will set the BCC header for the email message.  This should be called prior to display.
-                </p>Recipient addresses should be specified as per RFC2822.
+                </p>Recipient addresses should be specified as per RFC5322.
                 </p>After the view has been presented to the user, this method will no longer change the value.
     @param      bccRecipients    A NSArray of NSString instances specifying the email addresses of recipients.
  */

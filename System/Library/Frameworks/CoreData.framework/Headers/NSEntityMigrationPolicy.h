@@ -15,6 +15,14 @@
 
 #import <CoreData/CoreDataDefines.h>
 
+/* To access the entity migration policy keys in property mapping value expressions implemented in source code use the constants as declared.  To access them in custom value expression strings in the mapping model editor in Xcode follow the syntax rules outlined in the predicate format string syntax guide and refer to them as:
+ NSMigrationManagerKey           $manager
+ NSMigrationSourceObjectKey      $source
+ NSMigrationDestinationObjectKey $destination
+ NSMigrationEntityMappingKey     $entityMapping
+ NSMigrationPropertyMappingKey   $propertyMapping
+ NSMigrationEntityPolicyKey      $entityPolicy
+*/
 COREDATA_EXTERN NSString * const NSMigrationManagerKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
 COREDATA_EXTERN NSString * const NSMigrationSourceObjectKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
 COREDATA_EXTERN NSString * const NSMigrationDestinationObjectKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
@@ -26,6 +34,7 @@ COREDATA_EXTERN NSString * const NSMigrationEntityPolicyKey __OSX_AVAILABLE_STAR
 @class NSEntityMapping;
 @class NSMigrationManager;
 
+NS_CLASS_AVAILABLE(10_5, 3_0)
 @interface NSEntityMigrationPolicy : NSObject
 
 

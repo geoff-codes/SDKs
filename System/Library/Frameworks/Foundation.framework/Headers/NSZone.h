@@ -1,5 +1,5 @@
 /*	NSZone.h
-	Copyright (c) 1994-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObjCRuntime.h>
@@ -25,17 +25,17 @@ FOUNDATION_EXPORT void NSZoneFree(NSZone *zone, void *ptr);
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
 /* Garbage Collected memory allocation.
-   Raw memory may be directly allocated (and "realloc"ed) from the collector. The default unscanned memory returned by this call should not be used to hold live pointers to garbage collected memory.  Use the scanned option.  Further, the pointer type of the stored location must be marked with the __strong attribute in order for the write-barrier assignment primitive to be generated.
+   Raw memory may be directly allocated (and "realloc"ed) from the collector. The default unscanned memory returned by this call should not be used to hold live pointers to garbage collected memory.  Use the scanned option.  Further, the pointer type of the stored location must be marked with the __strong attribute in order for the write-barrier assignment primitive to be generated.  
    The NSCollectorDisabledOption provides an allocation for use as an external reference.
 */
 
 enum {
-    NSScannedOption = (1<<0),
-    NSCollectorDisabledOption = (1<<1),
+    NSScannedOption = (1UL << 0), 
+    NSCollectorDisabledOption = (1UL << 1),
 };
 
-FOUNDATION_EXPORT void *__strong NSAllocateCollectable(NSUInteger size, NSUInteger options) AVAILABLE_MAC_OS_X_VERSION_10_4_AND_LATER;
-FOUNDATION_EXPORT void *__strong NSReallocateCollectable(void *ptr, NSUInteger size, NSUInteger options) AVAILABLE_MAC_OS_X_VERSION_10_4_AND_LATER;
+FOUNDATION_EXPORT void *__strong NSAllocateCollectable(NSUInteger size, NSUInteger options) NS_AVAILABLE(10_4, 2_0);
+FOUNDATION_EXPORT void *__strong NSReallocateCollectable(void *ptr, NSUInteger size, NSUInteger options) NS_AVAILABLE(10_4, 2_0);
 
 #endif
 
@@ -44,7 +44,7 @@ FOUNDATION_EXPORT void *__strong NSReallocateCollectable(void *ptr, NSUInteger s
  CFTypeRef style objects are garbage collected, yet only sometime after the last CFRelease() is performed.  Particulary for fully-bridged CFTypeRef objects such as CFStrings and collections (CFDictionaryRef et alia) it is imperative that either CFMakeCollectable or the more type safe NSMakeCollectable be performed, preferably right upon allocation.  Conceptually, this moves them from a "C" style opaque pointer into an "id" style object.
 */
  
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 NS_INLINE id NSMakeCollectable(CFTypeRef cf) {
     return cf ? (id)CFMakeCollectable(cf) : nil;
 }

@@ -2,7 +2,7 @@
  *  ABRecord.h
  *  AddressBook
  *
- *  Copyright 2008 Apple Computer, Inc. All rights reserved.
+ *  Copyright (c) 2010 Apple Inc. All rights reserved.
  *
  *  An ABRecord corresponds to a persistent item, currently either
  *  a contact or a group. Records have a unique persistent integer

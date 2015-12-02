@@ -1,5 +1,5 @@
 /*	NSAutoreleasePool.h
-	Copyright (c) 1994-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -16,7 +16,7 @@
 
 - (void)addObject:(id)anObject;
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (void)drain;
 #endif
 

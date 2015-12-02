@@ -28,7 +28,7 @@
 // 
 // This notice may not be removed from this file.
 
-#import "SenTestingUtilities.h"
+#import <SenTestingKit/SenTestingUtilities.h>
 
 #undef STFail
 
@@ -83,76 +83,77 @@
 #endif /* STEnableDeprecatedAssertionMacros */
 
 /*" Generates a failure when !{ [a1 isEqualTo:a2] } is false 
-	(or one is nil and the other is not). 
-	_{a1    The object on the left.}
-	_{a2    The object on the right.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    (or one is nil and the other is not). 
+    _{a1    The object on the left.}
+    _{a2    The object on the right.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertEqualObjects(a1, a2, description, ...) \
 do { \
     @try {\
         id a1value = (a1); \
             id a2value = (a2); \
-                if (a1value == a2value) continue; \
-                    if ( (@encode(__typeof__(a1value)) == @encode(id)) && \
-                         (@encode(__typeof__(a2value)) == @encode(id)) && \
-                         [(id)a1value isEqual: (id)a2value] ) continue; \
-                             [self failWithException:[NSException failureInEqualityBetweenObject: a1value \
-                                                                                       andObject: a2value \
-                                                                                    inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                                                    atLine: __LINE__ \
-                                                                           withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+                if (a1value != a2value) { \
+                    if ( (strcmp(@encode(__typeof__(a1value)), @encode(id)) == 0) && \
+                         (strcmp(@encode(__typeof__(a2value)), @encode(id)) == 0) && \
+                         [(id)a1value isEqual:(id)a2value] ) continue; \
+                             [self failWithException:([NSException failureInEqualityBetweenObject:a1value \
+                                                                                       andObject:a2value \
+                                                                                    inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                                                    atLine:__LINE__ \
+                                                                           withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
+                } \
     }\
     @catch (id anException) {\
-        [self failWithException:[NSException failureInRaise:[NSString stringWithFormat: @"(%s) == (%s)", #a1, #a2] \
+        [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"(%s) == (%s)", #a1, #a2] \
                                                   exception:anException \
                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
                                                      atLine:__LINE__ \
-                                            withDescription:STComposeString(description, ##__VA_ARGS__)]]; \
+                                            withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
     }\
 } while(0)
 
 
 /*" Generates a failure when a1 is not equal to a2. This test is for
-	C scalars, structs and unions.
-	_{a1    The argument on the left.}
-	_{a2    The argument on the right.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    C scalars, structs and unions.
+    _{a1    The argument on the left.}
+    _{a2    The argument on the right.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertEquals(a1, a2, description, ...) \
 do { \
     @try {\
-		if (@encode(__typeof__(a1)) != @encode(__typeof__(a2))) { \
-			[self failWithException:[NSException failureInFile:[NSString stringWithUTF8String:__FILE__] \
-														atLine:__LINE__ \
-											   withDescription:[@"Type mismatch -- " stringByAppendingString:STComposeString(description, ##__VA_ARGS__)]]]; \
-		} \
-		else { \
-			__typeof__(a1) a1value = (a1); \
-			__typeof__(a2) a2value = (a2); \
-			NSValue *a1encoded = [NSValue value:&a1value withObjCType: @encode(__typeof__(a1))]; \
-			NSValue *a2encoded = [NSValue value:&a2value withObjCType: @encode(__typeof__(a2))]; \
-			if (![a1encoded isEqualToValue:a2encoded]) { \
-				[self failWithException:[NSException failureInEqualityBetweenValue: a1encoded \
-																		  andValue: a2encoded \
-																	  withAccuracy: nil \
-																			inFile: [NSString stringWithUTF8String:__FILE__] \
-																			atLine: __LINE__ \
-																   withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
-			} \
-		} \
+        if (strcmp(@encode(__typeof__(a1)), @encode(__typeof__(a2))) != 0) { \
+            [self failWithException:([NSException failureInFile:[NSString stringWithUTF8String:__FILE__] \
+                                                         atLine:__LINE__ \
+                                                withDescription:@"%@", [@"Type mismatch -- " stringByAppendingString:STComposeString(description, ##__VA_ARGS__)]])]; \
+        } \
+        else { \
+            __typeof__(a1) a1value = (a1); \
+            __typeof__(a2) a2value = (a2); \
+            NSValue *a1encoded = [NSValue value:&a1value withObjCType:@encode(__typeof__(a1))]; \
+            NSValue *a2encoded = [NSValue value:&a2value withObjCType:@encode(__typeof__(a2))]; \
+            if (![a1encoded isEqualToValue:a2encoded]) { \
+                [self failWithException:([NSException failureInEqualityBetweenValue:a1encoded \
+                                                                           andValue:a2encoded \
+                                                                       withAccuracy:nil \
+                                                                             inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                                             atLine:__LINE__ \
+                                                                    withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
+            } \
+        } \
     } \
     @catch (id anException) {\
-        [self failWithException:[NSException \
-					failureInRaise:[NSString stringWithFormat: @"(%s) == (%s)", #a1, #a2] \
-						 exception:anException \
-							inFile:[NSString stringWithUTF8String:__FILE__] \
-							atLine:__LINE__ \
-				   withDescription:STComposeString(description, ##__VA_ARGS__)]]; \
+        [self failWithException:([NSException \
+                 failureInRaise:[NSString stringWithFormat:@"(%s) == (%s)", #a1, #a2] \
+                      exception:anException \
+                         inFile:[NSString stringWithUTF8String:__FILE__] \
+                         atLine:__LINE__ \
+                withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
     }\
 } while(0)
 
@@ -160,141 +161,141 @@ do { \
 
 
 /*" Generates a failure when a1 is not equal to a2 within + or - accuracy is false. 
-	This test is for scalars such as floats and doubles where small differences 
-	could make these items not exactly equal, but also works for all scalars.
-	_{a1    The scalar on the left.}
-	_{a2    The scalar on the right.}
-	_{accuracy  The maximum difference between a1 and a2 for these values to be
-	considered equal.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    This test is for scalars such as floats and doubles where small differences 
+    could make these items not exactly equal, but also works for all scalars.
+    _{a1    The scalar on the left.}
+    _{a2    The scalar on the right.}
+    _{accuracy  The maximum difference between a1 and a2 for these values to be
+    considered equal.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 
 #define STAssertEqualsWithAccuracy(a1, a2, accuracy, description, ...) \
 do { \
     @try {\
-		if (@encode(__typeof__(a1)) != @encode(__typeof__(a2))) { \
-			[self failWithException:[NSException failureInFile:[NSString stringWithUTF8String:__FILE__] \
-														atLine:__LINE__ \
-											   withDescription:[@"Type mismatch -- " stringByAppendingString:STComposeString(description, ##__VA_ARGS__)]]]; \
-		} \
-		else { \
-			__typeof__(a1) a1value = (a1); \
-			__typeof__(a2) a2value = (a2); \
-			__typeof__(accuracy) accuracyvalue = (accuracy); \
-			if (STAbsoluteDifference(a1value, a2value) > accuracyvalue) { \
-				NSValue *a1encoded = [NSValue value:&a1value withObjCType:@encode(__typeof__(a1))]; \
-				NSValue *a2encoded = [NSValue value:&a2value withObjCType:@encode(__typeof__(a2))]; \
-				NSValue *accuracyencoded = [NSValue value:&accuracyvalue withObjCType:@encode(__typeof__(accuracy))]; \
-				[self failWithException:[NSException failureInEqualityBetweenValue: a1encoded \
-																		  andValue: a2encoded \
-																		  withAccuracy: accuracyencoded \
-																			inFile: [NSString stringWithUTF8String:__FILE__] \
-																			atLine: __LINE__ \
-																   withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
-			} \
-		} \
+        if (strcmp(@encode(__typeof__(a1)), @encode(__typeof__(a2))) != 0) { \
+            [self failWithException:([NSException failureInFile:[NSString stringWithUTF8String:__FILE__] \
+                                                         atLine:__LINE__ \
+                                                withDescription:@"%@", [@"Type mismatch -- " stringByAppendingString:STComposeString(description, ##__VA_ARGS__)]])]; \
+        } \
+        else { \
+            __typeof__(a1) a1value = (a1); \
+            __typeof__(a2) a2value = (a2); \
+            __typeof__(accuracy) accuracyvalue = (accuracy); \
+            if (STAbsoluteDifference(a1value, a2value) > accuracyvalue) { \
+                NSValue *a1encoded = [NSValue value:&a1value withObjCType:@encode(__typeof__(a1))]; \
+                NSValue *a2encoded = [NSValue value:&a2value withObjCType:@encode(__typeof__(a2))]; \
+                NSValue *accuracyencoded = [NSValue value:&accuracyvalue withObjCType:@encode(__typeof__(accuracy))]; \
+                [self failWithException:([NSException failureInEqualityBetweenValue:a1encoded \
+                                                                           andValue:a2encoded \
+                                                                       withAccuracy:accuracyencoded \
+                                                                             inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                                             atLine:__LINE__ \
+                                                                    withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
+            } \
+        } \
     } \
     @catch (id anException) {\
-        [self failWithException:[NSException failureInRaise:[NSString stringWithFormat: @"(%s) == (%s)", #a1, #a2] \
-												  exception:anException \
-													 inFile:[NSString stringWithUTF8String:__FILE__] \
-													 atLine:__LINE__ \
-											withDescription:STComposeString(description, ##__VA_ARGS__)]]; \
+        [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"(%s) == (%s)", #a1, #a2] \
+                                                   exception:anException \
+                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                      atLine:__LINE__ \
+                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
     }\
 } while(0)
 
 
 
 /*" Generates a failure unconditionally. 
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STFail(description, ...) \
-[self failWithException:[NSException failureInFile: [NSString stringWithUTF8String:__FILE__] \
-                                            atLine: __LINE__ \
-                                   withDescription: STComposeString(description, ##__VA_ARGS__)]]
+[self failWithException:([NSException failureInFile:[NSString stringWithUTF8String:__FILE__] \
+                                             atLine:__LINE__ \
+                                    withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]
 
 
 
 /*" Generates a failure when a1 is not nil.
     _{a1    An object.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertNil(a1, description, ...) \
 do { \
     @try {\
         id a1value = (a1); \
                 if (a1value != nil) { \
-                    NSString *_a1 = [NSString stringWithUTF8String: #a1]; \
+                    NSString *_a1 = [NSString stringWithUTF8String:#a1]; \
                     NSString *_expression = [NSString stringWithFormat:@"((%@) == nil)", _a1]; \
-                    [self failWithException:[NSException failureInCondition: _expression \
-                                                                     isTrue: NO \
-                                                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                                     atLine: __LINE__ \
-                                                            withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+                    [self failWithException:([NSException failureInCondition:_expression \
+                                                                      isTrue:NO \
+                                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                                      atLine:__LINE__ \
+                                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
                 } \
     }\
     @catch (id anException) {\
-        [self failWithException:[NSException failureInRaise:[NSString stringWithFormat: @"(%s) == nil fails", #a1] \
-                                                  exception:anException \
-                                                     inFile:[NSString stringWithUTF8String:__FILE__] \
-                                                     atLine:__LINE__ \
-                                            withDescription:STComposeString(description, ##__VA_ARGS__)]]; \
+        [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"(%s) == nil fails", #a1] \
+                                                   exception:anException \
+                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                      atLine:__LINE__ \
+                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
     }\
 } while(0)
 
 
 /*" Generates a failure when a1 is nil.
     _{a1    An object.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertNotNil(a1, description, ...) \
 do { \
     @try {\
         id a1value = (a1); \
                 if (a1value == nil) { \
-                    NSString *_a1 = [NSString stringWithUTF8String: #a1]; \
+                    NSString *_a1 = [NSString stringWithUTF8String:#a1]; \
                     NSString *_expression = [NSString stringWithFormat:@"((%@) != nil)", _a1]; \
-                    [self failWithException:[NSException failureInCondition: _expression \
-                                                                     isTrue: NO \
-                                                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                                     atLine: __LINE__ \
-                                                            withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+                    [self failWithException:([NSException failureInCondition:_expression \
+                                                                      isTrue:NO \
+                                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                                      atLine:__LINE__ \
+                                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
                 } \
     }\
     @catch (id anException) {\
-        [self failWithException:[NSException failureInRaise:[NSString stringWithFormat: @"(%s) != nil fails", #a1] \
-                                                  exception:anException \
-                                                     inFile:[NSString stringWithUTF8String:__FILE__] \
-                                                     atLine:__LINE__ \
-                                            withDescription:STComposeString(description, ##__VA_ARGS__)]]; \
+        [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"(%s) != nil fails", #a1] \
+                                                   exception:anException \
+                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                      atLine:__LINE__ \
+                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
     }\
 } while(0)
 
 
 /*" Generates a failure when expression evaluates to false. 
     _{expr    The expression that is tested.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertTrue(expr, description, ...) \
 do { \
         BOOL _evaluatedExpression = (expr);\
             if (!_evaluatedExpression) {\
-                NSString *_expression = [NSString stringWithUTF8String: #expr];\
-                    [self failWithException:[NSException failureInCondition: _expression \
-                                                                     isTrue: NO \
-                                                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                                     atLine: __LINE__ \
-                                                            withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+                NSString *_expression = [NSString stringWithUTF8String:#expr];\
+                    [self failWithException:([NSException failureInCondition:_expression \
+                                                                      isTrue:NO \
+                                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                                      atLine:__LINE__ \
+                                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
             } \
 } while (0)
 
@@ -302,49 +303,49 @@ do { \
 /*" Generates a failure when expression evaluates to false and in addition will 
     generate error messages if an exception is encountered. 
     _{expr    The expression that is tested.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertTrueNoThrow(expr, description, ...) \
 do { \
     @try {\
         BOOL _evaluatedExpression = (expr);\
             if (!_evaluatedExpression) {\
-                NSString *_expression = [NSString stringWithUTF8String: #expr];\
-                    [self failWithException:[NSException failureInCondition: _expression \
-                                                                     isTrue: NO \
-                                                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                                     atLine: __LINE__ \
-                                                            withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+                NSString *_expression = [NSString stringWithUTF8String:#expr];\
+                    [self failWithException:([NSException failureInCondition:_expression \
+                                                                      isTrue:NO \
+                                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                                      atLine:__LINE__ \
+                                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
             } \
     } \
     @catch (id anException) {\
-        [self failWithException:[NSException failureInRaise:[NSString stringWithFormat: @"(%s) ", #expr] \
-                                                  exception:anException \
-                                                     inFile:[NSString stringWithUTF8String:__FILE__] \
-                                                     atLine:__LINE__ \
-                                            withDescription:STComposeString(description, ##__VA_ARGS__)]]; \
+        [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"(%s) ", #expr] \
+                                                   exception:anException \
+                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                      atLine:__LINE__ \
+                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
     }\
 } while (0)
 
 
 /*" Generates a failure when the expression evaluates to true. 
     _{expr    The expression that is tested.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertFalse(expr, description, ...) \
 do { \
         BOOL _evaluatedExpression = (expr);\
             if (_evaluatedExpression) {\
-                NSString *_expression = [NSString stringWithUTF8String: #expr];\
-                    [self failWithException:[NSException failureInCondition: _expression \
-                                                                     isTrue: YES \
-                                                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                                     atLine: __LINE__ \
-                                                            withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+                NSString *_expression = [NSString stringWithUTF8String:#expr];\
+                    [self failWithException:([NSException failureInCondition:_expression \
+                                                                      isTrue:YES \
+                                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                                      atLine:__LINE__ \
+                                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
             } \
 } while (0)
 
@@ -352,53 +353,56 @@ do { \
 /*" Generates a failure when the expression evaluates to true and in addition 
     will generate error messages if an exception is encountered.
     _{expr    The expression that is tested.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertFalseNoThrow(expr, description, ...) \
 do { \
     @try {\
         BOOL _evaluatedExpression = (expr);\
             if (_evaluatedExpression) {\
-                NSString *_expression = [NSString stringWithUTF8String: #expr];\
-                    [self failWithException:[NSException failureInCondition: _expression \
-                                                                     isTrue: YES \
-                                                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                                     atLine: __LINE__ \
-                                                            withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+                NSString *_expression = [NSString stringWithUTF8String:#expr];\
+                    [self failWithException:([NSException failureInCondition:_expression \
+                                                                      isTrue:YES \
+                                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                                      atLine:__LINE__ \
+                                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
             } \
     } \
     @catch (id anException) {\
-        [self failWithException:[NSException failureInRaise:[NSString stringWithFormat: @"!(%s) ", #expr] \
-                                                  exception:anException \
-                                                     inFile:[NSString stringWithUTF8String:__FILE__] \
-                                                     atLine:__LINE__ \
-                                            withDescription:STComposeString(description, ##__VA_ARGS__)]]; \
+        [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"!(%s) ", #expr] \
+                                                   exception:anException \
+                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                      atLine:__LINE__ \
+                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
     }\
 } while (0)
 
 
 /*" Generates a failure when expression does not throw an exception. 
     _{expression    The expression that is evaluated.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 
 "*/
 #define STAssertThrows(expr, description, ...) \
 do { \
+    BOOL __caughtException = NO; \
     @try { \
         (expr);\
     } \
     @catch (id anException) { \
-        continue; \
+        __caughtException = YES; \
     }\
-    [self failWithException:[NSException failureInRaise: [NSString stringWithUTF8String:#expr] \
-                                              exception: nil \
-                                                 inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                 atLine: __LINE__ \
-                                        withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+    if (!__caughtException) { \
+        [self failWithException:([NSException failureInRaise:[NSString stringWithUTF8String:#expr] \
+                                                   exception:nil \
+                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                      atLine:__LINE__ \
+                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
+    } \
 } while (0)
 
 
@@ -406,34 +410,37 @@ do { \
     specific class. 
     _{expression    The expression that is evaluated.}
     _{specificException    The specified class of the exception.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 
 "*/
 #define STAssertThrowsSpecific(expr, specificException, description, ...) \
 do { \
+    BOOL __caughtException = NO; \
     @try { \
         (expr);\
     } \
     @catch (specificException *anException) { \
-        continue; \
+        __caughtException = YES; \
     }\
     @catch (id anException) {\
+        __caughtException = YES; \
         NSString *_descrip = STComposeString(@"(Expected exception: %@) %@", NSStringFromClass([specificException class]), description);\
-            [self failWithException:[NSException failureInRaise: [NSString stringWithUTF8String:#expr] \
-                                                      exception: anException \
-                                                         inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                         atLine: __LINE__ \
-                                                withDescription: STComposeString(_descrip, ##__VA_ARGS__)]]; \
-                                                    continue; \
+            [self failWithException:([NSException failureInRaise:[NSString stringWithUTF8String:#expr] \
+                                                       exception:anException \
+                                                          inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                          atLine:__LINE__ \
+                                                 withDescription:@"%@", STComposeString(_descrip, ##__VA_ARGS__)])]; \
     }\
-    NSString *_descrip = STComposeString(@"(Expected exception: %@) %@", NSStringFromClass([specificException class]), description);\
-        [self failWithException:[NSException failureInRaise: [NSString stringWithUTF8String:#expr] \
-                                                  exception: nil \
-                                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                     atLine: __LINE__ \
-                                            withDescription: STComposeString(_descrip, ##__VA_ARGS__)]]; \
+    if (!__caughtException) { \
+        NSString *_descrip = STComposeString(@"(Expected exception: %@) %@", NSStringFromClass([specificException class]), description);\
+            [self failWithException:([NSException failureInRaise:[NSString stringWithUTF8String:#expr] \
+                                                       exception:nil \
+                                                          inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                          atLine:__LINE__ \
+                                                 withDescription:@"%@", STComposeString(_descrip, ##__VA_ARGS__)])]; \
+    } \
 } while (0)
 
 
@@ -444,52 +451,56 @@ do { \
     _{expression    The expression that is evaluated.}
     _{specificException    The specified class of the exception.}
     _{aName    The name of the specified exception.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 
 "*/
 #define STAssertThrowsSpecificNamed(expr, specificException, aName, description, ...) \
 do { \
+    BOOL __caughtException = NO; \
     @try { \
         (expr);\
     } \
     @catch (specificException *anException) { \
-        if ([aName isEqualToString: [anException name]]) continue; \
-        NSString *_descrip = STComposeString(@"(Expected exception: %@ (name: %@)) %@", NSStringFromClass([specificException class]), aName, description);\
-        [self failWithException: \
-            [NSException failureInRaise: [NSString stringWithUTF8String:#expr] \
-                              exception: anException \
-                                 inFile: [NSString stringWithUTF8String:__FILE__] \
-                                 atLine: __LINE__ \
-                        withDescription: STComposeString(_descrip, ##__VA_ARGS__)]]; \
-        continue; \
+        __caughtException = YES; \
+        if (![aName isEqualToString:[anException name]]) { \
+            NSString *_descrip = STComposeString(@"(Expected exception: %@ (name: %@)) %@", NSStringFromClass([specificException class]), aName, description);\
+            [self failWithException: \
+                ([NSException failureInRaise:[NSString stringWithUTF8String:#expr] \
+                                   exception:anException \
+                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                      atLine:__LINE__ \
+                             withDescription:@"%@", STComposeString(_descrip, ##__VA_ARGS__)])]; \
+        } \
     }\
     @catch (id anException) {\
+        __caughtException = YES; \
         NSString *_descrip = STComposeString(@"(Expected exception: %@) %@", NSStringFromClass([specificException class]), description);\
         [self failWithException: \
-            [NSException failureInRaise: [NSString stringWithUTF8String:#expr] \
-                              exception: anException \
-                                 inFile: [NSString stringWithUTF8String:__FILE__] \
-                                 atLine: __LINE__ \
-                        withDescription: STComposeString(_descrip, ##__VA_ARGS__)]]; \
-        continue; \
+            ([NSException failureInRaise:[NSString stringWithUTF8String:#expr] \
+                               exception:anException \
+                                  inFile:[NSString stringWithUTF8String:__FILE__] \
+                                  atLine:__LINE__ \
+                         withDescription:@"%@", STComposeString(_descrip, ##__VA_ARGS__)])]; \
     }\
-    NSString *_descrip = STComposeString(@"(Expected exception: %@) %@", NSStringFromClass([specificException class]), description);\
-    [self failWithException: \
-        [NSException failureInRaise: [NSString stringWithUTF8String:#expr] \
-                          exception: nil \
-                             inFile: [NSString stringWithUTF8String:__FILE__] \
-                             atLine: __LINE__ \
-                    withDescription: STComposeString(_descrip, ##__VA_ARGS__)]]; \
+    if (!__caughtException) { \
+        NSString *_descrip = STComposeString(@"(Expected exception: %@) %@", NSStringFromClass([specificException class]), description);\
+        [self failWithException: \
+            ([NSException failureInRaise:[NSString stringWithUTF8String:#expr] \
+                               exception:nil \
+                                  inFile:[NSString stringWithUTF8String:__FILE__] \
+                                  atLine:__LINE__ \
+                         withDescription:@"%@", STComposeString(_descrip, ##__VA_ARGS__)])]; \
+    } \
 } while (0)
 
 
 /*" Generates a failure when expression does throw an exception. 
     _{expression    The expression that is evaluated.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertNoThrow(expr, description, ...) \
 do { \
@@ -497,11 +508,11 @@ do { \
         (expr);\
     } \
     @catch (id anException) { \
-        [self failWithException:[NSException failureInRaise: [NSString stringWithUTF8String:#expr] \
-                                                  exception: anException \
-                                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                     atLine: __LINE__ \
-                                            withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+        [self failWithException:([NSException failureInRaise:[NSString stringWithUTF8String:#expr] \
+                                                   exception:anException \
+                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                      atLine:__LINE__ \
+                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
     }\
 } while (0)
 
@@ -510,9 +521,9 @@ do { \
     class. Any other exception is okay (i.e. does not generate a failure).
     _{expression    The expression that is evaluated.}
     _{specificException    The specified class of the exception.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 "*/
 #define STAssertNoThrowSpecific(expr, specificException, description, ...) \
 do { \
@@ -520,11 +531,11 @@ do { \
         (expr);\
     } \
     @catch (specificException *anException) { \
-        [self failWithException:[NSException failureInRaise: [NSString stringWithUTF8String:#expr] \
-                                                  exception: anException \
-                                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                                     atLine: __LINE__ \
-                                            withDescription: STComposeString(description, ##__VA_ARGS__)]]; \
+        [self failWithException:([NSException failureInRaise:[NSString stringWithUTF8String:#expr] \
+                                                   exception:anException \
+                                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                                      atLine:__LINE__ \
+                                             withDescription:@"%@", STComposeString(description, ##__VA_ARGS__)])]; \
     }\
     @catch (id anythingElse) {\
         ; \
@@ -539,9 +550,9 @@ do { \
     _{expression    The expression that is evaluated.}
     _{specificException    The specified class of the exception.}
     _{aName    The name of the specified exception.}
-	_{description A format string as in the printf() function. Can be nil or
-		an empty string but must be present.}
-	_{... A variable number of arguments to the format string. Can be absent.}
+    _{description A format string as in the printf() function. Can be nil or
+        an empty string but must be present.}
+    _{... A variable number of arguments to the format string. Can be absent.}
 
 "*/
 #define STAssertNoThrowSpecificNamed(expr, specificException, aName, description, ...) \
@@ -550,16 +561,15 @@ do { \
         (expr);\
     } \
     @catch (specificException *anException) { \
-        if ([aName isEqualToString: [anException name]]) { \
+        if ([aName isEqualToString:[anException name]]) { \
             NSString *_descrip = STComposeString(@"(Expected exception: %@ (name: %@)) %@", NSStringFromClass([specificException class]), aName, description);\
             [self failWithException: \
-                [NSException failureInRaise: [NSString stringWithUTF8String:#expr] \
-                                  exception: anException \
-                                     inFile: [NSString stringWithUTF8String:__FILE__] \
-                                     atLine: __LINE__ \
-                            withDescription: STComposeString(_descrip, ##__VA_ARGS__)]]; \
+                ([NSException failureInRaise:[NSString stringWithUTF8String:#expr] \
+                                   exception:anException \
+                                      inFile:[NSString stringWithUTF8String:__FILE__] \
+                                      atLine:__LINE__ \
+                             withDescription:@"%@", STComposeString(_descrip, ##__VA_ARGS__)])]; \
         } \
-        continue; \
     }\
     @catch (id anythingElse) {\
         ; \

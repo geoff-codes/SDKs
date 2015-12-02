@@ -1,5 +1,5 @@
 /*	NSThread.h
-	Copyright (c) 1994-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -26,14 +26,16 @@
 
 + (void)exit;
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
-+ (double)threadPriority;
-+ (BOOL)setThreadPriority:(double)p;
-#endif
++ (double)threadPriority NS_AVAILABLE(10_2, 2_0);
++ (BOOL)setThreadPriority:(double)p NS_AVAILABLE(10_2, 2_0);
 
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+
+- (double)threadPriority NS_AVAILABLE(10_6, 4_0);
+- (void)setThreadPriority:(double)p NS_AVAILABLE(10_6, 4_0);
 
 + (NSArray *)callStackReturnAddresses;
++ (NSArray *)callStackSymbols NS_AVAILABLE(10_6, 4_0);
 
 - (void)setName:(NSString *)n;
 - (NSString *)name;
@@ -68,13 +70,13 @@ FOUNDATION_EXPORT NSString * const NSThreadWillExitNotification;
 
 @interface NSObject (NSThreadPerformAdditions)
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (void)performSelectorOnMainThread:(SEL)aSelector withObject:(id)arg waitUntilDone:(BOOL)wait modes:(NSArray *)array;
 - (void)performSelectorOnMainThread:(SEL)aSelector withObject:(id)arg waitUntilDone:(BOOL)wait;
 	// equivalent to the first method with kCFRunLoopCommonModes
 #endif
 
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(id)arg waitUntilDone:(BOOL)wait modes:(NSArray *)array;
 - (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(id)arg waitUntilDone:(BOOL)wait;
 	// equivalent to the first method with kCFRunLoopCommonModes

@@ -9,8 +9,7 @@ typedef struct CGDataProvider *CGDataProviderRef;
 
 #include <CoreGraphics/CGBase.h>
 #include <CoreFoundation/CFURL.h>
-#include <stddef.h>
-#include <unistd.h>
+#include <sys/types.h>
 
 /* This callback is called to copy `count' bytes from the sequential data
    stream to `buffer'. */

@@ -1,15 +1,14 @@
 /*	CFSocket.h
-	Copyright (c) 1999-2007, Apple Inc.  All rights reserved.
+	Copyright (c) 1999-2010, Apple Inc.  All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFSOCKET__)
 #define __COREFOUNDATION_CFSOCKET__ 1
 
+#include <TargetConditionals.h>
+
 #if TARGET_OS_WIN32
-// This needs to be early in the file, before sys/types gets included, or winsock.h complains
-// about "fd_set and associated macros have been defined".
-#include <winsock2.h>
-typedef SOCKET CFSocketNativeHandle;
+typedef uintptr_t CFSocketNativeHandle;
 #else
 typedef int CFSocketNativeHandle;
 #endif
@@ -120,20 +119,23 @@ enum {
     kCFSocketAcceptCallBack = 2,
     kCFSocketDataCallBack = 3,
     kCFSocketConnectCallBack = 4
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     ,
     kCFSocketWriteCallBack = 8
 #endif
 };
 typedef CFOptionFlags CFSocketCallBackType;
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 /* Socket flags */
 enum {
     kCFSocketAutomaticallyReenableReadCallBack = 1,
     kCFSocketAutomaticallyReenableAcceptCallBack = 2,
     kCFSocketAutomaticallyReenableDataCallBack = 3,
     kCFSocketAutomaticallyReenableWriteCallBack = 8,
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
+    kCFSocketLeaveErrors = 64,
+#endif
     kCFSocketCloseOnInvalidate = 128
 };
 #endif
@@ -169,7 +171,7 @@ CF_EXPORT CFSocketNativeHandle	CFSocketGetNative(CFSocketRef s);
 
 CF_EXPORT CFRunLoopSourceRef	CFSocketCreateRunLoopSource(CFAllocatorRef allocator, CFSocketRef s, CFIndex order);
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 CF_EXPORT CFOptionFlags	CFSocketGetSocketFlags(CFSocketRef s);
 CF_EXPORT void		CFSocketSetSocketFlags(CFSocketRef s, CFOptionFlags flags);
 CF_EXPORT void		CFSocketDisableCallBacks(CFSocketRef s, CFOptionFlags callBackTypes);

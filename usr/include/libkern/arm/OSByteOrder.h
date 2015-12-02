@@ -24,7 +24,9 @@ _OSSwapInt16(
     uint16_t        data
 )
 {
-#if defined(_ARM_ARCH_6)
+#if defined(__llvm__)
+  data = (data << 8 | data >> 8);
+#elif defined(_ARM_ARCH_6)
   __asm__ ("rev16 %0, %1\n" : "=l" (data) : "l" (data));
 #else
   data = (data << 8 | data >> 8);
@@ -39,7 +41,9 @@ _OSSwapInt32(
     uint32_t        data
 )
 {
-#if defined(_ARM_ARCH_6)
+#if defined(__llvm__)
+  data = __builtin_bswap32(data);
+#elif defined(_ARM_ARCH_6)
   __asm__ ("rev %0, %1\n" : "=l" (data) : "l" (data));
 #else
   /* This actually generates the best code */
@@ -55,6 +59,9 @@ _OSSwapInt64(
     uint64_t        data
 )
 {
+#if defined(__llvm__)
+    return __builtin_bswap64(data);
+#else
     union {
         uint64_t ull;
         uint32_t ul[2];
@@ -66,6 +73,7 @@ _OSSwapInt64(
     u.ul[0] = _OSSwapInt32(u.ul[0]);
     u.ul[1] = _OSSwapInt32(u.ul[1]);
     return u.ull;
+#endif
 }
 
 /* Functions for byte reversed loads. */

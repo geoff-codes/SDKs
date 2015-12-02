@@ -1,5 +1,5 @@
 /*	CFCharacterSet.h
-	Copyright (c) 1999-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1999-2010, Apple Inc. All rights reserved.
 */
 
 /*!
@@ -65,13 +65,13 @@ enum {
     kCFCharacterSetDecomposable, /* Canonically decomposable character set */
     kCFCharacterSetAlphaNumeric, /* Alpha Numeric character set (Unicode General Category L*, M*, & N*) */
     kCFCharacterSetPunctuation, /* Punctuation character set (Unicode General Category P*) */
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     kCFCharacterSetCapitalizedLetter = 13, /* Titlecase character set (Unicode General Category Lt) */
 #endif
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     kCFCharacterSetSymbol = 14, /* Symbol character set (Unicode General Category S*) */
 #endif
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     kCFCharacterSetNewline = 15, /* Newline character set (U000A ~ U000D, U0085, U2028, and U2029) */
 #endif
     kCFCharacterSetIllegal = 12/* Illegal character set */
@@ -162,7 +162,7 @@ CFCharacterSetRef CFCharacterSetCreateWithCharactersInString(CFAllocatorRef allo
 CF_EXPORT
 CFCharacterSetRef CFCharacterSetCreateWithBitmapRepresentation(CFAllocatorRef alloc, CFDataRef theData);
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 /*!
 	@function CFCharacterSetCreateInvertedSet
 	Creates a new immutable character set that is the invert of the specified character set.
@@ -213,7 +213,7 @@ CF_EXPORT Boolean CFCharacterSetHasMemberInPlane(CFCharacterSetRef theSet, CFInd
 CF_EXPORT
 CFMutableCharacterSetRef CFCharacterSetCreateMutable(CFAllocatorRef alloc);
 
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 /*!
 	@function CFCharacterSetCreateCopy
 	Creates a new character set with the values from the given character set.  This function tries to compact the backing store where applicable.
@@ -228,7 +228,7 @@ CFMutableCharacterSetRef CFCharacterSetCreateMutable(CFAllocatorRef alloc);
 	@result A reference to the new CFCharacterSet.
 */
 CF_EXPORT
-CFCharacterSetRef CFCharacterSetCreateCopy(CFAllocatorRef alloc, CFCharacterSetRef theSet) AVAILABLE_MAC_OS_X_VERSION_10_3_AND_LATER;
+CFCharacterSetRef CFCharacterSetCreateCopy(CFAllocatorRef alloc, CFCharacterSetRef theSet) CF_AVAILABLE(10_3, 2_0);
 #endif
 
 /*!
@@ -261,7 +261,7 @@ CFMutableCharacterSetRef CFCharacterSetCreateMutableCopy(CFAllocatorRef alloc, C
 CF_EXPORT
 Boolean CFCharacterSetIsCharacterMember(CFCharacterSetRef theSet, UniChar theChar);
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 /*!
 	@function CFCharacterSetIsLongCharacterMember
 	Reports whether or not the UTF-32 character is in the character set.

@@ -2,7 +2,7 @@
 //  UIBarButtonItem.h
 //  UIKit
 //
-//  Copyright 2008-2009 Apple Inc. All rights reserved.
+//  Copyright 2008-2010 Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -38,20 +38,27 @@ typedef enum {
     UIBarButtonSystemItemPause,
     UIBarButtonSystemItemRewind,
     UIBarButtonSystemItemFastForward,
-    UIBarButtonSystemItemUndo,		// available in iPhone 3.0
-    UIBarButtonSystemItemRedo,		// available in iPhone 3.0
+#if __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    UIBarButtonSystemItemUndo,
+    UIBarButtonSystemItemRedo,
+#endif
+#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    UIBarButtonSystemItemPageCurl,
+#endif
 } UIBarButtonSystemItem;
 
 @class UIImage, UIView;
 
-UIKIT_EXTERN_CLASS @interface UIBarButtonItem : UIBarItem {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIBarButtonItem : UIBarItem {
   @private
     NSString     *_title;
     NSSet        *_possibleTitles;
     SEL           _action;
     id            _target;
     UIImage      *_image;
+    UIImage      *_miniImage;
     UIEdgeInsets  _imageInsets;
+    UIEdgeInsets  _miniImageInsets;
     CGFloat       _width;   
     UIView       *_view;
     NSInteger     _tag;
@@ -62,6 +69,8 @@ UIKIT_EXTERN_CLASS @interface UIBarButtonItem : UIBarItem {
         unsigned int systemItem:7;
         unsigned int viewIsCustom:1;
         unsigned int isMinibarView:1;
+        unsigned int disableAutosizing:1;
+        unsigned int selected:1;
     } _barButtonItemFlags;
 }
 

@@ -2,7 +2,7 @@
  *  AddressBook.h
  *  AddressBook
  *
- *  Copyright (c) 2008 Apple, Inc. All rights reserved.
+ *  Copyright (c) 2010 Apple Inc. All rights reserved.
  *
  *  This library is not threadsafe. Recommended practice is to use
  *  a separate ABAddressBook instance on each thread in your

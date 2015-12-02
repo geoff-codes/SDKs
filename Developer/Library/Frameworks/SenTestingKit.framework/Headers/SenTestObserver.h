@@ -29,6 +29,7 @@
 // This notice may not be removed from this file.
 
 #import <Foundation/Foundation.h>
+#import <SenTestingKit/SenTestDefines.h>
 
 @class SenTest;
 @class SenTestRun;
@@ -55,3 +56,5 @@
 - (NSException *) exception;
 @end
 
+// Setting the SenTestObserverClass user default to the name of a subclass of SenTestObserver indicates that OCUnit should use that subclass for reporting test results rather than the default, SenTestLog.
+SENTEST_EXPORT NSString *SenTestObserverClassKey;

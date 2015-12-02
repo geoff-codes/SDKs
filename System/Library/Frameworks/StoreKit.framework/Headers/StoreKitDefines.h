@@ -12,3 +12,4 @@
 #endif
 
 #define	SK_EXTERN_CLASS	__attribute__((visibility("default")))
+#define SK_EXTERN_CLASS_AVAILABLE(version) __attribute__((visibility("default"))) NS_CLASS_AVAILABLE(NA, version)

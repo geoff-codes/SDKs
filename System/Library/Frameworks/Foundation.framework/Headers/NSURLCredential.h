@@ -1,6 +1,6 @@
 /*	
     NSURLCredential.h
-    Copyright (C) 2003-2007, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2010, Apple Inc. All rights reserved.    
     
     Public header file.
 */
@@ -8,7 +8,7 @@
 // Note: To use the APIs described in these headers, you must perform
 // a runtime check for Foundation-462.1 or later.
 #import <AvailabilityMacros.h>
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/NSObject.h>
 #import <Security/Security.h>
@@ -21,7 +21,7 @@
     @abstract Constants defining how long a credential will be kept around
     @constant NSURLCredentialPersistenceNone This credential won't be saved.
     @constant NSURLCredentialPersistenceForSession This credential will only be stored for this session.
-    @constant NSURLCredentialPersistencePermanent This credential will be stored permanently and shared with other applications.
+    @constant NSURLCredentialPersistencePermanent This credential will be stored permanently. Note: Whereas in Mac OS X any application can access any credential provided the user gives permission, in iPhone OS an application can access only its own credentials.
 */
 
 enum {
@@ -123,7 +123,7 @@ typedef NSUInteger NSURLCredentialPersistence;
     @param persistence enum that says to store per session, permanently or not at all
     @result the Initialized NSURLCredential
  */
-- (id)initWithIdentity:(SecIdentityRef)identity certificates:(NSArray *)certArray persistence:(NSURLCredentialPersistence) persistence __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (id)initWithIdentity:(SecIdentityRef)identity certificates:(NSArray *)certArray persistence:(NSURLCredentialPersistence) persistence NS_AVAILABLE(10_6, 3_0);
 
 /*!
     @method credentialWithCertificateArray:password:persistence:
@@ -133,21 +133,21 @@ typedef NSUInteger NSURLCredentialPersistence;
     @param persistence enum that says to store per session, permanently or not at all
     @result The new autoreleased NSURLCredential
  */
-+ (NSURLCredential *)credentialWithIdentity:(SecIdentityRef)identity certificates:(NSArray *)certArray persistence:(NSURLCredentialPersistence)persistence __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
++ (NSURLCredential *)credentialWithIdentity:(SecIdentityRef)identity certificates:(NSArray *)certArray persistence:(NSURLCredentialPersistence)persistence NS_AVAILABLE(10_6, 3_0);
 
 /*!
     @method identity
     @abstract Returns the SecIdentityRef of this credential, if it was created with a certificate and identity
     @result A SecIdentityRef or NULL if this is a username/password credential
  */
-- (SecIdentityRef)identity __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (SecIdentityRef)identity;
 
 /*!
     @method certificateArray
     @abstract Returns an NSArray of SecCertificateRef objects representing the client certificate for this credential, if this credential was created with an identity and certificate.
     @result an NSArray of SecCertificateRef or NULL if this is a username/password credential
  */
-- (NSArray *)certificates __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (NSArray *)certificates NS_AVAILABLE(10_6, 3_0);
 
 @end
 
@@ -158,14 +158,14 @@ typedef NSUInteger NSURLCredentialPersistence;
     @abstract Initialize a new NSURLCredential which specifies that the specified trust has been accepted.
     @result the Initialized NSURLCredential
  */
-- (id)initWithTrust:(SecTrustRef)trust __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (id)initWithTrust:(SecTrustRef)trust NS_AVAILABLE(10_6, 3_0);
 
 /*!
     @method continueWithHandshakeCredential
     @abstract Create a new NSURLCredential which specifies that a handshake has been trusted.
     @result The new autoreleased NSURLCredential
  */
-+ (NSURLCredential *)credentialForTrust:(SecTrustRef)trust __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
++ (NSURLCredential *)credentialForTrust:(SecTrustRef)trust NS_AVAILABLE(10_6, 3_0);
 
 @end
 

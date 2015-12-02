@@ -2,7 +2,7 @@
  *  AddressBookUI.h
  *  AddressBook
  *
- *  Copyright 2008 Apple Inc. All rights reserved.
+ *  Copyright (c) 2010 Apple Inc. All rights reserved.
  *
  */
 
@@ -18,6 +18,7 @@ extern "C" {
 #import <AddressBookUI/ABPersonViewController.h>
 #import <AddressBookUI/ABNewPersonViewController.h>
 #import <AddressBookUI/ABUnknownPersonViewController.h>
+#import <AddressBookUI/ABAddressFormatting.h>
 
 #if defined(__cplusplus)
 }

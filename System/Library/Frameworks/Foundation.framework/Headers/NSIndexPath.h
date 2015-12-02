@@ -1,10 +1,10 @@
 /*  NSIndexPath.h
-    Copyright (c) 2003-2008, Apple Inc. All rights reserved.
+    Copyright (c) 2003-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @interface NSIndexPath : NSObject <NSCopying, NSCoding> {
 	@private

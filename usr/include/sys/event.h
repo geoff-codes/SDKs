@@ -70,8 +70,9 @@
 #define EVFILT_MACHPORT         (-8)	/* Mach portsets */
 #define EVFILT_FS		(-9)	/* Filesystem events */
 #define EVFILT_USER             (-10)   /* User events */
+#define	EVFILT_SESSION		(-11)	/* Audit session events */
 
-#define EVFILT_SYSCOUNT		10
+#define EVFILT_SYSCOUNT		11
 #define EVFILT_THREADMARKER	EVFILT_SYSCOUNT /* Internal use only */
 
 #pragma pack(4)
@@ -162,27 +163,28 @@ struct kevent64_s {
 #define EV_OOBAND	EV_FLAG1
 
 /*
- * Filter specific flags for EVFILT_USER
- * 
- * On input, EV_TRIGGER causes the event to be triggered for output.
+ * data/hint fflags for EVFILT_USER, shared with userspace
  */
-#define EV_TRIGGER      0x0100
 
 /*
- * data/hint fflags for EVFILT_USER, shared with userspace
- *
- * On input, the top two bits of fflags specifies how the remaining thirty
+ * On input, NOTE_TRIGGER causes the event to be triggered for output.
+ */
+#define NOTE_TRIGGER	0x01000000
+#define EV_TRIGGER      0x0100 /*deprecated--for backwards compatibility only*/
+
+/*
+ * On input, the top two bits of fflags specifies how the lower twenty four 
  * bits should be applied to the stored value of fflags.
  *
  * On output, the top two bits will always be set to NOTE_FFNOP and the
- * remaining thirty bits will contain the stored fflags value.
+ * remaining twenty four bits will contain the stored fflags value.
  */
 #define NOTE_FFNOP      0x00000000              /* ignore input fflags */
 #define NOTE_FFAND      0x40000000              /* and fflags */
 #define NOTE_FFOR       0x80000000              /* or fflags */
 #define NOTE_FFCOPY     0xc0000000              /* copy fflags */
 #define NOTE_FFCTRLMASK 0xc0000000              /* mask for operations */
-#define NOTE_FFLAGSMASK (~NOTE_FFCTRLMASK)      /* mask for user fflags */
+#define NOTE_FFLAGSMASK	0x00ffffff 
 
 /*
  * data/hint fflags for EVFILT_{READ|WRITE}, shared with userspace
@@ -210,13 +212,14 @@ struct kevent64_s {
  * that hangs off the proc structure. They also both play games with the hint
  * passed to KNOTE(). If NOTE_SIGNAL is passed as a hint, then the lower bits
  * of the hint contain the signal. IF NOTE_FORK is passed, then the lower bits
- * contain the PID of the child.
+ * contain the PID of the child. 
  */
 #define	NOTE_EXIT	0x80000000		/* process exited */
 #define	NOTE_FORK	0x40000000		/* process forked */
 #define	NOTE_EXEC	0x20000000		/* process exec'd */
 #define	NOTE_REAP	0x10000000		/* process reaped */
 #define	NOTE_SIGNAL	0x08000000		/* shared with EVFILT_SIGNAL */
+#define	NOTE_EXITSTATUS	0x04000000		/* exit status to be returned, valid for child process only */
 #define	NOTE_PDATAMASK	0x000fffff		/* mask for pid/signal */
 #define	NOTE_PCTRLMASK	(~NOTE_PDATAMASK)
 
@@ -241,19 +244,38 @@ struct kevent64_s {
  * and related trailer receive options as defined in <mach/message.h>.
  * The presence of these flags directs the kevent64() call to attempt to receive
  * the message during kevent delivery, rather than just indicate that a message exists.
- * The data field contains the size of the receive buffer and ext[0] contains the
- * receive buffer pointer (as with mach_msg(), the buffer must be large enough to
- * receive the message and the message trailers).
+ * On setup, The ext[0] field contains the receive buffer pointer and ext[1] contains
+ * the receive buffer length.  Upon event delivery, the actual received message size
+ * is returned in ext[1].  As with mach_msg(), the buffer must be large enough to
+ * receive the message and the requested (or default) message trailers.  In addition,
+ * the fflags field contains the return code normally returned by mach_msg().
  *
- * If message receipt options were provided on input, on output fflags contains
- * the return code normally returned by mach_msg() for such a receive.
- *
- * On output, the data field contains the size of the message await receipt (or,
- * in the case of direct message receipt options being used, the size of the message
- * that acutally was received).
+ * If no message receipt options were provided in the fflags field on setup, no
+ * message is received by this call. Instead, on output, the data field simply
+ * contains the name of the actual port detected with a message waiting.
  */
 
+/*
+ * data/hint fflags for EVFILT_SESSION, shared with userspace.
+ *
+ * The kevent ident field should be set to AU_SESSION_ANY_ASID if interested
+ * in events for any session.
+ *
+ * NOTE_AS_UPDATE may be going away since struct auditinfo_addr may become 
+ * immutable once initially set.
+ */
+#define	NOTE_AS_START	0x00000001		/* start of new session */
+#define	NOTE_AS_END	0x00000002		/* start of new session */
+#define	NOTE_AS_ERR	0x00000004		/* error tracking new session */
+#define	NOTE_AS_CLOSE	0x00000008		/* currently unsupported */
+#define	NOTE_AS_UPDATE	0x00000010		/* session data updated */
 
+/*
+ * Kevent ident value for any session.
+ */
+#define	AS_ANY_ASID	0xFFFFFFFF
+
+struct au_sentry;	/* Audit session entry */
 
 
 /*

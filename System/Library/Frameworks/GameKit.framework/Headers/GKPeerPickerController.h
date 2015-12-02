@@ -2,7 +2,7 @@
  GKPeerPickerController.h
  Game Kit
  
- Copyright 2009 Apple, Inc. All rights reserved.
+ Copyright 2010 Apple, Inc. All rights reserved.
  
  This API provides a system-supplied user interface for selecting and connecting to another device for a multiplayer game.  The API introduces GKPeerPickerController for this purpose, and should be used in conjunction with the GKSession API.
  */
@@ -53,6 +53,7 @@ typedef NSUInteger GKPeerPickerConnectionType;
  
  You must provide a delegate that conforms to the GKPeerPickerControllerDelegate protocol in order to use this class. After the user interface starts, this class notifies your delegate of the user’s actions.
  */
+NS_CLASS_AVAILABLE(NA, 4_1)
 GK_EXTERN_CLASS @interface GKPeerPickerController : NSObject {
 @private
 	id _picker;

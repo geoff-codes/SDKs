@@ -2,7 +2,7 @@
  *  ABAddressBook.h
  *  AddressBook
  *
- *  Copyright (c) 2008 Apple, Inc. All rights reserved.
+ *  Copyright (c) 2010 Apple Inc. All rights reserved.
  *
  */
 

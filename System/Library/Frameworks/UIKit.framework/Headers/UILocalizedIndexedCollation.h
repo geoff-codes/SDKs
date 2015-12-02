@@ -2,15 +2,13 @@
 //  UILocalizedIndexedCollation.h
 //  UIKit
 //
-//  Copyright 2009 Apple Inc. All rights reserved.
+//  Copyright 2009-2010 Apple Inc. All rights reserved.
 //
-
-#if __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
 
-UIKIT_EXTERN_CLASS @interface UILocalizedIndexedCollation : NSObject
+UIKIT_CLASS_AVAILABLE(3_0) @interface UILocalizedIndexedCollation : NSObject
 {
   @package
     NSLocale *_locale;
@@ -45,5 +43,3 @@ UIKIT_EXTERN_CLASS @interface UILocalizedIndexedCollation : NSObject
 - (NSArray *)sortedArrayFromArray:(NSArray *)array collationStringSelector:(SEL)selector;
 
 @end
-
-#endif

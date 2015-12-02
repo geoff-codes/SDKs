@@ -2,7 +2,7 @@
 //  UIImage.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -21,14 +21,16 @@ typedef enum {
     UIImageOrientationRightMirrored, // vertical flip
 } UIImageOrientation;
 
-UIKIT_EXTERN_CLASS @interface UIImage : NSObject {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIImage : NSObject {
   @package
     CFTypeRef _imageRef;
+    CGFloat   _scale;
     struct {
 	unsigned int named:1;
 	unsigned int imageOrientation:3;
 	unsigned int cached:1;
 	unsigned int stretchable:1;
+	unsigned int hasBeenCached:1;
     } _imageFlags;
 }
 
@@ -37,14 +39,17 @@ UIKIT_EXTERN_CLASS @interface UIImage : NSObject {
 + (UIImage *)imageWithContentsOfFile:(NSString *)path;
 + (UIImage *)imageWithData:(NSData *)data;
 + (UIImage *)imageWithCGImage:(CGImageRef)imageRef;
++ (UIImage *)imageWithCGImage:(CGImageRef)imageRef scale:(CGFloat)scale orientation:(UIImageOrientation)orientation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 - (id)initWithContentsOfFile:(NSString *)path;
 - (id)initWithData:(NSData *)data;
 - (id)initWithCGImage:(CGImageRef)imageRef;
+- (id)initWithCGImage:(CGImageRef)imageRef scale:(CGFloat)scale orientation:(UIImageOrientation)orientation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 @property(nonatomic,readonly) CGSize             size;             // reflects orientation setting. size is in pixels
 @property(nonatomic,readonly) CGImageRef         CGImage;          // returns underlying CGImageRef
 @property(nonatomic,readonly) UIImageOrientation imageOrientation; // this will affect how the image is composited
+@property(nonatomic,readonly) CGFloat            scale __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 // the these draw the image 'right side up' in the usual coordinate system with 'point' being the top-left.
 

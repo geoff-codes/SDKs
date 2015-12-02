@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2008 Apple Inc. All rights reserved.
+ * Copyright (c) 2000-2010 Apple Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
@@ -439,11 +439,14 @@ struct ip_opts {
 
 #define	IP_TRAFFIC_MGT_BACKGROUND	65   /* int*; get background IO flags; set background IO */
 
+#define	IP_MULTICAST_IFINDEX	66   /* int*; set/get IP multicast i/f index */
+
 
 /* Background socket configuration flags */
 #ifdef __APPLE_API_UNSTABLE
-#define TRAFFIC_MGT_SO_BACKGROUND	0x0001
-#define TRAFFIC_MGT_SO_BG_SUPPRESSED	0x0002
+#define TRAFFIC_MGT_SO_BACKGROUND	0x0001	/* background socket */
+#define TRAFFIC_MGT_SO_BG_SUPPRESSED	0x0002	/* currently throttled */
+#define TRAFFIC_MGT_SO_BG_REGULATE	0x0004	/* traffic is regulated */
 #endif /* __APPLE_API_UNSTABLE */
 
 /*
@@ -512,10 +515,12 @@ struct ip_mreq {
 #undef __KAME_NETINET_IN_H_INCLUDED_
 
 
+#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
 __BEGIN_DECLS
 int        bindresvport(int, struct sockaddr_in *);
 struct sockaddr;
 int        bindresvport_sa(int, struct sockaddr *);
 __END_DECLS
+#endif
 
 #endif /* _NETINET_IN_H_ */

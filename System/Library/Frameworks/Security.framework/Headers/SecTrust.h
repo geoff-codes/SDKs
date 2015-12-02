@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2009 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2002-2010 Apple Inc. All Rights Reserved.
  * 
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -32,9 +32,8 @@
 
 #include <Security/SecBase.h>
 #include <CoreFoundation/CFArray.h>
+#include <CoreFoundation/CFData.h>
 #include <CoreFoundation/CFDate.h>
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1030 || __IPHONE_OS_VERSION_MIN_REQUIRED >= 20000
 
 #if defined(__cplusplus)
 extern "C" {
@@ -80,7 +79,6 @@ enum {
     kSecTrustResultOtherError
 };
 
-#endif /* __MAC_OS_X_VERSION_MIN_REQUIRED >= 1030 || __IPHONE_OS_VERSION_MIN_REQUIRED >= 20000 */
 
 /*!
 	@typedef SecTrustRef
@@ -100,7 +98,8 @@ CFTypeID SecTrustGetTypeID(void)
 	@function SecTrustCreateWithCertificates
 	@abstract Creates a trust object based on the given certificates and
     policies.
-    @param certificates The group of certificates to verify.
+    @param certificates The group of certificates to verify.  This can either
+    be a CFArrayRef of SecCertificateRef objects or a single SecCertificateRef
     @param policies An array of one or more policies. You may pass a
     SecPolicyRef to represent a single policy.
 	@param trustRef On return, a pointer to the trust management reference.
@@ -108,7 +107,7 @@ CFTypeID SecTrustGetTypeID(void)
     @discussion If multiple policies are passed in, all policies must verify
     for the chain to be considered valid.
 */
-OSStatus SecTrustCreateWithCertificates(CFArrayRef certificates,
+OSStatus SecTrustCreateWithCertificates(CFTypeRef certificates,
     CFTypeRef policies, SecTrustRef *trustRef)
     __OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_2_0);
 
@@ -209,6 +208,50 @@ CFIndex SecTrustGetCertificateCount(SecTrustRef trust)
 */
 SecCertificateRef SecTrustGetCertificateAtIndex(SecTrustRef trust, CFIndex ix)
     __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+
+/*!
+	@function SecTrustCopyExceptions
+	@abstract Returns an opauqe cookie which will allow future evaluations
+    of the current certificate to succeed.
+	@param trust A reference to an evaluated trust object.
+	@result An opaque cookie which when passed to SecTrustSetExceptions() will
+    cause a call to SecTrustEvaluate() return kSecTrustResultProceed.  This
+    will happen upon subsequent evaluation of the current certificate unless
+    some new error starts happening that wasn't being reported when the cookie
+    was returned from this function, for example if the certificate expires
+    evaluation will start failing again.
+    @discussion Normally this API should only be called once the errors have
+    been presented to the user and the user decided to trust the current
+    certificate chain regardless of the errors being presented, for the
+    current application/server/protocol/etc.
+*/
+CFDataRef SecTrustCopyExceptions(SecTrustRef trust)
+    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+
+/*!
+	@function SecTrustSetExceptions
+	@abstract Set a trust cookie to be used for evaluating this certificate chain.
+	@param trust A reference to an not yet evaluated trust object.
+    @param exceptions An exceptions cookie as returned by a call to
+    SecTrustCopyExceptions() in the past.
+	@result Upon calling SecTrustEvaluate(), any failures that where present at the
+    time the exceptions object was created are ignored, and instead of returning
+    kSecTrustResultRecoverableTrustFailure, kSecTrustResultProceed will be returned
+    (if the certificate for which exceptions was created matches the current leaf
+    certificate).
+    @discussion Clients of this interface will want to call
+    SecCertificateGetSHA1Digest(SecTrustGetCertificateAtIndex(trust, 0))
+    and use the result as one of the keys for deciding which exceptions cookie to use.
+    Examples of other keys to match on would be the server we are connecting to, the
+    ssid of the network this cert is for the account for which this cert should be
+    considered valid, etc.
+    @result true if the exceptions cookies was valid and matches the current leaf
+    certificate, false otherwise.  Note that this function returning true doesn't
+    mean the caller can skip calling SecTrustEvaluate(), as something could have
+    changed causing the evaluation to fail after all.
+*/
+bool SecTrustSetExceptions(SecTrustRef trust, CFDataRef exceptions)
+    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
 
 #if defined(__cplusplus)
 }

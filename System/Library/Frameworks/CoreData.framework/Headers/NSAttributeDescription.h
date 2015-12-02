@@ -38,6 +38,7 @@
 typedef NSUInteger NSAttributeType;
 
 // Attributes represent individual values like strings, numbers, dates, etc.
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSAttributeDescription : NSPropertyDescription {
 @private
 	Class _attributeValueClass;
@@ -45,8 +46,10 @@ typedef NSUInteger NSAttributeType;
     NSAttributeType _type;
     NSString *_attributeValueClassName;
     struct __attributeDescriptionFlags {
-        unsigned int _useForLocking:1;
-        unsigned int _reservedAttributeDescription:31;
+		unsigned int _hasMaxValueInExtraIvars:1;
+		unsigned int _hasMinValueInExtraIvars:1;
+		unsigned int _storeBinaryDataExternally:1;
+        unsigned int _reservedAttributeDescription:29;
     } _attributeDescriptionFlags;
     id _defaultValue;
 }

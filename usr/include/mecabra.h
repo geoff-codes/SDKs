@@ -1,122 +1,321 @@
 /*
-	mecabra.h
-*/
-#ifndef __MECABRA_H__
-#define __MECABRA_H__
+ * File: Mecabra.h
+ *
+ * Copyright: 2009 by Apple Inc. All rights reserved.
+ *
+ */
+
+#ifndef Mecabra_h
+#define Mecabra_h
 
 #include <CoreFoundation/CoreFoundation.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+/*
+===============================================================================
+    Basic Types And Constants
+===============================================================================
+*/
+/*!
+    @typedef  MecabraRef
+    @abstract Opaque object that represents mecabra input engine
+*/
+typedef const struct __Mecabra*  MecabraRef;
     
-// Temporarily make it public for the smooth transition to iPhone
-struct mecabra_candidate_t {
-    CFStringRef str;
-    CFStringRef reading;
-    uint8_t wordNum;
-    uint8_t lastIsPrefix; // Now it has values 0..2. 0=input yomi is complete, 1=input yomi is incomplete for the last word. 2=input yomi is incomplete for the one before the last word.
-    uint8_t kind;
-    uint8_t kind_index;
-    uint8_t wordLens[10];
-    uint8_t readingLens[10];
-    unsigned short lcAttrs[10];
-    unsigned short rcAttrs[10];
-    unsigned int trievalues[10];
-    int weight;
-};
-typedef struct mecabra_candidate_t mecabra_candidate_t;
-typedef struct mecabra_t mecabra_t;
-    
-
-/* ====================================
-    Pre-defined keys for parameter options(CFDictionary) of mecabra_new()
-   ==================================== */
-/* 
-    kMecabraOptionAmbiguousSearchKey
-    If its value is TRUE, do abmiguous search. Otherwize, not.
-    Key value: CFBoolean 
+/*! @enum     MecabraAnalysisOption
+    @abstract Options for analyzing string
+    @constant MecabraAnalysisDefault
+              Default option
+    @constant MecabraAnalysisNoPredictionMask
+              Not do prediction.
+    @constant MecabraAnalysisSingleWordMask
+              Treat the input string as single word.
+    @constant MecabraAnalysisAmbiguityMask
+              Do ambiguous analysis.
+    @constant MecabraAnalysisFuzzyPinyinMask
+              Analyze with Fuzzy Pinyin.
 */
-extern const CFStringRef kMecabraOptionAmbiguousSearchKey;
-/*  
-    kMecabraOptionAddressBookNamePhoneticPairsKey
-    Key value: CFArray of name-phonetic pair of AddressBook entries.
-               Each name and each phonetic is CFString.
-*/
-extern const CFStringRef kMecabraOptionAddressBookNamePhoneticPairsKey;
-/*
-    kMecabraOptionUseIputStringAsTopCandidateKey
-    if its value is TRUE, the input string will be the top candidate in candidate list.
-    Key value: CFBoolean
-*/
-extern const CFStringRef kMecabraOptionUseIputStringAsTopCandidateKey;
-/* 
-    kMecabraOptionAdditionalDicPathsKey
-    Key value: CFArray of additional dictionary CFURL 
-*/
-extern const CFStringRef kMecabraOptionAdditionalDicPathsKey;
-
-
-/* ====================================
-     Interfaces
-   ==================================== */
-/* 
-/*
-    Create a mecabra_t object
-*/
-mecabra_t* mecabra_new(CFURLRef system_dic_dir, CFURLRef learn_dic_dir, CFDictionaryRef options);
-
-/*
-    Analyze the string
-*/
-/* Analysis options */
 enum {
-	// not do prediction analysis
-    kAnalysisOptionNoPrediction                    = 1UL << 0,
-    kAnalysisOptionSingleWord                      = 1UL << 1
+    MecabraAnalysisDefault              = 0,
+    MecabraAnalysisNoPredictionMask     = 1 << 1,
+    MecabraAnalysisSingleWordMask       = 1 << 2,
+    MecabraAnalysisAmbiguityMask        = 1 << 3,
+    MecabraAnalysisFuzzyPinyinMask      = 1 << 4
 };
-typedef unsigned long mecabra_analyze_options;
+typedef CFOptionFlags MecabraAnalysisOption;
 
-bool mecabra_analyze(mecabra_t* mecabra, CFStringRef string, CFRange range, mecabra_analyze_options options);
+/*!
+    @typedef  MecabraCandidateRef
+    @abstract Opaque object that represents a mecabra candidate object
+*/
+typedef const void*  MecabraCandidateRef;
 
 /*
-    Iterate to get the next candidate
+===============================================================================
+    Mecabra
+===============================================================================
 */
-mecabra_candidate_t* mecabra_next_candidate(mecabra_t* mecabra);
 
-/*
-    Get the surface string of mecabra_candidate_t
+/*! @function MecabraCreate
+    @abstract Create a mecabra object.
+    @param    language
+              Language to be analyzed. 
+              Japanese: "ja", Simplified Chinese: "zh-Hans",
+              Traditional Chinese: "zh-Hant-Pinyin" or "zh-Hant-Zhuyin"
+    @param    learningDictionaryDirectory
+              CFURL of learning dictionary directory
+    @param    specialSymbolConversion
+              Specially used by Japanese Kana keyboard
+    @result   Return a created MecabraRef object.
 */
-CFStringRef mecabra_candidate_get_surface(mecabra_t* mecabra, mecabra_candidate_t *candidate);
+extern 
+MecabraRef MecabraCreate(const char* language, CFURLRef learningDictionaryDirectory, Boolean specialSymbolConversion);
 
-/*
-    Confirm a candidate so that mecabra can learn the candidate and predict the following candidates.
-    mecabra_next_candidate() can be invoked to get the predicted candidates
+/*! @function MecabraAnalyzeString
+    @abstract Analyze a string.
+    @param    mecabra
+              Mecabra object
+    @param    string
+              String to be analyzed
+    @param    options
+              Options when analyzing
+    @result   Return true if analysis is successful.
+    @discussion
+              If successful, use MecabraGetNextCandidate to get the candidates.
 */
-bool mecabra_confirm_candidate(mecabra_t* mecabra, mecabra_candidate_t* candidate);
+extern 
+Boolean MecabraAnalyzeString(MecabraRef mecabra, CFStringRef string, MecabraAnalysisOption options);
 
-/*
-    Save learn dic
+/*! @function MecabraGetNextCandidate
+    @abstract Enumerate to get next candidate.
+    @param    mecabra
+              Mecabra object
+    @result   Return the next candidate being enumerated, or NULL when all
+              the candidates have been enumerated.
+    @discussion
+              The returned candidates have been sorted by their priority.
 */
-void mecabra_save_learndic(mecabra_t* mecabra);
+extern 
+MecabraCandidateRef MecabraGetNextCandidate(MecabraRef mecabra);
+
+/*! @function MecabraAcceptCandidate
+    @abstract Accept a candidate so that mecabra can auto-learn it and also do prediction.
+    @param    mecabra
+              Mecabra object
+    @param    candidate
+              Candidate object to be accepted
+    @param    isPartial
+              Indicate if the candidate is partial or not.
+    @result   Return true if accept is successful.
+    @discussion
+              MecabraGetNextCandidate can be used to get the predicted candidates.
+*/
+extern 
+Boolean MecabraAcceptCandidate(MecabraRef mecabra, MecabraCandidateRef candidate, Boolean isPartial);
+
+/*! @function MecabraCancelLastAcceptedCandidate
+    @abstract Cancel last accepted candidate.
+    @param    mecabra
+              Mecabra object
+    @discussion 
+              Used to cancel the accepted candidate by MecabraAcceptCandidate.
+*/
+extern 
+Boolean MecabraCancelLastAcceptedCandidate(MecabraRef mecabra);
+
+/*! @function MecabraCopyLearningDictionaryNames
+    @abstract Copy the names(CFString) of learning dictionaries. 
+    @param    language
+              Language to be analyzed. 
+              Japanese: "ja", Simplified Chinese: "zh-Hans",
+              Traditional Chinese: "zh-Hant-Pinyin" or "zh-Hant-Zhuyin"
+    @result   Return CFArray of learning dictionaries names.
+    @discussion
+              Each name is CFString.
+*/
+extern 
+CFArrayRef MecabraCopyLearningDictionaryNames(const char* language);
+
+/*! @function MecabraSaveLearningDictionaries
+    @abstract Save learning dictionaries. 
+    @param    mecabra
+              Mecabra object
+*/
+extern 
+void MecabraSaveLearningDictionaries(MecabraRef mecabra);
+
+/*! @function MecabraClearLearningDictionaries
+    @abstract Clear learning dictionaries in memory. 
+    @param    mecabra
+              Mecabra object
+*/
+extern 
+void MecabraClearLearningDictionaries(MecabraRef mecabra);
+
+/*! @function MecabraSetAddressBookNamePhoneticPairs
+    @abstract Set name phonetic pairs of AddressBook entries.
+    @param    mecabra
+              Mecabra object
+    @param    namePhoneticPairs
+              CFArray of name phonetic pairs
+*/
+extern 
+void MecabraSetAddressBookNamePhoneticPairs(MecabraRef mecabra, CFArrayRef namePhoneticPairs);
+
+/*! @function MecabraSetUserWordKeyPairs
+    @abstract Set word key pairs of UserWord entries.
+    @param    mecabra
+              Mecabra object
+    @param    wordKeyPairs
+              CFArray of word key pairs
+*/
+extern 
+void MecabraSetUserWordKeyPairs(MecabraRef mecabra, CFArrayRef wordKeyPairs);
     
-/*
-    clear learn dic
-*/
-void mecabra_clear_learndic(mecabra_t* mecabra);
+/*! @function MecabraBuildLearningDictionary
+    @abstract Build learning dictionary
+    @param    mecabra
+              Mecabra object
+    @param    readings
+              CFArray of reading
+    @param    surfaces
+              CFArray of surfaces
+*/ 
+extern 
+Boolean MecabraBuildLearningDictionary(MecabraRef mecabra, CFArrayRef readings, CFArrayRef surfaces);
     
-/*
-    Returns an array of learning dictionary names. Used to delete learning dictionary files.
-*/
-CFArrayRef mecabra_create_learndic_names(void);
+/*! @function MecabraRelease
+    @abstract Release mecabra object. 
+    @param    mecabra
+              Mecabra object
+*/ 
+extern 
+void MecabraRelease(MecabraRef mecabra);
 
 /*
-	Dispose mecabra_t object
+===============================================================================
+    Mecabra Candidate
+===============================================================================
 */
-void mecabra_destroy(mecabra_t* mecabra);
+
+/*! @function MecabraCandidateCreate
+    @abstract Create a candidate object. 
+    @param    surface
+              Surface string of candidate
+    @param    reading
+              Reading string of candidate
+    @result   Return a candidate object.
+    @discussion
+              Either surface or reading can be NULL.
+*/
+extern 
+MecabraCandidateRef MecabraCandidateCreate(CFStringRef surface, CFStringRef reading);
+
+/*! @function MecabraCandidateReplace
+    @abstract Replace candidate content with another candidate.
+    @param    candidate
+              Candidate object to modify
+    @param    replacement
+              Candidate whose content to be put into candidate
+*/
+extern 
+void MecabraCandidateReplace(MecabraCandidateRef candidate, MecabraCandidateRef replacement);
+
+/*! @function MecabraCandidateGetSurface
+    @abstract Get the surface string of candidate.
+    @param    candidate
+              Candidate object
+    @result   Return the surface string of candidate.
+*/
+extern 
+CFStringRef MecabraCandidateGetSurface(MecabraCandidateRef candidate);
+
+/*! @function MecabraCandidateGetReading
+    @abstract Get the reading string of candidate.
+    @param    candidate
+              Candidate object
+    @result   Return the reading string of candidate.
+*/    
+extern 
+CFStringRef MecabraCandidateGetReading(MecabraCandidateRef candidate);
+
+/*! @function MecabraCandidateGetWordCount
+    @abstract Get the count of containing words.
+    @param    candidate
+              Candidate object
+    @result   Return the count of containing words.
+    @discussion 
+              Each candidate consists of one or more words. 
+*/        
+extern 
+int MecabraCandidateGetWordCount(MecabraCandidateRef candidate);  
+    
+/*! @function MecabraCandidateGetWordLengthAtIndex
+    @abstract Get the word length at index.
+    @param    candidate
+              Candidate object
+    @param    index
+              Index of the word
+    @result   Return the word length at index.
+*/        
+extern
+unsigned short MecabraCandidateGetWordLengthAtIndex(MecabraCandidateRef candidate, CFIndex index);
+    
+/*! @function MecabraCandidateGetWordReadingLengthAtIndex
+    @abstract Get the word reading length at index.
+    @param    candidate
+              Candidate object
+    @param    index
+              Index of the word
+    @result   Return the word reading length at index.
+*/        
+extern
+unsigned short MecabraCandidateGetWordReadingLengthAtIndex(MecabraCandidateRef candidate, CFIndex index);
+
+/*! @function MecabraCandidateRelease
+    @abstract Release mecabra candidate object. 
+    @param    candidate
+              Mecabra candidate object
+*/    
+extern 
+void MecabraCandidateRelease(MecabraCandidateRef candidate);
+
+/*
+===============================================================================
+    Extra API for Ruby Tools
+===============================================================================
+*/
+extern
+unsigned short MecabraCandidateGetLcAttrAtIndex(MecabraCandidateRef candidate, CFIndex index);
+
+extern
+unsigned short MecabraCandidateGetRcAttrAtIndex(MecabraCandidateRef candidate, CFIndex index);
+
+extern
+unsigned int MecabraCandidateGetTrieValueAtIndex(MecabraCandidateRef candidate, CFIndex index);
+
+extern
+unsigned short MecabraCandidateGetLastPrefixValue(MecabraCandidateRef candidate);
+    
+extern
+int MecabraCandidateGetWeight(MecabraCandidateRef candidate);
+
+extern
+unsigned short MecabraCandidateGetKind(MecabraCandidateRef candidate);
+
+extern
+unsigned short MecabraCandidateGetKindIndex(MecabraCandidateRef candidate);
+
+extern 
+void MecabraCandidateSetTypeAsSingleWord(MecabraCandidateRef candidate, uint8_t kind, uint8_t kindIndex);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__MECABRA_H__*/
+#endif /* Mecabra_h */
+

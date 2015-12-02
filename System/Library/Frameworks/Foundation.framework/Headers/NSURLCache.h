@@ -1,6 +1,6 @@
 /*	
     NSURLCache.h
-    Copyright (C) 2003-2007, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2010, Apple Inc. All rights reserved.    
     
     Public header file.
 */
@@ -8,7 +8,7 @@
 // Note: To use the APIs described in these headers, you must perform
 // a runtime check for Foundation-462.1 or later.
 #import <AvailabilityMacros.h>
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/NSObject.h>
 
@@ -24,9 +24,7 @@
 
     @constant NSURLCacheStorageAllowedInMemoryOnly Specifies that
     storage in an NSURLCache is allowed; however storage should be
-    done in memory only, no disk storage should be done. On the iPhone/iPod,
-    there is no disk cache.  This option is the same as specifying the
-    NSURLCacheStorageAllowed option.
+    done in memory only, no disk storage should be done.
 
     @constant NSURLCacheStorageNotAllowed Specifies that storage in an
     NSURLCache is not allowed in any fashion, either in memory or on
@@ -56,6 +54,7 @@ typedef NSUInteger NSURLCacheStoragePolicy;
 */
 @interface NSCachedURLResponse : NSObject <NSCoding, NSCopying>
 {
+    @private
     NSCachedURLResponseInternal *_internal;
 }
 

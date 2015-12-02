@@ -102,6 +102,7 @@ typedef __uint64_t	rlim_t;
 
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
 #define	PRIO_DARWIN_THREAD	3		/* Second argument is always 0 (current thread) */
+#define	PRIO_DARWIN_PROCESS	4		/* Second argument is a PID */
 
 /*
  * Range limitations for the value of the third parameter to setpriority().
@@ -109,11 +110,18 @@ typedef __uint64_t	rlim_t;
 #define	PRIO_MIN	-20
 #define	PRIO_MAX	20
 
-/* use PRIO_DARWIN_BG to set the current thread into "background" state
+/* 
+ * use PRIO_DARWIN_BG to set the current thread into "background" state
  * which lowers CPU, disk IO, and networking priorites until thread terminates
  * or "background" state is revoked
  */
 #define PRIO_DARWIN_BG 0x1000
+
+/*
+ * use PRIO_DARWIN_NONUI to restrict a process's ability to make calls to
+ * the GPU.
+ */
+#define PRIO_DARWIN_NONUI 0x1001
 
 #endif	/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
 

@@ -2,19 +2,17 @@
 //  SKPaymentQueue.h
 //  StoreKit
 //
-//  Copyright 2009 Apple, Inc. All rights reserved.
+//  Copyright 2009-2010 Apple, Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKitDefines.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
 @class SKPayment, SKPaymentTransaction;
 @protocol SKPaymentTransactionObserver;
 
 // SKPaymentQueue interacts with the server-side payment queue
-SK_EXTERN_CLASS @interface SKPaymentQueue : NSObject {
+SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPaymentQueue : NSObject {
 @private
     id _internal;
 }
@@ -59,5 +57,3 @@ SK_EXTERN_CLASS @interface SKPaymentQueue : NSObject {
 - (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @end
-
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

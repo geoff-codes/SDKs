@@ -2,7 +2,7 @@
 //  UISegmentedControl.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,6 +14,7 @@ typedef enum {
     UISegmentedControlStylePlain,     // large plain
     UISegmentedControlStyleBordered,  // large bordered
     UISegmentedControlStyleBar,       // small button/nav bar style. tintable
+    UISegmentedControlStyleBezeled,   // large bezeled style. tintable
 } UISegmentedControlStyle;
 
 enum {
@@ -22,15 +23,18 @@ enum {
 
 @class UIImage, UIColor;
 
-UIKIT_EXTERN_CLASS @interface UISegmentedControl : UIControl <NSCoding>
+UIKIT_CLASS_AVAILABLE(2_0) @interface UISegmentedControl : UIControl <NSCoding>
 {
+  @private
   // Note: all instance variables will become private in the future. Do not access directly.
     NSMutableArray *_segments;
     NSInteger       _selectedSegment;
     NSInteger       _highlightedSegment;
+    UIView*         _removedSegment;
     id              _delegate;
     UIColor        *_tintColor;
     UIBarStyle      _barStyle;
+    void           *_appearance;
     struct {
         unsigned int style:3;
         unsigned int size:2;
@@ -53,7 +57,7 @@ UIKIT_EXTERN_CLASS @interface UISegmentedControl : UIControl <NSCoding>
 
 @property(nonatomic) UISegmentedControlStyle segmentedControlStyle; // default is UISegmentedControlStylePlain
 @property(nonatomic,getter=isMomentary) BOOL momentary;             // if set, then we don't keep showing selected state after tracking ends. default is NO
-@property(nonatomic,retain) UIColor *tintColor;                     // default is nil. only used if style is UISegmentedControlStyleBar
+@property(nonatomic,retain) UIColor *tintColor;                     // default is nil. only used if style is UISegmentedControlStyleBar or UISegmentedControlStyleBezeled
 
 @property(nonatomic,readonly) NSUInteger numberOfSegments;
 

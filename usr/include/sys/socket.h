@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2007 Apple Inc. All rights reserved.
+ * Copyright (c) 2000-2010 Apple Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
@@ -72,7 +72,7 @@
 #ifndef _SYS_SOCKET_H_
 #define	_SYS_SOCKET_H_
 
-#include <sys/_types.h>
+#include <sys/types.h>
 #include <sys/cdefs.h>
 #include <machine/_param.h>
 
@@ -161,6 +161,7 @@ struct iovec {
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
 #define	SO_REUSEPORT	0x0200		/* allow local address & port reuse */
 #define	SO_TIMESTAMP	0x0400		/* timestamp received dgram traffic */
+#define SO_TIMESTAMP_MONOTONIC	0x0800	/* Monotonically increasing timestamp */
 #ifndef __APPLE__
 #define	SO_ACCEPTFILTER	0x1000		/* there is an accept filter */
 #else
@@ -184,6 +185,8 @@ struct iovec {
 #define	SO_TYPE		0x1008		/* get socket type */
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
 /*efine	SO_PRIVSTATE	0x1009		   get/deny privileged state */
+#define SO_LABEL        0x1010          /* socket's MAC label */
+#define SO_PEERLABEL    0x1011          /* socket's peer MAC label */
 #ifdef __APPLE__
 #define SO_NREAD	0x1020		/* APPLE: get 1st-packet byte count */
 #define SO_NKE		0x1021		/* APPLE: Install socket-level NKE */
@@ -200,9 +203,9 @@ struct iovec {
 #define SO_RESTRICT_DENYIN		0x00000001	/* flag for SO_RESTRICTIONS - deny inbound */
 #define SO_RESTRICT_DENYOUT		0x00000002	/* flag for SO_RESTRICTIONS - deny outbound */
 #define SO_RESTRICT_DENYSET		0x80000000	/* flag for SO_RESTRICTIONS - deny has been set */
+#define SO_RANDOMPORT   0x1082  /* APPLE: request local port randomization */
+#define SO_NP_EXTENSIONS	0x1083	/* To turn off some POSIX behavior */
 #endif
-#define	SO_LABEL	0x1010		/* socket's MAC label */
-#define	SO_PEERLABEL	0x1011		/* socket's peer MAC label */
 #endif	/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
 
 /*
@@ -218,6 +221,24 @@ struct	accept_filter_arg {
 	char	af_name[16];
 	char	af_arg[256-16];
 };
+#endif
+
+#if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
+#ifdef __APPLE__
+
+/*
+ * Structure to control non-portable Sockets extension to POSIX  
+ */
+struct so_np_extensions {
+	u_int32_t	npx_flags;
+	u_int32_t	npx_mask;
+};
+
+#define SONPX_SETOPTSHUT	0x000000001     /* flag for allowing setsockopt after shutdown */
+
+
+
+#endif
 #endif
 
 /*
@@ -509,18 +530,30 @@ struct cmsgcred {
 #define	CMSG_DATA(cmsg)		((unsigned char *)(cmsg) + \
 				 __DARWIN_ALIGN32(sizeof(struct cmsghdr)))
 
-/* given pointer to struct cmsghdr, return pointer to next cmsghdr */
-#define	CMSG_NXTHDR(mhdr, cmsg)						\
-	((((unsigned char *)(cmsg) +					\
-	   __DARWIN_ALIGN32((__uint32_t)(cmsg)->cmsg_len) +		\
-	   __DARWIN_ALIGN32(sizeof(struct cmsghdr))) >			\
-	   ((unsigned char *)(mhdr)->msg_control +			\
-	    (mhdr)->msg_controllen)) ?					\
-	 (struct cmsghdr *)0L /* NULL */ :				\
-	 (struct cmsghdr *)((unsigned char *)(cmsg) +			\
-	 		    __DARWIN_ALIGN32((__uint32_t)(cmsg)->cmsg_len)))
+/*
+ * RFC 2292 requires to check msg_controllen, in case that the kernel returns
+ * an empty list for some reasons.
+ */
+#define CMSG_FIRSTHDR(mhdr) \
+        ((mhdr)->msg_controllen >= sizeof(struct cmsghdr) ? \
+         (struct cmsghdr *)(mhdr)->msg_control : \
+         (struct cmsghdr *)0L)
 
-#define	CMSG_FIRSTHDR(mhdr)	((struct cmsghdr *)(mhdr)->msg_control)
+
+/* 
+ * Given pointer to struct cmsghdr, return pointer to next cmsghdr
+ * RFC 2292 says that CMSG_NXTHDR(mhdr, NULL) is equivalent to CMSG_FIRSTHDR(mhdr)
+ */
+#define	CMSG_NXTHDR(mhdr, cmsg)						\
+	((char *)(cmsg) == (char *)0L ? CMSG_FIRSTHDR(mhdr) :		\
+	 ((((unsigned char *)(cmsg) +					\
+	    __DARWIN_ALIGN32((__uint32_t)(cmsg)->cmsg_len) +		\
+	    __DARWIN_ALIGN32(sizeof(struct cmsghdr))) >			\
+	    ((unsigned char *)(mhdr)->msg_control +			\
+	     (mhdr)->msg_controllen)) ?					\
+	  (struct cmsghdr *)0L /* NULL */ :				\
+	  (struct cmsghdr *)((unsigned char *)(cmsg) +			\
+	 		    __DARWIN_ALIGN32((__uint32_t)(cmsg)->cmsg_len))))
 
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
 /* RFC 2292 additions */
@@ -530,10 +563,11 @@ struct cmsgcred {
 #endif	/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
 
 /* "Socket"-level control message types: */
-#define	SCM_RIGHTS	0x01		/* access rights (array of int) */
+#define	SCM_RIGHTS			0x01	/* access rights (array of int) */
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
-#define	SCM_TIMESTAMP	0x02		/* timestamp (struct timeval) */
-#define	SCM_CREDS	0x03		/* process creds (struct cmsgcred) */
+#define	SCM_TIMESTAMP			0x02	/* timestamp (struct timeval) */
+#define	SCM_CREDS			0x03	/* process creds (struct cmsgcred) */
+#define	SCM_TIMESTAMP_MONOTONIC		0x04	/* timestamp (uint64_t) */ 
 
 #endif	/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
 
@@ -591,7 +625,6 @@ int	sendfile(int, int, off_t, off_t *, struct sf_hdtr *, int);
 void	pfctlinput(int, struct sockaddr *);
 #endif	/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
 __END_DECLS
-
 
 
 #endif /* !_SYS_SOCKET_H_ */

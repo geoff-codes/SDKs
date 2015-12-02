@@ -2,7 +2,7 @@
 //  UISearchBar.h
 //  UIKit
 //
-//  Copyright 2008-2009 Apple Inc. All rights reserved.
+//  Copyright 2008-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,7 +15,7 @@
 @protocol UISearchBarDelegate;
 @class UITextField, UILabel, UIButton, UIColor;
 
-UIKIT_EXTERN_CLASS @interface UISearchBar : UIView { 
+UIKIT_CLASS_AVAILABLE(2_0) @interface UISearchBar : UIView { 
   @private
     UITextField            *_searchField;
     UILabel                *_promptLabel;
@@ -30,6 +30,7 @@ UIKIT_EXTERN_CLASS @interface UISearchBar : UIView {
     UIView                 *_background;
     UIView                 *_scopeBar;
     UIEdgeInsets            _contentInset;
+    id                      _appearance;
     struct {
         unsigned int barStyle:3;
         unsigned int showsBookmarkButton:1;
@@ -40,6 +41,10 @@ UIKIT_EXTERN_CLASS @interface UISearchBar : UIView {
         unsigned int hideBackground:1;
         unsigned int combinesLandscapeBars:1;
         unsigned int usesEmbeddedAppearance:1;
+        unsigned int showsSearchResultsButton:1;
+        unsigned int searchResultsButtonSelected:1;
+        unsigned int pretendsIsInBar:1;
+        unsigned int disabled:1;
     } _searchBarFlags;
 }
 
@@ -50,6 +55,8 @@ UIKIT_EXTERN_CLASS @interface UISearchBar : UIView {
 @property(nonatomic,copy)   NSString               *placeholder;           // default is nil
 @property(nonatomic)        BOOL                    showsBookmarkButton;   // default is NO
 @property(nonatomic)        BOOL                    showsCancelButton;     // default is NO
+@property(nonatomic)        BOOL                    showsSearchResultsButton __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // default is NO
+@property(nonatomic, getter=isSearchResultsButtonSelected) BOOL searchResultsButtonSelected __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // default is NO
 - (void)setShowsCancelButton:(BOOL)showsCancelButton animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @property(nonatomic,retain) UIColor                *tintColor;             // default is nil
@@ -80,6 +87,7 @@ UIKIT_EXTERN_CLASS @interface UISearchBar : UIView {
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar;                     // called when keyboard search button pressed
 - (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar;                   // called when bookmark button pressed
 - (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar;                    // called when cancel button pressed
+- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // called when search results button pressed
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 

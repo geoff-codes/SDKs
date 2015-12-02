@@ -1,6 +1,6 @@
 /*	
     NSURLProtocol.h
-    Copyright (C) 2003-2007, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2010, Apple Inc. All rights reserved.    
     
     Public header file.
 */
@@ -8,7 +8,7 @@
 // Note: To use the APIs described in these headers, you must perform
 // a runtime check for Foundation-462.1 or later.
 #import <AvailabilityMacros.h>
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSURLCache.h>

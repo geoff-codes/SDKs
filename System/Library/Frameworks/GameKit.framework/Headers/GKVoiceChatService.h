@@ -1,7 +1,7 @@
 /*
   GKVoiceChatService.h
 
-  Copyright 2009 Apple Inc. All rights reserved.
+  Copyright 2010 Apple Inc. All rights reserved.
  
  This service is useful for setting up a voice chat in two cases.
  1) You have a server that connects two clients, but you have no way of establishing a peer-to-peer channel.
@@ -91,44 +91,21 @@
 */
 
 #import <Foundation/Foundation.h>
-#import "GameKitDefines.h"
+#import <GameKit/GKDefines.h>
+#import <GameKit/GKPublicProtocols.h>
 
 @class GKVoiceChatService;
 
-//All clients will need to implement this protocol
-@protocol GKVoiceChatClient <NSObject>
-
-@required
-
-//this channel will only be used to setup voice chat, and not to send audio data. The only requirement is that messages are sent and received within a few (1-2) seconds time.
-- (void)voiceChatService:(GKVoiceChatService *)voiceChatService sendData:(NSData *)data toParticipantID:(NSString *)participantID; //must be sent within some reasonble period of time and should accept at least 512 bytes.
-
-- (NSString *)participantID; // voice chat client's participant ID
-
-@optional
-
-//should be sent immediately with no delay on a UDP peer-to-peer connection.  
-// If this method is implemented, then the Voice Chat Service will not attempt to set up a peer-to-peer connection. And will rely on this one.  To transmit audio.
-- (void)voiceChatService:(GKVoiceChatService *)voiceChatService sendRealTimeData:(NSData *)data toParticipantID:(NSString *)participantID;
-
-- (void)voiceChatService:(GKVoiceChatService *)voiceChatService didStartWithParticipantID:(NSString *)participantID;
-
-- (void)voiceChatService:(GKVoiceChatService *)voiceChatService didNotStartWithParticipantID:(NSString *)participantID error:(NSError *)error;
-
-- (void)voiceChatService:(GKVoiceChatService *)voiceChatService didStopWithParticipantID:(NSString *)participantID error:(NSError *)error;
-
-- (void)voiceChatService:(GKVoiceChatService *)voiceChatService didReceiveInvitationFromParticipantID:(NSString *)participantID callID:(NSInteger)callID;
-
-@end
-
-
 // GKVoiceChatService provides voice chat capabilities depending on your networking situation.
+NS_CLASS_AVAILABLE(NA, 4_1)
 GK_EXTERN_CLASS @interface GKVoiceChatService : NSObject {
 	@private
 	id _voiceChatService;
 }
 
 + (GKVoiceChatService *)defaultVoiceChatService;
+
++ (BOOL)isVoIPAllowed;
 
 @property(assign) id<GKVoiceChatClient> client;
 
@@ -170,27 +147,3 @@ GK_EXTERN_CLASS @interface GKVoiceChatService : NSObject {
 
 GK_EXTERN	NSString *  const GKVoiceChatServiceErrorDomain;
 
-enum
-{
-	
-	GKVoiceChatServiceInternalError = 32000,	
-	GKVoiceChatServiceNoRemotePacketsError = 32001,
-	GKVoiceChatServiceUnableToConnectError = 32002,
-	GKVoiceChatServiceRemoteParticipantHangupError = 32003,
-	GKVoiceChatServiceInvalidCallIDError = 32004,
-	GKVoiceChatServiceAudioUnavailableError = 32005,
-	GKVoiceChatServiceUninitializedClientError = 32006,
-	GKVoiceChatServiceClientMissingRequiredMethodsError = 32007,
-	GKVoiceChatServiceRemoteParticipantBusyError = 32008,
-	GKVoiceChatServiceRemoteParticipantCancelledError = 32009,
-	GKVoiceChatServiceRemoteParticipantResponseInvalidError = 32010,
-	GKVoiceChatServiceRemoteParticipantDeclinedInviteError = 32011,
-	GKVoiceChatServiceMethodCurrentlyInvalidError = 32012,
-	GKVoiceChatServiceNetworkConfigurationError = 32013,
-	GKVoiceChatServiceUnsupportedRemoteVersionError = 32014,
-	GKVoiceChatServiceOutOfMemoryError = 32015,
-	GKVoiceChatServiceInvalidParameterError = 32016
-	
-};
-
-typedef NSUInteger GKVoiceChatServiceError;

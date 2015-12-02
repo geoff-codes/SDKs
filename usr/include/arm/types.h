@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2000-2007 Apple Inc. All rights reserved.
+ * Copyright (c) 2000-2008 Apple Inc. All rights reserved.
  */
 /*
  * Copyright 1995 NeXT Computer, Inc. All rights reserved.
  */
-/*-
+/*
  * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
  *

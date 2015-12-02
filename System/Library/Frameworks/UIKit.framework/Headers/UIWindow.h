@@ -2,7 +2,7 @@
 //  UIWindow.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,12 +13,13 @@
 
 typedef CGFloat UIWindowLevel;
 
-@class UIEvent, NSUndoManager;
+@class UIEvent, UIScreen, NSUndoManager, UIViewController;
 
-UIKIT_EXTERN_CLASS @interface UIWindow : UIView {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIWindow : UIView {
   @package
     id                       _delegate;
     CGFloat                  _windowLevel;
+    CGFloat                  _windowSublevel;
     id                       _layerContext;
     UIView                  *_lastMouseDownView;
     UIView                  *_lastMouseEnteredView;
@@ -28,8 +29,13 @@ UIKIT_EXTERN_CLASS @interface UIWindow : UIView {
     UIInterfaceOrientation   _viewOrientation;
     UIView                  *_exclusiveTouchView;
     NSUndoManager           *_undoManager;
+    UIScreen                *_screen;
+    CALayer                 *_transformLayer;
+    NSMutableArray          *_rotationViewControllers;
+    UIViewController        *_rootViewController;
+	UIColor					*_savedBackgroundColor;
     struct {
-        unsigned int delegateWillRotate:1;
+	unsigned int delegateWillRotate:1;
         unsigned int delegateDidRotate:1;
         unsigned int delegateWillAnimateFirstHalf:1;
         unsigned int delegateDidAnimationFirstHalf:1;
@@ -52,10 +58,18 @@ UIKIT_EXTERN_CLASS @interface UIWindow : UIView {
         unsigned int needsAutorotationWhenReenabled:1;
         unsigned int forceTwoPartRotationAnimation:1;
         unsigned int orderKeyboardInAfterRotating:1;
+        unsigned int roundedCorners:4;
+        unsigned int resizesToFullScreen:1;
+        unsigned int keepContextInBackground:1;
+        unsigned int ignoreSetHidden:1;
+        unsigned int forceVisibleOnInit:1;
+        unsigned int settingFirstResponder:1;
     } _windowFlags;
     
     id _windowController;
 }
+
+@property(nonatomic,retain) UIScreen *screen __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);  // default is [UIScreen mainScreen]. changing the screen may be an expensive operation and should not be done in performance-sensitive code
 
 @property(nonatomic) UIWindowLevel windowLevel;                   // default = 0.0
 @property(nonatomic,readonly,getter=isKeyWindow) BOOL keyWindow;
@@ -64,6 +78,8 @@ UIKIT_EXTERN_CLASS @interface UIWindow : UIView {
 
 - (void)makeKeyWindow;
 - (void)makeKeyAndVisible;                             // convenience. most apps call this to show the main window and also make it key. otherwise use view hidden property
+
+@property(nonatomic,retain) UIViewController *rootViewController __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);  // default is nil
 
 - (void)sendEvent:(UIEvent *)event;                    // called by UIApplication to dispatch events to views inside the window
 
@@ -83,15 +99,20 @@ UIKIT_EXTERN NSString *const UIWindowDidBecomeHiddenNotification;  // nil
 UIKIT_EXTERN NSString *const UIWindowDidBecomeKeyNotification;     // nil
 UIKIT_EXTERN NSString *const UIWindowDidResignKeyNotification;     // nil
 
-// Each notification includes a nil object and a userInfo dictionary containing
-// keyboard center beginning and ending values and the keyboard bounds, all in main
-// screen coordinates.
+// Each notification includes a nil object and a userInfo dictionary containing the
+// begining and ending keyboard frame in screen coordinates. Use the various UIView and
+// UIWindow convertRect facilities to get the frame in the desired coordinate system.
+// Animation key/value pairs are only available for the "will" family of notification.
 UIKIT_EXTERN NSString *const UIKeyboardWillShowNotification;
 UIKIT_EXTERN NSString *const UIKeyboardDidShowNotification; 
 UIKIT_EXTERN NSString *const UIKeyboardWillHideNotification; 
 UIKIT_EXTERN NSString *const UIKeyboardDidHideNotification;
-UIKIT_EXTERN NSString *const UIKeyboardCenterBeginUserInfoKey;  // NSValue of CGPoint
-UIKIT_EXTERN NSString *const UIKeyboardCenterEndUserInfoKey;    // NSValue of CGPoint
-UIKIT_EXTERN NSString *const UIKeyboardBoundsUserInfoKey;       // NSValue of CGRect
+UIKIT_EXTERN NSString *const UIKeyboardFrameBeginUserInfoKey        __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // NSValue of CGRect
+UIKIT_EXTERN NSString *const UIKeyboardFrameEndUserInfoKey          __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // NSValue of CGRect
 UIKIT_EXTERN NSString *const UIKeyboardAnimationDurationUserInfoKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // NSNumber of double
-UIKIT_EXTERN NSString *const UIKeyboardAnimationCurveUserInfoKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // NSNumber of NSUInteger (UIViewAnimationCurve)
+UIKIT_EXTERN NSString *const UIKeyboardAnimationCurveUserInfoKey    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // NSNumber of NSUInteger (UIViewAnimationCurve)
+
+// These keys are superseded by UIKeyboardFrameBeginUserInfoKey and UIKeyboardFrameEndUserInfoKey.
+UIKIT_EXTERN NSString *const UIKeyboardCenterBeginUserInfoKey   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2);
+UIKIT_EXTERN NSString *const UIKeyboardCenterEndUserInfoKey     __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2);
+UIKIT_EXTERN NSString *const UIKeyboardBoundsUserInfoKey        __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2);

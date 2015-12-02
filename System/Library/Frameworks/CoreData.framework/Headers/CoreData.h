@@ -1,7 +1,7 @@
 /*
 	CoreData.h
 	Core Data
-    Copyright (c) 2004-2009 Apple Inc.
+    Copyright (c) 2004-2010 Apple Inc.
 	All rights reserved.
 */
 

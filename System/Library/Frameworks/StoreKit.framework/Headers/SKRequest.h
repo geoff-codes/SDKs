@@ -8,12 +8,10 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKitDefines.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
 @protocol SKRequestDelegate;
 
 // Base class used to fetch data from the store.  Should not be used directly.
-SK_EXTERN_CLASS @interface SKRequest : NSObject {
+SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKRequest : NSObject {
 @private
     id _requestInternal;
 }
@@ -36,5 +34,3 @@ SK_EXTERN_CLASS @interface SKRequest : NSObject {
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @end
-
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

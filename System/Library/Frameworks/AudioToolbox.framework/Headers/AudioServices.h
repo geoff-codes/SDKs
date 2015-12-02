@@ -3,7 +3,7 @@
 
      Contains:   API for general high level audio services.
 
-     Copyright:  (c) 2006 - 2008 by Apple Inc., all rights reserved.
+     Copyright:  (c) 2006 - 2008 by Apple, Inc., all rights reserved.
 
      Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
@@ -129,7 +129,8 @@ typedef void
     @constant       kSystemSoundID_Vibrate
                         Use this constant with the play sound APIs to vibrate the device
                         - iPhone only 
-                            - on a device with no vibration capability (like iPod Touch) this will do nothing
+                            - on a device with no vibration capability (like iPod Touch) this will 
+                            do nothing
     @constant       kSystemSoundID_FlashScreen
                         Use this constant with the play sound APIs to flash the screen
                         - Desktop systems only
@@ -186,7 +187,8 @@ enum
                         selected by the user in System Preferences. On iPhone there is no preferred user alert sound.
 */
 extern void 
-AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)                                          __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)                                          
+                                                                __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*!
     @function       AudioServicesPlaySystemSound
@@ -196,7 +198,8 @@ AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)                      
                         A SystemSoundID for the System Sound server to play.
 */
 extern void 
-AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)                                         __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)                                         
+                                                                __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*!
     @function       AudioServicesCreateSystemSoundID
@@ -211,7 +214,8 @@ AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)                     
 */
 extern OSStatus 
 AudioServicesCreateSystemSoundID(   CFURLRef                    inFileURL,
-                                    SystemSoundID* 				outSystemSoundID)                   __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+                                    SystemSoundID* 				outSystemSoundID)                   
+                                                                __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 	
 /*!
     @function       AudioServicesDisposeSystemSoundID
@@ -223,7 +227,8 @@ AudioServicesCreateSystemSoundID(   CFURLRef                    inFileURL,
                         A SystemSoundID that the application no longer needs to use.
 */
 extern OSStatus 
-AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)                                    __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)                                    
+                                                                __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*!
     @function       AudioServicesAddSystemSoundCompletion
@@ -251,7 +256,8 @@ AudioServicesAddSystemSoundCompletion(  SystemSoundID          					inSystemSoun
                                     	CFRunLoopRef                        	inRunLoop,
                                     	CFStringRef                        		inRunLoopMode,
                                     	AudioServicesSystemSoundCompletionProc  inCompletionRoutine,
-                                    	void*                               	inClientData)       __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+                                    	void*                               	inClientData)       
+                                                                    __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*!
     @function       AudioServicesRemoveSystemSoundCompletion
@@ -263,7 +269,8 @@ AudioServicesAddSystemSoundCompletion(  SystemSoundID          					inSystemSoun
                         removed.
 */
 extern void 
-AudioServicesRemoveSystemSoundCompletion(SystemSoundID inSystemSoundID)                             __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+AudioServicesRemoveSystemSoundCompletion(SystemSoundID inSystemSoundID)                             
+                                                                    __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*!
     @function       AudioServicesGetPropertyInfo
@@ -288,7 +295,8 @@ AudioServicesGetPropertyInfo( AudioServicesPropertyID   inPropertyID,
                               UInt32                    inSpecifierSize,
                               const void*               inSpecifier,
                               UInt32*                   outPropertyDataSize,
-                              Boolean*                  outWritable)                                __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+                              Boolean*                  outWritable)                                
+                                                                    __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*!
     @function       AudioServicesGetProperty
@@ -314,7 +322,8 @@ AudioServicesGetProperty(   AudioServicesPropertyID   inPropertyID,
                             UInt32                    inSpecifierSize,
                             const void*               inSpecifier,
                             UInt32*                   ioPropertyDataSize,
-                            void*                     outPropertyData)                              __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+                            void*                     outPropertyData)                              
+                                                                __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*!
     @function       AudioServicesSetProperty
@@ -337,7 +346,8 @@ AudioServicesSetProperty(   AudioServicesPropertyID   inPropertyID,
                             UInt32                    inSpecifierSize,
                             const void*               inSpecifier,
                             UInt32                    inPropertyDataSize,
-                            const void*               inPropertyData)                               __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+                            const void*               inPropertyData)                               
+                                                                __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 #if !TARGET_OS_IPHONE
 //==================================================================================================
@@ -394,7 +404,8 @@ enum
 */
 extern Boolean
 AudioHardwareServiceHasProperty(    AudioObjectID                       inObjectID,
-                                    const AudioObjectPropertyAddress*   inAddress)                  __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
+                                    const AudioObjectPropertyAddress*   inAddress)                  
+                                                            __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
 
 /*!
     @function       AudioHardwareServiceIsPropertySettable
@@ -411,7 +422,8 @@ AudioHardwareServiceHasProperty(    AudioObjectID                       inObject
 extern OSStatus
 AudioHardwareServiceIsPropertySettable( AudioObjectID                       inObjectID,
                                         const AudioObjectPropertyAddress*   inAddress,
-                                        Boolean*                            outIsSettable)          __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
+                                        Boolean*                            outIsSettable)          
+                                                            __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
 
 /*!
     @function       AudioHardwareServiceGetPropertyDataSize
@@ -437,7 +449,8 @@ AudioHardwareServiceGetPropertyDataSize(    AudioObjectID                       
                                             const AudioObjectPropertyAddress*   inAddress,
                                             UInt32                              inQualifierDataSize,
                                             const void*                         inQualifierData,
-                                            UInt32*                             outDataSize)        __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
+                                            UInt32*                             outDataSize)        
+                                                            __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
 
 /*!
     @function       AudioHardwareServiceGetPropertyData
@@ -469,7 +482,8 @@ AudioHardwareServiceGetPropertyData(    AudioObjectID                       inOb
                                         UInt32                              inQualifierDataSize,
                                         const void*                         inQualifierData,
                                         UInt32*                             ioDataSize,
-                                        void*                               outData)                __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
+                                        void*                               outData)                
+                                                        __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
 
 /*!
     @function       AudioHardwareServiceSetPropertyData
@@ -502,7 +516,8 @@ AudioHardwareServiceSetPropertyData(    AudioObjectID                       inOb
                                         UInt32                              inQualifierDataSize,
                                         const void*                         inQualifierData,
                                         UInt32                              inDataSize,
-                                        const void*                         inData)                 __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
+                                        const void*                         inData)                 
+                                                        __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
 
 /*!
     @function       AudioHardwareServiceAddPropertyListener
@@ -523,7 +538,8 @@ extern OSStatus
 AudioHardwareServiceAddPropertyListener(    AudioObjectID                       inObjectID,
                                             const AudioObjectPropertyAddress*   inAddress,
                                             AudioObjectPropertyListenerProc     inListener,
-                                            void*                               inClientData)       __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
+                                            void*                               inClientData)       
+                                                        __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
 
 /*!
     @function       AudioHardwareServiceRemovePropertyListener
@@ -544,7 +560,8 @@ extern OSStatus
 AudioHardwareServiceRemovePropertyListener( AudioObjectID                       inObjectID,
                                             const AudioObjectPropertyAddress*   inAddress,
                                             AudioObjectPropertyListenerProc     inListener,
-                                            void*                               inClientData)       __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
+                                            void*                               inClientData)       
+                                                        __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
 
 #endif //!TARGET_OS_IPHONE
 
@@ -566,12 +583,27 @@ AudioHardwareServiceRemovePropertyListener( AudioObjectID                       
     @constant       kAudioSessionInitializationError 
                         This error indicates an AudioSession initialization error.
     @constant       kAudioSessionUnsupportedPropertyError 
-                        The property is not supported.
+                        The property is not supported.  This error code can also be used to 
+                        indicate that a bad property value was passed in a SetProperty call,
+                        an attempt was made to set a read-only property, an attempt was made to
+                        read a write-only property, an attempt was made to read a property that
+                        is only available by way of a property listener, or an attempt was made 
+                        to set a listener on a property for which listeners are not supported.
     @constant       kAudioSessionBadPropertySizeError 
                         The size of the property data was not correct.
     @constant       kAudioSessionNotActiveError 
                         The operation failed because the AudioSession is not active.
                         Calling AudioSessionSetActive(true) first will fix this error in most cases.
+    @constant       kAudioSessionNoCategorySet
+                        The requested operation failed because it requires that the session have had an
+                        audio category explicitly set, and none was set.
+    @constant       kAudioSessionIncompatibleCategory
+                        The requested operation failed because the AudioSession has an incompatible
+                        category (e.g. attempting to play or record when the category is AudioProcessing) or
+                        the session is not active.
+    @constant       kAudioSessionUnspecifiedError
+                        An audio session unspecified error has occurred.  This would indicate an 
+                        Apple-internal bug or that the audio system is currently in a bad state.
 */
 enum
 {
@@ -584,7 +616,8 @@ enum
     kAudioSessionNotActiveError                         = '!act',
     kAudioServicesNoHardwareError                       = 'nohw',
     kAudioSessionNoCategorySet                          = '?cat',
-    kAudioSessionIncompatibleCategory                   = '!cat'
+    kAudioSessionIncompatibleCategory                   = '!cat',
+    kAudioSessionUnspecifiedError                       = 'what'
 };
 
 //==================================================================================================
@@ -624,9 +657,10 @@ enum {
     @abstract       These are used with as values for the kAudioSessionProperty_AudioCategory property
                     to indicate the audio category of the AudioSession.
     @constant       kAudioSessionCategory_AmbientSound 
-                        Use this category for backgound sounds such as rain, car engine noise, etc.  Mixes with other music.
+                        Use this category for background sounds such as rain, car engine noise, etc.  
+                        Mixes with other music.
     @constant       kAudioSessionCategory_SoloAmbientSound 
-                        Use this category for backgound sounds.  Other music will stop playing.
+                        Use this category for background sounds.  Other music will stop playing.
     @constant       kAudioSessionCategory_MediaPlayback 
                         Use this category for music tracks.
     @constant       kAudioSessionCategory_RecordAudio 
@@ -678,12 +712,13 @@ enum {
                         The audio category has changed (e.g. kAudioSessionCategory_MediaPlayback
                         has been changed to kAudioSessionCategory_PlayAndRecord).
     @constant       kAudioSessionRouteChangeReason_Override
-                        The route has been overriden (e.g. category is kAudioSessionCategory_PlayAndRecord
+                        The route has been overridden (e.g. category is kAudioSessionCategory_PlayAndRecord
                         and the output has been changed from the receiver, which is the default, to the speaker).
     @constant       kAudioSessionRouteChangeReason_WakeFromSleep
                         The device woke from sleep.
     @constant       kAudioSessionRouteChangeReason_NoSuitableRouteForCategory
-                        Returned when there is no route for the current category (for instance RecordCategory but no input device)
+                        Returned when there is no route for the current category (for instance RecordCategory 
+                        but no input device)
 */
 enum {
 	kAudioSessionRouteChangeReason_Unknown = 0,
@@ -697,6 +732,29 @@ enum {
 
 #define kAudioSession_AudioRouteChangeKey_Reason    "OutputDeviceDidChange_Reason"
 #define kAudioSession_AudioRouteChangeKey_OldRoute  "OutputDeviceDidChange_OldRoute"
+    
+//==================================================================================================
+#pragma mark    AudioSession interruption types for end interruption events
+
+/*!
+     @enum          AudioSession Interruption types
+     @abstract      When an app's AudioSessionInterruptionListener is called at the end of an interruption event,
+                    the app may query to see if it should resume audio or not.  The interruption type can be 
+                    obtained through the kAudioSessionProperty_InterruptionType, available in iPhone OS 4.0 and
+                    greater.
+     @constant      kAudioSessionInterruptionType_ShouldResume 
+                        Indicates that the interruption was one where it is appropriate to resume playback
+                        at the conclusion of the interruption.  (e.g.: a phone call was rejected)
+     @constant      kAudioSessionInterruptionType_ShouldNotResume
+                        Indicates that the interruption was one where it is not appropriate to resume playback
+                        at the conclusion of the interruption.  (e.g.: interruption due to iPod playback)
+ */
+enum {  // typedef UInt32 AudioSessionInterruptionType
+    kAudioSessionInterruptionType_ShouldResume                      = 'irsm',
+    kAudioSessionInterruptionType_ShouldNotResume                   = '!rsm'
+};
+typedef UInt32 AudioSessionInterruptionType;	    
+
 
 //==================================================================================================
 #pragma mark    AudioSession Properties
@@ -715,11 +773,13 @@ enum {
     @constant       kAudioSessionProperty_AudioRoute 
                         A CFStringRef with the name of the current route ("Headphone," "Speaker," etc.)
     @constant       kAudioSessionProperty_AudioRouteChange 
-                        The value for this property is ONLY provided with the property changed callback. You cannot get the 
-                        value of this property (or set it).
+                        The value for this property is ONLY provided with the property changed callback. You 
+                        cannot get the value of this property (or set it).
                         The property changed callback provides a CFDictionaryRef with two keyed values:
-                        Key = kAudioSession_AudioRouteChangeKey_Reason; value is a CFNumberRef with one of the reasons listed above.
-                        Key = kAudioSession_AudioRouteChangeKey_OldRoute; value is a CFStringRef with the name of the old route.
+                        Key = kAudioSession_AudioRouteChangeKey_Reason; value is a CFNumberRef with one of the 
+                        reasons listed above.
+                        Key = kAudioSession_AudioRouteChangeKey_OldRoute; value is a CFStringRef with the name 
+                        of the old route.
                         The new route can be obtained by calling AudioSessionGetProperty(kAudioSessionProperty_AudioRoute).
     @constant       kAudioSessionProperty_CurrentHardwareSampleRate 
                         A Float64 indicating the current hardware sample rate
@@ -736,14 +796,17 @@ enum {
     @constant       kAudioSessionProperty_CurrentHardwareIOBufferDuration 
                         A Float32 indicating the current hardware IO buffer duration in seconds.
     @constant       kAudioSessionProperty_OtherAudioIsPlaying 
-                        A UInt32 with a value other than zero when someone else, typically the iPod application, is playing audio
+                        A UInt32 with a value other than zero when someone else, typically the iPod application, 
+                        is playing audio
     @constant       kAudioSessionProperty_OverrideAudioRoute 
-                        A UInt32 with one of two values: kAudioSessionOverrideAudioRoute_None or kAudioSessionOverrideAudioRoute_Speaker
+                        A UInt32 with one of two values: kAudioSessionOverrideAudioRoute_None or 
+                        kAudioSessionOverrideAudioRoute_Speaker
     @constant       kAudioSessionProperty_AudioInputAvailable 
                         A UInt32 with a value other than zero when audio input is available.
                         Use this property, rather than the device model, to determine if audio input is available.
-                        A listener will notify you when audio input becomes available.  For instance, when a headset is attached
-                        to the second generation iPod Touch, audio input becomes available via the wired microphone. 
+                        A listener will notify you when audio input becomes available.  For instance, when a headset 
+                        is attached to the second generation iPod Touch, audio input becomes available via the wired 
+                        microphone. 
     @constant       kAudioSessionProperty_ServerDied
     					Available with iPhone 3.0 or greater
                         The value for this property is ONLY provided with the property changed callback. You cannot get the 
@@ -751,39 +814,67 @@ enum {
                         the audio server has died.
     @constant       kAudioSessionProperty_OtherMixableAudioShouldDuck
     					Available with iPhone 3.0 or greater
-                        If the current session category of an application allows mixing (iPod playback in the background for example), then that other audio will be ducked when the current application makes any sound. An example of this is the Nike app that does this as it provides periodic updtaes to its user (it ducks any iPod music currently being played while it provides its status).
-                        This defaults to off (0). Note that the other audio will be ducked for as long as the current session is active. You will need to deactivate your audio session when you want full volume playback of the other audio.
+                        If the current session category of an application allows mixing (iPod playback in the background 
+                        for example), then that other audio will be ducked when the current application makes any sound. 
+                        An example of this is the Nike app that does this as it provides periodic updates to its user (it 
+                        ducks any iPod music currently being played while it provides its status).
+                        This defaults to off (0). Note that the other audio will be ducked for as long as the current 
+                        session is active. 
+                        You will need to deactivate your audio session when you want full volume playback of the other audio.
+                        If your category is the Playback category and you have this set to its default (non-mixable), setting
+                        this value to on, will also make your category mixable with others
+                        (kAudioSessionProperty_OverrideCategoryMixWithOthers will be set to true)
     @constant       kAudioSessionProperty_OverrideCategoryMixWithOthers
     					Available with iPhone 3.0 or greater
-                        This allows an application to change the default behaviour of some audio session categories with regards to whether other applications can play while your session is active. The two typical cases are:
+                        This allows an application to change the default behavior of some audio session categories with regards to 
+                        whether other applications can play while your session is active. The two typical cases are:
                             (1) PlayAndRecord category
-                                this will default to false, but can be set to true. This would allow iPod to play in the background while an app had both audio input and output enabled
+                                this will default to false, but can be set to true. This would allow iPod to play in the background 
+                                while an app had both audio input and output enabled
                             (2) MediaPlayback category
-                                this will default to false, but can be set to true. This would allow iPod to play in the background, but an app will still be able to play regardless of the setting of the ringer switch 
+                                this will default to false, but can be set to true. This would allow iPod to play in the background, 
+                                but an app will still be able to play regardless of the setting of the ringer switch 
                             (3) Other categories
-                                this defaults to false and cannot be changed (that is, the mix with others setting of these categories cannot be overridden 
+                                this defaults to false and cannot be changed (that is, the mix with others setting of these categories 
+                                cannot be overridden 
                         An application must be prepared for setting this property to fail as behaviour may change in future releases. 
-                        If an application changes their category, they should reassert the override (it is not sticky across category changes)
+                        If an application changes their category, they should reassert the override (it is not sticky across 
+                        category changes)
     @constant       kAudioSessionProperty_OverrideCategoryDefaultToSpeaker
     					Available with iPhone 3.1 or greater
-                        This allows an application to change the default behaviour of some audio session categories with regards to whether other applications can play while your session is active. The two typical cases are:
+                        This allows an application to change the default behaviour of some audio session categories with regards to 
+                        the audio route. The current category behavior is:
                             (1) PlayAndRecord category
-                                this will default to false, but can be set to true. this will route to Speaker (instead of Receiver) when no other audio route is connected.
+                                this will default to false, but can be set to true. this will route to Speaker (instead of Receiver) 
+                                when no other audio route is connected.
                             (2) Other categories
-                                this defaults to false and cannot be changed (that is, the default to speaker setting of these categories cannot be overridden 
+                                this defaults to false and cannot be changed (that is, the default to speaker setting of these 
+                                categories cannot be overridden 
                         An application must be prepared for setting this property to fail as behaviour may change in future releases. 
                         If an application changes their category, they should reassert the override (it is not sticky across category changes)
     @constant       kAudioSessionProperty_OverrideCategoryEnableBluetoothInput
     					Available with iPhone 3.1 or greater
-                        This allows an application to change the default behaviour of some audio session categories with regards to whether other applications can play while your session is active. The two typical cases are:
+                        This allows an application to change the default behaviour of some audio session categories with regards to showing 
+                        bluetooth devices as available routes. The current category behavior is:
                             (1) PlayAndRecord category
-                                this will default to false, but can be set to true. This will allow a paired bluetooth device to show up as an available route for input, while playing through the category-appropriate output
+                                this will default to false, but can be set to true. This will allow a paired bluetooth device to show up as 
+                                an available route for input, while playing through the category-appropriate output
                             (2) Record category
-                                this will default to false, but can be set to true. This will allow a paired bluetooth device to show up as an available route for input 
+                                this will default to false, but can be set to true. This will allow a paired bluetooth device to show up 
+                                as an available route for input 
                             (3) Other categories
-                                this defaults to false and cannot be changed (that is, enabling bluetooth for input in these categories is not allowed) 
+                                this defaults to false and cannot be changed (that is, enabling bluetooth for input in these categories is 
+                                not allowed) 
                         An application must be prepared for setting this property to fail as behaviour may change in future releases. 
                         If an application changes their category, they should reassert the override (it is not sticky across category changes)
+    @constant       kAudioSessionProperty_InterruptionType
+                        Available with iPhone 4.0 or greater
+                        This is a read-only property that gives the type of the end interruption event.  Media playback apps (i.e., 
+                        those apps that have a "play" button), may use this property as a guideline for when to resume playing after an 
+                        interruption ends.  Apps without a "play" button, (e.g., games) should always resume audio playback when the 
+                        interruption ends.  This property is only valid within the scope of the client app's AudioSessionInterruptionListener 
+                        callback and only valid for the AudioSessionEndInterruption event.  Attempting to read the property at any other 
+                        time is invalid.  
 */
 enum { // typedef UInt32 AudioSessionPropertyID
     kAudioSessionProperty_PreferredHardwareSampleRate           = 'hwsr',   // Float64          (get/set)
@@ -806,8 +897,9 @@ enum { // typedef UInt32 AudioSessionPropertyID
     kAudioSessionProperty_OverrideCategoryMixWithOthers         = 'cmix',   // UInt32           (get, some set)
     kAudioSessionProperty_OverrideCategoryDefaultToSpeaker      = 'cspk',   // UInt32           (get, some set)
     kAudioSessionProperty_OverrideCategoryEnableBluetoothInput  = 'cblu',   // UInt32           (get, some set)
+    kAudioSessionProperty_InterruptionType                      = 'type',   // UInt32           (get only)
 };
-
+    
 //==================================================================================================
 #pragma mark -
 #pragma mark Callbacks
@@ -828,9 +920,9 @@ typedef void (*AudioSessionInterruptionListener)(
 
 /*!
     @typedef        AudioSessionPropertyListener
-    @abstract       A function to be executed when a property chages.
+    @abstract       A function to be executed when a property changes.
     @discussion     AudioSessionPropertyListener may be provided by client application to be
-                    called when a property chages.
+                    called when a property changes.
     @param          inClientData
                         The client user data to use when calling the listener.
     @param          inID
@@ -875,7 +967,8 @@ extern OSStatus
 AudioSessionInitialize(             CFRunLoopRef                        inRunLoop, 
                                     CFStringRef                         inRunLoopMode, 
                                     AudioSessionInterruptionListener    inInterruptionListener, 
-                                    void                                *inClientData)              __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+                                    void                                *inClientData)              
+                                                            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
 
 /*!
     @function       AudioSessionSetActive
@@ -889,7 +982,44 @@ AudioSessionInitialize(             CFRunLoopRef                        inRunLoo
                         A Boolean indicating if you want to make this AudioSession active or inactive.
 */
 extern OSStatus
-AudioSessionSetActive(              Boolean                             active)                     __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+AudioSessionSetActive(              Boolean                             active)                     
+                                                            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+
+//==================================================================================================
+#pragma mark    AudioSessionActivationFlags for AudioSessionSetActiveWithFlags
+    
+/*!
+    @enum           Flags for AudioSessionSetActiveWithFlags
+    @abstract       These are valid bitmap flags that may be combined and passed to AudioSessionSetActiveWithFlags
+                    to refine this routine's behavior.
+    @constant       kAudioSessionSetActiveFlag_NotifyOthersOnDeactivation
+                        Notify an interrupted app that the interruption has ended and it may resume playback. Only
+                        valid on session deactivation.
+*/
+enum {
+    kAudioSessionSetActiveFlag_NotifyOthersOnDeactivation       = (1 << 0)  //  0x01
+};
+    
+/*!
+    @function       AudioSessionSetActiveWithFlags
+    @abstract       Same functionality as AudioSessionSetActive, with an additional flags parameter for 
+                    refining behavior.
+    @discussion     Call this function with active set to true to activate this AudioSession (interrupt
+                    the currently active AudioSession).
+                    Call this function with active set to false to deactivate this AudioSession (allow
+                    another interrupted AudioSession to resume).
+                    Pass in one or more flags to refine the behavior during activation or deactivation.
+                    When active is true this call may fail if the currently active AudioSession has a 
+                    higher priority.
+    @param          active
+                        A Boolean indicating if you want to make this AudioSession active or inactive.
+    @param          inFlags
+                        A bitmap containing one or more flags from the AudioSessionActivationFlags enum.
+*/
+extern OSStatus
+AudioSessionSetActiveWithFlags(     Boolean                             active,
+                                    UInt32                              inFlags)                    
+                                                            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*!
     @function       AudioSessionGetProperty
@@ -904,11 +1034,16 @@ AudioSessionSetActive(              Boolean                             active) 
                         On exit it will contain the actual size of the data.
     @param          outData
                         The data for the property will be copied here.
+    @return         kAudioSessionNoError if the operation was successful.  If the property is a
+                    write-only property or only available by way of property listeners, 
+                    kAudioSessionUnsupportedPropertyError will be returned.  Other error codes 
+                    listed under AudioSession Error Constants also apply to this function.
 */
 extern OSStatus
 AudioSessionGetProperty(            AudioSessionPropertyID              inID,
                                     UInt32                              *ioDataSize,
-                                    void                                *outData)                   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+                                    void                                *outData)                   
+                                                            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
 
 /*!
     @function       AudioSessionSetProperty
@@ -921,15 +1056,21 @@ AudioSessionGetProperty(            AudioSessionPropertyID              inID,
                         The size of the data payload.
     @param          inData
                         The data for the property we want to set.
-*/
+    @return         kAudioSessionNoError if the operation was successful.  If the property is a
+                    read-only property or an invalid property value is passed in, 
+                    kAudioSessionUnsupportedPropertyError will be returned.  Other error codes 
+                    listed under AudioSession Error Constants also apply to 
+                    this function.
+ */
 extern OSStatus
 AudioSessionSetProperty(            AudioSessionPropertyID              inID,
                                     UInt32                              inDataSize,
-                                    const void                          *inData)                    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+                                    const void                          *inData)                    
+                                                            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
 
 /*!
     @function       AudioSessionGetPropertySize
-    @abstract       Get the size of the paload for a property.
+    @abstract       Get the size of the payload for a property.
     @discussion     This function can be called to get the size for the payload of a property.
                     Valid properties are listed in an enum above.
     @param          inID
@@ -939,7 +1080,8 @@ AudioSessionSetProperty(            AudioSessionPropertyID              inID,
 */
 extern OSStatus
 AudioSessionGetPropertySize(        AudioSessionPropertyID              inID,
-                                    UInt32                              *outDataSize)               __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+                                    UInt32                              *outDataSize)               
+                                                            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
 
 /*!
     @function       AudioSessionAddPropertyListener
@@ -953,11 +1095,16 @@ AudioSessionGetPropertySize(        AudioSessionPropertyID              inID,
                         The listener to be called when the property changes.
     @param          inClientData
                         The client user data to use when calling the listener.
-*/
+    @return         kAudioSessionNoError if the operation was successful.  If the property does
+                    not support listeners, kAudioSessionUnsupportedPropertyError will be returned.  
+                    Other error codes listed under AudioSession Error Constants also apply to 
+                    this function.
+ */
 extern OSStatus
 AudioSessionAddPropertyListener(    AudioSessionPropertyID              inID,
                                     AudioSessionPropertyListener        inProc,
-                                    void                                *inClientData)              __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+                                    void                                *inClientData)              
+                                                            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
 
 /*!
     @function       AudioSessionRemovePropertyListener
@@ -966,9 +1113,14 @@ AudioSessionAddPropertyListener(    AudioSessionPropertyID              inID,
                     Valid properties are listed above.
     @param          inID
                         The AudioSessionPropertyID for which we want to remove the listener.
+    @return         kAudioSessionNoError if the operation was successful.  If the property does
+                    not support listeners, kAudioSessionUnsupportedPropertyError will be returned.  
+                    Other error codes listed under AudioSession Error Constants also apply to 
+                    this function.
 */
 extern OSStatus
-AudioSessionRemovePropertyListener(	AudioSessionPropertyID          inID)                           __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_2_0);
+AudioSessionRemovePropertyListener(	AudioSessionPropertyID          inID)                           
+                                    __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_2_0);
 
 /*!
     @function       AudioSessionRemovePropertyListener
@@ -977,12 +1129,16 @@ AudioSessionRemovePropertyListener(	AudioSessionPropertyID          inID)       
                     Valid properties are listed above.
     @param          inID
                         The AudioSessionPropertyID for which we want to remove the listener.
+    @return         kAudioSessionNoError if the operation was successful.  If the property does
+                    not support listeners, kAudioSessionUnsupportedPropertyError will be returned.  
+                    Other error codes listed under AudioSession Error Constants also apply to 
+                    this function.
 */
 extern OSStatus
 AudioSessionRemovePropertyListenerWithUserData(	AudioSessionPropertyID          inID,
                                                 AudioSessionPropertyListener    inProc,
-                                                void                            *inClientData)              __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_1);
-
+                                                void                            *inClientData)              
+                                                            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_1);
 
 #pragma mark -
 #pragma mark Deprecated

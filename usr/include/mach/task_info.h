@@ -220,12 +220,16 @@ typedef struct task_affinity_tag_info	*task_affinity_tag_info_t;
 #define TASK_DYLD_INFO			17	/* This is experimental. */
 
 struct task_dyld_info {
-	mach_vm_address_t	all_image_info;
+	mach_vm_address_t	all_image_info_addr;
+	mach_vm_size_t		all_image_info_size;
+	integer_t		all_image_info_format;		
 };
 typedef struct task_dyld_info	task_dyld_info_data_t;
 typedef struct task_dyld_info	*task_dyld_info_t;
 #define TASK_DYLD_INFO_COUNT	\
     		(sizeof(task_dyld_info_data_t) / sizeof(natural_t))
+#define TASK_DYLD_ALL_IMAGE_INFO_32	0	/* format value */
+#define TASK_DYLD_ALL_IMAGE_INFO_64	1	/* format value */
 
 #pragma pack()
 

@@ -1,5 +1,5 @@
 /*	CFPreferences.h
-	Copyright (c) 1998-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2010, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFPREFERENCES__)
@@ -115,7 +115,7 @@ CF_EXPORT
 CFArrayRef CFPreferencesCopyKeyList(CFStringRef applicationID, CFStringRef userName, CFStringRef hostName);
 
 #ifndef CF_OPEN_SOURCE
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 
 /* Function to determine whether or not a given key has been imposed on the
 user - In cases where machines and/or users are under some kind of management,

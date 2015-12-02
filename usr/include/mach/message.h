@@ -462,7 +462,7 @@ typedef struct
  * MAX_TRAILER_SIZE.
  */
 typedef mach_msg_mac_trailer_t mach_msg_max_trailer_t;
-#define MAX_TRAILER_SIZE sizeof(mach_msg_max_trailer_t)
+#define MAX_TRAILER_SIZE ((mach_msg_size_t)sizeof(mach_msg_max_trailer_t))
 
 /*
  * Legacy requirements keep us from ever updating these defines (even

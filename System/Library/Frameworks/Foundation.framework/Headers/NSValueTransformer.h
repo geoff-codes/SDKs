@@ -1,19 +1,18 @@
 /*	NSValueTransformer.h
-        Copyright (c) 2002-2007, Apple Inc. All rights reserved.
+        Copyright (c) 2002-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
-#import <Availability.h>
 
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_3_0
+#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @class NSArray, NSString;
 
-FOUNDATION_EXPORT NSString * const NSNegateBooleanTransformerName	__OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_3_0);
-FOUNDATION_EXPORT NSString * const NSIsNilTransformerName		__OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_3_0);
-FOUNDATION_EXPORT NSString * const NSIsNotNilTransformerName		__OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_3_0);
-FOUNDATION_EXPORT NSString * const NSUnarchiveFromDataTransformerName		__OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_3_0);
-FOUNDATION_EXPORT NSString * const NSKeyedUnarchiveFromDataTransformerName		__OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
+FOUNDATION_EXPORT NSString * const NSNegateBooleanTransformerName	NS_AVAILABLE(10_3, 3_0);
+FOUNDATION_EXPORT NSString * const NSIsNilTransformerName		NS_AVAILABLE(10_3, 3_0);
+FOUNDATION_EXPORT NSString * const NSIsNotNilTransformerName		NS_AVAILABLE(10_3, 3_0);
+FOUNDATION_EXPORT NSString * const NSUnarchiveFromDataTransformerName	NS_AVAILABLE(10_3, 3_0);
+FOUNDATION_EXPORT NSString * const NSKeyedUnarchiveFromDataTransformerName	NS_AVAILABLE(10_5, 3_0);
 
 @interface NSValueTransformer : NSObject {
 }

@@ -11,6 +11,7 @@
 
 @class MKPlacemarkInternal;
 
+NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 @interface MKPlacemark : NSObject <MKAnnotation> {
 @private
     MKPlacemarkInternal *_internal;

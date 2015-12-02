@@ -2,7 +2,7 @@
 //  UITextView.h
 //  UIKit
 //
-//  Copyright 2007-2009 Apple Inc. All rights reserved.
+//  Copyright 2007-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -21,11 +21,30 @@
 @class UIWebDocumentView;
 @class WebCoreFrameBridge;
 @class WebFrame;
-@protocol UITextViewDelegate;
 @class UITextInteractionAssistant;
 @class UITextSelectionView;
+@class UITextView;
 
-UIKIT_EXTERN_CLASS @interface UITextView : UIScrollView <UITextInputTraits> 
+
+@protocol UITextViewDelegate <NSObject, UIScrollViewDelegate>
+
+@optional
+
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView;
+- (BOOL)textViewShouldEndEditing:(UITextView *)textView;
+
+- (void)textViewDidBeginEditing:(UITextView *)textView;
+- (void)textViewDidEndEditing:(UITextView *)textView;
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
+- (void)textViewDidChange:(UITextView *)textView;
+
+- (void)textViewDidChangeSelection:(UITextView *)textView;
+
+@end
+
+
+UIKIT_CLASS_AVAILABLE(2_0) @interface UITextView : UIScrollView <UITextInputTraits> 
 {
   @package
     WebFrame           *m_frame;
@@ -33,18 +52,12 @@ UIKIT_EXTERN_CLASS @interface UITextView : UIScrollView <UITextInputTraits>
     int                 m_marginTop;
     UIDelayedAction    *m_selectionTimer;
     UIDelayedAction    *m_longPressAction;
-    CGPoint             m_touchPoint;
-    CGPoint             m_touchOffset;
-    UITouch            *m_syntheticTouch;
     BOOL                m_editable;
     BOOL                m_editing;
     BOOL                m_becomesEditableWithGestures;
-    BOOL                m_selecting;
-    BOOL                m_handlingMouse;
-    BOOL                m_sentMouseDown;
-    BOOL                m_passMouseDownToOther;
-    BOOL                m_scrollOnMouseUp;
     BOOL                m_reentrancyGuard;
+    BOOL                m_readyForScroll;
+    BOOL                m_hasExplicitTextAlignment;
     
     // Gesture recognition.
     UITextInteractionAssistant *m_interactionAssistant;
@@ -54,7 +67,9 @@ UIKIT_EXTERN_CLASS @interface UITextView : UIScrollView <UITextInputTraits>
     UIWebDocumentView  *m_webView;
     UIFont             *m_font;
     UIColor            *m_textColor;
-    UITextAlignment    m_textAlignment;
+    UITextAlignment     m_textAlignment;
+    UIView             *m_inputView;
+    UIView             *m_inputAccessoryView;
 }
 
 @property(nonatomic,assign) id<UITextViewDelegate> delegate;
@@ -69,22 +84,11 @@ UIKIT_EXTERN_CLASS @interface UITextView : UIScrollView <UITextInputTraits>
 - (BOOL)hasText;
 - (void)scrollRangeToVisible:(NSRange)range;
 
-@end
 
-@protocol UITextViewDelegate <NSObject>
-
-@optional
-
-- (BOOL)textViewShouldBeginEditing:(UITextView *)textView;
-- (BOOL)textViewShouldEndEditing:(UITextView *)textView;
-
-- (void)textViewDidBeginEditing:(UITextView *)textView;
-- (void)textViewDidEndEditing:(UITextView *)textView;
-
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
-- (void)textViewDidChange:(UITextView *)textView;
-
-- (void)textViewDidChangeSelection:(UITextView *)textView;
+// Presented when object becomes first responder.  If set to nil, reverts to following responder chain.  If
+// set while first responder, will not take effect until reloadInputViews is called.
+@property (readwrite, retain) UIView *inputView;             
+@property (readwrite, retain) UIView *inputAccessoryView;
 
 @end
 

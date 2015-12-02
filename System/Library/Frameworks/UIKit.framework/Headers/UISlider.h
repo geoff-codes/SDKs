@@ -2,7 +2,7 @@
 //  UISlider.h
 //  UIKit
 //
-//  Copyright 2006-2009 Apple Inc. All rights reserved.
+//  Copyright 2006-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 
 @class UIImageView, UIImage;
 
-UIKIT_EXTERN_CLASS @interface UISlider : UIControl <NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UISlider : UIControl <NSCoding> {
   @package
     float _value;
     float _minValue;
@@ -29,10 +29,12 @@ UIKIT_EXTERN_CLASS @interface UISlider : UIControl <NSCoding> {
     struct {
 	unsigned int continuous:1;
 	unsigned int animating:1;
+        unsigned int preparingToAnimate:1;
 	unsigned int showValue:1;
 	unsigned int trackEnabled:1;
 	unsigned int creatingSnapshot:1;
 	unsigned int thumbDisabled:1;
+	unsigned int minTrackHidden:1;
     } _sliderFlags;
 
     CGFloat _hitOffset;

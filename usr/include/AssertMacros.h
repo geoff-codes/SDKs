@@ -92,14 +92,20 @@
  *      If you define __ASSERTMACROS__ before this file is included, then nothing in
  *      this file will take effect.
  *
- *      Prior to Mac OS X 10.6 ( SnowLeopard ) the macro names used in this file
- *      conflicted with some user code, including libraries in boost and the proposed
- *      C++ standards efforts.  Because of this, most of the macros have been changed
- *      so that they are prefixed with __ and contain at least one capital letter, which
- *      should alleviate the current and future conflicts.  A tops script is at the
- *      end of this file should convert all of the old macro names used in a directory
- *      to the new names.
- *
+ *      Prior to Mac OS X 10.6 the macro names used in this file conflicted with some
+ *      user code, including libraries in boost and the proposed C++ standards efforts,
+ *      and there was no way for a client of this header to resolve this conflict. Because
+ *      of this, most of the macros have been changed so that they are prefixed with 
+ *      __ and contain at least one capital letter, which should alleviate the current
+ *      and future conflicts.  However, to allow current sources to continue to compile,
+ *      compatibility macros are defined at the end with the old names.  A tops script 
+ *      at the end of this file will convert all of the old macro names used in a directory
+ *      to the new names.  Clients are recommended to migrate over to these new macros as
+ *      they update their sources because a future release of Mac OS X will remove the
+ *      old macro definitions ( without the double-underscore prefix ).  Clients who
+ *      want to compile without the old macro definitions can define the macro
+ *      __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES to 0 before this file is
+ *      included.
  */
 
 
@@ -1219,18 +1225,64 @@
 #endif
 
 /*
- *	Before SnowLeopard, Mac OS X defined version of most of these macros without the __ prefix, which
+ *	For time immemorial, Mac OS X has defined version of most of these macros without the __ prefix, which
  *	could collide with similarly named functions or macros in user code, including new functionality in
  *	Boost and the C++ standard library.
  *
- *	--- explain how to enable and disable the older stuff, once we finalize it ---
+ *	A future release of Mac OS X will no longer do this, and will require that clients move to the
+ *  new macros as defined above.  However, in the interim both the new and old macros will work, unless
+ *  clients define a macro __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES before this file is included
+ *  in their compilations.  Clients who do not want the older macros defined can accomplish this by adding
+ *    #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
+ *  at the top of their sources, or my adding -D__ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=0 to the
+ *  gcc compilation options.
+ *
+ *  To aid users of these macros in converting their sources, the following tops script will convert usages
+ *  of the old macros into the new equivalents.  To do so, in Terminal go into the directory containing the
+ *  sources to be converted and run this command.
+ *
+    find . -name '*.[c|cc|cp|cpp|m|mm|h]' -print0 |  xargs -0 tops -verbose \
+      replace "check(<b args>)" with "__Check(<args>)" \
+      replace "check_noerr(<b args>)" with "__Check_noErr(<args>)" \
+      replace "check_noerr_string(<b args>)" with "__Check_noErr_String(<args>)" \
+      replace "check_string(<b args>)" with "__Check_String(<args>)" \
+      replace "require(<b args>)" with "__Require(<args>)" \
+      replace "require_action(<b args>)" with "__Require_Action(<args>)" \
+      replace "require_action_string(<b args>)" with "__Require_Action_String(<args>)" \
+      replace "require_noerr(<b args>)" with "__Require_noErr(<args>)" \
+      replace "require_noerr_action(<b args>)" with "__Require_noErr_Action(<args>)" \
+      replace "require_noerr_action_string(<b args>)" with "__Require_noErr_Action_String(<args>)" \
+      replace "require_noerr_string(<b args>)" with "__Require_noErr_String(<args>)" \
+      replace "require_string(<b args>)" with "__Require_String(<args>)" \
+      replace "verify(<b args>)" with "__Verify(<args>)" \
+      replace "verify_action(<b args>)" with "__Verify_Action(<args>)" \
+      replace "verify_noerr(<b args>)" with "__Verify_noErr(<args>)" \
+      replace "verify_noerr_action(<b args>)" with "__Verify_noErr_Action(<args>)" \
+      replace "verify_noerr_string(<b args>)" with "__Verify_noErr_String(<args>)" \
+      replace "verify_string(<b args>)" with "__Verify_String(<args>)" \
+      replace "ncheck(<b args>)" with "__nCheck(<args>)" \
+      replace "ncheck_string(<b args>)" with "__nCheck_String(<args>)" \
+      replace "nrequire(<b args>)" with "__nRequire(<args>)" \
+      replace "nrequire_action(<b args>)" with "__nRequire_Action(<args>)" \
+      replace "nrequire_action_quiet(<b args>)" with "__nRequire_Action_Quiet(<args>)" \
+      replace "nrequire_action_string(<b args>)" with "__nRequire_Action_String(<args>)" \
+      replace "nrequire_quiet(<b args>)" with "__nRequire_Quiet(<args>)" \
+      replace "nrequire_string(<b args>)" with "__nRequire_String(<args>)" \
+      replace "nverify(<b args>)" with "__nVerify(<args>)" \
+      replace "nverify_string(<b args>)" with "__nVerify_String(<args>)" \
+      replace "require_action_quiet(<b args>)" with "__Require_Action_Quiet(<args>)" \
+      replace "require_noerr_action_quiet(<b args>)" with "__Require_noErr_Action_Quiet(<args>)" \
+      replace "require_noerr_quiet(<b args>)" with "__Require_noErr_Quiet(<args>)" \
+      replace "require_quiet(<b args>)" with "__Require_Quiet(<args>)" \
+      replace "check_compile_time(<b args>)" with "__Check_Compile_Time(<args>)" \
+      replace "debug_string(<b args>)" with "__Debug_String(<args>)"
  *
  */
 
 #ifndef __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES
+	/* If we haven't set this yet, it defaults to on.  In the next release, this will default to off. */
 	#define	__ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES	1
 #endif
-
 
 #if	__ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES
 

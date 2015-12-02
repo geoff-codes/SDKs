@@ -6,7 +6,7 @@
 #import <QuartzCore/CABase.h>
 #import <Foundation/NSObject.h>
 
-@interface CAValueFunction : NSObject
+@interface CAValueFunction : NSObject <NSCoding>
 {
 @protected
   NSString *_string;

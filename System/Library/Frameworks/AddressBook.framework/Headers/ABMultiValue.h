@@ -2,7 +2,7 @@
  *  ABMultiValue.h
  *  AddressBook
  *
- *  Copyright 2008 Apple, Inc. All rights reserved.
+ *  Copyright (c) 2010 Apple Inc. All rights reserved.
  *
  *  MultiValues are ordered, homogeneous collections of values. Each
  *  value has a unique persistent identifier which can be use to

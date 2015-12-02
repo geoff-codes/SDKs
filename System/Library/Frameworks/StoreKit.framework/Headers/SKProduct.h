@@ -8,9 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKitDefines.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
-SK_EXTERN_CLASS @interface SKProduct : NSObject {
+SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKProduct : NSObject {
 @private
     id _internal;
 }
@@ -26,5 +24,3 @@ SK_EXTERN_CLASS @interface SKProduct : NSObject {
 @property(nonatomic, readonly) NSString *productIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @end
-
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

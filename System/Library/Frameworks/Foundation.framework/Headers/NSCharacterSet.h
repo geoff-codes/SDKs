@@ -1,5 +1,5 @@
 /*	NSCharacterSet.h
-	Copyright (c) 1994-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
 */
 
 #import <CoreFoundation/CFCharacterSet.h>
@@ -27,13 +27,13 @@ enum {
 + (id)decomposableCharacterSet;
 + (id)illegalCharacterSet;
 + (id)punctuationCharacterSet;
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 + (id)capitalizedLetterCharacterSet;
 #endif
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 + (id)symbolCharacterSet;
 #endif
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 + (id)newlineCharacterSet;
 #endif
 
@@ -46,7 +46,7 @@ enum {
 - (NSData *)bitmapRepresentation;
 - (NSCharacterSet *)invertedSet;
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (BOOL)longCharacterIsMember:(UTF32Char)theLongChar;
 
 - (BOOL)isSupersetOfSet:(NSCharacterSet *)theOtherSet;

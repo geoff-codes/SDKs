@@ -13,6 +13,7 @@ enum {
     NSFetchRequestExpressionType = 50
 };
 
+NS_CLASS_AVAILABLE(10_5, 3_0)
 @interface NSFetchRequestExpression : NSExpression {
 @private
     void* _reserved1;

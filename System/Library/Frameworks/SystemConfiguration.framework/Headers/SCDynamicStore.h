@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2001, 2003-2005, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (c) 2000, 2001, 2003-2005, 2008-2010 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -30,9 +30,7 @@
 #include <Availability.h>
 #include <TargetConditionals.h>
 #include <sys/cdefs.h>
-#if	!TARGET_OS_IPHONE
 #include <dispatch/dispatch.h>
-#endif	// !TARGET_OS_IPHONE
 #include <CoreFoundation/CoreFoundation.h>
 
 
@@ -219,7 +217,6 @@ SCDynamicStoreCreateRunLoopSource	(
 					CFIndex				order
 					)				__OSX_AVAILABLE_STARTING(__MAC_10_1,__IPHONE_NA);
 
-#if	!TARGET_OS_IPHONE
 /*!
 	@function SCDynamicStoreSetDispatchQueue
 	@discussion Initiates notifications for the Notification
@@ -235,7 +232,6 @@ SCDynamicStoreSetDispatchQueue		(
 					SCDynamicStoreRef		store,
 					dispatch_queue_t		queue
 					)				__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
-#endif	// !TARGET_OS_IPHONE
 
 /*!
 	@function SCDynamicStoreCopyKeyList

@@ -1,7 +1,7 @@
 /*
   MeCab -- Yet Another Part-of-Speech and Morphological Analyzer
 
-  $Id: mecab.h,v 1.5 2009/04/02 22:58:01 guo1 Exp $;
+  $Id: mecab_em_tok.h,v 1.5 2009/04/02 22:58:01 guo1 Exp $;
 
   Copyright(C) 2001-2006 Taku Kudo <taku@chasen.org>
   Copyright(C) 2004-2006 Nippon Telegraph and Telephone Corporation
@@ -50,9 +50,9 @@ struct mecab_token_t {
   unsigned short rcAttr;
   unsigned short posid;
   short wcost;
+  unsigned int   feature;
 #if 1 /* MECAB_APPLE_ENHANCEMENT */
 #else  /* original */
-  unsigned int   feature;
   unsigned int   compound;  /* reserved for noun compound */
 #endif
 };

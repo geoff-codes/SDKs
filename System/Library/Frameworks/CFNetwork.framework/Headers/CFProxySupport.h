@@ -81,7 +81,7 @@ extern "C" {
 		The caller is responsible for releasing the returned dictionary.
 */
 CFN_EXPORT CFDictionaryRef
-CFNetworkCopySystemProxySettings( void )					__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+CFNetworkCopySystemProxySettings( void )					__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_2_0);
 
 	
 /*
@@ -314,6 +314,21 @@ CFN_EXPORT const CFStringRef kCFProxyPortNumberKey					   __OSX_AVAILABLE_STARTI
 CFN_EXPORT const CFStringRef kCFProxyAutoConfigurationURLKey			 __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*
+ *  kCFProxyAutoConfigurationJavaScriptKey
+ *  
+ *  Discussion:
+ *	Key for the proxy's PAC script
+ *	The value is a CFString that contains the full JavaScript soure text for the PAC file.
+ *  
+ *  Availability:
+ *	Mac OS X:		 in version 10.5 and later in CoreServices.framework
+ *	CarbonLib:		not available
+ *	Non-Carbon CFM:   not available
+ */
+CFN_EXPORT const CFStringRef kCFProxyAutoConfigurationJavaScriptKey			 __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+
+
+/*
  *  kCFProxyUsernameKey
  *  
  *  Discussion:
@@ -408,7 +423,12 @@ CFN_EXPORT const CFStringRef kCFProxyTypeFTP							 __OSX_AVAILABLE_STARTING(__M
  *	Non-Carbon CFM:   not available
  */
 CFN_EXPORT const CFStringRef kCFProxyTypeAutoConfigurationURL			__OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
-
+/*
+ *
+ *
+ */
+CFN_EXPORT const CFStringRef kCFProxyTypeAutoConfigurationJavaScript    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+	
 /*
  *  kCFProxyAutoConfigHTTPResponse
  *  
@@ -428,7 +448,7 @@ CFN_EXPORT const CFStringRef kCFProxyAutoConfigurationHTTPResponseKey			__OSX_AV
  *	Key for the list of host name patterns that should bypass the proxy; value is a
  *	CFArray of CFStrings.  
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesExceptionsList		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesExceptionsList		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesExcludeSimpleHostnames
  *  
@@ -437,7 +457,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesExceptionsList		__OSX_AVAILABLE_ST
  *	CFNumber.  Simple hostnames will be excluded if the key is present and has a 
  *	non-zero value.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesExcludeSimpleHostnames	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesExcludeSimpleHostnames	__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesFTPEnable
  *  
@@ -445,7 +465,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesExcludeSimpleHostnames	__OSX_AVAIL
  *	Key for the enabled status of the ftp proxy; value is a
  *	CFNumber.  The proxy is enabled if the key is present and has a non-zero value.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPEnable			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPEnable			__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesFTPPassive
  *  
@@ -454,7 +474,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPEnable			__OSX_AVAILABLE_STARTI
  *	CFNumber.  A value of one indicates that passive mode is enabled, a value
  *	of zero indicates that passive mode is not enabled.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPPassive		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPPassive		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesFTPPort
  *  
@@ -462,7 +482,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPPassive		__OSX_AVAILABLE_STARTI
  *	Key for the port number associated with the ftp proxy; value is a
  *	CFNumber which is the port number.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPPort			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPPort			__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesFTPProxy
  *  
@@ -470,7 +490,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPPort			__OSX_AVAILABLE_STARTING
  *	Key for the host name associated with the ftp proxy; value is a
  *	CFString which is the proxy host name.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPProxy			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPProxy			__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesGopherEnable
  *  
@@ -478,7 +498,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesFTPProxy			__OSX_AVAILABLE_STARTIN
  *	Key for the enabled status of the gopher proxy; value is a
  *	CFNumber.  The proxy is enabled if the key is present and has a non-zero value.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesGopherEnable		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesGopherEnable		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesGopherPort
  *  
@@ -486,7 +506,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesGopherEnable		__OSX_AVAILABLE_STAR
  *	Key for the port number associated with the gopher proxy; value is a
  *	CFNumber which is the port number.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesGopherPort		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesGopherPort		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesGopherProxy
  *  
@@ -494,7 +514,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesGopherPort		__OSX_AVAILABLE_STARTI
  *	Key for the host name associated with the gopher proxy; value is a
  *	CFString which is the proxy host name.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesGopherProxy		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesGopherProxy		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesHTTPEnable
  *  
@@ -502,7 +522,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesGopherProxy		__OSX_AVAILABLE_START
  *	Key for the enabled status of the HTTP proxy; value is a
  *	CFNumber.  The proxy is enabled if the key is present and has a non-zero value.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPEnable		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPEnable		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_2_0);
 /*
  *  kCFNetworkProxiesHTTPPort
  *  
@@ -510,7 +530,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPEnable		__OSX_AVAILABLE_STARTI
  *	Key for the port number associated with the HTTP proxy; value is a
  *	CFNumber which is the port number.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPPort			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPPort			__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_2_0);
 /*
  *  kCFNetworkProxiesHTTPProxy
  *  
@@ -518,7 +538,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPPort			__OSX_AVAILABLE_STARTIN
  *	Key for the host name associated with the HTTP proxy; value is a
  *	CFString which is the proxy host name.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPProxy			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPProxy			__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_2_0);
 /*
  *  kCFNetworkProxiesHTTPSEnable
  *  
@@ -526,7 +546,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPProxy			__OSX_AVAILABLE_STARTI
  *	Key for the enabled status of the HTTPS proxy; value is a
  *	CFNumber.  The proxy is enabled if the key is present and has a non-zero value.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPSEnable		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPSEnable		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesHTTPSPort
  *  
@@ -534,7 +554,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPSEnable		__OSX_AVAILABLE_START
  *	Key for the port number associated with the HTTPS proxy; value is a
  *	CFNumber which is the port number.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPSPort			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPSPort			__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesHTTPSProxy
  *  
@@ -542,7 +562,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPSPort			__OSX_AVAILABLE_STARTI
  *	Key for the host name associated with the HTTPS proxy; value is a
  *	CFString which is the proxy host name.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPSProxy		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPSProxy		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesRTSPEnable
  *  
@@ -550,7 +570,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesHTTPSProxy		__OSX_AVAILABLE_STARTI
  *	Key for the enabled status of the RTSP proxy; value is a
  *	CFNumber.  The proxy is enabled if the key is present and has a non-zero value.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesRTSPEnable		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesRTSPEnable		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesRTSPPort
  *  
@@ -558,7 +578,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesRTSPEnable		__OSX_AVAILABLE_STARTI
  *	Key for the port number associated with the RTSP proxy; value is a
  *	CFNumber which is the port number.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesRTSPPort			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesRTSPPort			__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesRTSPProxy
  *  
@@ -566,7 +586,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesRTSPPort			__OSX_AVAILABLE_STARTIN
  *	Key for the host name associated with the RTSP proxy; value is a
  *	CFString which is the proxy host name.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesRTSPProxy			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesRTSPProxy			__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesSOCKSEnable
  *  
@@ -574,7 +594,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesRTSPProxy			__OSX_AVAILABLE_STARTI
  *	Key for the enabled status of the SOCKS proxy; value is a
  *	CFNumber.  The proxy is enabled if the key is present and has a non-zero value.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesSOCKSEnable		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesSOCKSEnable		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesSOCKSPort
  *  
@@ -582,7 +602,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesSOCKSEnable		__OSX_AVAILABLE_START
  *	Key for the port number associated with the SOCKS proxy; value is a
  *	CFNumber which is the port number.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesSOCKSPort			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesSOCKSPort			__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesSOCKSProxy
  *  
@@ -590,7 +610,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesSOCKSPort			__OSX_AVAILABLE_STARTI
  *	Key for the host name associated with the SOCKS proxy; value is a
  *	CFString which is the proxy host name.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesSOCKSProxy		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesSOCKSProxy		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 /*
  *  kCFNetworkProxiesProxyAutoConfigEnable
  *  
@@ -598,15 +618,24 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesSOCKSProxy		__OSX_AVAILABLE_STARTI
  *	Key for the enabled status ProxyAutoConfig (PAC); value is a
  *	CFNumber.  ProxyAutoConfig is enabled if the key is present and has a non-zero value.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoConfigEnable	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoConfigEnable	__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_2_0);
 /*
- *  kCFNetworkProxiesSOCKSProxy
+ *  kCFNetworkProxiesProxyAutoConfigURLString
  *  
  *  Discussion:
  *	Key for the url which indicates the location of the ProxyAutoConfig (PAC) file; value is a
  *	CFString which is url for the PAC file.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoConfigURLString	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoConfigURLString	__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_2_0);
+/*
+ * kCFNetworkProxiesProxyAutoConfigJavaScript
+ *
+ * Discussion:
+ * Key for the string which is the full JavaScript source of the ProxyAutoConfig (PAC) script;  value is a
+ * CFString with is the full text source of the PAC script.
+ */
+CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoConfigJavaScript	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+	
 /*
  *  kCFNetworkProxiesProxyAutoDiscoveryEnable
  *  
@@ -614,7 +643,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoConfigURLString	__OSX_AVA
  *	Key for the enabled status of proxy auto discovery; value is a
  *	CFNumber.  Proxy auto discovery is enabled if the key is present and has a non-zero value.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoDiscoveryEnable	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_NA);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoDiscoveryEnable	__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_NA);
 #endif // TARGET_OS_MAC
 
 #ifdef __cplusplus

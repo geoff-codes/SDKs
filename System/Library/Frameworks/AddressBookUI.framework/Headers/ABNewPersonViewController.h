@@ -2,7 +2,7 @@
 //  ABNewPersonViewController.h
 //  AddressBookUI
 //
-//  Copyright 2008 Apple Inc. All rights reserved.
+//  Copyright (c) 2010 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -10,6 +10,7 @@
 
 @protocol ABNewPersonViewControllerDelegate;
 
+NS_CLASS_AVAILABLE(NA, 2_0)
 @interface ABNewPersonViewController : UIViewController
 {
     @private
@@ -18,6 +19,7 @@
         id                                    _parentGroup;
         
         id                                    _helper;
+        ABRecordRef                           _recordForNewPerson;
 }
 
 @property(nonatomic,assign)    id<ABNewPersonViewControllerDelegate> newPersonViewDelegate;

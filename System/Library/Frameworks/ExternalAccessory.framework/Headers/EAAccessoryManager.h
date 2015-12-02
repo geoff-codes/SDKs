@@ -5,17 +5,15 @@
 //  Copyright 2008 Apple, Inc. All rights reserved.
 //
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
 // EAAccessoryManager Notifications
 EA_EXTERN NSString *const EAAccessoryDidConnectNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 EA_EXTERN NSString *const EAAccessoryDidDisconnectNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-// Keys in the EAAccessoryDidArriveNotification/EAAccessoryDidDisconnectNotification userInfo
+// Keys in the EAAccessoryDidConnectNotification/EAAccessoryDidDisconnectNotification userInfo
 EA_EXTERN NSString *const EAAccessoryKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // EAAccessory
 
 @class EAAccessory;
 
-EA_EXTERN_CLASS @interface EAAccessoryManager : NSObject {
+EA_EXTERN_CLASS_AVAILABLE(3_0) @interface EAAccessoryManager : NSObject {
 @private
     NSMutableArray *_connectedAccessories;
 }
@@ -28,5 +26,3 @@ EA_EXTERN_CLASS @interface EAAccessoryManager : NSObject {
 @property (nonatomic, readonly) NSArray *connectedAccessories __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @end
-
-#endif // #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

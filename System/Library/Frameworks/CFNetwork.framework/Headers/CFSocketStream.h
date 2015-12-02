@@ -243,6 +243,21 @@ CFN_EXPORT const CFStringRef kCFStreamSSLAllowsExpiredRoots			  __OSX_STREAM_PRO
  */
 CFN_EXPORT const CFStringRef kCFStreamSSLAllowsAnyRoot				   __OSX_STREAM_PROPERTIES_DEPRECATED_10_6;
 
+/*	kCFStreamNetworkServiceType
+ *
+ * Discussion:
+ * Property key to specify the type of service for the stream.  This
+ * allows the system to properly handle the request with respect to
+ * routing, suspension behavior and other networking related attributes
+ * appropriate for the given service type.  The service types supported
+ * are documented below.  Most streams should not need to set this
+ * property.
+ */
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceType		__OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+
+/* supported network service types: */
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVoIP __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);		// voice over IP
+
 /*
  *  kCFStreamErrorDomainWinSock
  *  

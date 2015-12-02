@@ -2,7 +2,7 @@
 //  UITableViewCell.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -18,11 +18,12 @@ typedef enum {
     UITableViewCellStyleValue1,		// Left aligned label on left and right aligned label on right with blue text (Used in Settings)
     UITableViewCellStyleValue2,		// Right aligned label on left with blue text and left aligned label on right (Used in Phone/Contacts)
     UITableViewCellStyleSubtitle	// Left aligned label on top and left aligned label on bottom with gray text (Used in iPod).
-} UITableViewCellStyle;                 // available in iPhone 3.0
+} UITableViewCellStyle;             // available in iPhone OS 3.0
 
 typedef enum {
     UITableViewCellSeparatorStyleNone,
-    UITableViewCellSeparatorStyleSingleLine
+    UITableViewCellSeparatorStyleSingleLine,
+    UITableViewCellSeparatorStyleSingleLineEtched   // This separator style is only supported for grouped style table views currently
 } UITableViewCellSeparatorStyle;
 
 typedef enum {
@@ -49,11 +50,11 @@ enum {
     UITableViewCellStateShowingEditControlMask          = 1 << 0,
     UITableViewCellStateShowingDeleteConfirmationMask   = 1 << 1
 };
-typedef NSUInteger UITableViewCellStateMask;        // available in iPhone 3.0
+typedef NSUInteger UITableViewCellStateMask;        // available in iPhone OS 3.0
 
 #define UITableViewCellStateEditingMask UITableViewCellStateShowingEditControlMask
 
-UIKIT_EXTERN_CLASS @interface UITableViewCell : UIView <NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding> {
   @private
     id           _layoutManager;
     id           _target;
@@ -72,9 +73,15 @@ UIKIT_EXTERN_CLASS @interface UITableViewCell : UIView <NSCoding> {
     UIView      *_backgroundView;
     UIView      *_selectedBackgroundView;
     UIView      *_selectedOverlayView;
+    CGFloat      _selectionFadeDuration;
     UIColor     *_backgroundColor;
     UIColor     *_separatorColor;
+    UIColor     *_topShadowColor;
+    UIColor     *_bottomShadowColor;
+    UIColor     *_sectionBorderColor;
     UIView      *_floatingSeparatorView;
+    UIView      *_topShadowAnimationView;
+    UIView      *_bottomShadowAnimationView;
     CFMutableDictionaryRef _unhighlightedStates;
     struct {
         unsigned int showingDeleteConfirmation:1;
@@ -89,7 +96,6 @@ UIKIT_EXTERN_CLASS @interface UITableViewCell : UIView <NSCoding> {
         unsigned int showsReorderControl:1;
         unsigned int showDisclosure:1;
         unsigned int showTopSeparator:1;
-
         unsigned int disclosureClickable:1;
         unsigned int disclosureStyle:1;
         unsigned int showingRemoveControl:1;
@@ -105,6 +111,10 @@ UIKIT_EXTERN_CLASS @interface UITableViewCell : UIView <NSCoding> {
         unsigned int drawingDisabled:1;
         unsigned int style:12;
         unsigned int showingMenu:1;
+        unsigned int clipsContents:1;
+        unsigned int animatingSelection:1;
+        unsigned int backgroundColorSet:1;
+        unsigned int needsSetup:1;
     } _tableCellFlags;
     
     UIButton *_accessoryView;
@@ -113,6 +123,7 @@ UIKIT_EXTERN_CLASS @interface UITableViewCell : UIView <NSCoding> {
     UIView *_customEditingAccessoryView;
     UIView *_separatorView;
     UIView *_topSeparatorView;
+    UIView *_topShadowView;
     UITextField *_editableTextField;
     CFAbsoluteTime _lastSelectionTime;
     NSTimer *_deselectTimer;

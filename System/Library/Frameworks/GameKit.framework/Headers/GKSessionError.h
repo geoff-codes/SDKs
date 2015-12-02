@@ -1,8 +1,8 @@
 /*
- *  GKError.h
+ *  GKSessionError.h
  *  GameKit
  *
- *  Copyright 2009 Apple, Inc. All rights reserved.
+ *  Copyright 2010 Apple, Inc. All rights reserved.
  *
  */
 

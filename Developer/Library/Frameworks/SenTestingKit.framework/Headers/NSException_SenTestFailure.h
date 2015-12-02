@@ -29,7 +29,7 @@
 // This notice may not be removed from this file.
 
 #import <Foundation/Foundation.h>
-#import "SenTestDefines.h"
+#import <SenTestingKit/SenTestDefines.h>
 
 @interface NSException (SenTestFailure)
 

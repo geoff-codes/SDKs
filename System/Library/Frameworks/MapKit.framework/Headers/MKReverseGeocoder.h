@@ -17,6 +17,7 @@
 @class MKReverseGeocoderInternal;
 @protocol MKReverseGeocoderDelegate;
 
+NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 @interface MKReverseGeocoder : NSObject {
 @private
     MKReverseGeocoderInternal *_internal;
@@ -24,15 +25,15 @@
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)coordinate;
 
-@property (nonatomic, assign) id<MKReverseGeocoderDelegate> delegate;
-@property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
 
 // A MKReverseGeocoder object should only be started once.
 - (void)start;
-
-@property (nonatomic, readonly, getter=isQuerying) BOOL querying;
-
 - (void)cancel;
+
+@property (nonatomic, assign) id<MKReverseGeocoderDelegate> delegate;
+@property (nonatomic, readonly) CLLocationCoordinate2D coordinate;      // the exact coordinate being reverse geocoded.
+@property (nonatomic, readonly) MKPlacemark *placemark                  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); 
+@property (nonatomic, readonly, getter=isQuerying) BOOL querying;
 
 @end
 
@@ -45,5 +46,3 @@
 //     will have the domain MKErrorDomain and the code MKErrorPlacemarkNotFound
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error;
 @end
-
-

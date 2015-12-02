@@ -30,6 +30,7 @@ enum {
 
 typedef NSUInteger NSSnapshotEventType;
 
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSManagedObject : NSObject {
 @private
     int32_t             _cd_rc;

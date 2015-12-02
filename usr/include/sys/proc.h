@@ -122,7 +122,7 @@ struct extern_proc {
 	u_quad_t p_iticks;		/* Statclock hits processing intr. */
 	int	p_traceflag;		/* Kernel trace points. */
 	struct	vnode *p_tracep;	/* Trace to vnode. */
-	int	p_siglist;		/* DEPRECATED */
+	int	p_siglist;		/* DEPRECATED. */
 	struct	vnode *p_textvp;	/* Vnode of executable. */
 	int	p_holdcnt;		/* If non-zero, don't swap. */
 	sigset_t p_sigmask;	/* DEPRECATED. */
@@ -202,6 +202,7 @@ struct extern_proc {
 #define	P_PHYSIO	0		/* Obsolete: retained for compilation */
 #define	P_FSTRACE	0		/* Obsolete: retained for compilation */
 #define	P_SSTEP		0		/* Obsolete: retained for compilation */
+
 
 
 

@@ -1,6 +1,6 @@
 /*	
     NSURLConnection.h
-    Copyright (C) 2003-2007, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2010, Apple Inc. All rights reserved.    
     
     Public header file.
 */
@@ -8,9 +8,7 @@
 // Note: To use the APIs described in these headers, you must perform
 // a runtime check for Foundation-462.1 or later.
 #import <AvailabilityMacros.h>
-#import <Availability.h>
-
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/NSObject.h>
 
@@ -127,13 +125,13 @@
         or should delay processing until it receives the -start message.
     @result The initialized NSURLConnection instance
 */
-- (id)initWithRequest:(NSURLRequest *)request delegate:(id)delegate startImmediately:(BOOL)startImmediately AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (id)initWithRequest:(NSURLRequest *)request delegate:(id)delegate startImmediately:(BOOL)startImmediately NS_AVAILABLE(10_5, 2_0);
 
 /*!
     @method start
     @abstract Causes the NSURLConnection to start processing its request, if it has not already.
 */
-- (void)start AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (void)start NS_AVAILABLE(10_5, 2_0);
 
 /*! 
     @method cancel
@@ -147,15 +145,15 @@
 
 /* Scheduling APIs
     NSURLConnection sends its delegate messages via the run loop; these methods
-    determine which runlopes and which modes the messages will be sent on.  At creation,
+    determine which runloops and which modes the messages will be sent on.  At creation,
     a connection is scheduled on the current thread (the one where the creation takes place)
     in the default mode.  That can be changed to add or remove runloop + mode pairs
     using the following methods.  It is permissible to be scheduled on multiple run loops and modes,
     or on the same run loop in multiple modes, so scheduling in one place does not cause unscheduling
     in another.
 */
-- (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
-- (void)unscheduleFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER;
+- (void)scheduleInRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode NS_AVAILABLE(10_5, 2_0);
+- (void)unscheduleFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSString *)mode NS_AVAILABLE(10_5, 2_0);
 
 @end
 
@@ -256,21 +254,6 @@
 */
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response;
 
-/*!
-    @method connection:canAuthenticateAgainstProtectionSpace:
-    @abstract This method gives the delegate an opportunity to inspect an NSURLProtectionSpace before an authentication attempt is made.
-    @discussion If implemented, will be called before connection:didReceiveAuthenticationChallenge 
-    to give the delegate a chance to inspect the protection space that will be authenticated against.  Delegates should determine
-    if they are prepared to respond to the authentication method of the protection space and if so, return YES, or NO to
-    allow default processing to handle the authentication.  If this delegate is not implemented, then default 
-    processing will occur (typically, consulting
-    the user's keychain and/or failing the connection attempt.
-    @param connection an NSURLConnection that has an NSURLProtectionSpace ready for inspection
-    @param protectionSpace an NSURLProtectionSpace that will be used to generate an authentication challenge
-    @result a boolean value that indicates the willingness of the delegate to handle the authentication
- */
-- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-
 /*! 
     @method connection:needNewBodyStream:  
     @abstract This method is called whenever an NSURLConnection
@@ -291,7 +274,22 @@
     @param request The current NSURLRequest object associated with the connection.
     @result The new unopened body stream to use (see setHTTPBodyStream).
 */
-- (NSInputStream *)connection:(NSURLConnection *)connection needNewBodyStream:(NSURLRequest *)request __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (NSInputStream *)connection:(NSURLConnection *)connection needNewBodyStream:(NSURLRequest *)request NS_AVAILABLE(10_6, 3_0);
+
+/*!
+    @method connection:canAuthenticateAgainstProtectionSpace:
+    @abstract This method gives the delegate an opportunity to inspect an NSURLProtectionSpace before an authentication attempt is made.
+    @discussion If implemented, will be called before connection:didReceiveAuthenticationChallenge 
+    to give the delegate a chance to inspect the protection space that will be authenticated against.  Delegates should determine
+    if they are prepared to respond to the authentication method of the protection space and if so, return YES, or NO to
+    allow default processing to handle the authentication.  If this delegate is not implemented, then default 
+    processing will occur (typically, consulting
+    the user's keychain and/or failing the connection attempt.
+    @param connection an NSURLConnection that has an NSURLProtectionSpace ready for inspection
+    @param protectionSpace an NSURLProtectionSpace that will be used to generate an authentication challenge
+    @result a boolean value that indicates the willingness of the delegate to handle the authentication
+ */
+- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace NS_AVAILABLE(10_6, 3_0);
 
 /*!
     @method connection:didReceiveAuthenticationChallenge:
@@ -326,7 +324,7 @@
     @param connection  the NSURLConnection object asking if it should consult the credential storage.
     @result NO if the connection should not consult the credential storage, Yes if it should.
 */
-- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection NS_AVAILABLE(10_6, 3_0);
 
 /*! 
     @method connection:didReceiveResponse:   
@@ -382,7 +380,7 @@
     @param totalBytesWritten total number of bytes written for this connection
     @param totalBytesExpectedToWrite the number of bytes the connection expects to write (can change due to retransmission of body content)
 */
-- (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite NS_AVAILABLE(10_6, 3_0);
 
 /*! 
     @method connectionDidFinishLoading:   
@@ -458,9 +456,9 @@
     request that is used for the loading process.
     @param response An out parameter which is filled in with the
     response generated by performing the load.
-    @param error An out parameter which is filled in with the
-    error generated by performing the load. If no error occurred
-    the load, this will be nil.
+    @param error Out parameter (may be NULL) used if an error occurs
+    while processing the request. Will not be modified if the load
+    succeeds.
     @result The content of the URL resulting from performing the load,
     or nil if the load failed.
 */

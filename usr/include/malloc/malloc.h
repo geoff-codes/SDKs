@@ -51,8 +51,12 @@ typedef struct _malloc_zone_t {
 
     struct malloc_introspection_t	*introspect;
     unsigned	version;
-	/* aligned memory allocation; may be NULL */
+    
+    /* aligned memory allocation. The callback may be NULL. */
 	void *(*memalign)(struct _malloc_zone_t *zone, size_t alignment, size_t size);
+    
+    /* free a pointer known to be in zone and known to have the given size. The callback may be NULL. */
+    void (*free_definite_size)(struct _malloc_zone_t *zone, void *ptr, size_t size);
 } malloc_zone_t;
 
 /*********	Creation and destruction	************/
@@ -61,7 +65,7 @@ extern malloc_zone_t *malloc_default_zone(void);
     /* The initial zone */
 
 extern malloc_zone_t *malloc_create_zone(vm_size_t start_size, unsigned flags);
-    /* Create a new zone */
+    /* Creates a new zone with default behavior and registers it */
 
 extern void malloc_destroy_zone(malloc_zone_t *zone);
     /* Destroys zone and everything it allocated */
@@ -124,8 +128,10 @@ extern int malloc_make_nonpurgeable(void *ptr);
 /*********	Functions for zone implementors	************/
 
 extern void malloc_zone_register(malloc_zone_t *zone);
-    /* Registers a freshly created zone;
-    Should typically be called after a zone has been created */
+    /* Registers a custom malloc zone; Should typically be called after a 
+     * malloc_zone_t has been filled in with custom methods by a client.  See
+     * malloc_create_zone for creating additional malloc zones with the
+     * default allocation and free behavior. */
 
 extern void malloc_zone_unregister(malloc_zone_t *zone);
     /* De-registers a zone
@@ -170,6 +176,7 @@ typedef struct malloc_introspection_t {
     void	(*force_lock)(malloc_zone_t *zone); /* Forces locking zone */
     void	(*force_unlock)(malloc_zone_t *zone); /* Forces unlocking zone */
     void	(*statistics)(malloc_zone_t *zone, malloc_statistics_t *stats); /* Fills statistics */
+    boolean_t (*zone_locked)(malloc_zone_t *zone); /* Are any zone locks held */
 } malloc_introspection_t;
 
 extern void malloc_printf(const char *format, ...);

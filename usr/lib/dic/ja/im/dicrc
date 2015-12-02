@@ -1,4 +1,0 @@
-cost-factor = 700
-bos-feature = BOS/EOS
-eval-size = 1
-unk-eval-size = 1

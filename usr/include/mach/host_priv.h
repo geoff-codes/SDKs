@@ -395,10 +395,13 @@ extern
 kern_return_t kext_request
 (
 	host_priv_t host_priv,
+	uint32_t user_log_flags,
 	vm_offset_t request_data,
 	mach_msg_type_number_t request_dataCnt,
 	vm_offset_t *response_data,
 	mach_msg_type_number_t *response_dataCnt,
+	vm_offset_t *log_data,
+	mach_msg_type_number_t *log_dataCnt,
 	kern_return_t *op_result
 );
 
@@ -784,6 +787,7 @@ __END_DECLS
 		mach_msg_ool_descriptor_t request_data;
 		/* end of the kernel processed data */
 		NDR_record_t NDR;
+		uint32_t user_log_flags;
 		mach_msg_type_number_t request_dataCnt;
 	} __Request__kext_request_t;
 #ifdef  __MigPackStructs
@@ -1182,9 +1186,11 @@ union __RequestUnion__host_priv_subsystem {
 		/* start of the kernel processed data */
 		mach_msg_body_t msgh_body;
 		mach_msg_ool_descriptor_t response_data;
+		mach_msg_ool_descriptor_t log_data;
 		/* end of the kernel processed data */
 		NDR_record_t NDR;
 		mach_msg_type_number_t response_dataCnt;
+		mach_msg_type_number_t log_dataCnt;
 		kern_return_t op_result;
 	} __Reply__kext_request_t;
 #ifdef  __MigPackStructs

@@ -1,5 +1,5 @@
 /*	CFMessagePort.h
-	Copyright (c) 1998-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2010, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFMESSAGEPORT__)
@@ -8,6 +8,7 @@
 #include <CoreFoundation/CFString.h>
 #include <CoreFoundation/CFRunLoop.h>
 #include <CoreFoundation/CFData.h>
+#include <dispatch/dispatch.h>
 
 CF_EXTERN_C_BEGIN
 
@@ -18,7 +19,8 @@ enum {
     kCFMessagePortSendTimeout = -1,
     kCFMessagePortReceiveTimeout = -2,
     kCFMessagePortIsInvalid = -3,
-    kCFMessagePortTransportError = -4
+    kCFMessagePortTransportError = -4,
+    kCFMessagePortBecameInvalidError = -5
 };
 
 typedef struct {
@@ -51,6 +53,8 @@ CF_EXPORT void CFMessagePortSetInvalidationCallBack(CFMessagePortRef ms, CFMessa
 CF_EXPORT SInt32	CFMessagePortSendRequest(CFMessagePortRef remote, SInt32 msgid, CFDataRef data, CFTimeInterval sendTimeout, CFTimeInterval rcvTimeout, CFStringRef replyMode, CFDataRef *returnData);
 
 CF_EXPORT CFRunLoopSourceRef	CFMessagePortCreateRunLoopSource(CFAllocatorRef allocator, CFMessagePortRef local, CFIndex order);
+
+CF_EXPORT void CFMessagePortSetDispatchQueue(CFMessagePortRef ms, dispatch_queue_t queue) CF_AVAILABLE(10_6, 4_0);
 
 CF_EXTERN_C_END
 

@@ -1,12 +1,15 @@
 /*
-  AVAudioRecorder.h
+	File:  AVAudioRecorder.h
+	
+	Framework:  AVFoundation
 
-  Copyright 2008 Apple Inc. All rights reserved.
+	Copyright 2008-2010 Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSDate.h>  /* for NSTimeInterval */
-#import "AVAudioSettings.h"
+#import <AVFoundation/AVAudioSettings.h>
+#import <Availability.h>
 
 @protocol AVAudioRecorderDelegate;
 @class NSDictionary, NSURL, NSError;
@@ -67,10 +70,20 @@
 /* if an error occurs while encoding it will be reported to the delegate. */
 - (void)audioRecorderEncodeErrorDidOccur:(AVAudioRecorder *)recorder error:(NSError *)error;
 
+#if TARGET_OS_IPHONE
 /* audioRecorderBeginInterruption: is called when the audio session has been interrupted while the recorder was recording. The recorder will have been paused. */
 - (void)audioRecorderBeginInterruption:(AVAudioRecorder *)recorder;
 
-/* audioRecorderEndInterruption: is called when the audio session interruption has ended and this recorder had been interrupted while recording. 
-The recorder can be restarted at this point. */
+/* audioRecorderEndInterruption:withFlags: is called when the audio session interruption has ended and this recorder had been interrupted while recording. */
+/* Currently the only flag is AVAudioSessionInterruptionFlags_ShouldResume. */
+#if defined(__MAC_10_7) || defined(__IPHONE_4_0)
+- (void)audioRecorderEndInterruption:(AVAudioRecorder *)recorder withFlags:(NSUInteger)flags
+	__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+#endif
+
+/* audioRecorderEndInterruption: is called when the preferred method, audioRecorderEndInterruption:withFlags:, is not implemented. */
 - (void)audioRecorderEndInterruption:(AVAudioRecorder *)recorder;
+#endif // TARGET_OS_IPHONE
+
 @end
+

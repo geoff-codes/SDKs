@@ -1,6 +1,9 @@
 #ifndef __gl_es20ext_h_
 #define __gl_es20ext_h_
 
+#include <OpenGLES/ES2/gl.h>
+#include <Availability.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -43,22 +46,106 @@ extern "C" {
 #   define GL_APIENTRYP GL_APIENTRY*
 #endif
 
-#define GL_OES_depth24                                          1
-#define GL_OES_mapbuffer                                        1
-#define GL_OES_packed_depth_stencil                             1
-#define GL_OES_fbo_render_mipmap                                1
-#define GL_OES_rgb8_rgba8                                       1
-#define GL_OES_standard_derivatives                             1
+#define GL_APPLE_framebuffer_multisample                        1
+#define GL_APPLE_rgb_422                                        1
+#define GL_APPLE_texture_format_BGRA8888                        1
+#define GL_APPLE_texture_max_level                              1
+#define GL_EXT_blend_minmax                                     1
+#define GL_EXT_discard_framebuffer                              1
+#define GL_EXT_read_format_bgra                                 1
+#define GL_EXT_shader_texture_lod                               1
+#define GL_EXT_texture_filter_anisotropic                       1
 #define GL_IMG_read_format                                      1
 #define GL_IMG_texture_compression_pvrtc                        1
-#define GL_IMG_texture_format_BGRA8888                          1
-#define GL_EXT_blend_minmax                                     1
-#define GL_EXT_texture_filter_anisotropic                       1
+#define GL_OES_depth_texture                                    1
+#define GL_OES_depth24                                          1
+#define GL_OES_fbo_render_mipmap                                1
+#define GL_OES_mapbuffer                                        1
+#define GL_OES_packed_depth_stencil                             1
+#define GL_OES_rgb8_rgba8                                       1
+#define GL_OES_standard_derivatives                             1
+#define GL_OES_texture_float                                    1
+#define GL_OES_texture_half_float                               1
+#define GL_OES_vertex_array_object                              1
+
+/*------------------------------------------------------------------------*
+ * APPLE extension tokens
+ *------------------------------------------------------------------------*/
+#if GL_APPLE_framebuffer_multisample
+#define GL_RENDERBUFFER_SAMPLES_APPLE                           0x8CAB
+#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE             0x8D56
+#define GL_MAX_SAMPLES_APPLE                                    0x8D57
+#define GL_READ_FRAMEBUFFER_APPLE                               0x8CA8
+#define GL_DRAW_FRAMEBUFFER_APPLE                               0x8CA9
+#define GL_DRAW_FRAMEBUFFER_BINDING_APPLE                       0x8CA6
+#define GL_READ_FRAMEBUFFER_BINDING_APPLE                       0x8CAA
+#endif
+
+#if GL_APPLE_rgb_422
+#define GL_RGB_422_APPLE                   0x8A1F
+#define GL_UNSIGNED_SHORT_8_8_APPLE        0x85BA
+#define GL_UNSIGNED_SHORT_8_8_REV_APPLE    0x85BB
+#endif
+
+#if GL_APPLE_texture_format_BGRA8888
+#define GL_BGRA_EXT                                             0x80E1
+#endif
+
+#if GL_APPLE_texture_format_BGRA8888 || GL_IMG_read_format
+#define GL_BGRA                                                 0x80E1
+#endif
+
+#if GL_APPLE_texture_max_level
+#define GL_TEXTURE_MAX_LEVEL_APPLE                              0x813D
+#endif
+
+/*------------------------------------------------------------------------*
+ * EXT extension tokens
+ *------------------------------------------------------------------------*/
+#if GL_EXT_blend_minmax
+#define GL_MIN_EXT                                              0x8007
+#define GL_MAX_EXT                                              0x8008
+#endif
+
+#if GL_EXT_discard_framebuffer
+#define GL_COLOR_EXT                                            0x1800
+#define GL_DEPTH_EXT                                            0x1801
+#define GL_STENCIL_EXT                                          0x1802
+#endif
+
+#if GL_EXT_read_format_bgra
+#define GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT                       0x8365
+#define GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT                       0x8366
+#define GL_UNSIGNED_SHORT_1_5_5_5_REV                           GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
+#endif
+
+#if GL_EXT_read_format_bgra || GL_IMG_read_format
+#define GL_UNSIGNED_SHORT_4_4_4_4_REV                           0x8365
+#endif
+
+#if GL_EXT_texture_filter_anisotropic
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT                           0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT                       0x84FF
+#endif
+
+/*------------------------------------------------------------------------*
+ * IMG extension tokens
+ *------------------------------------------------------------------------*/
+#if GL_IMG_read_format
+#define GL_BGRA_IMG                                             0x80E1
+#define GL_UNSIGNED_SHORT_4_4_4_4_REV_IMG                       0x8365
+#endif
+
+#if GL_IMG_texture_compression_pvrtc
+#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG                      0x8C00
+#define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG                      0x8C01
+#define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG                     0x8C02
+#define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG                     0x8C03
+#endif
 
 /*------------------------------------------------------------------------*
  * OES extension tokens
  *------------------------------------------------------------------------*/
-
 #if GL_OES_depth24
 #define GL_DEPTH_COMPONENT24_OES                                0x81A6
 #endif
@@ -85,48 +172,45 @@ extern "C" {
 #define GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES                  0x8B8B
 #endif
 
+#if GL_OES_texture_half_float
+#define GL_HALF_FLOAT_OES                                       0x8D61
+#endif
+
+#if GL_OES_vertex_array_object
+#define GL_VERTEX_ARRAY_BINDING_OES                             0x85B5
+#endif
+
+/**************************************************************************/
 
 /*------------------------------------------------------------------------*
- * IMG extension tokens
+ * APPLE extension functions
  *------------------------------------------------------------------------*/
-
-#if GL_IMG_texture_compression_pvrtc
-#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG                      0x8C00
-#define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG                      0x8C01
-#define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG                     0x8C02
-#define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG                     0x8C03
-#endif
-
-#if GL_IMG_read_format
-#define GL_UNSIGNED_SHORT_4_4_4_4_REV                           0x8365
-#endif
-
-#if GL_IMG_read_format || GL_IMG_texture_format_BGRA8888
-#define GL_BGRA                                                 0x80E1
+#if GL_APPLE_framebuffer_multisample
+GL_API GLvoid glRenderbufferStorageMultisampleAPPLE(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+GL_API GLvoid glResolveMultisampleFramebufferAPPLE(void)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 #endif
 
 /*------------------------------------------------------------------------*
- * EXT extension tokens
+ * EXT extension functions
  *------------------------------------------------------------------------*/
-
-#if GL_EXT_blend_minmax
-#define GL_MIN_EXT                                              0x8007
-#define GL_MAX_EXT                                              0x8008
-#endif
-
-#if GL_EXT_texture_filter_anisotropic
-#define GL_TEXTURE_MAX_ANISOTROPY_EXT                           0x84FE
-#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT                       0x84FF
+#if GL_EXT_discard_framebuffer
+GL_API GLvoid GL_APIENTRY glDiscardFramebufferEXT(GLenum target, GLsizei numAttachments, const GLenum *attachments)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 #endif
 
 /*------------------------------------------------------------------------*
  * OES extension functions
  *------------------------------------------------------------------------*/
-
 #if GL_OES_mapbuffer
-GL_API void GL_APIENTRY glGetBufferPointervOES (GLenum target, GLenum pname, GLvoid **params);
+GL_API GLvoid GL_APIENTRY glGetBufferPointervOES (GLenum target, GLenum pname, GLvoid **params);
 GL_API GLvoid * GL_APIENTRY glMapBufferOES (GLenum target, GLenum access);
 GL_API GLboolean GL_APIENTRY glUnmapBufferOES (GLenum target);
+#endif
+
+#if GL_OES_vertex_array_object
+GL_API GLvoid glBindVertexArrayOES(GLuint array)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+GL_API GLvoid glDeleteVertexArraysOES(GLsizei n, const GLuint *arrays)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+GL_API GLvoid glGenVertexArraysOES(GLsizei n, GLuint *arrays)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+GL_API GLboolean glIsVertexArrayOES(GLuint array)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 #endif
 
 #ifdef __cplusplus
@@ -134,4 +218,3 @@ GL_API GLboolean GL_APIENTRY glUnmapBufferOES (GLenum target);
 #endif
 
 #endif /* __gl_es20ext_h_ */
-

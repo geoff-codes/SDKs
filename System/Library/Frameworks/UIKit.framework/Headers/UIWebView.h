@@ -2,12 +2,13 @@
 //  UIWebView.h
 //  UIKit
 //
-//  Copyright 2007-2009 Apple Inc. All rights reserved.
+//  Copyright 2007-2010 Apple Inc. All rights reserved.
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UIDataDetectors.h>
+#import <UIKit/UIScrollView.h>
 
 enum {
     UIWebViewNavigationTypeLinkClicked,
@@ -22,7 +23,7 @@ typedef NSUInteger UIWebViewNavigationType;
 @class UIWebViewInternal;
 @protocol UIWebViewDelegate;
 
-UIKIT_EXTERN_CLASS @interface UIWebView : UIView <NSCoding> { 
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIWebView : UIView <NSCoding, UIScrollViewDelegate> { 
  @private
     UIWebViewInternal *_internal;
 }
@@ -51,6 +52,9 @@ UIKIT_EXTERN_CLASS @interface UIWebView : UIView <NSCoding> {
 
 @property(nonatomic) BOOL detectsPhoneNumbers __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_2_0, __IPHONE_3_0);
 @property(nonatomic) UIDataDetectorTypes dataDetectorTypes __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_3_0);
+
+@property (nonatomic) BOOL allowsInlineMediaPlayback __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0); // iPhone Safari defaults to NO. iPad Safari defaults to YES
+@property (nonatomic) BOOL mediaPlaybackRequiresUserAction __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0); // iPhone and iPad Safari both default to YES
 
 @end
 

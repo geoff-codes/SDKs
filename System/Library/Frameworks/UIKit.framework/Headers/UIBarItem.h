@@ -2,7 +2,7 @@
 //  UIBarItem.h
 //  UIKit
 //
-//  Copyright 2008-2009 Apple Inc. All rights reserved.
+//  Copyright 2008-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,7 +11,8 @@
 
 @class UIImage;
 
-UIKIT_EXTERN_CLASS @interface UIBarItem : NSObject {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIBarItem : NSObject {
+  @private
 }
 
 @property(nonatomic,getter=isEnabled) BOOL         enabled;      // default is YES

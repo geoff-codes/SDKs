@@ -96,6 +96,11 @@ typedef uint32_t		mach_vm_size_t;
 typedef uint32_t		vm_map_offset_t;
 typedef uint32_t		vm_map_address_t;
 typedef uint32_t		vm_map_size_t;
+
+typedef uint32_t		vm32_offset_t;
+typedef uint32_t		vm32_address_t;
+typedef uint32_t		vm32_size_t;
+
 #define VM_MAP_MIN_ADDRESS	VM_MIN_ADDRESS
 #define VM_MAP_MAX_ADDRESS	VM_MAX_ADDRESS
 

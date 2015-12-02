@@ -2,7 +2,7 @@
 //  UINavigationController.h
 //  UIKit
 //
-//  Copyright 2007-2009 Apple Inc. All rights reserved.
+//  Copyright 2007-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -27,10 +27,10 @@
 
 UIKIT_EXTERN const CGFloat UINavigationControllerHideShowBarDuration;
 
-@class UIView, UINavigationBar, UINavigationItem, UIToolbar;
+@class UIView, UINavigationBar, UINavigationItem, UIToolbar, UILayoutContainerView;
 @protocol UINavigationControllerDelegate;
 
-UIKIT_EXTERN_CLASS @interface UINavigationController : UIViewController {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationController : UIViewController {
   @package
     UIView           *_containerView;
     UINavigationBar  *_navigationBar;
@@ -47,7 +47,8 @@ UIKIT_EXTERN_CLASS @interface UINavigationController : UIViewController {
     UIViewController *_disappearingViewController;
     
     id <UINavigationControllerDelegate> _delegate;
-    
+    UILayoutContainerView *_containerViewInSheet;
+
     struct {
         unsigned int isAppearingAnimated:1;
         unsigned int isAlreadyPoppingNavigationItem:1;
@@ -61,6 +62,9 @@ UIKIT_EXTERN_CLASS @interface UINavigationController : UIViewController {
         unsigned int didPreloadKeyboardAnimation:1;
         unsigned int didHideBottomBar:1;
         unsigned int isChangingOrientationForPop:1;
+        unsigned int pretendNavBarHidden:1;
+        unsigned int avoidMovingNavBarOffscreenBeforeUnhiding:1;
+        unsigned int searchBarHidNavBar:1;        
     } _navigationControllerFlags;
 }
 

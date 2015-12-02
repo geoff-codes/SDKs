@@ -19,10 +19,11 @@
 @class NSString;
 
 // Properties describe values within a managed object. There are different types of properties, each of them represented by a subclass which encapsulates the specific property behavior.
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSPropertyDescription : NSObject <NSCoding, NSCopying> {
 @private
-	void *_reserved;
 	NSString *_versionHashModifier;
+	id _underlyingProperty;
 	NSData *_versionHash;
     __weak NSEntityDescription *_entity;
     NSString *_name;
@@ -36,7 +37,8 @@
         unsigned int _skipValidation:1;
         unsigned int _isIndexedBySpotlight:1;
         unsigned int _isStoredInExternalRecord:1;
-        unsigned int _reservedPropertyDescription:25;
+		unsigned int _extraIvarsAreInDataBlob:1;
+        unsigned int _reservedPropertyDescription:24;
     } _propertyDescriptionFlags;    
     __strong void *_extraIvars;
     NSMutableDictionary *_userInfo;

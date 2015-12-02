@@ -3,7 +3,7 @@
  *  CLErrorDomain.h
  *  CoreLocation
  *
- *  Copyright 2008 Apple Computer, Inc. All rights reserved.
+ *  Copyright 2008 Apple, Inc. All rights reserved.
  *
  */
 

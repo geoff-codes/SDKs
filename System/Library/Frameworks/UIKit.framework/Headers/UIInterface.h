@@ -2,7 +2,7 @@
 //  UIInterface.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -27,6 +27,7 @@ typedef enum {
 + (UIColor *)darkTextColor;                 // for a light background
 + (UIColor *)groupTableViewBackgroundColor;
 + (UIColor *)viewFlipsideBackgroundColor;
++ (UIColor *)scrollViewTexturedBackgroundColor __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_3_2);
 @end
 
 // System fonts

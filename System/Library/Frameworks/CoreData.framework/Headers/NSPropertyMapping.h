@@ -10,6 +10,7 @@
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 
+NS_CLASS_AVAILABLE(10_5, 3_0)
 @interface NSPropertyMapping : NSObject {
     @private
     void *_reserved;

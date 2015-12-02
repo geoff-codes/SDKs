@@ -2,14 +2,15 @@
 //  UIResponder.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UIEvent.h>
 
-UIKIT_EXTERN_CLASS @interface UIResponder : NSObject {    
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIResponder : NSObject {
+  @private
 }
 
 - (UIResponder*)nextResponder;
@@ -36,6 +37,8 @@ UIKIT_EXTERN_CLASS @interface UIResponder : NSObject {
 - (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 - (void)motionCancelled:(UIEventSubtype)motion withEvent:(UIEvent *)event __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
+- (void)remoteControlReceivedWithEvent:(UIEvent *)event __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 @property(nonatomic,readonly) NSUndoManager *undoManager __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
@@ -48,5 +51,17 @@ UIKIT_EXTERN_CLASS @interface UIResponder : NSObject {
 - (void)paste:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 - (void)select:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 - (void)selectAll:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)delete:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+
+@end
+
+@interface UIResponder (UIResponderInputViewAdditions)
+
+// Called and presented when object becomes first responder.  Goes up the responder chain.
+@property (readonly, retain) UIView *inputView __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);            
+@property (readonly, retain) UIView *inputAccessoryView __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); 
+
+// If called while object is first responder, reloads inputView and inputAccessoryView.  Otherwise ignored.
+- (void)reloadInputViews __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
 
 @end

@@ -2,10 +2,8 @@
 //  UIAccessibilityElement.h
 //  UIAccessibility
 //
-//  Copyright 2008-2009 Apple Inc. All rights reserved.
+//  Copyright 2008-2010 Apple Inc. All rights reserved.
 //
-
-#if __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIAccessibilityConstants.h>
@@ -18,7 +16,7 @@
  of UIAccessibilityElement to cover for user interface items that are not
  backed by a UIView (for example: painted text or icon).
  */
-UIKIT_EXTERN_CLASS @interface UIAccessibilityElement : NSObject
+UIKIT_CLASS_AVAILABLE(3_0) @interface UIAccessibilityElement : NSObject
 {
 @private
     id _storage;
@@ -36,5 +34,3 @@ UIKIT_EXTERN_CLASS @interface UIAccessibilityElement : NSObject
 @property (nonatomic, assign) UIAccessibilityTraits accessibilityTraits;
 
 @end
-
-#endif

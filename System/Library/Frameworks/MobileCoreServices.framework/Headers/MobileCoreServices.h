@@ -3,7 +3,9 @@
 	Copyright (c) 2009, Apple Inc. All rights reserved.
 */
 
-#import <Foundation/Foundation.h>
+#ifndef __MOBILECORESERVICES__
 
-#import <MobileCoreServices/UTCoreTypes.h>
-#import <MobileCoreServices/UTType.h>
+#include <MobileCoreServices/UTCoreTypes.h>
+#include <MobileCoreServices/UTType.h>
+
+#endif /* __MOBILECORESERVICES__ */

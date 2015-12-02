@@ -21,6 +21,7 @@
 @class NSManagedObject;
 
 // Entities describe the "types" of objects available.
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSEntityDescription : NSObject <NSCoding, NSCopying, NSFastEnumeration> {
 @private
 	int32_t  _cd_rc;
@@ -45,7 +46,9 @@
         unsigned int _skipValidation:1;
         unsigned int _hasPropertiesIndexedBySpotlight:1;
         unsigned int _hasPropertiesStoredInTruthFile:1;
-        unsigned int _reservedEntityDescription:25;
+        unsigned int _rangesAreInDataBlob:1; 
+		unsigned int _hasAttributesWithExternalDataReferences:1;
+        unsigned int _reservedEntityDescription:23;
     } _entityDescriptionFlags;
     __strong void *_extraIvars;
     NSMutableDictionary *_userInfo;

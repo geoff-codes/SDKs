@@ -2,7 +2,7 @@
 //  UIActivityIndicator.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIView.h>
@@ -14,7 +14,7 @@ typedef enum {
     UIActivityIndicatorViewStyleGray,
 } UIActivityIndicatorViewStyle;
 
-UIKIT_EXTERN_CLASS @interface UIActivityIndicatorView : UIView <NSCoding>
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIActivityIndicatorView : UIView <NSCoding>
 { 
   @package
     CFTimeInterval               _duration;

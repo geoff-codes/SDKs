@@ -2,20 +2,19 @@
 //  UISearchDisplayController.h
 //  UIKit
 //
-//  Copyright 2009 Apple Inc. All rights reserved.
+//  Copyright 2009-2010 Apple Inc. All rights reserved.
 //
-
-#if __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UILabel.h>
+#import <UIKit/UITableView.h>
 
-@class UISearchBar, UITableView, UIViewController;
+@class UISearchBar, UITableView, UIViewController, UIPopoverController;
 @protocol UITableViewDataSource, UITableViewDelegate, UISearchDisplayDelegate;
 
-UIKIT_EXTERN_CLASS @interface UISearchDisplayController : NSObject {
+UIKIT_CLASS_AVAILABLE(3_0) @interface UISearchDisplayController : NSObject {
   @private
     UIViewController           *_viewController;
     UITableView                *_tableView;
@@ -28,6 +27,10 @@ UIKIT_EXTERN_CLASS @interface UISearchDisplayController : NSObject {
     id<UITableViewDelegate>     _tableViewDelegate;
     CFMutableArrayRef           _containingScrollViews;
     CGFloat                     _lastKeyboardAdjustment;
+    CGFloat                     _lastFooterAdjustment;
+    UIPopoverController        *_popoverController;
+    UITableViewStyle            _searchResultsTableViewStyle;
+    id                          _navigationControllerBookkeeper;
     struct {
         unsigned int visible:1;
         unsigned int animating:1;
@@ -35,6 +38,10 @@ UIKIT_EXTERN_CLASS @interface UISearchDisplayController : NSObject {
         unsigned int hidNavigationBar:1;
         unsigned int noResultsMessageVisible:1;
         unsigned int noResultsMessageAutoDisplay:1;
+        unsigned int navigationBarHidingEnabled:1;
+        unsigned int dimTableViewOnEmptySearchString:1;
+        unsigned int isRotatingWithPopover:1;
+        unsigned int cancelButtonManagementDisabled:1;
     } _searchDisplayControllerFlags;
 }
 
@@ -78,5 +85,3 @@ UIKIT_EXTERN_CLASS @interface UISearchDisplayController : NSObject {
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption;
 
 @end
-
-#endif

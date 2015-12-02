@@ -1,8 +1,8 @@
 /*	NSUndoManager.h
-	Copyright (c) 1995-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1995-2010, Apple Inc. All rights reserved.
 */
 
-#if MAC_OS_X_VERSION_10_0 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_3_0
+#if MAC_OS_X_VERSION_10_0 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 //
 // NSUndoManager is a general-purpose undo stack where clients can register
@@ -19,8 +19,7 @@ enum {
     NSUndoCloseGroupingRunLoopOrdering		= 350000
 };
 
-@interface NSUndoManager : NSObject
-{
+@interface NSUndoManager : NSObject {
     @private
     id 			_undoStack;
     id 			_redoStack;
@@ -34,12 +33,10 @@ enum {
         unsigned int groupsByEvent:1;
         unsigned int reserved:27;
     } _flags;
-
-    id 			_target;		// Temp for Invocation based
-
+    id 			_target;
+    id			_proxy;
     void		*_NSUndoManagerReserved1;
     void		*_NSUndoManagerReserved2;
-    void		*_NSUndoManagerReserved3;
 }
 
         /* Begin/End Grouping */
@@ -147,18 +144,19 @@ enum {
 
 @end
 
-FOUNDATION_EXPORT NSString * const NSUndoManagerCheckpointNotification;
+FOUNDATION_EXPORT NSString * const NSUndoManagerCheckpointNotification NS_AVAILABLE(10_0, 3_0);
     // This is called before an undo group is begun or ended so any
     // clients that need to lazily register undos can do so in the
     // correct group.
 
-FOUNDATION_EXPORT NSString * const NSUndoManagerWillUndoChangeNotification;
-FOUNDATION_EXPORT NSString * const NSUndoManagerWillRedoChangeNotification;
+FOUNDATION_EXPORT NSString * const NSUndoManagerWillUndoChangeNotification NS_AVAILABLE(10_0, 3_0);
+FOUNDATION_EXPORT NSString * const NSUndoManagerWillRedoChangeNotification NS_AVAILABLE(10_0, 3_0);
 
-FOUNDATION_EXPORT NSString * const NSUndoManagerDidUndoChangeNotification;
-FOUNDATION_EXPORT NSString * const NSUndoManagerDidRedoChangeNotification;
+FOUNDATION_EXPORT NSString * const NSUndoManagerDidUndoChangeNotification NS_AVAILABLE(10_0, 3_0);
+FOUNDATION_EXPORT NSString * const NSUndoManagerDidRedoChangeNotification NS_AVAILABLE(10_0, 3_0);
 
-FOUNDATION_EXPORT NSString * const NSUndoManagerDidOpenUndoGroupNotification;
-FOUNDATION_EXPORT NSString * const NSUndoManagerWillCloseUndoGroupNotification;
+FOUNDATION_EXPORT NSString * const NSUndoManagerDidOpenUndoGroupNotification NS_AVAILABLE(10_0, 3_0);
+FOUNDATION_EXPORT NSString * const NSUndoManagerWillCloseUndoGroupNotification NS_AVAILABLE(10_0, 3_0);
 
 #endif
+

@@ -2,7 +2,7 @@
 //  UIControl.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -64,7 +64,7 @@ typedef NSUInteger UIControlState;
 
 //______________________________________________________
 
-UIKIT_EXTERN_CLASS @interface UIControl : UIView {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIControl : UIView {
   @package
     NSMutableArray* _targetActions;
     CGPoint         _previousPoint;
@@ -103,7 +103,7 @@ UIKIT_EXTERN_CLASS @interface UIControl : UIView {
 
 // add target/action for particular event. you can call this multiple times and you can specify multiple target/actions for a particular event.
 // passing in nil as the target goes up the responder chain. The action may optionally include the sender and the event in that order
-// the action cannot be NULL.
+// the action cannot be NULL. Note that the target is not retained.
 - (void)addTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents;
 
 // remove the target/action for a set of events. pass in NULL for the action to remove all actions for that target

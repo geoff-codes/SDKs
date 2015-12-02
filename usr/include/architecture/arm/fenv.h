@@ -35,10 +35,6 @@
 #if !defined(__VFP_FP__) || defined(__SOFTFP__)
 	#warning The <fenv.h> functions are not supported on platforms that do not have hardware floating-point.
 #else
-   
-#if defined(__GNUC__) && (__GNUC__ >= 4)   
-    #pragma GCC fenv
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,9 +50,9 @@ extern "C" {
     non-default modes must do so under the effect of an enabling
     "fenv_access" pragma:
 
-    Note that prior to iPhone OS 2.0, these interfaces did nothing.
-
     #pragma STDC FENV_ACCESS on
+ 
+    Note that prior to iPhone OS 2.0, these interfaces did nothing.
 */
 
 /********************************************************************************
@@ -117,34 +113,18 @@ typedef struct {
 typedef unsigned short fexcept_t;
 
 /*    Definitions of floating-point exception macros                          */
-enum {
-  _FE_INEXACT                    = 0x0010,
-  _FE_UNDERFLOW                  = 0x0008,
-  _FE_OVERFLOW                   = 0x0004,
-  _FE_DIVBYZERO                  = 0x0002,
-  _FE_INVALID                    = 0x0001,
-  _FE_ALL_EXCEPT                 = 0x001F /* FE_INEXACT | FE_DIVBYZERO | FE_UNDERFLOW | FE_OVERFLOW | FE_INVALID*/
-};
-
-#define FE_INEXACT              _FE_INEXACT
-#define FE_DIVBYZERO            _FE_DIVBYZERO
-#define FE_UNDERFLOW            _FE_UNDERFLOW
-#define FE_OVERFLOW             _FE_OVERFLOW
-#define FE_INVALID              _FE_INVALID
-#define FE_ALL_EXCEPT           _FE_ALL_EXCEPT
+#define FE_INEXACT          0x0010
+#define FE_UNDERFLOW        0x0008
+#define FE_OVERFLOW         0x0004
+#define FE_DIVBYZERO        0x0002
+#define FE_INVALID          0x0001
+#define FE_ALL_EXCEPT       0x001F
 
 /*    Definitions of rounding direction macros                                */
-enum {
-  _FE_TONEAREST                  = 0x00000000,
-  _FE_UPWARD                     = 0x00400000,
-  _FE_DOWNWARD                   = 0x00800000,
-  _FE_TOWARDZERO                 = 0x00C00000,
-};
-
-#define FE_TONEAREST    _FE_TONEAREST
-#define FE_TOWARDZERO   _FE_TOWARDZERO
-#define FE_UPWARD       _FE_UPWARD
-#define FE_DOWNWARD     _FE_DOWNWARD
+#define FE_TONEAREST        0x00000000
+#define FE_UPWARD           0x00400000
+#define FE_DOWNWARD         0x00800000
+#define FE_TOWARDZERO       0x00C00000
 
 /* default environment object        */
 extern const fenv_t _FE_DFL_ENV;

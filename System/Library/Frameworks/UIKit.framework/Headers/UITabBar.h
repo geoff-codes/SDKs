@@ -2,7 +2,7 @@
 //  UITabBar.h
 //  UIKit
 //
-//  Copyright 2008-2009 Apple Inc. All rights reserved.
+//  Copyright 2008-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 @class UITabBarItem;
 @protocol UITabBarDelegate;
 
-UIKIT_EXTERN_CLASS @interface UITabBar : UIView {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBar : UIView {
   @private
     UIView*                _customizeView;
     id<UITabBarDelegate>   _delegate;
@@ -28,6 +28,7 @@ UIKIT_EXTERN_CLASS @interface UITabBar : UIView {
     } _tabBarFlags;
     NSArray               *_buttonItems;
     CFMutableArrayRef      _hiddenItems;
+    id _appearance;
 }
 
 @property(nonatomic,assign) id<UITabBarDelegate> delegate;     // weak reference. default is nil

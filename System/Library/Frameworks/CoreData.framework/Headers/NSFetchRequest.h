@@ -17,10 +17,12 @@
 @class NSPredicate;
 @class NSString;
 
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSFetchRequest : NSObject <NSCoding, NSCopying> {
 @private
-	void *_reserved;
-	void *_reserved2;
+	NSArray *_affectedStores;
+	NSArray *_groupByProperties;
+	NSPredicate *_havingPredicate;
 	NSUInteger _offset;
 	NSArray *_valuesToFetch;
     __weak NSEntityDescription *_entity;
@@ -28,7 +30,6 @@
     NSArray *_sortDescriptors;
     NSUInteger _batchSize;
     unsigned long _fetchLimit;
-    NSArray *_affectedStores;
     NSArray *_relationshipKeyPathsForPrefetching;
     struct _fetchRequestFlags {
         unsigned int distinctValuesOnly:1;
@@ -38,7 +39,8 @@
         unsigned int returnsObjectsAsFaults:1;
         unsigned int excludePendingChanges:1;
         unsigned int isInUse:1;
-        unsigned int _RESERVED:23;
+        unsigned int entityIsName:1;
+        unsigned int _RESERVED:22;
     } _flags;
 }
 

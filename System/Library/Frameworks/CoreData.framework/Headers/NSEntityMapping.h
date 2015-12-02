@@ -24,7 +24,7 @@ enum {
 };
 typedef NSUInteger NSEntityMappingType;
 
-
+NS_CLASS_AVAILABLE(10_5, 3_0)
 @interface NSEntityMapping : NSObject {
 
 @private

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008 Apple Inc. All rights reserved.
+ * Copyright (c) 2008-2010 Apple Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
@@ -370,6 +370,7 @@ extern const struct in6_addr in6addr_linklocal_allrouters;
 
 #define IPV6_RECVTCLASS         35 /* bool; recv traffic class values */
 #define IPV6_TCLASS             36 /* int; send traffic class value */
+
 
 /* to define items, should talk with KAME guys first, for *BSD compatibility */
 

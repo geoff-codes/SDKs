@@ -3,7 +3,7 @@
  
      Contains:   Property constants for AudioUnits
  
-     Copyright:  (c) 2001-2008 by Apple Inc., all rights reserved.
+     Copyright:  (c) 2001-2008 by Apple, Inc., all rights reserved.
  
      Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
@@ -137,7 +137,7 @@ enum {
 						Value Type:		AudioUnitParameterID
 						Access:			Read
 						
-						The list of parameter IDs on the specifed scope
+						The list of parameter IDs on the specified scope
 						
 	@constant		kAudioUnitProperty_ParameterInfo
 						Scope:			Any
@@ -153,7 +153,7 @@ enum {
 						
 						The caller provides the selector for a given audio unit API, and retrieves a function pointer for that selector. For instance,
 						this enables the caller to retrieve the function pointer for the AudioUnitRender call, so that call can be made directly
-						through to the audio unit to avoid the overhead of the Component Mgr's dispatch.
+						through to the audio unit to avoid the overhead of the ComponentMgr's dispatch.
 	
 	@constant		kAudioUnitProperty_CPULoad
 						Scope:			Global
@@ -359,7 +359,7 @@ enum {
 						Access:				read
 
 						Publishes the audio unit's custom Cocoa NSViews. The Host can determine how big this structure is by 
-						querying the size of the property (ie. How many alternate UI classes there are for the unit)
+						querying the size of the property (i.e., How many alternate UI classes there are for the unit)
 						Typically, most audio units will provide 1 UI class per unit
 	
 	@constant		kAudioUnitProperty_SupportedChannelLayoutTags
@@ -399,7 +399,7 @@ enum {
 						this property can be used to ask the audio unit whether it can supply a truncated name, with
 						the host suggesting a length (number of characters). If the unit returns a longer
 						name than the host requests, that name maybe truncated to the requested characters in display.
-						The unit could return a shorter name than requeseted as well. The unit returns a CFString
+						The unit could return a shorter name than requested as well. The unit returns a CFString
 						that should be released by the host. When using this property, the host asks for
 						the name in the same scope and element as the unit publishes the parameter.
 
@@ -528,7 +528,7 @@ enum {
 							presentation latency will be the latency of the device itself - which is the I/O buffer size, 
 							and the device's safety offset and latency
 							
-							The previous audio unit's (connected to this last unit) output presenation latency will be that 
+							The previous audio unit's (connected to this last unit) output presentation latency will be that 
 							initial presentation latency plus the processing latency (as expressed by 
 							kAudioUnitProperty_Latency) of the last unit.
 							
@@ -641,7 +641,7 @@ enum {
 
 						This property allows a host application to determine which input samples correspond to a sample 
 						in the output buffer. It is useful only for audio units that do time-stretching, such as the 
-						AUVaripseed and AUTimePitch units, where the relationship between input and output samples is 
+						AUVarispeed and AUTimePitch units, where the relationship between input and output samples is 
 						non-trivial. For these units, the range of input samples that correspond to an output buffer 
 						typically differs from the range of input samples that were pulled for that render call. 
 						This difference arises because of internal buffering, processing latency, and other factors.
@@ -888,10 +888,16 @@ typedef struct AudioUnitFrequencyResponseBin
 
 
 
-
 /*!
 	@typedef		HostCallback_GetBeatAndTempo
 	@abstract		Retrieve information about the current beat and/or tempo
+	@discussion		If the host app has set this callback, then the audio unit can use this to get the current beat and tempo as they relate to the first sample in the render buffer. The audio unit can call this callback only from within the audio unit render call (otherwise the host is unable to provide information accurately to the audio unit as the information obtained is relate to the current AudioUnitRender call). If the host cannot provide the requested information, it will return kAudioUnitErr_CannotDoInCurrentContext.
+	
+			The AudioUnit can provide NULL for any of the requested parameters (except for inHostUserData) if it is not interested in that particular piece of information
+
+	@param			inHostUserData			Must be provided by the audio unit when it makes this call. It is the client data provided by the host when it set the HostCallbacks property
+	@param			outCurrentBeat			The current beat, where 0 is the first beat. Tempo is defined as the number of whole-number (integer) beat values (as indicated by the outCurrentBeat field) per minute.
+	@param			outCurrentTempo			The current tempo
 */
 typedef OSStatus (*HostCallback_GetBeatAndTempo) (void		*inHostUserData, 
 											Float64			*outCurrentBeat, 
@@ -899,7 +905,17 @@ typedef OSStatus (*HostCallback_GetBeatAndTempo) (void		*inHostUserData,
 
 /*!
 	@typedef		HostCallback_GetMusicalTimeLocation
-	@abstract		Retrieve information about the general musical time state of the host
+	@abstract		Retrieve information about the musical time state of the host
+	@discussion		If the host app has set this callback, then the audio unit can use this to obtain information about the state of musical time in the host. The audio unit can call this callback only from within the audio unit render call (otherwise the host is unable to provide information accurately to the audio unit as the information obtained is relate to the current AudioUnitRender call). If the host cannot provide the requested information, it will return kAudioUnitErr_CannotDoInCurrentContext.
+	
+			The AudioUnit can provide NULL for any of the requested parameters (except for inHostUserData) if it is not interested in that particular piece of information
+
+	@param			inHostUserData					Must be provided by the audio unit when it makes this call. It is the client data provided by the host when it set the HostCallbacks property
+	@param			outDeltaSampleOffsetToNextBeat	The number of samples until the next whole beat from the start sample of the current rendering buffer
+	@param			outTimeSig_Numerator			The Numerator of the current time signature
+	@param			outTimeSig_Denominator			The Denominator of the current time signature (4 is a quarter note, etc)
+	@param			outCurrentMeasureDownBeat		The beat that corresponds to the downbeat (first beat) of the current measure that is being rendered
+
 */
 typedef OSStatus (*HostCallback_GetMusicalTimeLocation) (void     *inHostUserData, 
 												UInt32            *outDeltaSampleOffsetToNextBeat,
@@ -909,7 +925,19 @@ typedef OSStatus (*HostCallback_GetMusicalTimeLocation) (void     *inHostUserDat
 
 /*!
 	@typedef		HostCallback_GetTransportState
-	@abstract		Retrieve information about the time line's (or transport) state of the host
+	@abstract		Retrieve information about the time line's (or transport) state of the host. 
+	@discussion		If the host app has set this callback, then the audio unit can use this to obtain information about the transport state of the host's time line. The audio unit can call this callback only from within the audio unit render call (otherwise the host is unable to provide information accurately to the audio unit as the information obtained is relate to the current AudioUnitRender call. If the host cannot provide the requested information, it will return kAudioUnitErr_CannotDoInCurrentContext.
+	
+			The AudioUnit can provide NULL for any of the requested parameters (except for inHostUserData) if it is not interested in that particular piece of information
+	
+	@param			inHostUserData					Must be provided by the audio unit when it makes this call. It is the client data provided by the host when it set the HostCallbacks property
+	@param			outIsPlaying					Returns true if the host's transport is currently playing, false if stopped
+	@param			outTransportStateChanged		Returns true if there was a change to the state of, or discontinuities in, the host's transport (generally since the callback was last called). Can indicate such state changes as start/top, time moves (jump from one time line to another).
+	@param			outCurrentSampleInTimeLine		Returns the current sample count in the time line of the host's transport time.  
+	@param			outIsCycling					Returns true if the host's transport is currently cycling or looping
+	@param			outCycleStartBeat				If cycling is true, the start beat of the cycle or loop point in the host's transport
+	@param			outCycleEndBeat					If cycling is true, the end beat of the cycle or loop point in the host's transport
+	
 */
 typedef OSStatus (*HostCallback_GetTransportState) (void 	*inHostUserData,
 										Boolean 			*outIsPlaying,
@@ -1055,7 +1083,7 @@ typedef struct AUInputSamplesInOutputCallbackStruct {
 	@constant		kAudioUnitParameterUnit_BPM
 						beats per minute, ie tempo
     @constant		kAudioUnitParameterUnit_Beats
-						time relative to tempo, ie. 1.0 at 120 BPM would equal 1/2 a second
+						time relative to tempo, i.e., 1.0 at 120 BPM would equal 1/2 a second
 	@constant		kAudioUnitParameterUnit_Milliseconds
 						parameter is expressed in milliseconds
 	@constant		kAudioUnitParameterUnit_Ratio
@@ -1123,7 +1151,7 @@ typedef UInt32		AudioUnitParameterUnit;
 						the host should release those names when it is finished with them, but there was no way
 						to communicate this distinction in behavior.
 						Thus, if an audio unit will (or could) generate a name dynamically, it should set this flag in 
-						the paramter's info.. The host should check for this flag, and if present, release the parameter
+						the parameter's info. The host should check for this flag, and if present, release the parameter
 						name when it is finished with it.
 */
 typedef struct AudioUnitParameterInfo
@@ -1359,7 +1387,7 @@ enum {
 						Value Type:			array of AUParameterMIDIMapping
 						Access:				read/write
 
-						This property allows setting and retreiving the current mapping state between 
+						This property allows setting and retrieving the current mapping state between 
 						(some/many/all of) an audio unit's parameters and MIDI messages. When set, it should replace 
 						any previous mapped settings the audio unit had.
 					
@@ -1815,7 +1843,7 @@ typedef struct AudioUnitParameterValueTranslation
 */
 typedef struct AudioUnitPresetMAS_SettingData
 {
-	UInt32 				isStockSetting; // zero or 1  i.e. "long bool"
+	UInt32 				isStockSetting; // zero or 1  i.e., "long bool"
 	UInt32 				settingID;
 	UInt32 				dataLen; //length of following data
 	UInt8 				data[1];
@@ -1917,6 +1945,9 @@ enum {
 							used to provide a single callback to the host application from the input 
 							I/O proc, in order to notify the host that input is available and may be 
 							obtained by calling the AudioUnitRender function.
+							
+							Note that the inputProc will always receive a NULL AudioBufferList in ioData.
+							You must call AudioUnitRender in order to obtain the audio.
 
 	@constant		kAudioOutputUnitProperty_HasIO
 	@discussion			Scope: { scope output, element 0 = output } { scope input, element 1 = input }
@@ -1978,19 +2009,79 @@ typedef struct AudioOutputUnitStartAtTimeParams {
 						Access: read/write
 							Enable automatic gain control on the processed signal. On by default.
  
-	 @constant		kAUVoiceIOProperty_DuckNonVoiceAudio
-	 @discussion		Scope: Global
+	@constant		kAUVoiceIOProperty_DuckNonVoiceAudio
+	@discussion			Scope: Global
 						Value Type: UInt32
 						Access: read/write
 							Enable ducking of the non voice audio signal. Since music signals are typically
 							louder than voice, ducking the music signal can increase the intelligibility 
 							of voice chats. Note that the amount of duking is dependent on the audio route.
 							Set to 0 to turn off or 1 to turn on. On by default.
+ 
+	@constant		kAUVoiceIOProperty_VoiceProcessingQuality
+	@discussion			Scope: Global
+						Value Type: UInt32
+						Access: read/write
+							Sets the quality of the voice processing unit. Quality values are comprised between
+							0 (lowest) and 127 (highest).
+ 
+	@constant		kAUVoiceIOProperty_MuteOutput
+	@discussion			Scope: Global
+						Value Type: UInt32
+						Access: read/write
+							Mutes the output of the voice processing unit. 
+							0 (default) = muting off. 1 = mute output.  
+
+	@constant		kAUVoiceIOProperty_FarEndVersionInfo
+	@discussion			Scope: Global
+						Value Type: VoiceIOFarEndVersionInfo
+						Access: read/write
+							The remote end's version information - hardware model, operating system version and voice processing unit component version.
+ 
 */
 enum {
 	kAUVoiceIOProperty_BypassVoiceProcessing		= 2100,
 	kAUVoiceIOProperty_VoiceProcessingEnableAGC		= 2101,
-	kAUVoiceIOProperty_DuckNonVoiceAudio			= 2102
+	kAUVoiceIOProperty_DuckNonVoiceAudio			= 2102,
+	kAUVoiceIOProperty_VoiceProcessingQuality		= 2103, 
+	kAUVoiceIOProperty_MuteOutput					= 2104, 
+	kAUVoiceIOProperty_FarEndVersionInfo			= 2105
+	
+};
+
+/*!
+ @struct		VoiceIOFarEndVersionInfo
+ @field			farEndHwModel; 
+ @discussion			A UTF-8 encoded string containing the hardware model of the device being used on the remote end.
+						If the field is unknown, the length of the string should be 0.
+ @field			farEndOSVersion;
+ @discussion			A UTF-8 encoded string containing the operating system version running on the device being used on the remote end.
+						If the field is unknown, the length of the string should be 0.
+ @field			farEndAUVersion
+ @discussion			If the remote end is iOS v4.2 or later or Mac OS X v10.7 or later, this field should contain the component version
+						of the voice processing audio unit being used on the remote end. Otherwise set to one of the farEndAUVersion
+						default values defined below.
+ */
+typedef struct VoiceIOFarEndVersionInfo
+{
+	UInt8		farEndHwModel[64];
+	UInt8		farEndOSVersion[64];
+	UInt32 		farEndAUVersion;
+} VoiceIOFarEndVersionInfo;
+
+/*!
+ @enum			VoiceIOFarEndVersionInfo - farEndAUVersion defaults
+ @discussion		
+ @constant		kVoiceIOFarEndAUVersion_RequiresBackwardCompatibility
+ @discussion			Set the farEndAUVersion field of the VoiceIOFarEndVersionInfo struct to this value if the remote end is a 
+						device running a pre iOS v4.2 or pre Mac OS X v10.7 operating system.
+ @constant		kVoiceIOFarEndAUVersion_ThirdParty
+ @discussion			Set the farEndAUVersion field of the VoiceIOFarEndVersionInfo struct to this value if the remote end is a
+						3rd party following Open FaceTime standards.
+ */
+enum {
+	kVoiceIOFarEndAUVersion_RequiresBackwardCompatibility = 1,
+	kVoiceIOFarEndAUVersion_ThirdParty	= 2
 };
 #endif
 
@@ -2482,7 +2573,7 @@ struct ScheduledAudioSlice {
 					Before starting playback, you must first open all audio files to be played
 					using the AudioFile API's (see AudioToolbox/AudioFile.h), and pass their
 					AudioFileIDs to the unit by setting the kAudioUnitProperty_ScheduledFileIDs
-					propery. This property must not be set during playback. The audio files must
+					property. This property must not be set during playback. The audio files must
 					be kept open for the duration of playback.
 
 
@@ -2503,7 +2594,7 @@ struct ScheduledAudioSlice {
 					You should set kAudioUnitProperty_ScheduledFilePrime after scheduling
 					initial file regions to be played and before starting playback. This SetProperty call
 					will begin reading the audio files and not return until the number of frames
-					specifed by the property value have been read.
+					specified by the property value have been read.
 					
 					
 					Completion Callbacks
@@ -2582,7 +2673,7 @@ enum {
 	kAudioUnitProperty_ScheduledFileNumberBuffers   = 3314
 };
 
-typedef struct ScheduledAudioFileRegion ScheduledAudioFileRegion; //forward declaraion, see definition below
+typedef struct ScheduledAudioFileRegion ScheduledAudioFileRegion; //forward declaration, see definition below
 /*!
 	@typedef		ScheduledAudioFileRegionCompletionProc
 */
@@ -2806,7 +2897,7 @@ typedef struct AUNumVersion {
 } AUNumVersion;
 #else
 typedef struct AUNumVersion {
-                                              /* Numeric version part of 'vers' resource accessable in little endian format */
+                                              /* Numeric version part of 'vers' resource accessible in little endian format */
   UInt8               nonRelRev;              /*revision level of non-released version*/
   UInt8               stage;                  /*stage code: dev, alpha, beta, final*/
   UInt8               minorAndBugRev;         /*2nd & 3rd part of version number share a byte*/

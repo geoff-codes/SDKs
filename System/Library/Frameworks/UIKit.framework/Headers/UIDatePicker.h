@@ -2,7 +2,7 @@
 //  UIDatePicker.h
 //  UIKit
 //
-//  Copyright 2006-2009 Apple Inc. All rights reserved.
+//  Copyright 2006-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -18,7 +18,7 @@ typedef enum {
 
 @class UIPickerView;
 
-UIKIT_EXTERN_CLASS @interface UIDatePicker : UIControl <NSCoding>
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIDatePicker : UIControl <NSCoding>
 {
   @private
     UIPickerView *_pickerView;
@@ -28,7 +28,7 @@ UIKIT_EXTERN_CLASS @interface UIDatePicker : UIControl <NSCoding>
 
 @property(nonatomic,retain) NSLocale      *locale;                // default is nil. use current locale or locale from calendar
 @property(nonatomic,retain) NSTimeZone    *timeZone;              // default is nil. use current time zone or time zone from calendar
-@property(nonatomic,copy)   NSCalendar    *calendar;              // default is nil. use current calendar
+@property(nonatomic,copy)   NSCalendar    *calendar;              // default is [NSCalendar currentCalendar]. setting nil returns to default
 
 @property(nonatomic,retain) NSDate        *date;                  // default is current date when picker created. Ignored in countdown timer mode. for that mode, picker starts at 0:00
 

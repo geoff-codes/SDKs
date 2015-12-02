@@ -84,21 +84,12 @@ extern "C" {
 *      Taxonomy of floating point data types                                  *
 ******************************************************************************/
 
-enum {
-    _FP_NAN          = 1,                   /*      NaN                    */
-    _FP_INFINITE     = 2,                   /*      + or - infinity        */
-    _FP_ZERO         = 3,                   /*      + or - zero            */
-    _FP_NORMAL       = 4,                   /*      all normal numbers     */
-    _FP_SUBNORMAL    = 5,                    /*      denormal numbers       */
-    _FP_SUPERNORMAL  = 6                    /*      long double delivering > LDBL_DIG, e.g. 1. + 2^-1000 */
-};
-
-#define FP_NAN          _FP_NAN
-#define FP_INFINITE     _FP_INFINITE
-#define FP_ZERO         _FP_ZERO
-#define FP_NORMAL       _FP_NORMAL
-#define FP_SUBNORMAL    _FP_SUBNORMAL
-#define FP_SUPERNORMAL  _FP_SUPERNORMAL
+#define FP_NAN          1
+#define FP_INFINITE     2
+#define FP_ZERO         3
+#define FP_NORMAL       4
+#define FP_SUBNORMAL    5
+#define FP_SUPERNORMAL  6 /* meaningful only on PowerPC */
 
 /* fma() *function call* is more costly than equivalent (in-line) multiply and add operations    */
 /* For single and double precision, the cost isn't too bad, because we can fall back on higher   */
@@ -124,7 +115,7 @@ extern int __math_errhandling ( void );
 *                                                                               *
 *                              Inquiry macros                                   *
 *                                                                               *
-*   fpclassify      Returns one of the FP_Å values.                             *
+*   fpclassify      Returns one of the FP_* values.                             *
 *   isnormal        Non-zero if and only if the argument x is normalized.       *
 *   isfinite        Non-zero if and only if the argument x is finite.           *
 *   isnan           Non-zero if and only if the argument x is a NaN.            *
@@ -465,6 +456,23 @@ extern long double fmal(long double, long double, long double);
 
 
 #if !defined(_ANSI_SOURCE)
+
+/* 
+ * set X_TLOSS = pi*2**52, which is possibly defined in <values.h>
+ * (one may replace the following line by "#include <values.h>")
+ */
+
+#define X_TLOSS		1.41484755040568800000e+16 
+
+/* The bessel functions are available in iPhone OS 3.2 and later. */
+#include <Availability.h>
+
+extern double j0 ( double ) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+extern double j1 ( double ) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+extern double jn ( int, double ) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+extern double y0 ( double ) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+extern double y1 ( double ) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
+extern double yn ( int, double ) __OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_3_2); 
 
 extern double scalb ( double, double ); 
 extern int signgam;     /* required for unix 2003 */

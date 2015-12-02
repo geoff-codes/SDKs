@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2008 Apple Inc. All rights reserved.
+ * Copyright (c) 2000-2010 Apple Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
@@ -216,18 +216,17 @@ struct if_data64 {
 
 #pragma pack()
 
+
 /*
  * Structure defining a queue for a network interface.
  */
 struct	ifqueue {
-	void *ifq_head;
-	void *ifq_tail;
+	void	*ifq_head;
+	void	*ifq_tail;
 	int	ifq_len;
 	int	ifq_maxlen;
 	int	ifq_drops;
 };
-
-
 
 
 

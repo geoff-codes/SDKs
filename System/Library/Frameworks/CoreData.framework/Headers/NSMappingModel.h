@@ -11,6 +11,7 @@
 
 @class NSManagedObjectModel;
 
+NS_CLASS_AVAILABLE(10_5, 3_0)
 @interface NSMappingModel: NSObject {
     @private
     void *_reserved;

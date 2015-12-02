@@ -2,7 +2,7 @@
 //  MKAnnotation.h
 //  MapKit
 //
-//  Copyright 2009 Apple Inc. All rights reserved.
+//  Copyright 2009-2010 Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -19,5 +19,8 @@
 // Title and subtitle for use by selection UI.
 - (NSString *)title;
 - (NSString *)subtitle;
+
+// Called as a result of dragging an annotation view.
+- (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 @end

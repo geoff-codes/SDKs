@@ -1,5 +1,5 @@
 /* CoreGraphics - CGPDFOperatorTable.h
- * Copyright (c) 2004 Apple Inc.
+ * Copyright (c) 2004-2008 Apple Inc.
  * All rights reserved. */
 
 #ifndef CGPDFOPERATORTABLE_H_

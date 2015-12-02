@@ -45,7 +45,7 @@
 
 #define HIGH_EXC_VECTORS	((vm_address_t) 0xFFFF0000) /* exception vectors virt */
 
-#define VM_MIN_KERNEL_ADDRESS	((vm_address_t) 0xC0000000)
+#define VM_MIN_KERNEL_ADDRESS	((vm_address_t) 0x80000000)
 #define VM_MIN_KERNEL_AND_KEXT_ADDRESS VM_MIN_KERNEL_ADDRESS
 #define VM_MAX_KERNEL_ADDRESS	((vm_address_t) 0xFFFEFFFF) /* end short of exc vecs */
 

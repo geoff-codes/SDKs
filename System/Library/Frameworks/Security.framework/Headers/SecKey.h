@@ -41,14 +41,13 @@
 extern "C" {
 #endif
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 20000
-
-/* Padding Types. */
+/* Padding Types (iPhone OS 2.0 and later only). */
 typedef uint32_t SecPadding;
 enum
 {
     kSecPaddingNone      = 0,
     kSecPaddingPKCS1     = 1,
+    kSecPaddingOAEP      = 2,
 
     /* For SecKeyRawSign/SecKeyRawVerify only, data to be signed is an MD2
        hash; standard ASN.1 padding will be done, as well as PKCS1 padding
@@ -66,7 +65,6 @@ enum
     kSecPaddingPKCS1SHA1 = 0x8002,
 };
 
-#endif /* __IPHONE_OS_VERSION_MIN_REQUIRED >= 20000 */
 
 /*!
 	@function SecKeyGetTypeID
@@ -234,7 +232,7 @@ OSStatus SecKeyEncrypt(
 
 
 /*!
-    @function SecKeyEncrypt
+    @function SecKeyDecrypt
     @abstract Decrypt a block of ciphertext. 
     @param key Private key with which to decrypt the data.
     @param padding See Padding Types above, typically kSecPaddingPKCS1.

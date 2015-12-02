@@ -11,6 +11,7 @@
 @class CLLocation;
 @class MKUserLocationInternal;
 
+NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 @interface MKUserLocation : NSObject <MKAnnotation> {
   @private
     MKUserLocationInternal *_internal;

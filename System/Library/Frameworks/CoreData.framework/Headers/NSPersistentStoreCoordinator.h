@@ -105,6 +105,7 @@ COREDATA_EXTERN NSString * const NSStoreModelVersionIdentifiersKey __OSX_AVAILAB
 */
 COREDATA_EXTERN NSString * const NSPersistentStoreOSCompatibility __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);    
 
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSPersistentStoreCoordinator : NSObject <NSLocking> {
 @private
     void *_reserved;

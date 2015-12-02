@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2008 Apple Inc. All rights reserved.
+ * Copyright (c) 2000-2009 Apple Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
@@ -252,7 +252,7 @@
  */
 
 /* These settings are particular to each product. */
-/* Product: iPhone */
+/* Platform: iPhoneOS */
 #define __DARWIN_ONLY_64_BIT_INO_T	1
 #define __DARWIN_ONLY_UNIX_CONFORMANCE	1
 #define __DARWIN_ONLY_VERS_1050		1
@@ -319,8 +319,10 @@
 #  else /* default */
 #    if __DARWIN_ONLY_64_BIT_INO_T
 #      define __DARWIN_64_BIT_INO_T 1
-#    else /* !__DARWIN_ONLY_64_BIT_INO_T */
+#    elif defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) && ((__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__-0) < 1060) || __DARWIN_UNIX03 == 0
 #      define __DARWIN_64_BIT_INO_T 0
+#    else /* default */
+#      define __DARWIN_64_BIT_INO_T 1
 #    endif /* __DARWIN_ONLY_64_BIT_INO_T */
 #  endif
 #endif /* !__DARWIN_64_BIT_INO_T */
@@ -328,10 +330,10 @@
 #if !defined(__DARWIN_VERS_1050)
 #  if   __DARWIN_ONLY_VERS_1050
 #    define __DARWIN_VERS_1050 1
-#  elif defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) && ((__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__-0) >= 1050)
-#    define __DARWIN_VERS_1050 1
-#  else /* default */
+#  elif defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) && ((__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__-0) < 1050) || __DARWIN_UNIX03 == 0
 #    define __DARWIN_VERS_1050 0
+#  else /* default */
+#    define __DARWIN_VERS_1050 1
 #  endif
 #endif /* !__DARWIN_VERS_1050 */
 
@@ -400,6 +402,17 @@
 
 #define __DARWIN_EXTSN(sym)		__asm("_" __STRING(sym) __DARWIN_SUF_EXTSN)
 #define __DARWIN_EXTSN_C(sym)		__asm("_" __STRING(sym) __DARWIN_SUF_EXTSN __DARWIN_SUF_NON_CANCELABLE)
+
+/*
+ * symbol release macros
+ */
+#if defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) && ((__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__-0) < 1060)
+#undef __DARWIN_10_6_AND_LATER
+#define __DARWIN_10_6_AND_LATER_ALIAS(x)	/* nothing */
+#else /* 10.6 and beyond */
+#define __DARWIN_10_6_AND_LATER
+#define __DARWIN_10_6_AND_LATER_ALIAS(x)	x
+#endif
 
 
 /*
@@ -555,6 +568,16 @@
  */
 #if __DARWIN_UNIX03
 #define _DARWIN_FEATURE_UNIX_CONFORMANCE	3
+#endif
+
+/* 
+ * This macro casts away the qualifier from the variable
+ *
+ * Note: use at your own risk, removing qualifiers can result in
+ * catastrophic run-time failures.
+ */
+#ifndef __CAST_AWAY_QUALIFIER
+#define __CAST_AWAY_QUALIFIER(variable, qualifier, type)  (type) ((char *)0 + ((qualifier char *)(variable) - (qualifier char *)0) ) 
 #endif
 
 #endif /* !_CDEFS_H_ */

@@ -3,7 +3,7 @@
 
     Contains:   AudioQueue Interfaces for the AudioToolbox
 
-    Copyright:  © 2006-2008 by Apple Inc., all rights reserved.
+    Copyright:  © 2006-2010 by Apple, Inc., all rights reserved.
 
     Bugs?:      For bug reports, consult the following page on
                 the World Wide Web:
@@ -96,7 +96,7 @@ extern "C" {
     @constant   kAudioQueueErr_CannotStart          The audio queue has encountered a problem and
                                                     cannot start.
     @constant   kAudioQueueErr_InvalidDevice        The device assigned to the queue could not
-                                                    be located.
+                                                    be located, or is not properly configured.
     @constant   kAudioQueueErr_BufferInQueue        The buffer cannot be disposed of when it is
                                                     enqueued.
     @constant   kAudioQueueErr_InvalidRunState      The queue is running but the function can
@@ -110,14 +110,21 @@ extern "C" {
     @constant   kAudioQueueErr_PrimeTimedOut        During Prime, the queue's AudioConverter failed to
                                                     convert the requested number of sample frames.
     @constant   kAudioQueueErr_CodecNotFound        The required audio codec was not found.
-	@constant   kAudioQueueErr_InvalidCodecAccess   Access to the required codec is not permitted (possibly due to
-	                                                incompatible AudioSession settings on iPhoneOS).
+    @constant   kAudioQueueErr_InvalidCodecAccess   Access to the required codec is not permitted
+                                                    (possibly due to incompatible AudioSession
+                                                    settings on iPhoneOS).
     @constant   kAudioQueueErr_QueueInvalidated     On iPhoneOS, the audio server has exited, causing
                                                     this audio queue to have become invalid.
-    @constant   kAudioQueueErr_EnqueueDuringReset   During Reset, Stop, or Dispose, it is not permitted to enqueue buffers.
-    @constant   kAudioQueueErr_InvalidOfflineMode   The operation requires the queue to be in offline mode but it isn't,
-													or vice versa. (Offline mode is entered and exited via 
-													AudioQueueSetOfflineRenderFormat).
+    @constant   kAudioQueueErr_TooManyTaps          There can only be one processing tap per
+                                                    audio queue.
+    @constant   kAudioQueueErr_InvalidTapContext    GetTapSourceAudio can only be called from the
+                                                    tap's callback.
+    @constant   kAudioQueueErr_EnqueueDuringReset   During Reset, Stop, or Dispose, it is not
+                                                    permitted to enqueue buffers.
+    @constant   kAudioQueueErr_InvalidOfflineMode   The operation requires the queue to be in
+                                                    offline mode but it isn't, or vice versa.
+                                                    (Offline mode is entered and exited via
+                                                    AudioQueueSetOfflineRenderFormat).
 */
 enum {
     kAudioQueueErr_InvalidBuffer        = -66687,
@@ -135,8 +142,8 @@ enum {
     kAudioQueueErr_InvalidPropertyValue = -66675,
     kAudioQueueErr_PrimeTimedOut        = -66674,
     kAudioQueueErr_CodecNotFound        = -66673,
-	kAudioQueueErr_InvalidCodecAccess	= -66672,
-	kAudioQueueErr_QueueInvalidated     = -66671,
+    kAudioQueueErr_InvalidCodecAccess   = -66672,
+    kAudioQueueErr_QueueInvalidated     = -66671,
     kAudioQueueErr_EnqueueDuringReset   = -66632,
     kAudioQueueErr_InvalidOfflineMode   = -66626,
 };
@@ -245,57 +252,57 @@ enum {
 #if TARGET_OS_IPHONE
 /*
     @enum Audio Queue Property IDs
-	@asbtract Audio Queue Property IDs (iPhone 3.0 or greater only)
-	
-	@constant	kAudioQueueProperty_HardwareCodecPolicy
-		A UInt32 describing how the audio queue is to choose between a hardware or
-		software version of the codec required for its audio format. Its value is one of
-		the AudioQueueHardwareCodecPolicy constants below.
-		
-		If the chosen codec is not available, or if a hardware codec is chosen and the 
-		AudioSession category does not permit use of hardware codecs, attempts to Prime or Start
-		the queue will fail.
+    @asbtract Audio Queue Property IDs (iPhone 3.0 or greater only)
+    
+    @constant   kAudioQueueProperty_HardwareCodecPolicy
+        A UInt32 describing how the audio queue is to choose between a hardware or
+        software version of the codec required for its audio format. Its value is one of
+        the AudioQueueHardwareCodecPolicy constants below.
+        
+        If the chosen codec is not available, or if a hardware codec is chosen and the 
+        AudioSession category does not permit use of hardware codecs, attempts to Prime or Start
+        the queue will fail.
 
-		Use kAudioFormatProperty_Encoders or kAudioFormatProperty_Decoders to determine
-		whether the codec you are interested in using is available in hardware form,
-		software, or both.
-		
-		Changing this property is not permitted while the queue is primed or running. Changing
-		this property at other times may cause any properties set on the codec to be lost.
-		
-		See also the discussion of kAudioFormatProperty_HardwareCodecCapabilities
-		in AudioToolbox/AudioFormat.h.
+        Use kAudioFormatProperty_Encoders or kAudioFormatProperty_Decoders to determine
+        whether the codec you are interested in using is available in hardware form,
+        software, or both.
+        
+        Changing this property is not permitted while the queue is primed or running. Changing
+        this property at other times may cause any properties set on the codec to be lost.
+        
+        See also the discussion of kAudioFormatProperty_HardwareCodecCapabilities
+        in AudioToolbox/AudioFormat.h.
 */
 enum {
-	kAudioQueueProperty_HardwareCodecPolicy				= 'aqcp'		// value is UInt32
+    kAudioQueueProperty_HardwareCodecPolicy             = 'aqcp'        // value is UInt32
 };
 
 /*!
-	@enum		AudioQueueHardwareCodecPolicy constants
-	@abstract	Values of kAudioQueueProperty_HardwareCodecPolicy (iPhone 3.0 or greater only)
-	
-	@constant kAudioQueueHardwareCodecPolicy_Default
-		If the required codec is available in both hardware and software forms, the audio queue
-		will choose a hardware codec if its AudioSession category permits, software otherwise.
-		If the required codec is only available in one form, that codec is chosen.
-	@constant kAudioQueueHardwareCodecPolicy_UseSoftwareOnly
-		The audio queue will choose a software codec if one is available.
-	@constant kAudioQueueHardwareCodecPolicy_UseHardwareOnly
-		The audio queue will choose a hardware codec if one is available and its use permitted
-		by the AudioSession category.
-	@constant kAudioQueueHardwareCodecPolicy_PreferSoftware
-		The audio queue will choose a software codec if one is available; if not, it will choose a
-		hardware codec if one is available and its use permitted by the AudioSession category.
-	@constant kAudioQueueHardwareCodecPolicy_PreferHardware
-		The audio queue will choose a hardware codec if one is available and its use permitted
-		by the AudioSession category; otherwise, it will choose a software codec if one is available.
+    @enum       AudioQueueHardwareCodecPolicy constants
+    @abstract   Values of kAudioQueueProperty_HardwareCodecPolicy (iPhone 3.0 or greater only)
+    
+    @constant kAudioQueueHardwareCodecPolicy_Default
+        If the required codec is available in both hardware and software forms, the audio queue
+        will choose a hardware codec if its AudioSession category permits, software otherwise.
+        If the required codec is only available in one form, that codec is chosen.
+    @constant kAudioQueueHardwareCodecPolicy_UseSoftwareOnly
+        The audio queue will choose a software codec if one is available.
+    @constant kAudioQueueHardwareCodecPolicy_UseHardwareOnly
+        The audio queue will choose a hardware codec if one is available and its use permitted
+        by the AudioSession category.
+    @constant kAudioQueueHardwareCodecPolicy_PreferSoftware
+        The audio queue will choose a software codec if one is available; if not, it will choose a
+        hardware codec if one is available and its use permitted by the AudioSession category.
+    @constant kAudioQueueHardwareCodecPolicy_PreferHardware
+        The audio queue will choose a hardware codec if one is available and its use permitted
+        by the AudioSession category; otherwise, it will choose a software codec if one is available.
 */
 enum {
-	kAudioQueueHardwareCodecPolicy_Default				= 0,
-	kAudioQueueHardwareCodecPolicy_UseSoftwareOnly		= 1,
-	kAudioQueueHardwareCodecPolicy_UseHardwareOnly		= 2,
-	kAudioQueueHardwareCodecPolicy_PreferSoftware		= 3,
-	kAudioQueueHardwareCodecPolicy_PreferHardware		= 4
+    kAudioQueueHardwareCodecPolicy_Default              = 0,
+    kAudioQueueHardwareCodecPolicy_UseSoftwareOnly      = 1,
+    kAudioQueueHardwareCodecPolicy_UseHardwareOnly      = 2,
+    kAudioQueueHardwareCodecPolicy_PreferSoftware       = 3,
+    kAudioQueueHardwareCodecPolicy_PreferHardware       = 4
 };
 #endif
 
@@ -326,14 +333,24 @@ enum {
         A value from -2400 to 2400 indicating the number of cents to pitch-shift the queues
         playback. (1200 cents is one octave.) Only applicable when the time/pitch processor has 
         been enabled  and on Mac OS X 10.6 and higher.
+    @constant   kAudioQueueParam_VolumeRampTime
+        A value indicating the number of seconds over which subsequent volume changes will be
+        ramped. For example, to fade out from full unity gain to silence over the course of 1
+        second, set kAudioQueueParam_VolumeRampTime to 1 then kAudioQueueParam_Volume to 0.
+    @constant   kAudioQueueParam_Pan
+        A value from -1 to 1 indicating the pan position of a mono source (-1 = hard left, 0 =
+        center, 1 = hard right). For a stereo source this parameter affects left/right balance.
+        For multi-channel sources, this parameter has no effect.
 */
 enum    // typedef UInt32 AudioQueueParameterID;
 {
-    kAudioQueueParam_Volume     = 1,
+    kAudioQueueParam_Volume         = 1,
 #if !TARGET_OS_IPHONE
-    kAudioQueueParam_PlayRate   = 2,
-    kAudioQueueParam_Pitch      = 3,
+    kAudioQueueParam_PlayRate       = 2,
+    kAudioQueueParam_Pitch          = 3,
 #endif
+    kAudioQueueParam_VolumeRampTime = 4,
+    kAudioQueueParam_Pan            = 13
 };
 
 #pragma mark -
@@ -888,9 +905,9 @@ AudioQueueFreeBuffer(               AudioQueueRef           inAQ,
         the client should provide packet descriptions in the buffer's mPacketDescriptions
         and mPacketDescriptionCount fields rather than in inNumPacketDescs and
         inNumPacketDescs, which should be NULL and 0, respectively, in this case.
-		
-		For an input queue, pass 0 and NULL for inNumPacketDescs and inPacketDescs,
-		respectively. Your callback will receive packet descriptions owned by the audio queue.
+        
+        For an input queue, pass 0 and NULL for inNumPacketDescs and inPacketDescs,
+        respectively. Your callback will receive packet descriptions owned by the audio queue.
 
     @param      inAQ
         The audio queue you are assigning the buffer to.
@@ -949,7 +966,7 @@ AudioQueueEnqueueBuffer(            AudioQueueRef                       inAQ,
     @param      inNumParamValues
         The number of parameter values pointed to by the inParamValues parameter.
     @param      inParamValues
-        An array of parameter values(In Mac OS X v10.5, there is only one parameter,
+        An array of parameter values. (In Mac OS X v10.5, there is only one parameter,
         kAudioQueueParam_Volume.) These values are set before buffer playback and cannot be
         changed while the buffer is playing. How accurately changes in parameters can be
         scheduled depends on the size of the buffer. If there are no parameters to set
@@ -963,6 +980,10 @@ AudioQueueEnqueueBuffer(            AudioQueueRef                       inAQ,
         queued. If multiple buffers are queued, their times must be in ascending order or NULL;
         otherwise, an error occurs. The start time indicates when the actual audio data in the
         buffer is to be played (that is, the trim frames are not counted).
+        
+        Note: When specifying a start time for a buffer, if the buffer is not the first enqueued
+        since AudioQueueStop or AudioQueueReset, it is normally necessary to call AudioQueueFlush
+        before AudioQueueEnqueueBufferWithParameters.
     @param      outActualStartTime
         On return, points to an AudioTimeStamp structure indicating when the buffer will
         actually play.
@@ -1445,7 +1466,7 @@ AudioQueueDeviceGetNearestStartTime(AudioQueueRef           inAQ,
 extern OSStatus
 AudioQueueSetOfflineRenderFormat(   AudioQueueRef           inAQ,
                                     const AudioStreamBasicDescription *inFormat,
-                                    const AudioChannelLayout *inLayout);
+                                    const AudioChannelLayout *inLayout)     __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*!
     @function   AudioQueueOfflineRender
@@ -1459,7 +1480,8 @@ AudioQueueSetOfflineRenderFormat(   AudioQueueRef           inAQ,
     @param      ioBuffer
         The buffer into which the queue will render.
     @param      inNumberFrames
-        The number of frames of audio to render.
+        The number of frames of audio to render. Note that fewer frames than requested may be returned.
+        This can happen if insufficient data was enqueued.
     @result
         An OSStatus result code.
 */

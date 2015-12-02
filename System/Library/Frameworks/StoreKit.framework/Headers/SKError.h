@@ -8,8 +8,6 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKitDefines.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0
-
 SK_EXTERN NSString * const SKErrorDomain __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 // error codes for the SKErrorDomain
@@ -20,5 +18,3 @@ enum {
     SKErrorPaymentInvalid,      // purchase identifier was invalid, etc.
     SKErrorPaymentNotAllowed    // this device is not allowed to make the payment
 };
-
-#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_3_0

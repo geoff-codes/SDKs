@@ -3,7 +3,7 @@
  
      Contains:   Parameter constants for Apple AudioUnits
  
-     Copyright:  (c) 2002-2008 by Apple Inc., all rights reserved.
+     Copyright:  (c) 2002-2008 by Apple, Inc., all rights reserved.
  
      Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
@@ -82,7 +82,6 @@ enum {
 #pragma mark Apple Specific
 
 // Parameters for the AUMixer3D unit
-// only some of these parameters are available in the embedded implementation of this AU
 enum {
         // Input, Degrees, -180->180, 0
     k3DMixerParam_Azimuth		= 0,
@@ -97,7 +96,17 @@ enum {
     k3DMixerParam_Gain			= 3,
 	
 		// Input, rate scaler	0.5 -> 2.0
-    k3DMixerParam_PlaybackRate	= 4
+    k3DMixerParam_PlaybackRate	= 4,
+	
+		// bus enable : 0.0 or 1.0
+    k3DMixerParam_Enable       = 5,
+
+		// Minimum input gain constraint : 0.0 -> 1.0 (available on iphone only)
+    k3DMixerParam_MinGain      = 6,
+
+		// Maximum input gain constraint : 0.0 -> 1.0 (available on iphone only)
+    k3DMixerParam_MaxGain      = 7
+	
 	
 };
 
@@ -105,6 +114,8 @@ enum {
 enum {
 	kMultiChannelMixerParam_Volume 	= 0,
 	kMultiChannelMixerParam_Enable 	= 1,
+	kMultiChannelMixerParam_Pan     = 2,			// -1 - 0 - 1, only valid when output is not mono
+													// relationship to mix matrix: last one in wins
 
 		// read-only
 	// these report level in dB, as do the other mixers

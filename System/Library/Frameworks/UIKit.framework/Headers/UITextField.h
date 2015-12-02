@@ -2,7 +2,7 @@
 //  UITextField.h
 //  UIKit
 //
-//  Copyright 2005-2009 Apple Inc. All rights reserved.
+//  Copyright 2005-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,7 +13,7 @@
 #import <UIKit/UIStringDrawing.h>
 #import <UIKit/UITextInputTraits.h>
 
-@class UIImage, UIImageView, UILabel, UIColor;
+@class UIImage, UIImageView, UILabel, UIColor, UIButton;
 @class UITextFieldAtomBackgroundView;
 @class UITextFieldBackgroundView;
 @class UITextFieldBorderView;
@@ -38,7 +38,7 @@ typedef enum {
     UITextFieldViewModeAlways
 } UITextFieldViewMode;
 
-UIKIT_EXTERN_CLASS @interface UITextField : UIControl <UITextInputTraits, NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInputTraits, NSCoding> {
   @private
     NSString           *_text;
     UIColor            *_textColor;
@@ -69,7 +69,7 @@ UIKIT_EXTERN_CLASS @interface UITextField : UIControl <UITextInputTraits, NSCodi
     NSString           *_style;
     CFTimeInterval      _mouseDownTime;
     
-    UIView             *_clearButton;
+    UIButton           *_clearButton;
     CGSize              _clearButtonOffset;
     
     CGSize              _leftViewOffset;
@@ -88,6 +88,9 @@ UIKIT_EXTERN_CLASS @interface UITextField : UIControl <UITextInputTraits, NSCodi
     UITextInteractionAssistant *_interactionAssistant;
     UITextSelectionView *_selectionView;
     
+    UIView             *_inputView;
+    UIView             *_inputAccessoryView;
+
     UITextFieldAtomBackgroundView *_atomBackgroundView;
 
     struct {
@@ -98,11 +101,11 @@ UIKIT_EXTERN_CLASS @interface UITextField : UIControl <UITextInputTraits, NSCodi
         unsigned int isAnimating:4;
         unsigned int inactiveHasDimAppearance:1;
         unsigned int becomesFirstResponderOnClearButtonTap:1;
-	unsigned int clearsOnBeginEditing:1;
-	unsigned int adjustsFontSizeToFitWidth:1;
-	unsigned int fieldEditorAttached:1;
-	unsigned int inBecomeFirstResponder:1;
-        unsigned int becomingFirstResponder:1;
+        unsigned int clearsOnBeginEditing:1;
+        unsigned int adjustsFontSizeToFitWidth:1;
+        unsigned int fieldEditorAttached:1;
+        unsigned int canBecomeFirstResponder:1;
+        unsigned int inResignFirstResponder:1;
         unsigned int undoDisabled:1;
         unsigned int contentsRTL:1;
         unsigned int explicitAlignment:1;
@@ -117,7 +120,7 @@ UIKIT_EXTERN_CLASS @interface UITextField : UIControl <UITextInputTraits, NSCodi
 @property(nonatomic,retain) UIColor                *textColor;            // default is nil. use opaque black
 @property(nonatomic,retain) UIFont                 *font;                 // default is nil. use system font 12 pt
 @property(nonatomic)        UITextAlignment         textAlignment;        // default is UITextAlignmentLeft
-@property(nonatomic)        UITextBorderStyle       borderStyle;          // default is UITextBorderStyleNone. ignored if custom background image set.
+@property(nonatomic)        UITextBorderStyle       borderStyle;          // default is UITextBorderStyleNone. If set to UITextBorderStyleRoundedRect, custom background images are ignored.
 @property(nonatomic,copy)   NSString               *placeholder;          // default is nil. string is drawn 70% gray
 @property(nonatomic)        BOOL                    clearsOnBeginEditing; // default is NO which moves cursor to location clicked. if YES, all text cleared
 @property(nonatomic)        BOOL                    adjustsFontSizeToFitWidth; // default is NO. if YES, text will shrink to minFontSize along baseline
@@ -158,6 +161,11 @@ UIKIT_EXTERN_CLASS @interface UITextField : UIControl <UITextInputTraits, NSCodi
 
 - (void)drawTextInRect:(CGRect)rect;
 - (void)drawPlaceholderInRect:(CGRect)rect;
+
+// Presented when object becomes first responder.  If set to nil, reverts to following responder chain.  If
+// set while first responder, will not take effect until reloadInputViews is called.
+@property (readwrite, retain) UIView *inputView;             
+@property (readwrite, retain) UIView *inputAccessoryView;
 
 @end
 

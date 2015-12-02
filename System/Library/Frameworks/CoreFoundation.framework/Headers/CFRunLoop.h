@@ -1,5 +1,5 @@
 /*	CFRunLoop.h
-	Copyright (c) 1998-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2010, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFRUNLOOP__)
@@ -33,12 +33,12 @@ enum {
 
 /* Run Loop Observer Activities */
 enum {
-    kCFRunLoopEntry = (1 << 0),
-    kCFRunLoopBeforeTimers = (1 << 1),
-    kCFRunLoopBeforeSources = (1 << 2),
-    kCFRunLoopBeforeWaiting = (1 << 5),
-    kCFRunLoopAfterWaiting = (1 << 6),
-    kCFRunLoopExit = (1 << 7),
+    kCFRunLoopEntry = (1UL << 0),
+    kCFRunLoopBeforeTimers = (1UL << 1),
+    kCFRunLoopBeforeSources = (1UL << 2),
+    kCFRunLoopBeforeWaiting = (1UL << 5),
+    kCFRunLoopAfterWaiting = (1UL << 6),
+    kCFRunLoopExit = (1UL << 7),
     kCFRunLoopAllActivities = 0x0FFFFFFFU
 };
 typedef CFOptionFlags CFRunLoopActivity;
@@ -49,7 +49,7 @@ CF_EXPORT const CFStringRef kCFRunLoopCommonModes;
 CF_EXPORT CFTypeID CFRunLoopGetTypeID(void);
 
 CF_EXPORT CFRunLoopRef CFRunLoopGetCurrent(void);
-CF_EXPORT CFRunLoopRef CFRunLoopGetMain(void) AVAILABLE_MAC_OS_X_VERSION_10_1_AND_LATER;
+CF_EXPORT CFRunLoopRef CFRunLoopGetMain(void) CF_AVAILABLE(10_1, 2_0);
 
 CF_EXPORT CFStringRef CFRunLoopCopyCurrentMode(CFRunLoopRef rl);
 
@@ -64,6 +64,10 @@ CF_EXPORT SInt32 CFRunLoopRunInMode(CFStringRef mode, CFTimeInterval seconds, Bo
 CF_EXPORT Boolean CFRunLoopIsWaiting(CFRunLoopRef rl);
 CF_EXPORT void CFRunLoopWakeUp(CFRunLoopRef rl);
 CF_EXPORT void CFRunLoopStop(CFRunLoopRef rl);
+
+#if __BLOCKS__ && (MAC_OS_X_VERSION_10_6 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_4_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED)
+CF_EXPORT void CFRunLoopPerformBlock(CFRunLoopRef rl, CFTypeRef mode, void (^block)(void)) CF_AVAILABLE(10_6, 4_0); 
+#endif
 
 CF_EXPORT Boolean CFRunLoopContainsSource(CFRunLoopRef rl, CFRunLoopSourceRef source, CFStringRef mode);
 CF_EXPORT void CFRunLoopAddSource(CFRunLoopRef rl, CFRunLoopSourceRef source, CFStringRef mode);
@@ -102,7 +106,7 @@ typedef struct {
     mach_port_t	(*getPort)(void *info);
     void *	(*perform)(void *msg, CFIndex size, CFAllocatorRef allocator, void *info);
 #else
-    HANDLE	(*getPort)(void *info);
+    void *	(*getPort)(void *info);
     void	(*perform)(void *info);
 #endif
 } CFRunLoopSourceContext1;

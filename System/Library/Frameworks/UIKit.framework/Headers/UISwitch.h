@@ -2,7 +2,7 @@
 //  UISwitch.h
 //  UIKit
 //
-//  Copyright 2008-2009 Apple Inc. All rights reserved.
+//  Copyright 2008-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,7 +10,7 @@
 #import <UIKit/UIControl.h>
 #import <UIKit/UIKitDefines.h>
 
-UIKIT_EXTERN_CLASS @interface UISwitch : UIControl <NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UISwitch : UIControl <NSCoding> {
   @private
     id _control;
 }

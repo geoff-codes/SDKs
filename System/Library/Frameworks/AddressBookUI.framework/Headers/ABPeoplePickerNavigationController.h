@@ -2,7 +2,7 @@
 //  ABPeoplePickerNavigationController.h
 //  AddressBookUI
 //
-//  Copyright 2008 Apple Inc. All rights reserved.
+//  Copyright (c) 2010 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UINavigationController.h>
@@ -17,9 +17,10 @@
     // The ABPeoplePickerNavigationController allows the user to select a person or value by presenting
     // the entire address book.
 
+NS_CLASS_AVAILABLE(NA, 2_0)
 @interface ABPeoplePickerNavigationController : UINavigationController
 {
-    @private
+    @package
         ABAddressBookRef        _addressBook;
         id                      _peoplePickerDelegate;
         
@@ -29,15 +30,19 @@
         CFArrayRef              _displayedProperties;
         id                     _reserved1,
                                _reserved2,
-                               _reserved3;
+                               _reserved3,
+                               _reserved4;
+        NSArray               *_defaultToolbarItems;
+        
         id                      _insertionValue;
         ABPropertyID            _insertionProperty;
-
+    
         struct {
             unsigned            allowsEditing:1;
             unsigned            allowsCancel:1;
             unsigned            allowsActions:1;
-            unsigned            allowsSound:1;
+            unsigned            allowsSounds:1;
+            unsigned            hidesSearchableStores:1;
         } _flags;
 }
 

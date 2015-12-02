@@ -1,11 +1,10 @@
 /*	NSPredicate.h
-	Copyright (c) 2004-2009, Apple Inc. All rights reserved.
+	Copyright (c) 2004-2010, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSSet.h>
-#import <Availability.h>
 
 #if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_3_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 
@@ -22,13 +21,17 @@
 
 + (NSPredicate *)predicateWithValue:(BOOL)value;    // return predicates that always evaluate to true/false
 
+#if NS_BLOCKS_AVAILABLE
++ (NSPredicate*)predicateWithBlock:(BOOL (^)(id evaluatedObject, NSDictionary *bindings))block NS_AVAILABLE(10_6, 4_0); 
+#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6 */
+
 - (NSString *)predicateFormat;    // returns the format string of the predicate
 
 - (NSPredicate *)predicateWithSubstitutionVariables:(NSDictionary *)variables;    // substitute constant values for variables
 
 - (BOOL)evaluateWithObject:(id)object;    // evaluate a predicate against a single object
 
-- (BOOL)evaluateWithObject:(id)object substitutionVariables:(NSDictionary *)bindings __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_3_0); // single pass evaluation substituting variables from the bindings dictionary for any variable expressions encountered
+- (BOOL)evaluateWithObject:(id)object substitutionVariables:(NSDictionary *)bindings NS_AVAILABLE(10_5, 3_0); // single pass evaluation substituting variables from the bindings dictionary for any variable expressions encountered
 
 @end
 
@@ -42,11 +45,11 @@
 
 
 @interface NSSet (NSPredicateSupport)
-- (NSSet *)filteredSetUsingPredicate:(NSPredicate *)predicate __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_3_0);    // evaluate a predicate against a set of objects and return a filtered set
+- (NSSet *)filteredSetUsingPredicate:(NSPredicate *)predicate NS_AVAILABLE(10_5, 3_0);    // evaluate a predicate against a set of objects and return a filtered set
 @end
 
 @interface NSMutableSet (NSPredicateSupport)
-- (void)filterUsingPredicate:(NSPredicate *)predicate __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_3_0);    // evaluate a predicate against a set of objects and filter the mutable set directly
+- (void)filterUsingPredicate:(NSPredicate *)predicate NS_AVAILABLE(10_5, 3_0);    // evaluate a predicate against a set of objects and filter the mutable set directly
 @end
 
 #endif

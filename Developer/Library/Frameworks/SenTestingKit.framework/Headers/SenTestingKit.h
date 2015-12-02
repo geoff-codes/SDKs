@@ -28,20 +28,20 @@
 // 
 // This notice may not be removed from this file.
 
-#import "SenTestDefines.h"
-#import "SenTest.h"
-#import "SenTestCase.h"
-#import "SenTestSuite.h"
-#import "SenTestObserver.h"
-#import "NSException_SenTestFailure.h"
+#import <SenTestingKit/SenTestDefines.h>
+#import <SenTestingKit/SenTest.h>
+#import <SenTestingKit/SenTestCase.h>
+#import <SenTestingKit/SenTestSuite.h>
+#import <SenTestingKit/SenTestObserver.h>
+#import <SenTestingKit/NSException_SenTestFailure.h>
 
-#import "SenTestLog.h"
-#import "SenTestDistributedNotifier.h"
-#import "SenTestRun.h"
-#import "SenTestSuiteRun.h"
-#import "SenTestCaseRun.h"
+#import <SenTestingKit/SenTestLog.h>
+#import <SenTestingKit/SenTestDistributedNotifier.h>
+#import <SenTestingKit/SenTestRun.h>
+#import <SenTestingKit/SenTestSuiteRun.h>
+#import <SenTestingKit/SenTestCaseRun.h>
 
-#import "SenInterfaceTestCase.h"
+#import <SenTestingKit/SenInterfaceTestCase.h>
 
-#import "SenTestProbe.h"
-#import "SenTestingUtilities.h"
+#import <SenTestingKit/SenTestProbe.h>
+#import <SenTestingKit/SenTestingUtilities.h>

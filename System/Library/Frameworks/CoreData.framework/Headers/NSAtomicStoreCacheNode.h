@@ -13,6 +13,7 @@
 #import <CoreData/NSManagedObjectID.h>
 #import <CoreData/NSManagedObject.h>
 
+NS_CLASS_AVAILABLE(10_5, 3_0)
 @interface NSAtomicStoreCacheNode : NSObject {
     @private
     NSManagedObjectID *_objectID;

@@ -2,14 +2,15 @@
 //  UIFont.h
 //  UIKit
 //
-//  Copyright 2007-2009 Apple Inc. All rights reserved.
+//  Copyright 2007-2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIKitDefines.h>
 
-UIKIT_EXTERN_CLASS @interface UIFont : NSObject {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIFont : NSObject {
+  @private
 }
 
 + (UIFont *)fontWithName:(NSString *)fontName size:(CGFloat)fontSize;
@@ -30,11 +31,15 @@ UIKIT_EXTERN_CLASS @interface UIFont : NSObject {
 @property(nonatomic,readonly)        CGFloat   pointSize;
 @property(nonatomic,readonly)        CGFloat   ascender;
 @property(nonatomic,readonly)        CGFloat   descender;
-@property(nonatomic,readonly)        CGFloat   leading;
 @property(nonatomic,readonly)        CGFloat   capHeight;
 @property(nonatomic,readonly)        CGFloat   xHeight;
+@property(nonatomic,readonly)        CGFloat   lineHeight __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 // Create a new font that is identical to the current font except the specified size
 - (UIFont *)fontWithSize:(CGFloat)fontSize;
 
+@end
+
+@interface UIFont (UIFontDeprecated)
+@property(nonatomic,readonly) CGFloat leading; // use lineHeight. does not return actual leading. will be formally deprecated in future
 @end

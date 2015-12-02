@@ -3,7 +3,7 @@
 
      Contains:   API for translating between audio data formats.
 
-     Copyright:  (c) 1985-2008 by Apple Inc., all rights reserved.
+     Copyright:  (c) 1985-2008 by Apple, Inc., all rights reserved.
 
      Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
@@ -735,7 +735,7 @@ AudioConverterConvertBuffer(	AudioConverterRef				inAudioConverter,
 				This callback function supplies input to AudioConverterFillComplexBuffer.
 				
 				The AudioConverter requests a minimum number of packets (*ioNumberDataPackets).
-				The callback may return one or more packets. If this is less than than the minimum,
+				The callback may return one or more packets. If this is less than the minimum,
 				the callback will simply be called again in the near future.
 
 				The callback manipulates the members of ioData to point to one or more buffers

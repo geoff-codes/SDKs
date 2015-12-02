@@ -113,7 +113,7 @@ extern "C" {
     document type declaration should only be exported by the application
     which controls the document format.
 
-    An imported declatation is for applications which depend on the
+    An imported declaration is for applications which depend on the
     existence of someone else's type declaration. If application A can
     open application B's document format, then application A makes
     an imported declaration of application B's document type so that
@@ -283,7 +283,7 @@ extern const CFStringRef kUTTagClassOSType                           __OSX_AVAIL
  *    likely to be correct. When there a choice must be made between
  *    multiple public types or multiple non-public types, the selection
  *    rules are undefined. Clients needing finer control should use
- *    UTTypeCreateAllIdentifiersWithTag. If no declared type is
+ *    UTTypeCreateAllIdentifiersForTag. If no declared type is
  *    indicated, a dynamic type identifier is generated which satisfies
  *    the parameters.
  *  

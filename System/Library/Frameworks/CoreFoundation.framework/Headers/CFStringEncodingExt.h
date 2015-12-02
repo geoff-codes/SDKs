@@ -1,5 +1,5 @@
 /*	CFStringEncodingExt.h
-	Copyright (c) 1998-2007, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2010, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFSTRINGENCODINGEXT__)
@@ -78,7 +78,7 @@ enum {
     kCFStringEncodingISOLatin7 = 0x020D,	/* ISO 8859-13 */
     kCFStringEncodingISOLatin8 = 0x020E,	/* ISO 8859-14 */
     kCFStringEncodingISOLatin9 = 0x020F,	/* ISO 8859-15 */
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     kCFStringEncodingISOLatin10 = 0x0210,	/* ISO 8859-16 */
 #endif
 
@@ -117,7 +117,7 @@ enum {
 
     /* Various national standards begin at 0x600 */
 /*  kCFStringEncodingASCII = 0x0600, defined in CoreFoundation/CFString.h */
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     kCFStringEncodingANSEL = 0x0601,	/* ANSEL (ANSI Z39.47) */
 #endif
     kCFStringEncodingJIS_X0201_76 = 0x0620,
@@ -125,10 +125,10 @@ enum {
     kCFStringEncodingJIS_X0208_90 = 0x0622,
     kCFStringEncodingJIS_X0212_90 = 0x0623,
     kCFStringEncodingJIS_C6226_78 = 0x0624,
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     kCFStringEncodingShiftJIS_X0213 = 0x0628, /* Shift-JIS format encoding of JIS X0213 planes 1 and 2*/
 #endif
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     kCFStringEncodingShiftJIS_X0213_MenKuTen = 0x0629,	/* JIS X0213 in plane-row-column notation */
 #endif
     kCFStringEncodingGB_2312_80 = 0x0630,
@@ -162,7 +162,7 @@ enum {
     kCFStringEncodingMacRomanLatin1 = 0x0A04,	/* Mac OS Roman permuted to align with ISO Latin-1 */
     kCFStringEncodingHZ_GB_2312 = 0x0A05,	/* HZ (RFC 1842, for Chinese mail & news) */
     kCFStringEncodingBig5_HKSCS_1999 = 0x0A06, /* Big-5 with Hong Kong special char set supplement*/
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     kCFStringEncodingVISCII = 0x0A07,	/* RFC 1456, Vietnamese */
     kCFStringEncodingKOI8_U = 0x0A08,	/* RFC 2319, Ukrainian */
     kCFStringEncodingBig5_E = 0x0A09,	/* Taiwan Big-5E standard */
@@ -170,13 +170,18 @@ enum {
 
     /* Other platform encodings*/
 /*  kCFStringEncodingNextStepLatin = 0x0B01, defined in CoreFoundation/CFString.h */
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
     kCFStringEncodingNextStepJapanese = 0x0B02,	/* NextStep Japanese encoding */
 #endif
 
     /* EBCDIC & IBM host encodings begin at 0xC00 */
     kCFStringEncodingEBCDIC_US = 0x0C01,	/* basic EBCDIC-US */
     kCFStringEncodingEBCDIC_CP037 = 0x0C02,	/* code page 037, extended EBCDIC (Latin-1 set) for US,Canada... */
+
+#if MAC_OS_X_VERSION_10_6 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
+    kCFStringEncodingUTF7 = 0x04000100, /* kTextEncodingUnicodeDefault + kUnicodeUTF7Format RFC2152 */
+    kCFStringEncodingUTF7_IMAP = 0x0A10, /* UTF-7 (IMAP folder variant) RFC3501 */
+#endif /* MAC_OS_X_VERSION_10_6 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED */
 
     /* Deprecated constants */
     kCFStringEncodingShiftJIS_X0213_00 = 0x0628 /* Shift-JIS format encoding of JIS X0213 planes 1 and 2 (DEPRECATED) */
