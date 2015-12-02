@@ -4,10 +4,10 @@
  *	  header file for postgres vacuum cleaner and statistics analyzer
  *
  *
- * Portions Copyright (c) 1996-2010, PostgreSQL Global Development Group
+ * Portions Copyright (c) 1996-2011, PostgreSQL Global Development Group
  * Portions Copyright (c) 1994, Regents of the University of California
  *
- * $PostgreSQL: pgsql/src/include/commands/vacuum.h,v 1.89.6.1 2010/08/01 22:38:20 tgl Exp $
+ * src/include/commands/vacuum.h
  *
  *-------------------------------------------------------------------------
  */
@@ -50,6 +50,10 @@
  * the information to be stored in a pg_statistic row for the column.  Be
  * careful to allocate any pointed-to data in anl_context, which will NOT
  * be CurrentMemoryContext when compute_stats is called.
+ *
+ * Note: for the moment, all comparisons done for statistical purposes
+ * should use the database's default collation (DEFAULT_COLLATION_OID).
+ * This might change in some future release.
  *----------
  */
 typedef struct VacAttrStats *VacAttrStatsP;
@@ -64,7 +68,7 @@ typedef struct VacAttrStats
 	 * type-specific typanalyze function.
 	 *
 	 * Note: do not assume that the data being analyzed has the same datatype
-	 * shown in attr, ie do not trust attr->atttypid, attlen, etc.  This is
+	 * shown in attr, ie do not trust attr->atttypid, attlen, etc.	This is
 	 * because some index opclasses store a different type than the underlying
 	 * column/expression.  Instead use attrtypid, attrtypmod, and attrtype for
 	 * information about the datatype being fed to the typanalyze function.

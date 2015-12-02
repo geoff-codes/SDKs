@@ -1,6 +1,6 @@
 /*
         NSParagraphStyle.h
-        Copyright (c) 1994-2011, Apple Inc.  All rights reserved.
+        Copyright (c) 1994-2012, Apple Inc.  All rights reserved.
 
 	NSParagraphStyle and NSMutableParagraphStyle hold paragraph style information
 	NSTextTab holds information about a single tab stop

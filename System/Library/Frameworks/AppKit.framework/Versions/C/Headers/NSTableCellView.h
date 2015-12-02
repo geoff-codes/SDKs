@@ -1,7 +1,7 @@
 /*
     NSTableCellView.h
     Application Kit
-    Copyright (c) 2009-2011, Apple Inc.
+    Copyright (c) 2009-2012, Apple Inc.
     All rights reserved.
 */
 
@@ -17,7 +17,6 @@
 
 /* View Based NSTableView: The NSTableCellView is a reusable container view shown for a particular cell in the table. See NSTableView.h for more information. 
  */
-NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE
 NS_CLASS_AVAILABLE(10_7, NA)
 @interface NSTableCellView : NSView {
 @private

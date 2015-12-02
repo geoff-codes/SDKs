@@ -38,7 +38,8 @@ enum {
 	kJRSUI_Key_windowFrameDrawClipped = 26,
 	kJRSUI_Key_windowFrameDrawTitleSeparator = 27,
 	kJRSUI_Key_windowTitleBarHeight = 28,
-	kJRSUI_Key_presentationState = 30
+	kJRSUI_Key_presentationState = 30,
+	kJRSUI_Key_userInterfaceLayoutDirection = 31
 };
 typedef CFIndex JRSUIKey;
 
@@ -254,6 +255,14 @@ enum {
 typedef CFIndex JRSUIPresentationState;
 
 void JRSUIControlSetPresentationState(JRSUIControlRef control, JRSUIPresentationState value);
+
+enum {
+	kJRSUI_UserInterfaceLayoutDirection_leftToRight = 1,
+	kJRSUI_UserInterfaceLayoutDirection_rightToLeft = 2
+};
+typedef CFIndex JRSUIUserInterfaceLayoutDirection;
+
+void JRSUIControlSetUserInterfaceLayoutDirection(JRSUIControlRef control, JRSUIUserInterfaceLayoutDirection value);
 
 // special setters
 

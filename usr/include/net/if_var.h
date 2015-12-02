@@ -82,7 +82,7 @@
 #define APPLE_IF_FAM_DISC      8
 #define APPLE_IF_FAM_MDECAP    9
 #define APPLE_IF_FAM_GIF       10
-#define APPLE_IF_FAM_FAITH     11
+#define APPLE_IF_FAM_FAITH     11	/* deprecated */
 #define APPLE_IF_FAM_STF       12
 #define APPLE_IF_FAM_FIREWIRE  13
 #define APPLE_IF_FAM_BOND      14

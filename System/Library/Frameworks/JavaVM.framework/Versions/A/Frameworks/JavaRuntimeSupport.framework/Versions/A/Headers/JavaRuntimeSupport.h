@@ -13,6 +13,7 @@
 #import <JavaRuntimeSupport/JRSEvent.h>
 #import <JavaRuntimeSupport/JRSDrag.h>
 #import <JavaRuntimeSupport/JRSInputMethodController.h>
+#import <JavaRuntimeSupport/JRSWindow.h>
 #import <JavaRuntimeSupport/JRSMenu.h>
 #import <JavaRuntimeSupport/JRSFont.h>
 #import <JavaRuntimeSupport/JRSAppKitAWT.h>
@@ -22,3 +23,4 @@
 #import <JavaRuntimeSupport/JRSUIProperties.h>
 #import <JavaRuntimeSupport/JRSUIHitTesting.h>
 #import <JavaRuntimeSupport/JRSUIScrollBars.h>
+#import <JavaRuntimeSupport/JRSSecurity.h>

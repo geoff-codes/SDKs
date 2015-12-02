@@ -452,6 +452,14 @@ enum
                         This property is never settable.
     @constant       kCMIODevicePropertyLinkedAndSyncedCoreAudioDeviceUID
                         Identical to kCMIODevicePropertyLinkedCoreAudioDeviceUID, except that it only returns a UID if the linked CoreAudio device shares the same hardware clock (CFStringRef)
+    @constant       kCMIODevicePropertyIIDCInitialUnitSpace
+                        A UInt32 which specifies the initial unit space for IIDC cameras as described in "IIDC 1394-based Digital Camera Specification Version 1.31" (1394 Trade Association
+						Document 2003017)." This property is never settable.
+    @constant       kCMIODevicePropertyIIDCCSRData
+						A UInt32 which provides access to control and status registers for IIDC cameras. The qualifier contains a UInt32 that specifies the register to access.
+						If the register's offset is relative to the initial unit space, then the qualifier should be the value returned by kCMIODevicePropertyIIDCInitialUnitSpace + offset.
+						If the register's offset is relative to the initial register space, then the qualifier should be $F0000000 + offset.
+						Changes in this property never result in a property changed notification.
 */
 enum
 {
@@ -479,7 +487,9 @@ enum
     kCMIODevicePropertyLinkedCoreAudioDeviceUID     = 'plud',
     kCMIODevicePropertyVideoDigitizerComponents     = 'vdig', 
     kCMIODevicePropertySuspendedByUser              = 'sbyu',
-    kCMIODevicePropertyLinkedAndSyncedCoreAudioDeviceUID = 'plsd'
+    kCMIODevicePropertyLinkedAndSyncedCoreAudioDeviceUID	= 'plsd',
+    kCMIODevicePropertyIIDCInitialUnitSpace			= 'iuns',
+    kCMIODevicePropertyIIDCCSRData					= 'csrd'
 };
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

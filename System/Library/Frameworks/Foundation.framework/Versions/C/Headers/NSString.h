@@ -1,5 +1,5 @@
 /*	NSString.h
-	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2012, Apple Inc. All rights reserved.
 */
 
 typedef unsigned short unichar;
@@ -17,24 +17,17 @@ FOUNDATION_EXPORT NSString * const NSParseErrorException; // raised by -property
 
 /* These options apply to the various search/find and comparison methods (except where noted).
 */
-enum {
+typedef NS_OPTIONS(NSUInteger, NSStringCompareOptions) {
     NSCaseInsensitiveSearch = 1,
     NSLiteralSearch = 2,		/* Exact character-by-character equivalence */
     NSBackwardsSearch = 4,		/* Search from end of source string */
     NSAnchoredSearch = 8,		/* Search is limited to start (or end, if NSBackwardsSearch) of source string */
-    NSNumericSearch = 64		/* Added in 10.2; Numbers within strings are compared using numeric value, that is, Foo2.txt < Foo7.txt < Foo25.txt; only applies to compare methods, not find */
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-    ,
-    NSDiacriticInsensitiveSearch = 128, /* If specified, ignores diacritics (o-umlaut == o) */
-    NSWidthInsensitiveSearch = 256, /* If specified, ignores width differences ('a' == UFF41) */
-    NSForcedOrderingSearch = 512 /* If specified, comparisons are forced to return either NSOrderedAscending or NSOrderedDescending if the strings are equivalent but not strictly equal, for stability when sorting (e.g. "aaa" > "AAA" with NSCaseInsensitiveSearch specified) */
-#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 */
-#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-    ,
-    NSRegularExpressionSearch = 1024    /* Applies to rangeOfString:..., stringByReplacingOccurrencesOfString:..., and replaceOccurrencesOfString:... methods only; the search string is treated as an ICU-compatible regular expression; if set, no other options can apply except NSCaseInsensitiveSearch and NSAnchoredSearch */
-#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7 || __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED */
+    NSNumericSearch = 64,		/* Added in 10.2; Numbers within strings are compared using numeric value, that is, Foo2.txt < Foo7.txt < Foo25.txt; only applies to compare methods, not find */
+    NSDiacriticInsensitiveSearch NS_ENUM_AVAILABLE(10_5, 2_0) = 128, /* If specified, ignores diacritics (o-umlaut == o) */
+    NSWidthInsensitiveSearch NS_ENUM_AVAILABLE(10_5, 2_0) = 256, /* If specified, ignores width differences ('a' == UFF41) */
+    NSForcedOrderingSearch NS_ENUM_AVAILABLE(10_5, 2_0) = 512, /* If specified, comparisons are forced to return either NSOrderedAscending or NSOrderedDescending if the strings are equivalent but not strictly equal, for stability when sorting (e.g. "aaa" > "AAA" with NSCaseInsensitiveSearch specified) */
+    NSRegularExpressionSearch NS_ENUM_AVAILABLE(10_7, 3_2) = 1024    /* Applies to rangeOfString:..., stringByReplacingOccurrencesOfString:..., and replaceOccurrencesOfString:... methods only; the search string is treated as an ICU-compatible regular expression; if set, no other options can apply except NSCaseInsensitiveSearch and NSAnchoredSearch */
 };
-typedef NSUInteger NSStringCompareOptions;
 
 /* Note that in addition to the values explicitly listed below, NSStringEncoding supports encodings provided by CFString.
 See CFStringEncodingExt.h for a list of these encodings.
@@ -70,16 +63,15 @@ enum {
 };
 typedef NSUInteger NSStringEncoding;
 
-enum {
+typedef NS_OPTIONS(NSUInteger, NSStringEncodingConversionOptions) {
     NSStringEncodingConversionAllowLossy = 1,
     NSStringEncodingConversionExternalRepresentation = 2
 };
-typedef NSUInteger NSStringEncodingConversionOptions;
 
 FOUNDATION_EXPORT NSString * const NSCharacterConversionException;
 
 
-@interface NSString : NSObject <NSCopying, NSMutableCopying, NSCoding>
+@interface NSString : NSObject <NSCopying, NSMutableCopying, NSSecureCoding>
 
 /* NSString primitive (funnel) methods. A minimal subclass of NSString just needs to implement these, although we also recommend getCharacters:range:. See below for the other methods.
 */
@@ -96,10 +88,12 @@ FOUNDATION_EXPORT NSString * const NSCharacterConversionException;
 - (NSString *)substringToIndex:(NSUInteger)to;
 - (NSString *)substringWithRange:(NSRange)range;    // Hint: Use with rangeOfComposedCharacterSequencesForRange: to avoid breaking up composed characters
 
+/* In the compare: methods, the range argument specifies the subrange, rather than the whole, of the receiver to use in the comparison. The range is not applied to the search string.  For example, [@"AB" compare:@"ABC" options:0 range:NSMakeRange(0,1)] compares "A" to "ABC", not "A" to "A", and will return NSOrderedAscending.
+*/
 - (NSComparisonResult)compare:(NSString *)string;
 - (NSComparisonResult)compare:(NSString *)string options:(NSStringCompareOptions)mask;
 - (NSComparisonResult)compare:(NSString *)string options:(NSStringCompareOptions)mask range:(NSRange)compareRange;
-- (NSComparisonResult)compare:(NSString *)string options:(NSStringCompareOptions)mask range:(NSRange)compareRange locale:(id)locale; // locale arg used to be a dictionary pre-Leopard. We now accepts NSLocale. Assumes the current locale if non-nil and non-NSLocale.
+- (NSComparisonResult)compare:(NSString *)string options:(NSStringCompareOptions)mask range:(NSRange)compareRange locale:(id)locale; // locale arg used to be a dictionary pre-Leopard. We now accept NSLocale. Assumes the current locale if non-nil and non-NSLocale. nil continues to mean canonical compare, which doesn't depend on user's locale choice.
 - (NSComparisonResult)caseInsensitiveCompare:(NSString *)string;
 - (NSComparisonResult)localizedCompare:(NSString *)string;
 - (NSComparisonResult)localizedCaseInsensitiveCompare:(NSString *)string;
@@ -146,9 +140,17 @@ FOUNDATION_EXPORT NSString * const NSCharacterConversionException;
 
 - (NSString *)commonPrefixWithString:(NSString *)aString options:(NSStringCompareOptions)mask;
 
+/* The following three case methods perform the canonical (non-localized) mappings. They are suitable for programming operations that require stable results not depending on the user's locale preference.  For localized case mapping for strings presented to users, use their corresponding methods with locale argument below.
+ */
 - (NSString *)uppercaseString;
 - (NSString *)lowercaseString;
 - (NSString *)capitalizedString;
+
+/* The following methods perform localized case mappings based on the locale specified. Passing nil indicates the canonical mapping.  For the user preference locale setting, specify +[NSLocale currentLocale].
+ */
+- (NSString *)uppercaseStringWithLocale:(NSLocale *)locale NS_AVAILABLE(10_8, 6_0);
+- (NSString *)lowercaseStringWithLocale:(NSLocale *)locale NS_AVAILABLE(10_8, 6_0);
+- (NSString *)capitalizedStringWithLocale:(NSLocale *)locale NS_AVAILABLE(10_8, 6_0);
 
 - (NSString *)stringByTrimmingCharactersInSet:(NSCharacterSet *)set;
 - (NSString *)stringByPaddingToLength:(NSUInteger)newLength withString:(NSString *)padString startingAtIndex:(NSUInteger)padIndex;
@@ -160,20 +162,21 @@ FOUNDATION_EXPORT NSString * const NSCharacterConversionException;
 - (NSRange)paragraphRangeForRange:(NSRange)range;
 
 #if NS_BLOCKS_AVAILABLE
-enum {
-	// Pass in one of the "By" options:
-	NSStringEnumerationByLines = 0,                       // Equivalent to lineRangeForRange:
-        NSStringEnumerationByParagraphs = 1,                  // Equivalent to paragraphRangeForRange:
-	NSStringEnumerationByComposedCharacterSequences = 2,  // Equivalent to rangeOfComposedCharacterSequencesForRange:
-	NSStringEnumerationByWords = 3,
-        NSStringEnumerationBySentences = 4,
-	// ...and combine any of the desired additional options:
-	NSStringEnumerationReverse = 1UL << 8,
-	NSStringEnumerationSubstringNotRequired = 1UL << 9,
-	NSStringEnumerationLocalized = 1UL << 10              // User's default locale
+typedef NS_OPTIONS(NSUInteger, NSStringEnumerationOptions) {
+    // Pass in one of the "By" options:
+    NSStringEnumerationByLines = 0,                       // Equivalent to lineRangeForRange:
+    NSStringEnumerationByParagraphs = 1,                  // Equivalent to paragraphRangeForRange:
+    NSStringEnumerationByComposedCharacterSequences = 2,  // Equivalent to rangeOfComposedCharacterSequencesForRange:
+    NSStringEnumerationByWords = 3,
+    NSStringEnumerationBySentences = 4,
+    // ...and combine any of the desired additional options:
+    NSStringEnumerationReverse = 1UL << 8,
+    NSStringEnumerationSubstringNotRequired = 1UL << 9,
+    NSStringEnumerationLocalized = 1UL << 10              // User's default locale
 };
-typedef NSUInteger NSStringEnumerationOptions;
 
+/* In the enumerate methods, the blocks will be invoked inside an autorelease pool, so any values assigned inside the block should be retained.
+*/
 - (void)enumerateSubstringsInRange:(NSRange)range options:(NSStringEnumerationOptions)opts usingBlock:(void (^)(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop))block NS_AVAILABLE(10_6, 4_0);
 - (void)enumerateLinesUsingBlock:(void (^)(NSString *line, BOOL *stop))block NS_AVAILABLE(10_6, 4_0);
 #endif

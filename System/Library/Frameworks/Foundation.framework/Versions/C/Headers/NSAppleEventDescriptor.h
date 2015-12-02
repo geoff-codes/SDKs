@@ -1,6 +1,6 @@
 /*
 	NSAppleEventDescriptor.h
-	Copyright (c) 1997-2011, Apple Inc. All rights reserved.
+	Copyright (c) 1997-2012, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -8,7 +8,7 @@
 
 @class NSData;
 
-@interface NSAppleEventDescriptor : NSObject<NSCopying> {
+@interface NSAppleEventDescriptor : NSObject<NSCopying, NSSecureCoding> {
     @private
     AEDesc _desc;
     BOOL _hasValidDesc;

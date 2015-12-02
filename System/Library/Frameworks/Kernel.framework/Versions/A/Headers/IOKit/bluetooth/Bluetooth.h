@@ -226,6 +226,12 @@ struct	BluetoothKey
 	uint8_t		data[ 16 ];
 };
 
+typedef struct  BluetoothIRK                BluetoothIRK;
+struct BluetoothIRK
+{
+    uint8_t     data[ 16 ];
+};
+        
 typedef struct	BluetoothPINCode			BluetoothPINCode;
 struct	BluetoothPINCode
 {
@@ -483,7 +489,10 @@ typedef enum
     kBluetoothL2CAPConfigurationOptionMTU                           = 0x01,
     kBluetoothL2CAPConfigurationOptionFlushTimeout                  = 0x02,
     kBluetoothL2CAPConfigurationOptionQoS                           = 0x03,
-    kBluetoothL2CAPConfigurationOptionRetransmissionAndFlowControl  = 0x04
+    kBluetoothL2CAPConfigurationOptionRetransmissionAndFlowControl  = 0x04,
+    kBluetoothL2CAPConfigurationOptionFrameCheckSequence            = 0x05,
+    kBluetoothL2CAPConfigurationOptionExtendedFlowSpecification     = 0x06,
+    kBluetoothL2CAPConfigurationOptionExtendedWindowSize            = 0x07
 } BluetoothL2CAPConfigurationOption;
 
 enum
@@ -496,9 +505,11 @@ enum
 
 typedef enum
 {
-    kBluetoothL2CAPConfigurationRetransmissionModeFlag  = 0x01,
-    kBluetoothL2CAPConfigurationFlowControlModeFlag     = 0x02,
-    kBluetoothL2CAPConfigurationBasicL2CAPModeFlag      = 0x00,
+    kBluetoothL2CAPConfigurationBasicL2CAPModeFlag          = 0x00,
+    kBluetoothL2CAPConfigurationRetransmissionModeFlag      = 0x01,
+    kBluetoothL2CAPConfigurationFlowControlModeFlag         = 0x02,
+    kBluetoothL2CAPConfigurationEnhancedRetransmissionMode  = 0x03,
+    kBluetoothL2CAPConfigurationStreamingMode               = 0x04
 } BluetoothL2CAPConfigurationRetransmissionAndFlowControlFlags;
 
 
@@ -1029,7 +1040,6 @@ struct BluetoothHCISupportedFeatures
 	uint8_t	data[8];
 };
 
-#if BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_1_1
 typedef uint8_t										BluetoothHCIPageNumber;
 typedef struct	BluetoothHCIExtendedFeaturesInfo	BluetoothHCIExtendedFeaturesInfo;
 struct BluetoothHCIExtendedFeaturesInfo
@@ -1038,7 +1048,6 @@ struct BluetoothHCIExtendedFeaturesInfo
 	BluetoothHCIPageNumber	maxPage;
 	uint8_t					data[8];
 };
-#endif /* BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_1_1 */
 		
 enum BluetoothFeatureBits
 {
@@ -1507,7 +1516,6 @@ struct	BluetoothHCIInquiryResults
 	IOItemCount						count;
 };
 
-#if BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_0
 
 //Inquiries with RSSI (v1.2 specification)
 
@@ -1709,10 +1717,6 @@ struct BluetoothAFHResults
 	uint8_t						afhMap[10];
 };
 
-#endif /* BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_0 */
-
-#if BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_1_1
-
 typedef uint32_t	BluetoothNumericValue;
 
 typedef struct BluetoothUserConfirmationRequest	BluetoothUserConfirmationRequest;
@@ -1727,8 +1731,6 @@ struct			BluetoothHCIEventSimplePairingCompleteResults
 {
 	BluetoothDeviceAddress						deviceAddress;
 };
-
-#endif /* BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_1_1 */
 
 
 // Packet Sizes
@@ -2082,14 +2084,12 @@ struct 			BluetoothHCIEventReadSupportedFeaturesResults
 	BluetoothHCISupportedFeatures				supportedFeatures;
 };
 
-#if BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_1_1
 typedef struct	BluetoothHCIEventReadExtendedFeaturesResults 	BluetoothHCIEventReadExtendedFeaturesResults;
 struct 			BluetoothHCIEventReadExtendedFeaturesResults
 {
 	BluetoothConnectionHandle					connectionHandle;
 	BluetoothHCIExtendedFeaturesInfo			supportedFeaturesInfo;
 };
-#endif /* BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_1_1 */
 		
 typedef struct	BluetoothHCIEventReadRemoteVersionInfoResults 	BluetoothHCIEventReadRemoteVersionInfoResults;
 struct 			BluetoothHCIEventReadRemoteVersionInfoResults
@@ -2229,7 +2229,6 @@ struct			BluetoothHCIEventReadRemoteSupportedFeaturesResults
 	BluetoothHCISupportedFeatures				lmpFeatures;
 };
 
-#if BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_1_1
 typedef struct	BluetoothHCIEventReadRemoteExtendedFeaturesResults 	BluetoothHCIEventReadRemoteExtendedFeaturesResults;
 struct			BluetoothHCIEventReadRemoteExtendedFeaturesResults
 {
@@ -2239,7 +2238,6 @@ struct			BluetoothHCIEventReadRemoteExtendedFeaturesResults
 	BluetoothHCIPageNumber						maxPage;
 	BluetoothHCISupportedFeatures				lmpFeatures;
 };
-#endif /* BLUETOOTH_VERSION_MAX_ALLOWED >= BLUETOOTH_VERSION_2_1_1 */
 
 typedef struct	BluetoothHCIEventQoSViolationResults 	BluetoothHCIEventQoSViolationResults;
 struct			BluetoothHCIEventQoSViolationResults

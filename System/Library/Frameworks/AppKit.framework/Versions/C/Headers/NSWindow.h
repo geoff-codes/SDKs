@@ -1,7 +1,7 @@
 /*
 	NSWindow.h
 	Application Kit
-	Copyright (c) 1994-2011, Apple Inc.
+	Copyright (c) 1994-2012, Apple Inc.
 	All rights reserved.
 */
 
@@ -185,7 +185,6 @@ typedef NSUInteger NSWindowButton;
 @class NSEvent;
 @class NSWindowController;
 
-NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE
 @interface NSWindow : NSResponder <NSAnimatablePropertyContainer, NSUserInterfaceValidations, NSUserInterfaceItemIdentification>
 {
     /*All instance variables are private*/
@@ -260,7 +259,7 @@ NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE
         unsigned int        autodisplay:1;
         unsigned int        tossedFirstEvent:1;
         unsigned int        isImageCache:1;
-        unsigned int        interfaceStyle:3;
+        unsigned int        _unused:3;
         unsigned int        keyViewSelectionDirection:2;
         unsigned int        defaultButtonCellKETemporarilyDisabled:1;
         unsigned int        defaultButtonCellKEDisabled:1;
@@ -363,8 +362,11 @@ If the url represents a filename or other resource with a known icon, that icon 
 - (void)setPreservesContentDuringLiveResize:(BOOL)flag;
 
 - (void)update;
+
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder;
+/* firstResponder is Key Value Observing (KVO) compliant. */
 - (NSResponder *)firstResponder;
+
 - (NSInteger)resizeFlags;
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)close;
@@ -380,6 +382,8 @@ If the url represents a filename or other resource with a known icon, that icon 
 - (void)setBackgroundColor:(NSColor *)color;
 - (NSColor *)backgroundColor;
 
+/* Indicates the thickness of a given border of the window. NSMinYEdge is the bottom edge of the window, while NSMaxYEdge is the top edge of the window. This method may throw an exception for values that don't apply to the current window styleMask; specifically, passing NSMaxYEdge for a non-textured window will always raise. The contentBorder does not include the titlebar or toolbar.
+ */
 - (void)setContentBorderThickness:(CGFloat)thickness forEdge:(NSRectEdge)edge NS_AVAILABLE_MAC(10_5);
 - (CGFloat)contentBorderThicknessForEdge:(NSRectEdge)edge NS_AVAILABLE_MAC(10_5);
 
@@ -387,8 +391,8 @@ If the url represents a filename or other resource with a known icon, that icon 
 - (BOOL)autorecalculatesContentBorderThicknessForEdge:(NSRectEdge)edge NS_AVAILABLE_MAC(10_5);
 
 /* Calling -setMovable with a flag of NO will disable server-side dragging of the window via titlebar or background.  -setMovableByWindowBackground:YES is ignored on a window that returns NO from -isMovable.  When a window returns NO for -isMovable, it can be dragged between spaces only in spaces F8 mode, and its relative screen position is preserved.  Note that the a resizable window may still be resized, and the window frame may be changed programmatically.  Applications may choose to enable application-controlled window dragging after disabling server-side dragging (perhaps to achieve snapping or pinnning) by handling the mouseDown/mouseDragged/mouseUp sequence in -sendEvent: in an NSWindow subclass.  Note that a non movable window will also not be moved (or resized) by the system in response to a display reconfiguration. */
-- (void)setMovable:(BOOL)flag	NS_AVAILABLE_MAC(10_6);
-- (BOOL)isMovable	NS_AVAILABLE_MAC(10_6);
+- (void)setMovable:(BOOL)flag NS_AVAILABLE_MAC(10_6);
+- (BOOL)isMovable NS_AVAILABLE_MAC(10_6);
 
 - (void)setMovableByWindowBackground:(BOOL)flag;
 - (BOOL)isMovableByWindowBackground;
@@ -617,7 +621,7 @@ If the url represents a filename or other resource with a known icon, that icon 
 - (void)setColorSpace:(NSColorSpace *)colorSpace NS_AVAILABLE_MAC(10_6);
 - (NSColorSpace *)colorSpace NS_AVAILABLE_MAC(10_6);
 
-/* windowNumbersWithOptions: returns an autoreleased array of NSNumbers containing windowNumbers for all visible windows satisfying options.  In no options are specified, only visible windows belonging to the calling application and on the active space are included.  If options include NSWindowNumberListAllApplications, visible windows belonging to all applications are included.  If options include NSWindowNumberListAllSpaces, visible windows on all spaces are included. 
+/* windowNumbersWithOptions: returns an autoreleased array of NSNumbers containing windowNumbers for all visible windows satisfying options.  If no options are specified, only visible windows belonging to the calling application and on the active space are included.  If options include NSWindowNumberListAllApplications, visible windows belonging to all applications are included.  If options include NSWindowNumberListAllSpaces, visible windows on all spaces are included.  Windows on the active space are returned in z-order.  
    Examples: 
       To get an array of windowNumbers visible on the current space and belonging to the calling application:  
 	windowNumbers = [NSWindow windowNumbersWithOptions:0];
@@ -671,7 +675,7 @@ If the url represents a filename or other resource with a known icon, that icon 
 // create an NSWindow for a Carbon window - windowRef must be a Carbon WindowRef - see MacWindows.h
 - (NSWindow *)initWithWindowRef:(void * /* WindowRef */)windowRef;
 // return the Carbon WindowRef for this window, creating if necessary: - see MacWindows.h
-- (void * /* WindowRef */)windowRef;
+- (void * /* WindowRef */)windowRef NS_RETURNS_INNER_POINTER;
 @end
 
 
@@ -786,7 +790,7 @@ APPKIT_EXTERN NSString *NSWindowWillMoveNotification;
 APPKIT_EXTERN NSString *NSWindowWillBeginSheetNotification;
 APPKIT_EXTERN NSString *NSWindowDidEndSheetNotification;
 
-/* NSWindowDidChangeBackingPropertiesNotification is posted on 10.7.3 and later, when a window's backingScaleFactor and/or its colorSpace changes.  When runing on a system version where this new notification is available, applications should use it instead of NSWindowDidChangeScreenProfileNotification to watch for changes to either of these backing store properties.  Many applications won't have any need to watch for this notification, but those that perform sophisticated color handling or manually manage their own caches of window-resolution-and/or/colorspace-appropriate bitmapped images will find this notification useful, as a prompt to invalidate their caches or schedule other reassessment for the new resolution and/or color space as needed.  The notification's userInfo dictionary specifies the window's previous backingScaleFactor and colorSpace.  You can compare these with the window's new backingScaleFactor and colorSpace at the time of the notification, to determine which of these two properties (potentially both) changed.
+/* NSWindowDidChangeBackingPropertiesNotification is posted on 10.7.3 and later, when a window's backingScaleFactor and/or its colorSpace changes.  When running on a system version where this new notification is available, applications should use it instead of NSWindowDidChangeScreenProfileNotification to watch for changes to either of these backing store properties.  Many applications won't have any need to watch for this notification, but those that perform sophisticated color handling or manually manage their own caches of window-resolution-and/or/colorspace-appropriate bitmapped images will find this notification useful, as a prompt to invalidate their caches or schedule other reassessment for the new resolution and/or color space as needed.  The notification's userInfo dictionary specifies the window's previous backingScaleFactor and colorSpace.  You can compare these with the window's new backingScaleFactor and colorSpace at the time of the notification, to determine which of these two properties (potentially both) changed.
 */
 APPKIT_EXTERN NSString * const NSWindowDidChangeBackingPropertiesNotification NS_AVAILABLE_MAC(10_7); // added in 10.7.3; userInfo keys: NSBackingPropertyOldScaleFactorKey, NSBackingPropertyOldColorSpaceKey
 

@@ -3,7 +3,7 @@
  
 	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 
  */
 
@@ -70,4 +70,10 @@ enum {
 	AVErrorOperationNotSupportedForAsset				= -11838,
 	
 	AVErrorDecoderTemporarilyUnavailable				= -11839,  // userInfo may contain AVErrorMediaTypeKey & AVErrorMediaSubTypeKey, if available
+	AVErrorEncoderTemporarilyUnavailable				= -11840,  // userInfo may contain AVErrorMediaTypeKey & AVErrorMediaSubTypeKey, if available
+	AVErrorInvalidVideoComposition						= -11841,
+	AVErrorReferenceForbiddenByReferencePolicy			= -11842,
+	AVErrorInvalidOutputURLPathExtension                = -11843,
+	AVErrorScreenCaptureFailed                          = -11844,
+	AVErrorDisplayWasDisabled                           = -11845,
 };

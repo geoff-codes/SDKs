@@ -1,8 +1,7 @@
 /*
- *
- * @APPLE_LICENSE_HEADER_START@
+ * Copyright © 1998-2012 Apple Inc.  All rights reserved.
  * 
- * Copyright (c) 1998-2006 Apple Computer, Inc.  All Rights Reserved.
+ * @APPLE_LICENSE_HEADER_START@
  * 
  * This file contains Original Code and/or Modifications of Original Code
  * as defined in and that are subject to the Apple Public Source License
@@ -59,9 +58,9 @@ class IOUSBCompositeDriver : public IOService
 {
     OSDeclareDefaultStructors(IOUSBCompositeDriver)
     
-    IOUSBDevice	* 	fDevice;
-    IONotifier * 	fNotifier;
-    bool		fExpectingClose;
+    IOUSBDevice	*       fDevice;
+    IONotifier *        fNotifier;
+    bool                fExpectingClose;
     UInt8               fConfigValue;
     UInt8               fConfigbmAttributes;
     
@@ -69,6 +68,7 @@ class IOUSBCompositeDriver : public IOService
     {
 		bool			fIssueRemoteWakeup;
 		bool			fRemoteWakeupIssued;
+		bool			fDoNotReconfigure;
     };
     
     IOUSBCompositeDriverExpansionData * fIOUSBCompositeExpansionData;
@@ -106,7 +106,15 @@ public:
     UInt8                               GetConfigbmAttributes()     { return fConfigbmAttributes; }
     IONotifier *                        GetNotifier()               { return fNotifier; }
 	
-    OSMetaClassDeclareReservedUnused(IOUSBCompositeDriver,  0);
+    /*!
+     @function ConfigureDriverPowerManagement
+     @abstract To be used by a subclass of IOUSBCompositeDriver which wants to participare in the IOPower tree. This is called as part of IOUSBCompositeDriver::start. The default implementation is a NOP
+     @param provider The provider as passed into the start method.
+     */
+    OSMetaClassDeclareReservedUsed(IOUSBCompositeDriver,  0);
+    virtual IOReturn ConfigureDevicePowerManagement( IOService * provider );
+
+    
     OSMetaClassDeclareReservedUnused(IOUSBCompositeDriver,  1);
     OSMetaClassDeclareReservedUnused(IOUSBCompositeDriver,  2);
     OSMetaClassDeclareReservedUnused(IOUSBCompositeDriver,  3);
@@ -128,4 +136,4 @@ public:
     OSMetaClassDeclareReservedUnused(IOUSBCompositeDriver, 19);
 };
 
-#endif _IOKIT_IOUSBCompositeDriver_H
+#endif

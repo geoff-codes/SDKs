@@ -1,7 +1,7 @@
 /*
 	NSImage.h
 	Application Kit
-	Copyright (c) 1994-2011, Apple Inc.
+	Copyright (c) 1994-2012, Apple Inc.
 	All rights reserved.
 */
 
@@ -37,7 +37,6 @@ typedef NSUInteger NSImageCacheMode;
 
 @class _NSImageAuxiliary;
 
-NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE
 @interface NSImage : NSObject <NSCopying, NSCoding, NSPasteboardReading, NSPasteboardWriting>
 {
     /*All instance variables are private*/
@@ -84,6 +83,9 @@ NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE
 
 // not for general use, but useful for compatibility with old NSImage behavior.  Ignore exif orientation tags in JPEG and such.  See AppKit release notes.
 - (id)initWithDataIgnoringOrientation:(NSData *)data NS_AVAILABLE_MAC(10_6);
+
+// Note that the block passed to the below method may be invoked whenever and on whatever thread the image itself is drawn on. Care should be taken to ensure that all state accessed within the drawingHandler block is done so in a thread safe manner.
++ (id)imageWithSize:(NSSize)size flipped:(BOOL)drawingHandlerShouldBeCalledWithFlippedContext drawingHandler:(BOOL (^)(NSRect dstRect))drawingHandler NS_AVAILABLE_MAC(10_8);
 
 - (void)setSize:(NSSize)aSize;
 - (NSSize)size;
@@ -213,10 +215,10 @@ APPKIT_EXTERN NSString *const NSImageHintInterpolation NS_AVAILABLE_MAC(10_6); /
 
 - (NSImage *)imageDidNotDraw:(id)sender inRect:(NSRect)aRect;
 
-- (void)image:(NSImage*)image willLoadRepresentation:(NSImageRep*)rep;
-- (void)image:(NSImage*)image didLoadRepresentationHeader:(NSImageRep*)rep;
-- (void)image:(NSImage*)image didLoadPartOfRepresentation:(NSImageRep*)rep withValidRows:(NSInteger)rows; 
-- (void)image:(NSImage*)image didLoadRepresentation:(NSImageRep*)rep withStatus:(NSImageLoadStatus)status;
+- (void)image:(NSImage *)image willLoadRepresentation:(NSImageRep *)rep;
+- (void)image:(NSImage *)image didLoadRepresentationHeader:(NSImageRep *)rep;
+- (void)image:(NSImage *)image didLoadPartOfRepresentation:(NSImageRep *)rep withValidRows:(NSInteger)rows; 
+- (void)image:(NSImage *)image didLoadRepresentation:(NSImageRep *)rep withStatus:(NSImageLoadStatus)status;
 @end
 
 @interface NSBundle(NSBundleImageExtension)
@@ -375,3 +377,5 @@ APPKIT_EXTERN NSString *const NSImageNameStatusAvailable NS_AVAILABLE_MAC(10_6);
 APPKIT_EXTERN NSString *const NSImageNameStatusPartiallyAvailable NS_AVAILABLE_MAC(10_6);
 APPKIT_EXTERN NSString *const NSImageNameStatusUnavailable NS_AVAILABLE_MAC(10_6);
 APPKIT_EXTERN NSString *const NSImageNameStatusNone NS_AVAILABLE_MAC(10_6);
+
+APPKIT_EXTERN NSString *const NSImageNameShareTemplate NS_AVAILABLE_MAC(10_8);

@@ -1,5 +1,5 @@
 /*	NSKeyedArchiver.h
-	Copyright (c) 2001-2011, Apple Inc. All rights reserved.
+	Copyright (c) 2001-2012, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSCoder.h>
@@ -169,7 +169,7 @@ FOUNDATION_EXPORT NSString * const NSInvalidUnarchiveOperationException;
         // the immediate superclass, and so on.
 
 // substitution
-- (id)unarchiver:(NSKeyedUnarchiver *)unarchiver didDecodeObject:(id)object;
+- (id)unarchiver:(NSKeyedUnarchiver *)unarchiver didDecodeObject:(id) NS_RELEASES_ARGUMENT object NS_RETURNS_RETAINED;
 	// Informs the delegate that the object has been decoded.  The delegate
 	// either returns this object or can return a different object to replace
 	// the decoded one.  The object may be nil.  If the delegate returns nil,

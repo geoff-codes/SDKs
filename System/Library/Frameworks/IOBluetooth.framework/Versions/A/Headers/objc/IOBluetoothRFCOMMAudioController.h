@@ -271,8 +271,14 @@ enum IOBluetoothSCODriverPropertiesPublic
 - (void) audioDevice:(id)device serviceLevelConnectionOpened:(IOReturn)status;
 - (void) audioDevice:(id)device serviceLevelConnectionClosed:(IOReturn)status;
 
+- (void) audioDevice:(id)device scoConnectionOpening:(IOReturn)status;
 - (void) audioDevice:(id)device scoConnectionOpened:(IOReturn)status;
 - (void) audioDevice:(id)device scoConnectionClosed:(IOReturn)status;
 - (void) audioDevice:(id)device scoDone:(IOReturn)status;
+
+- (void) audioDevice:(id)device scoAudioDeviceActive:(IOReturn)status;
+- (void) audioDevice:(id)device scoAudioDeviceInactive:(IOReturn)status;
+
+- (void) audioDevice:(id)device disconnectedError:(IOReturn)status;
 
 @end

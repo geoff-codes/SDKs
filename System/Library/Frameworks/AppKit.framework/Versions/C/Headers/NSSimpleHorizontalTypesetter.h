@@ -1,6 +1,6 @@
 /* 
     NSSimpleHorizontalTypesetter.h
-    Copyright (c) 1993-2011, Apple Inc.
+    Copyright (c) 1993-2012, Apple Inc.
     All rights reserved. 
  
     A concrete class to lay glyphs out in horizontal boxes.
@@ -176,7 +176,7 @@ NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE
 - (NSTextContainer *)currentContainer;
 - (NSParagraphStyle *)currentParagraphStyle;
 - (NSTextStorage *)currentTextStorage;
-- (NSTypesetterGlyphInfo *)baseOfTypesetterGlyphInfo;
+- (NSTypesetterGlyphInfo *)baseOfTypesetterGlyphInfo NS_RETURNS_INNER_POINTER;
 - (NSUInteger)sizeOfTypesetterGlyphInfo;
 - (NSUInteger)capacityOfTypesetterGlyphInfo;
 - (NSUInteger)firstGlyphIndexOfCurrentLineFragment;

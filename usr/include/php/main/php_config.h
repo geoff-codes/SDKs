@@ -5,7 +5,7 @@
    +----------------------------------------------------------------------+
    | Zend Engine                                                          |
    +----------------------------------------------------------------------+
-   | Copyright (c) 1998-2012 Zend Technologies Ltd. (http://www.zend.com) |
+   | Copyright (c) 1998-2013 Zend Technologies Ltd. (http://www.zend.com) |
    +----------------------------------------------------------------------+
    | This source file is subject to version 2.00 of the Zend license,     |
    | that is bundled with this package in the file LICENSE, and is        |
@@ -20,7 +20,7 @@
    +----------------------------------------------------------------------+
 */
 
-/* $Id: acconfig.h 321634 2012-01-01 13:15:04Z felipe $ */
+/* $Id$ */
 
 #ifndef ZEND_API
 
@@ -408,9 +408,6 @@
 /* Define to 1 if you have the `alphasort' function. */
 #define HAVE_ALPHASORT 1
 
-/* Suhosin-Patch for PHP */
-#define SUHOSIN_PATCH 1
-
 /* Whether you have AOLserver */
 /* #undef HAVE_AOLSERVER */
 
@@ -775,6 +772,12 @@
 
 /* */
 #define HAVE_GD_IMAGESETTILE 1
+
+/* */
+/* #undef HAVE_GD_IMAGE_CONVOLUTION */
+
+/* */
+/* #undef HAVE_GD_IMAGE_PIXELATE */
 
 /* */
 #define HAVE_GD_JPG 1
@@ -2151,7 +2154,7 @@
 #define PHP_BLOWFISH_CRYPT 1
 
 /* PHP build date */
-#define PHP_BUILD_DATE "2012-02-20"
+#define PHP_BUILD_DATE "2013-07-07"
 
 /* Define if your system has fork/vfork/CreateProcess */
 #define PHP_CAN_SUPPORT_PROC_OPEN 1
@@ -2235,7 +2238,7 @@
 #define PHP_STD_DES_CRYPT 1
 
 /* uname -a output */
-#define PHP_UNAME "Darwin melodie.apple.com 11.0 Darwin Kernel Version 11.2.0: Mon Dec 5 14:22:03 PST 2011; root:xnu-1699.24.81~1/RELEASE_X86_64 x86_64"
+#define PHP_UNAME "Darwin bowman.apple.com 12.0 Darwin Kernel Version 12.2.0: Sat Aug 25 00:48:52 PDT 2012; root:xnu-2050.18.24~1/RELEASE_X86_64 x86_64"
 
 /* Whether PHP has to use its own crypt_r for blowfish, des and ext des */
 #define PHP_USE_PHP_CRYPT_R 1

@@ -1,7 +1,7 @@
 /*
 	NSViewController.h
 	Application Kit
-	Copyright (c) 2006-2011, Apple Inc.
+	Copyright (c) 2006-2012, Apple Inc.
 	All rights reserved.
 */
 
@@ -11,7 +11,6 @@
 
 @class NSArray, NSBundle, NSPointerArray, NSView;
 
-NS_AUTOMATED_REFCOUNT_WEAK_UNAVAILABLE
 NS_CLASS_AVAILABLE(10_5, NA)
 @interface NSViewController : NSResponder <NSCoding>
 {

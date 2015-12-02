@@ -272,8 +272,12 @@ enum
                         An CFArray of CMFormatDescriptionRefs that describe the available still image data formats for the CMIOStream. The client must release the CFArray when done with
                         it. This property is never settable, and is not present for streams which are unable to produce still images.
     @constant       kCMIOStreamPropertyFrameRate
-                        A Float64 that indicates the current video frame rate of the CMIOStream. This property is only present for muxed or video streams which can determine their rate. 
-    @constant       kCMIOStreamPropertyFrameRates
+                        A Float64 that indicates the current video frame rate of the CMIOStream. The frame rate might fall below this, but it will not exceed it. This property is only present
+						for muxed or video streams which can determine their rate. 
+     @constant       kCMIOStreamPropertyMinimumFrameRate
+                        A Float64 that indicates the minumum video frame rate of the CMIOStream. This property is only present for muxed or video streams which can determine their rate and 
+                        guarantee a minimum rate.
+   @constant       kCMIOStreamPropertyFrameRates
                         An array of Float64s that indicates the valid values for the video frame rate of the CMIOStream. This property is only present for muxed or video streams which can
                         determine their rate. Moreover, it is limited to the rates that correspond to a single CMFormatDescriptionRef, as opposed to the super set of rates that would be
                         associated with the full set of available CMFormatDescriptionRefs.
@@ -343,6 +347,7 @@ enum
     kCMIOStreamPropertyStillImage                       = 'stmg',
     kCMIOStreamPropertyStillImageFormatDescriptions     = 'stft',
     kCMIOStreamPropertyFrameRate                        = 'nfrt',
+    kCMIOStreamPropertyMinimumFrameRate                 = 'mfrt',
     kCMIOStreamPropertyFrameRates                       = 'nfr#',
     kCMIOStreamPropertyNoDataTimeoutInMSec              = 'pmn1',
     kCMIOStreamPropertyDeviceSyncTimeoutInMSec          = 'pmn2',
