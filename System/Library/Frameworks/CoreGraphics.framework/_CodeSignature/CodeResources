@@ -6,35 +6,35 @@
 	<dict>
 		<key>Resources/libCGCorePDF.A.dylib</key>
 		<data>
-		u9Bf75uIcXHpkyYBoQHb5IFadZo=
+		2BICcGGaDnYjzzyhtfX2ny3HZsY=
 		</data>
 		<key>Resources/libCGFreetype.A.dylib</key>
 		<data>
-		9H6tmbwh1d4XAGjYz9GGuUJLOfw=
+		p57SFBUkfiOlb4dBbRSMQT0PZog=
 		</data>
 		<key>Resources/libCGVolute.A.dylib</key>
 		<data>
-		GAH9zXmDGtSanf9a9uLQI1WGzRY=
+		wNaRXrySBXNZ3UvGU/Pgr0BGY4c=
 		</data>
 		<key>Resources/libCMaps.A.dylib</key>
 		<data>
-		ziFTx2PLzVy4phvmjDhJ6eX8tCQ=
+		v5er2NNTSJQXJiQKYnScokDJ0FY=
 		</data>
 		<key>Resources/libFontStreams.A.dylib</key>
 		<data>
-		I/nuXrHJTt4awXUZOZoHKNHGktA=
+		GOCwyQwPnqDCMw1MTw+8t/p8FAU=
 		</data>
 		<key>Resources/libJBIG2.A.dylib</key>
 		<data>
-		2dQjV08LLaBwfwsZb3UxX3jbI3U=
+		DAzk1CBM1H3Tm84EfjFHaUVvInQ=
 		</data>
 		<key>Resources/libPDFRIP.A.dylib</key>
 		<data>
-		VwUWa2YVoeTLJlh/4SdNOw6ZvcM=
+		uRsmA4atzmu8WbUK8quocQ0IoUY=
 		</data>
 		<key>Resources/libRIP.A.dylib</key>
 		<data>
-		PWY9mfA1WkzpB7c1llmieYILdt4=
+		gf52gK3U9E+gZ9qH3HBaah72Z7A=
 		</data>
 	</dict>
 	<key>rules</key>
@@ -45,6 +45,13 @@
 			<true/>
 			<key>weight</key>
 			<real>10</real>
+		</dict>
+		<key>\.licns$</key>
+		<dict>
+			<key>optional</key>
+			<true/>
+			<key>weight</key>
+			<real>50</real>
 		</dict>
 		<key>^Resources/</key>
 		<true/>
@@ -102,7 +109,7 @@
 			<key>optional</key>
 			<true/>
 			<key>weight</key>
-			<real>5</real>
+			<real>40</real>
 		</dict>
 		<key>^version.plist$</key>
 		<true/>

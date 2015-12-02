@@ -10,8 +10,10 @@
 //        Further information related to these wrapper can be found in the
 //        iAP specifications.
 //
-//  Copyright 2008 Apple, Inc. All rights reserved.
+//  Copyright (c) 2008-2012 Apple, Inc. All rights reserved.
 //
+
+#import <Foundation/Foundation.h>
 
 @class EAAccessoryInternal;
 @protocol EAAccessoryDelegate;

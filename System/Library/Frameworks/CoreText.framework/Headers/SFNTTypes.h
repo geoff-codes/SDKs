@@ -2,12 +2,14 @@
  *  SFNTTypes.h
  *  CoreText
  *
- *  Copyright (c) 2008-2011 Apple Inc. All rights reserved.
+ *  Copyright 1994-2012 Apple Inc. All rights reserved.
  *
  */
 
 #ifndef __SFNTTYPES__
 #define __SFNTTYPES__
+
+#include <TargetConditionals.h>
 
 #include <MacTypes.h>
 
@@ -57,7 +59,8 @@ enum {
   kFontISO10646_1993Semantics   = 2,
   kFontUnicodeV2_0BMPOnlySemantics = 3,
   kFontUnicodeV2_0FullCoverageSemantics = 4,
-  kFontUnicodeV4_0VariationSequenceSemantics = 5
+  kFontUnicodeV4_0VariationSequenceSemantics = 5,
+  kFontUnicode_FullRepertoire = 6
 };
 
 enum {
@@ -279,15 +282,6 @@ enum {
   sizeof_sfntCMapHeader         = 4
 };
 
-/*  Data type used to access names from font name table */
-
-typedef UInt32                          FontNameCode;
-
-/* Data types for encoding components as used in interfaces */
-typedef UInt32                          FontPlatformCode;
-typedef UInt32                          FontScriptCode;
-typedef UInt32                          FontLanguageCode;
-
 /* Name table */
 enum {
   nameFontTableTag              = 'name'
@@ -395,6 +389,26 @@ enum {
   sizeof_sfntVariationHeader    = 16
 };
 
+/* Fdsc table - font descriptor */
+enum {
+  descriptorFontTableTag        = 'fdsc'
+};
+
+struct sfntFontDescriptor {
+  FourCharCode        name;
+  Fixed               value;
+};
+typedef struct sfntFontDescriptor       sfntFontDescriptor;
+struct sfntDescriptorHeader {
+  Fixed               version;                /* 1.0 in Fixed */
+  SInt32              descriptorCount;
+  sfntFontDescriptor  descriptor[1];
+};
+typedef struct sfntDescriptorHeader     sfntDescriptorHeader;
+enum {
+  sizeof_sfntDescriptorHeader   = 8
+};
+
 /* Feat Table - layout feature table */
 enum {
   featureFontTableTag           = 'feat'
@@ -428,6 +442,32 @@ struct sfntFeatureHeader {
   sfntFontRunFeature  runs[1];
 };
 typedef struct sfntFeatureHeader        sfntFeatureHeader;
+/* OS/2 Table */
+enum {
+  os2FontTableTag               = 'OS/2'
+};
+
+/*  Special invalid glyph ID value, useful as a sentinel value, for example */
+enum {
+  nonGlyphID                    = 65535
+};
+
+/*  Data type used to access names from font name table */
+
+typedef UInt32                          FontNameCode;
+/* Data types for encoding components as used in interfaces */
+typedef UInt32                          FontPlatformCode;
+typedef UInt32                          FontScriptCode;
+typedef UInt32                          FontLanguageCode;
+/*
+**  FontVariation is used to specify a coordinate along a variation axis. The name
+**  identifies the axes to be applied, and value is the setting to be used.
+*/
+struct FontVariation {
+  FourCharCode        name;
+  Fixed               value;
+};
+typedef struct FontVariation            FontVariation;
 
 #pragma pack(pop)
 

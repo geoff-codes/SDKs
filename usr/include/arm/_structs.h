@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2006-2007 Apple Inc. All rights reserved.
  */
-
 #include <sys/appleapiopts.h>
 
 #ifdef __need_mcontext_t
@@ -26,6 +25,7 @@ _STRUCT_MCONTEXT
 	_STRUCT_ARM_THREAD_STATE	__ss;
 	_STRUCT_ARM_VFP_STATE		__fs;
 };
+
 #else /* !__DARWIN_UNIX03 */
 #define _STRUCT_MCONTEXT        struct mcontext
 _STRUCT_MCONTEXT
@@ -34,6 +34,7 @@ _STRUCT_MCONTEXT
 	_STRUCT_ARM_THREAD_STATE	ss;
 	_STRUCT_ARM_VFP_STATE		fs;
 };
+
 #endif /* __DARWIN_UNIX03 */
 #endif /* _STRUCT_MCONTEXT */
 #endif /* __need_struct_mcontext */

@@ -1,19 +1,18 @@
 /*
     NSMigrationManager.h
     Core Data
-    Copyright (c) 2004-2010 Apple Inc.
+    Copyright (c) 2004-2012 Apple Inc.
     All rights reserved.
 */
 
 #import <Foundation/NSArray.h>
 #import <Foundation/NSDictionary.h>
 #import <Foundation/NSError.h>
-#import <Foundation/NSObject.h>
-#import <Foundation/NSString.h>
 
 @class NSEntityDescription;
 @class NSEntityMapping;
 @class NSManagedObjectContext;
+@class NSManagedObject;
 @class NSManagedObjectModel;
 @class NSMappingModel;
 @class NSMigrationContext;

@@ -2,7 +2,7 @@
 //  UIPopoverController.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 
@@ -17,7 +17,7 @@
 @class UIBarButtonItem, UIView;
 @protocol UIPopoverControllerDelegate;
 
-enum {
+typedef NS_OPTIONS(NSUInteger, UIPopoverArrowDirection) {
     UIPopoverArrowDirectionUp = 1UL << 0,
     UIPopoverArrowDirectionDown = 1UL << 1,
     UIPopoverArrowDirectionLeft = 1UL << 2,
@@ -25,9 +25,8 @@ enum {
     UIPopoverArrowDirectionAny = UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown | UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight,
     UIPopoverArrowDirectionUnknown = NSUIntegerMax
 };
-typedef NSUInteger UIPopoverArrowDirection;
 
-UIKIT_CLASS_AVAILABLE(3_2)
+NS_CLASS_AVAILABLE_IOS(3_2)
 @interface UIPopoverController : NSObject <UIAppearanceContainer> {}
 
 /* The view controller provided becomes the content view controller for the UIPopoverController. This is the designated initializer for UIPopoverController.
@@ -72,11 +71,11 @@ UIKIT_CLASS_AVAILABLE(3_2)
 
 /* Clients may wish to change the available area for popover display. The default implementation of this method always returns insets which define 10 points from the edges of the display, and presentation of popovers always accounts for the status bar. The rectangle being inset is always expressed in terms of the current device orientation; (0, 0) is always in the upper-left of the device. This may require insets to change on device rotation.
  */
-@property (nonatomic, readwrite) UIEdgeInsets popoverLayoutMargins __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property (nonatomic, readwrite) UIEdgeInsets popoverLayoutMargins NS_AVAILABLE_IOS(5_0);
 
 /* Clients may customize the popover background chrome by providing a class which subclasses `UIPopoverBackgroundView` and which implements the required instance and class methods on that class.
  */
-@property (nonatomic, readwrite, retain) Class popoverBackgroundViewClass __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property (nonatomic, readwrite, retain) Class popoverBackgroundViewClass NS_AVAILABLE_IOS(5_0);
 
 @end
 
@@ -97,10 +96,10 @@ UIKIT_CLASS_AVAILABLE(3_2)
 
 /* contentSizeForViewInPopover allows you to set the size of the content from within the view controller. This property is read/write, and you should generally not override it.
  */
-@property (nonatomic,readwrite) CGSize contentSizeForViewInPopover __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_3_2);
+@property (nonatomic,readwrite) CGSize contentSizeForViewInPopover NS_AVAILABLE_IOS(3_2);
 
 /* modalInPopover is set on the view controller when you wish to force the popover hosting the view controller into modal behavior. When this is active, the popover will ignore events outside of its bounds until this is set to NO.
  */
-@property (nonatomic,readwrite,getter=isModalInPopover) BOOL modalInPopover __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_3_2);
+@property (nonatomic,readwrite,getter=isModalInPopover) BOOL modalInPopover NS_AVAILABLE_IOS(3_2);
 
 @end

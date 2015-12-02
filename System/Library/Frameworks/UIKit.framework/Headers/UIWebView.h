@@ -2,7 +2,7 @@
 //  UIWebView.h
 //  UIKit
 //
-//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIView.h>
@@ -10,26 +10,26 @@
 #import <UIKit/UIDataDetectors.h>
 #import <UIKit/UIScrollView.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIWebViewNavigationType) {
     UIWebViewNavigationTypeLinkClicked,
     UIWebViewNavigationTypeFormSubmitted,
     UIWebViewNavigationTypeBackForward,
     UIWebViewNavigationTypeReload,
     UIWebViewNavigationTypeFormResubmitted,
     UIWebViewNavigationTypeOther
-} UIWebViewNavigationType;
+};
 
 @class UIWebViewInternal;
 @protocol UIWebViewDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIWebView : UIView <NSCoding, UIScrollViewDelegate> { 
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIWebView : UIView <NSCoding, UIScrollViewDelegate> { 
  @private
     UIWebViewInternal *_internal;
 }
 
 @property(nonatomic,assign) id<UIWebViewDelegate> delegate;
 
-@property(nonatomic,readonly,retain) UIScrollView *scrollView __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property(nonatomic,readonly,retain) UIScrollView *scrollView NS_AVAILABLE_IOS(5_0);
 
 - (void)loadRequest:(NSURLRequest *)request;
 - (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL;
@@ -51,13 +51,17 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIWebView : UIView <NSCoding, UIScrollView
 
 @property(nonatomic) BOOL scalesPageToFit;
 
-@property(nonatomic) BOOL detectsPhoneNumbers __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_2_0, __IPHONE_3_0);
-@property(nonatomic) UIDataDetectorTypes dataDetectorTypes __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_3_0);
+@property(nonatomic) BOOL detectsPhoneNumbers NS_DEPRECATED_IOS(2_0, 3_0);
+@property(nonatomic) UIDataDetectorTypes dataDetectorTypes NS_AVAILABLE_IOS(3_0);
 
-@property (nonatomic) BOOL allowsInlineMediaPlayback __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0); // iPhone Safari defaults to NO. iPad Safari defaults to YES
-@property (nonatomic) BOOL mediaPlaybackRequiresUserAction __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0); // iPhone and iPad Safari both default to YES
+@property (nonatomic) BOOL allowsInlineMediaPlayback NS_AVAILABLE_IOS(4_0); // iPhone Safari defaults to NO. iPad Safari defaults to YES
+@property (nonatomic) BOOL mediaPlaybackRequiresUserAction NS_AVAILABLE_IOS(4_0); // iPhone and iPad Safari both default to YES
 
-@property (nonatomic) BOOL mediaPlaybackAllowsAirPlay __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0); // iPhone and iPad Safari both default to YES
+@property (nonatomic) BOOL mediaPlaybackAllowsAirPlay NS_AVAILABLE_IOS(5_0); // iPhone and iPad Safari both default to YES
+
+@property (nonatomic) BOOL suppressesIncrementalRendering NS_AVAILABLE_IOS(6_0); // iPhone and iPad Safari both default to NO
+
+@property (nonatomic) BOOL keyboardDisplayRequiresUserAction NS_AVAILABLE_IOS(6_0); // default is YES
 
 @end
 

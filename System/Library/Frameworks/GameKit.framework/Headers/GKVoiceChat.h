@@ -11,12 +11,13 @@ enum {
     GKVoiceChatPlayerConnected,
     GKVoiceChatPlayerDisconnected,
     GKVoiceChatPlayerSpeaking,
-    GKVoiceChatPlayerSilent
+    GKVoiceChatPlayerSilent,
+    GKVoiceChatPlayerConnecting
 };
 typedef NSInteger GKVoiceChatPlayerState;
 
 // GKVoiceChat represents an instance of a named voice communications channel
-NS_CLASS_AVAILABLE(NA, 4_1)
+NS_CLASS_AVAILABLE(10_8, 4_1)
 @interface GKVoiceChat : NSObject {
 }
 	
@@ -31,7 +32,7 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 @property(nonatomic, assign) float volume; // default 1.0 (max is 1.0, min is 0.0)
 
 
-@property(nonatomic, readonly) NSArray *playerIDs __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // list of GKPlayerIDs
+@property(nonatomic, readonly) NSArray *playerIDs __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0); // list of GKPlayerIDs
 
 + (BOOL)isVoIPAllowed;
 

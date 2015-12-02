@@ -6,12 +6,6 @@
  *
  */
 
-#if __OBJC__
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 #import <AddressBook/AddressBook.h>
 
 #import <AddressBookUI/ABPeoplePickerNavigationController.h>
@@ -19,9 +13,3 @@ extern "C" {
 #import <AddressBookUI/ABNewPersonViewController.h>
 #import <AddressBookUI/ABUnknownPersonViewController.h>
 #import <AddressBookUI/ABAddressFormatting.h>
-
-#if defined(__cplusplus)
-}
-#endif
-#else
-#endif

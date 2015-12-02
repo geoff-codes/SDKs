@@ -2,7 +2,7 @@
  *	CTRun.h
  *	CoreText
  *
- *	Copyright (c) 2004-2011 Apple Inc. All rights reserved.
+ *	Copyright (c) 2004-2012 Apple Inc. All rights reserved.
  *
  */
 
@@ -55,14 +55,13 @@ typedef const struct __CTRun * CTRunRef;
 				in the current CG context for proper drawing.
 */
 
-enum
+typedef CF_OPTIONS(uint32_t, CTRunStatus)
 {
 	kCTRunStatusNoStatus = 0,
 	kCTRunStatusRightToLeft = (1 << 0),
 	kCTRunStatusNonMonotonic = (1 << 1),
 	kCTRunStatusHasNonIdentityMatrix = (1 << 2)
 };
-typedef uint32_t CTRunStatus;
 
  
 /*!

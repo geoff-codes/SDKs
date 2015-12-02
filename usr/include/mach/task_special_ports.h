@@ -84,7 +84,7 @@ typedef	int	task_special_port_t;
 
 #define TASK_SEATBELT_PORT	7	/* Seatbelt compiler/DEM port for task. */
 
-#define TASK_GSSD_PORT		8	/* GSSD port for security context */
+/* PORT 8 was the GSSD TASK PORT which transformed to a host port */
 
 #define TASK_ACCESS_PORT	9	/* Permission check for task_for_pid. */
 
@@ -110,12 +110,6 @@ typedef	int	task_special_port_t;
 
 #define task_set_bootstrap_port(task, port)	\
 		(task_set_special_port((task), TASK_BOOTSTRAP_PORT, (port)))
-
-#define task_get_gssd_port(task, port)	\
-		(task_get_special_port((task), TASK_GSSD_PORT, (port)))
-
-#define task_set_gssd_port(task, port)	\
-		(task_set_special_port((task), TASK_GSSD_PORT, (port)))
 
 #define task_get_task_access_port(task, port)	\
 		(task_get_special_port((task), TASK_ACCESS_PORT, (port)))

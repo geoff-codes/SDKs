@@ -2,7 +2,7 @@
  *  CTFontManager.h
  *  CoreText
  *
- *  Copyright (c) 2008-2011 Apple Inc. All rights reserved.
+ *  Copyright (c) 2008-2012 Apple Inc. All rights reserved.
  *
  */
 
@@ -28,16 +28,16 @@ extern "C" {
 #endif
 
 /*!
-	@constant	CTRegisterBundleFonts
-	@discussion If this key is defined in the application bundle info dictionary with a boolean value of true, CTFontManager will register all fonts in the Fonts subdirectory of the bundle's Resources directory in the process scope.  
- */
+    @constant   CTRegisterBundleFonts
+    @discussion If this key is defined in the application bundle info dictionary with a boolean value of true, CTFontManager will register all fonts in the Fonts subdirectory of the bundle's Resources directory in the process scope.  
+*/
 
 /*!
-	@function   CTFontManagerCopyAvailablePostScriptNames
-	@abstract   Returns an array of unique PostScript font names.
+    @function   CTFontManagerCopyAvailablePostScriptNames
+    @abstract   Returns an array of unique PostScript font names.
  
-	@result     This function returns a retained reference to a CFArray of CFString references, or NULL on error. The caller is responsible for releasing the array.
- */
+    @result     This function returns a retained reference to a CFArray of CFString references, or NULL on error. The caller is responsible for releasing the array.
+*/
 CFArrayRef CTFontManagerCopyAvailablePostScriptNames( void ) CT_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_NA);
 
 /*!
@@ -66,7 +66,7 @@ CFArrayRef CTFontManagerCopyAvailableFontURLs( void ) CT_AVAILABLE_STARTING( __M
                 The second localized font family name, as CFStringRef.
     @param      context
                 Unused. Can be NULL.
-    @result     A CFComparisonResult value indicating the sort order for the two family names. kCFComparisonResultGreatherThan if family1 is greater than family2, kCFComparisonResultLessThan if family1 is less than family2, and kCFComparisonResultEqualTo if they are equal.
+    @result     A CFComparisonResult value indicating the sort order for the two family names. kCFComparisonResultGreaterThan if family1 is greater than family2, kCFComparisonResultLessThan if family1 is less than family2, and kCFComparisonResultEqualTo if they are equal.
 */
 CFComparisonResult CTFontManagerCompareFontFamilyNames(
     const void *        family1,
@@ -76,7 +76,7 @@ CFComparisonResult CTFontManagerCompareFontFamilyNames(
 /*!
     @function   CTFontManagerCreateFontDescriptorsFromURL
     @abstract   Returns an array of font descriptors representing each of the fonts in the specified URL.
-				Note: these font descriptors are not available through font descriptor matching.
+                Note: these font descriptors are not available through font descriptor matching.
 
     @param      fileURL
                 A file system URL referencing a valid font file.
@@ -85,6 +85,19 @@ CFComparisonResult CTFontManagerCompareFontFamilyNames(
 */
 CFArrayRef CTFontManagerCreateFontDescriptorsFromURL(
     CFURLRef            fileURL ) CT_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_NA);
+
+/*!
+    @function   CTFontManagerCreateFontDescriptorFromData
+    @abstract   Returns a font descriptor representing the font in the supplied data.
+                Note: the font descriptor is not available through font descriptor matching.
+
+    @param      data
+                A CFData containing font data.
+
+    @result     A font descriptor created from the data, or NULL on error.
+*/
+CTFontDescriptorRef CTFontManagerCreateFontDescriptorFromData(
+    CFDataRef               data ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
 
 /*!
     @enum       CTFontManagerScope
@@ -98,13 +111,12 @@ CFArrayRef CTFontManagerCreateFontDescriptorsFromURL(
                 The font is available to the current user session, and will not be available in subsequent sessions.
                 User scope is unsupported in iOS.
 */
-enum {
+typedef CF_ENUM(uint32_t, CTFontManagerScope) {
     kCTFontManagerScopeNone         = 0,
     kCTFontManagerScopeProcess      = 1,
     kCTFontManagerScopeUser         = 2,    /* not supported in iOS */
     kCTFontManagerScopeSession      = 3     /* not supported in iOS */
 };
-typedef uint32_t CTFontManagerScope;
 
 /*!
     @function   CTFontManagerRegisterFontsForURL
@@ -162,11 +174,11 @@ bool CTFontManagerUnregisterFontsForURL(
                 Pointer to receive CFError in the case of failed registration.
  
     @result     Returns true if registration of the fonts was successful.
- */
+*/
 bool CTFontManagerRegisterGraphicsFont(
     CGFontRef               font,
-    CFErrorRef *            error ) CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_4_1);
-	
+    CFErrorRef *            error ) CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_4_1);
+    
 /*!
     @function   CTFontManagerUnregisterGraphicsFont
     @abstract   Unregisters the specified graphics font with the font manager. Unregistered fonts are no longer discoverable through font descriptor matching.
@@ -178,13 +190,12 @@ bool CTFontManagerRegisterGraphicsFont(
                 Pointer to receive CFError in the case of failed unregistration.
  
     @result     Returns true if unregistration of the font was successful.
- */
+*/
 bool CTFontManagerUnregisterGraphicsFont(
     CGFontRef               font,
-    CFErrorRef *            error ) CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_4_1);
-	
+    CFErrorRef *            error ) CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_4_1);
 
-	/*!
+/*!
     @function   CTFontManagerRegisterFontsForURLs
     @abstract   Registers fonts from the specified font URLs with the font manager. Registered fonts are discoverable through font descriptor matching.
 
@@ -278,8 +289,8 @@ bool CTFontManagerIsSupportedFont(
     @result     A CFRunLoopSourceRef that should be added to the run loop. To stop receiving requests, invalidate this run loop source. Will return NULL on error, in the case of a duplicate requestPortName, or invalid context structure.
 */
 CFRunLoopSourceRef CTFontManagerCreateFontRequestRunLoopSource(
-	CFIndex							sourceOrder, 
-	CFArrayRef (^createMatchesCallback)(CFDictionaryRef requestAttributes, pid_t requestingProcess)) CT_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_NA);
+    CFIndex         sourceOrder,
+    CFArrayRef    (^createMatchesCallback)(CFDictionaryRef requestAttributes, pid_t requestingProcess)) CT_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_NA);
 #endif // defined(__BLOCKS__)
 
 /*!
@@ -302,13 +313,12 @@ extern const CFStringRef kCTFontManagerBundleIdentifier CT_AVAILABLE_STARTING( _
                 Requires user input for auto-activation. A dialog will be presented to the user to confirm auto
                 activation of the font.
 */
-enum {
+typedef CF_ENUM(uint32_t, CTFontManagerAutoActivationSetting) {
     kCTFontManagerAutoActivationDefault     = 0,
     kCTFontManagerAutoActivationDisabled    = 1,
     kCTFontManagerAutoActivationEnabled     = 2,
     kCTFontManagerAutoActivationPromptUser  = 3
 };
-typedef uint32_t CTFontManagerAutoActivationSetting;
 
 /*!
     @function   CTFontManagerSetAutoActivationSetting
@@ -335,7 +345,7 @@ void CTFontManagerSetAutoActivationSetting(
     @result     Will return the auto-activation setting for specified bundle identifier.
 */
 CTFontManagerAutoActivationSetting CTFontManagerGetAutoActivationSetting(
-    CFStringRef                         bundleIdentifier ) CT_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_NA);
+    CFStringRef bundleIdentifier ) CT_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_NA);
 
 /*! --------------------------------------------------------------------------
     @group Manager Notifications

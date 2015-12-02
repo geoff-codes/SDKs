@@ -2,7 +2,7 @@
 //  UIGeometry.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 
@@ -68,14 +68,14 @@ UIKIT_EXTERN UIOffset UIOffsetFromString(NSString *string);
 + (NSValue *)valueWithCGRect:(CGRect)rect;
 + (NSValue *)valueWithCGAffineTransform:(CGAffineTransform)transform;
 + (NSValue *)valueWithUIEdgeInsets:(UIEdgeInsets)insets;
-+ (NSValue *)valueWithUIOffset:(UIOffset)insets __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
++ (NSValue *)valueWithUIOffset:(UIOffset)insets NS_AVAILABLE_IOS(5_0);
 
 - (CGPoint)CGPointValue;
 - (CGSize)CGSizeValue;
 - (CGRect)CGRectValue;
 - (CGAffineTransform)CGAffineTransformValue;
 - (UIEdgeInsets)UIEdgeInsetsValue;
-- (UIOffset)UIOffsetValue __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (UIOffset)UIOffsetValue NS_AVAILABLE_IOS(5_0);
 
 @end
     
@@ -86,13 +86,13 @@ UIKIT_EXTERN UIOffset UIOffsetFromString(NSString *string);
 - (void)encodeCGRect:(CGRect)rect forKey:(NSString *)key;
 - (void)encodeCGAffineTransform:(CGAffineTransform)transform forKey:(NSString *)key;
 - (void)encodeUIEdgeInsets:(UIEdgeInsets)insets forKey:(NSString *)key;
-- (void)encodeUIOffset:(UIOffset)offset forKey:(NSString *)key __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (void)encodeUIOffset:(UIOffset)offset forKey:(NSString *)key NS_AVAILABLE_IOS(5_0);
 
 - (CGPoint)decodeCGPointForKey:(NSString *)key;
 - (CGSize)decodeCGSizeForKey:(NSString *)key;
 - (CGRect)decodeCGRectForKey:(NSString *)key;
 - (CGAffineTransform)decodeCGAffineTransformForKey:(NSString *)key;
 - (UIEdgeInsets)decodeUIEdgeInsetsForKey:(NSString *)key;
-- (UIOffset)decodeUIOffsetForKey:(NSString *)key __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (UIOffset)decodeUIOffsetForKey:(NSString *)key NS_AVAILABLE_IOS(5_0);
 
 @end

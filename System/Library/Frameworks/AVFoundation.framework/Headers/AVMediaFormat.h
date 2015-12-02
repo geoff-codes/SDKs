@@ -18,79 +18,150 @@ AVF_EXPORT NSString *const AVMediaTypeText                  NS_AVAILABLE(10_7, 4
 AVF_EXPORT NSString *const AVMediaTypeClosedCaption         NS_AVAILABLE(10_7, 4_0);
 AVF_EXPORT NSString *const AVMediaTypeSubtitle              NS_AVAILABLE(10_7, 4_0);
 AVF_EXPORT NSString *const AVMediaTypeTimecode              NS_AVAILABLE(10_7, 4_0);
-AVF_EXPORT NSString *const AVMediaTypeTimedMetadata         NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVMediaTypeMetadata              NS_AVAILABLE(10_8, 6_0);
 AVF_EXPORT NSString *const AVMediaTypeMuxed                 NS_AVAILABLE(10_7, 4_0);
 
 
 // Media characteristics
 
+/*!
+ @constant AVMediaCharacteristicVisual
+ @abstract A media characteristic that indicates that a track or media selection option includes visual content.
+ @discussion
+ AVMediaTypeVideo, AVMediaTypeSubtitle, AVMediaTypeClosedCaption are examples of media types with the characteristic AVMediaCharacteristicVisual.
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
+*/
 AVF_EXPORT NSString *const AVMediaCharacteristicVisual      NS_AVAILABLE(10_7, 4_0);
+
+/*!
+ @constant AVMediaCharacteristicAudible
+ @abstract A media characteristic that indicates that a track or media selection option includes audible content.
+ @discussion
+ AVMediaTypeAudio is a media type with the characteristic AVMediaCharacteristicAudible.
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
+*/
 AVF_EXPORT NSString *const AVMediaCharacteristicAudible     NS_AVAILABLE(10_7, 4_0);
+
+/*!
+ @constant AVMediaCharacteristicLegible
+ @abstract A media characteristic that indicates that a track or media selection option includes legible content.
+ @discussion
+ AVMediaTypeSubtitle and AVMediaTypeClosedCaption are examples of media types with the characteristic AVMediaCharacteristicLegible.
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
+*/
 AVF_EXPORT NSString *const AVMediaCharacteristicLegible     NS_AVAILABLE(10_7, 4_0);
+
+/*!
+ @constant AVMediaCharacteristicFrameBased
+ @abstract A media characteristic that indicates that a track or media selection option includes content that's frame-based.
+ @discussion
+ Frame-based content typically comprises discrete media samples that, once rendered, can remain current for indefinite periods of time without additional processing in support of "time-stretching". Further, any dependencies between samples are always explicitly signalled, so that the operations required to render any single sample can readily be performed on demand. AVMediaTypeVideo is the most common type of frame-based media. AVMediaTypeAudio is the most common counterexample. 
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
+*/
 AVF_EXPORT NSString *const AVMediaCharacteristicFrameBased  NS_AVAILABLE(10_7, 4_0);
 
 /*!
  @constant AVMediaCharacteristicIsMainProgramContent
- @abstract A media characteristic that, when present in an AVMediaSelectionOption, indicates that the option includes content that's marked by the content author as intrinsic to the presentation of the asset.
+ @abstract A media characteristic that indicates that a track or media selection option includes content that's marked by the content author as intrinsic to the presentation of the asset.
  @discussion
  Example: an option that presents the main program audio for the presentation, regardless of locale, would typically have this characteristic.
  The value of this characteristic is @"public.main-program-content".
  Note for content authors: the presence of this characteristic for a media option is inferred; any option that does not have the characteristic AVMediaCharacteristicIsAuxiliaryContent is considered to have the characteristic AVMediaCharacteristicIsMainProgramContent.
+
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
 */
-AVF_EXPORT NSString *const AVMediaCharacteristicIsMainProgramContent NS_AVAILABLE(TBD, 5_0);
+AVF_EXPORT NSString *const AVMediaCharacteristicIsMainProgramContent NS_AVAILABLE(10_8, 5_0);
 
 /*!
  @constant AVMediaCharacteristicIsAuxiliaryContent
- @abstract A media characteristic that, when present in an AVMediaSelectionOption, indicates that the option includes content that's marked by the content author as auxiliary to the presentation of the asset.
+ @abstract A media characteristic that indicates that a track or media selection option includes content that's marked by the content author as auxiliary to the presentation of the asset.
  @discussion
  The value of this characteristic is @"public.auxiliary-content".
  Example: an option that presents audio media containing commentary on the presentation would typically have this characteristic.
  Note for content authors: for QuickTime movie and .m4v files a media option is considered to have the characteristic AVMediaCharacteristicIsAuxiliaryContent if it's explicitly tagged with that characteristic or if, as a member of an altenate track group, its associated track is excluded from autoselection.
  See the discussion of the tagging of tracks with media characteristics below.
+
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
 */
-AVF_EXPORT NSString *const AVMediaCharacteristicIsAuxiliaryContent NS_AVAILABLE(TBD, 5_0);
+AVF_EXPORT NSString *const AVMediaCharacteristicIsAuxiliaryContent NS_AVAILABLE(10_8, 5_0);
 
 /*!
  @constant AVMediaCharacteristicContainsOnlyForcedSubtitles
- @abstract A media characteristic that, when present in an AVMediaSelectionOption, indicates that the options presents only forced subtitles.
+ @abstract A media characteristic that indicates that a track or media selection option presents only forced subtitles.
  @discussion
  Media options with forced-only subtitles are typically selected when 1) the user has not selected a legible option with an accessibility characteristic or an auxiliary purpose and 2) its locale matches the locale of the selected audible media selection option.
  The value of this characteristic is @"public.subtitles.forced-only".
  Note for content authors: the presence of this characteristic for a legible media option is inferred from the format description of the associated track that presents the subtitle media.
+
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
 */
-AVF_EXPORT NSString *const AVMediaCharacteristicContainsOnlyForcedSubtitles NS_AVAILABLE(TBD, 5_0);
+AVF_EXPORT NSString *const AVMediaCharacteristicContainsOnlyForcedSubtitles NS_AVAILABLE(10_8, 5_0);
 
 /*!
  @constant AVMediaCharacteristicTranscribesSpokenDialogForAccessibility
- @abstract A media characteristic that, when present in an AVMediaSelectionOption, indicates that the option includes legible content in the language of its specified locale that transcribes spoken dialog.
+ @abstract A media characteristic that indicates that a track or media selection option includes legible content in the language of its specified locale that:
+ 	- transcribes spoken dialog and
+ 	- identifies speakers whenever other visual cues are insufficient for a viewer to determine who is speaking.
  @discussion
+ Legible tracks provided for accessibility purposes are typically tagged both with this characteristic as well as with AVMediaCharacteristicDescribesMusicAndSoundForAccessibility.
+
+ A legible track provided for accessibility purposes that's associated with an audio track that has no spoken dialog can be tagged with this characteristic, because it trivially meets these requirements.
+
  The value of this characteristic is @"public.accessibility.transcribes-spoken-dialog".
- Note that it's possible for a legible media option to include both transcriptions of spoken dialog and descriptions of music and sound effects.
+
  Note for content authors: for QuickTime movie and .m4v files a media option is considered to have the characteristic AVMediaCharacteristicTranscribesSpokenDialogForAccessibility only if it's explicitly tagged with that characteristic.
  See the discussion of the tagging of tracks with media characteristics below.
+
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
 */
-AVF_EXPORT NSString *const AVMediaCharacteristicTranscribesSpokenDialogForAccessibility NS_AVAILABLE(TBD, 5_0);
+AVF_EXPORT NSString *const AVMediaCharacteristicTranscribesSpokenDialogForAccessibility NS_AVAILABLE(10_8, 5_0);
 
 /*!
  @constant AVMediaCharacteristicDescribesMusicAndSoundForAccessibility
- @abstract A media characteristic that, when present in an AVMediaSelectionOption, indicates that the option includes legible content in the language of its specified locale that describes music and sound effects occurring in program audio.
+ @abstract A media characteristic that indicates that a track or media selection option includes legible content in the language of its specified locale that:
+ 	- describes music and
+ 	- describes sound other than spoken dialog, such as sound effects and significant silences, occurring in program audio.
  @discussion
+ Legible tracks provided for accessibility purposes are typically tagged both with this characteristic as well as with AVMediaCharacteristicTranscribesSpokenDialogForAccessibility.
+
+ A legible track provided for accessibility purposes that's associated with an audio track without music and without sound other than spoken dialog -- lacking even significant silences -- can be tagged with this characteristic, because it trivially meets these requirements.
+
  The value of this characteristic is @"public.accessibility.describes-music-and-sound".
- Note that it's possible for a legible media option to include both transcriptions of spoken dialog and descriptions of music and sound effects.
+
  Note for content authors: for QuickTime movie and .m4v files a media option is considered to have the characteristic AVMediaCharacteristicDescribesMusicAndSoundForAccessibility only if it's explicitly tagged with that characteristic.
  See the discussion of the tagging of tracks with media characteristics below.
+
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
 */
-AVF_EXPORT NSString *const AVMediaCharacteristicDescribesMusicAndSoundForAccessibility NS_AVAILABLE(TBD, 5_0);
+AVF_EXPORT NSString *const AVMediaCharacteristicDescribesMusicAndSoundForAccessibility NS_AVAILABLE(10_8, 5_0);
+
+/*!
+ @constant AVMediaCharacteristicEasyToRead
+ @abstract A media characteristic that indicates that a track or media selection option provides legible content in the language of its specified locale that has been edited for ease of reading.
+ @discussion
+ The value of this characteristic is @"public.easy-to-read".
+ 
+ Closed caption tracks that carry "easy reader" captions (per the CEA-608 specification) should be tagged with this characteristic. Subtitle tracks can also be tagged with this characteristic, where appropriate.
+
+ Note for content authors: for QuickTime movie and .m4v files a track is considered to have the characteristic AVMediaCharacteristicEasyToRead only if it's explicitly tagged with that characteristic.
+ See the discussion of the tagging of tracks with media characteristics below.
+
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
+*/
+AVF_EXPORT NSString *const AVMediaCharacteristicEasyToRead NS_AVAILABLE(10_8, 6_0);
 
 /*!
  @constant AVMediaCharacteristicDescribesVideoForAccessibility
- @abstract A media characteristic that, when present in an AVMediaSelectionOption, indicates that the option includes audible content that describes the visual portion of the presentation.
+ @abstract A media characteristic that indicates that a track or media selection option includes audible descriptions of the visual portion of the presentation that are sufficient for listeners without access to the visual content to comprehend the essential information, such as action and setting, that it depicts.
  @discussion
+ See -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
  The value of this characteristic is @"public.accessibility.describes-video".
  Note for content authors: for QuickTime movie and .m4v files a media option is considered to have the characteristic AVMediaCharacteristicDescribesVideoForAccessibility only if it's explicitly tagged with that characteristic.
  See the discussion of the tagging of tracks with media characteristics below.
+
+ Also see -[AVAssetTrack hasMediaCharacteristic:] and -[AVMediaSelectionOption hasMediaCharacteristic:].
 */
-AVF_EXPORT NSString *const AVMediaCharacteristicDescribesVideoForAccessibility NS_AVAILABLE(TBD, 5_0);
+AVF_EXPORT NSString *const AVMediaCharacteristicDescribesVideoForAccessibility NS_AVAILABLE(10_8, 5_0);
 
 /*
 	Tagging of tracks of .mov and .m4v files with media characteristics

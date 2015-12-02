@@ -1,15 +1,14 @@
 /*
     NSAttributeDescription.h
     Core Data
-    Copyright (c) 2004-2010 Apple Inc.
+    Copyright (c) 2004-2012 Apple Inc.
     All rights reserved.
 */
 
-#import <Foundation/NSObject.h>
+#import <Foundation/NSArray.h>
 #import <CoreData/NSPropertyDescription.h>
 
 @class NSEntityDescription;
-@class NSString;
 
 // types explicitly distinguish between bit sizes to ensure data store independence of the underlying operating system
  enum {

@@ -2,38 +2,35 @@
 //  UIDocument.h
 //  UIKit
 //
-//  Copyright (c) 1997-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 1997-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
 
-enum {
+typedef NS_ENUM(NSInteger, UIDocumentChangeKind) {
     UIDocumentChangeDone,
     UIDocumentChangeUndone,
     UIDocumentChangeRedone,
     UIDocumentChangeCleared
 };
-typedef NSInteger UIDocumentChangeKind;
 
-enum {
+typedef NS_ENUM(NSInteger, UIDocumentSaveOperation) {
     UIDocumentSaveForCreating,
     UIDocumentSaveForOverwriting
 };
-typedef NSInteger UIDocumentSaveOperation;
 
-enum {
+typedef NS_OPTIONS(NSUInteger, UIDocumentState) {
     UIDocumentStateNormal          = 0,
     UIDocumentStateClosed          = 1 << 0, // The document has either not been successfully opened, or has been since closed. Document properties may not be valid.
     UIDocumentStateInConflict      = 1 << 1, // Conflicts exist for the document's fileURL. They can be accessed through +[NSFileVersion otherVersionsOfItemAtURL:].
     UIDocumentStateSavingError     = 1 << 2, // An error has occurred that prevents the document from saving.
     UIDocumentStateEditingDisabled = 1 << 3  // Set before calling -disableEditing. The document is is busy and it is not currently safe to allow user edits. -enableEditing will be called when it becomes safe to edit again.
 };
-typedef NSInteger UIDocumentState;
 
-UIKIT_EXTERN NSString *const UIDocumentStateChangedNotification __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+UIKIT_EXTERN NSString *const UIDocumentStateChangedNotification NS_AVAILABLE_IOS(5_0);
 
-UIKIT_CLASS_AVAILABLE(5_0) @interface UIDocument : NSObject <NSFilePresenter> {
+NS_CLASS_AVAILABLE_IOS(5_0) @interface UIDocument : NSObject <NSFilePresenter> {
     @private
     NSURL *_fileURL;
     NSString *_fileType;

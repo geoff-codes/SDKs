@@ -20,7 +20,6 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 @property(nonatomic, assign) id<GKMatchmakerViewControllerDelegate>     matchmakerDelegate;
 @property(nonatomic, readonly, retain) GKMatchRequest                   *matchRequest;
 @property(nonatomic, assign, getter=isHosted) BOOL                      hosted;  // set to YES to receive hosted (eg. not peer-to-peer) match results. Will cause the controller to return an array of players instead of a match.
-@property(nonatomic, copy) NSString                                     *defaultInvitationMessage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // default message to use when inviting friends. Can be edited by the user.
 
 // Initialize with a matchmaking request, allowing the user to send invites and/or start matchmaking
 - (id)initWithMatchRequest:(GKMatchRequest *)request;
@@ -35,8 +34,12 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 // Update the displayed connection status for a remote server-hosted player
 - (void)setHostedPlayer:(NSString *)playerID connected:(BOOL)connected __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
-// Deprecated, use setConnected:forHostedPlayer: instead.
+// Deprecated, use setHostedPlayer:connected: instead.
 - (void)setHostedPlayerReady:(NSString *)playerID __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_1,__IPHONE_5_0);
+
+
+// deprecated, set the message on the match request instead
+@property(nonatomic, copy) NSString                                     *defaultInvitationMessage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // default message to use when inviting friends. Can be edited by the user.
 
 @end
 

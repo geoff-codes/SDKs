@@ -5,6 +5,8 @@
  *  Copyright (c) 2010 Apple Inc. All rights reserved.
  */
 
+#if TARGET_OS_IPHONE
+
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CLAvailability.h>
 
@@ -74,5 +76,6 @@ NS_CLASS_AVAILABLE(TBD,5_0)
 @property (nonatomic, readonly) NSString *inlandWater; // eg. Lake Tahoe
 @property (nonatomic, readonly) NSString *ocean; // eg. Pacific Ocean
 @property (nonatomic, readonly) NSArray *areasOfInterest; // eg. Golden Gate Park
-
 @end
+
+#endif //TARGET_OS_IPHONE

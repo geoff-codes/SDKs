@@ -28,6 +28,12 @@ EVENTKITUI_CLASS_AVAILABLE(5_0)
                 displayStyle:(EKCalendarChooserDisplayStyle)displayStyle
                   eventStore:(EKEventStore *)eventStore;
 
+// variant to only show calendars for events or reminders.
+- (id)initWithSelectionStyle:(EKCalendarChooserSelectionStyle)style 
+                displayStyle:(EKCalendarChooserDisplayStyle)displayStyle
+                  entityType:(EKEntityType)entityType
+                  eventStore:(EKEventStore *)eventStore;
+
 @property(nonatomic, readonly) EKCalendarChooserSelectionStyle    selectionStyle;
 
 @property(nonatomic, assign) id<EKCalendarChooserDelegate>        delegate;

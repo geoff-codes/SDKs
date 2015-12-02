@@ -214,7 +214,7 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPSProxyPort			 __OSX_AVAILABLE_
  *  kCFStreamPropertyHTTPShouldAutoredirect
  *  
  *  Discussion:
- *	Proxy dictionary key. Value is a CFBoolean. Redirection is not
+ *	Stream property key. Value is a CFBoolean. Redirection is not
  *	performed by default.
  *  
  *  Availability:
@@ -229,7 +229,7 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPShouldAutoredirect	 __OSX_AVAI
  *  kCFStreamPropertyHTTPAttemptPersistentConnection
  *  
  *  Discussion:
- *	Proxy dictionary key. Value is a CFBoolean.  If this property is
+ *	Stream property key. Value is a CFBoolean.  If this property is
  *	set to kCFBooleanTrue, an HTTP stream will look for an
  *	appropriate extant persistent connection to use, and if it finds
  *	none, will try to create one. Persistent connections are not used
@@ -247,7 +247,7 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPAttemptPersistentConnection __
  *  kCFStreamPropertyHTTPRequestBytesWrittenCount
  *  
  *  Discussion:
- *	Proxy dictionary key. Value is a CFNumber. This property can only
+ *	Stream property key. Value is a CFNumber. This property can only
  *	be retrieved, not set. The number returned is the number of bytes
  *	from the body of the request that have been written to the
  *	underlying socket

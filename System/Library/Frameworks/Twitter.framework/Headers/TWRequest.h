@@ -5,24 +5,26 @@
 //  Copyright 2011 Apple Inc. All rights reserved.
 //
 
+// This class has been  deprecated in iOS 6. Please use SLRequest (in the Social framework) instead.
+
 #import <Foundation/Foundation.h>
+#import <Social/SLRequest.h>
 
 @class ACAccount;
 
-enum TWRequestMethod {
-    TWRequestMethodGET,
-    TWRequestMethodPOST,
-    TWRequestMethodDELETE
+enum {
+    TWRequestMethodGET = SLRequestMethodGET,
+    TWRequestMethodPOST = SLRequestMethodPOST,
+    TWRequestMethodDELETE = SLRequestMethodDELETE
 };
 
-typedef enum TWRequestMethod TWRequestMethod; // available in iPhone 5.0
+typedef SLRequestMethod TWRequestMethod; // available in iPhone 5.0
 
 // Completion block for performRequestWithHandler. 
-typedef void(^TWRequestHandler)(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error);
+typedef SLRequestHandler TWRequestHandler;
 
-NS_CLASS_AVAILABLE(NA, 5_0) 
-@interface TWRequest : NSObject {
-}
+NS_DEPRECATED(NA, NA, 5_0, 6_0) __attribute__((visibility("default")))
+@interface TWRequest : NSObject
 
 - (id)initWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(TWRequestMethod)requestMethod;
 
@@ -38,7 +40,8 @@ NS_CLASS_AVAILABLE(NA, 5_0)
 // The parameters 
 @property (nonatomic, readonly) NSDictionary *parameters;
 
-// Specify a named MIME multi-part value.
+// Specify a named MIME multi-part value. As of version 6.0, if you set parameters,
+// the parameters will automatically be added as form data in the multi-part data.
 - (void)addMultiPartData:(NSData*)data withName:(NSString*)name type:(NSString*)type; 
 
 // Returns an OAuth compatible NSURLRequest for use with NSURLConnection. 
@@ -48,3 +51,4 @@ NS_CLASS_AVAILABLE(NA, 5_0)
 - (void)performRequestWithHandler:(TWRequestHandler)handler;
 
 @end
+

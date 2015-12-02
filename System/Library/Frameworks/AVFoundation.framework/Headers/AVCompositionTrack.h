@@ -133,7 +133,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 		To specify an empty time range, pass NSNull for the track and a time range of starting at kCMTimeInvalid with a duration
 		of the desired empty edit.
 */
-- (BOOL)insertTimeRanges:(NSArray *)timeRanges ofTracks:(NSArray *)tracks atTime:(CMTime)startTime error:(NSError **)error NS_AVAILABLE(TBD, 5_0);
+- (BOOL)insertTimeRanges:(NSArray *)timeRanges ofTracks:(NSArray *)tracks atTime:(CMTime)startTime error:(NSError **)error NS_AVAILABLE(10_8, 5_0);
 
 /*!
 	@method			insertEmptyTimeRange:

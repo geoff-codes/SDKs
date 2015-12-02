@@ -6,14 +6,14 @@
 #ifndef COREIMAGEDEFINES_H
 #define COREIMAGEDEFINES_H
 
-#import <TargetConditionals.h>
-#import <Availability.h>
+#include <TargetConditionals.h>
+#include <Availability.h>
 
-#import <stdbool.h>
-#import <stdint.h>
-#import <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
 
-#import <CoreGraphics/CoreGraphics.h>
+#include <CoreGraphics/CoreGraphics.h>
 
 #ifdef __cplusplus
  #define CI_EXTERN_C_BEGIN  extern "C" {
@@ -29,7 +29,8 @@
 # define CORE_IMAGE_EXPORT extern __attribute__((visibility("default")))
 #endif
 
-#define CORE_IMAGE_CLASS_EXPORT __attribute__((visibility("default")))
+#define CORE_IMAGE_HIDDEN extern __attribute__((visibility("hidden")))
 
+#define CORE_IMAGE_CLASS_EXPORT __attribute__((visibility("default")))
 
 #endif /* COREIMAGEDEFINES_H */

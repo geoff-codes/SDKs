@@ -2,7 +2,7 @@
 //  UIAccelerometer.h
 //  UIKit
 //
-//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,7 +15,7 @@ typedef double UIAccelerationValue;
 
 @protocol UIAccelerometerDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0)
+NS_CLASS_AVAILABLE_IOS(2_0)
 @interface UIAcceleration : NSObject {
   @private
     NSTimeInterval timestamp;
@@ -29,7 +29,7 @@ UIKIT_CLASS_AVAILABLE(2_0)
 
 @end
 
-UIKIT_CLASS_AVAILABLE(2_0)
+NS_CLASS_AVAILABLE_IOS(2_0)
 @interface UIAccelerometer : NSObject {
   @private
     NSTimeInterval               _updateInterval;
@@ -50,6 +50,6 @@ UIKIT_CLASS_AVAILABLE(2_0)
 @protocol UIAccelerometerDelegate<NSObject>
 @optional
 
-- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_5_0);
+- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration NS_DEPRECATED_IOS(2_0, 5_0);
 
 @end

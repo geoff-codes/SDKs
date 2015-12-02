@@ -1,30 +1,20 @@
 /*
     NSPersistentStoreCoordinator.h
     Core Data
-    Copyright (c) 2004-2010 Apple Inc.
+    Copyright (c) 2004-2012 Apple Inc.
     All rights reserved.
 */
 
-#import <Foundation/NSObject.h>
+#import <Foundation/NSArray.h>
 #import <Foundation/NSLock.h>
 #import <CoreData/CoreDataDefines.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-#ifndef NSPersistentStore
-#define NSPersistentStore NSObject
-#endif
-#endif
-
-@class NSArray;
-@class NSMutableArray;
 @class NSDictionary;
 @class NSError;
 @class NSManagedObjectID;
 @class NSManagedObjectModel;
+@class NSManagedObjectContext;
 @class NSPersistentStore;
-@class NSMutableDictionary;
-@class NSString;
-@class NSURL;
 @class NSPersistentStoreRequest;
 
 // Persistent store types supported by Core Data:

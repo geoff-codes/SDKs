@@ -65,7 +65,7 @@
 
 /* When true the particles are rendered as if they directly inhabit the
  * three dimensional coordinate space of the layer's superlayer, rather
- * than being flattened into the layer's plane first. Defaults to false.
+ * than being flattened into the layer's plane first. Defaults to NO.
  * If true, the effect of the `filters', `backgroundFilters' and shadow-
  * related properties of the layer is undefined. */
 

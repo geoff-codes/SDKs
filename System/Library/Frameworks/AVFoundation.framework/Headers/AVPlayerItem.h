@@ -30,6 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreMedia/CMTime.h>
 #import <CoreMedia/CMTimeRange.h>
+#import <CoreMedia/CMSync.h>
 #if TARGET_OS_IPHONE
 #import <CoreGraphics/CGGeometry.h>
 #else // ! TARGET_OS_IPHONE
@@ -42,6 +43,9 @@
 AVF_EXPORT NSString *const AVPlayerItemTimeJumpedNotification			 NS_AVAILABLE(10_7, 5_0);	// the item's current time has changed discontinuously
 AVF_EXPORT NSString *const AVPlayerItemDidPlayToEndTimeNotification      NS_AVAILABLE(10_7, 4_0);   // item has played to its end time
 AVF_EXPORT NSString *const AVPlayerItemFailedToPlayToEndTimeNotification NS_AVAILABLE(10_7, 4_3);   // item has failed to play to its end time
+AVF_EXPORT NSString *const AVPlayerItemPlaybackStalledNotification       NS_AVAILABLE(TBD, 6_0);    // media did not arrive in time to continue playback
+AVF_EXPORT NSString *const AVPlayerItemNewAccessLogEntryNotification	 NS_AVAILABLE(TBD, 6_0);	// a new access log entry has been added
+AVF_EXPORT NSString *const AVPlayerItemNewErrorLogEntryNotification		 NS_AVAILABLE(TBD, 6_0);	// a new error log entry has been added
 
 // notification userInfo key                                                                    type
 AVF_EXPORT NSString *const AVPlayerItemFailedToPlayToEndTimeErrorKey     NS_AVAILABLE(10_7, 4_3);   // NSError
@@ -180,18 +184,40 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  */
 @property (nonatomic, readonly) CGSize presentationSize;
 
-/* indicates whether the item can be played at rates greater than 1.0 */
-@property (nonatomic, readonly) BOOL canPlayFastForward NS_AVAILABLE(TBD, 5_0);
-
-/* indicates whether the item can be played at rates less than -1.0 */
-@property (nonatomic, readonly) BOOL canPlayFastReverse NS_AVAILABLE(TBD, 5_0);
-
 /*!
  @property timedMetadata
- @discussion The timed metadata played most recently by the media stream. Notifications of changes are available via key-value observation.
- @abstract Returns an NSArray of AVMetadataItem.
+ @abstract Provides an NSArray of AVMetadataItems representing the timed metadata encountered most recently within the media as it plays. May be nil.
+ @discussion
+   Notifications of changes are available via key-value observation.
+   As an optimization for playback, AVPlayerItem may omit the processing of timed metadata when no observer of this property is registered. Therefore, when no such observer is registered, the value of the timedMetadata property may remain nil regardless of the contents of the underlying media.
  */
 @property (nonatomic, readonly) NSArray *timedMetadata;
+
+@end
+
+
+@interface AVPlayerItem (AVPlayerItemRateAndSteppingSupport)
+
+/* indicates whether the item can be played at rates greater than 1.0 */
+@property (nonatomic, readonly) BOOL canPlayFastForward NS_AVAILABLE(10_8, 5_0);
+
+/* indicates whether the item can be played at rates between 0.0 and 1.0 */
+@property (nonatomic, readonly) BOOL canPlaySlowForward NS_AVAILABLE(10_8, 6_0);
+
+/* indicates whether the item can be played at rate -1.0 */
+@property (nonatomic, readonly) BOOL canPlayReverse NS_AVAILABLE(10_8, 6_0);
+
+/* indicates whether the item can be played at rates less between 0.0 and -1.0 */
+@property (nonatomic, readonly) BOOL canPlaySlowReverse NS_AVAILABLE(10_8, 6_0);
+
+/* indicates whether the item can be played at rates less than -1.0 */
+@property (nonatomic, readonly) BOOL canPlayFastReverse NS_AVAILABLE(10_8, 5_0);
+
+/* Indicates whether the item supports stepping forward; see -stepByCount:. Once the item has become ready to play, the value of canStepForward does not change even when boundary conditions are reached, such as when the item's currentTime is its end time. */
+@property (nonatomic, readonly) BOOL canStepForward NS_AVAILABLE(10_8, 6_0);
+
+/* indicates whether the item supports stepping backward; see -stepByCount:. Once the item has become ready to play, the value of canStepBackward does not change even when boundary conditions are reached, such as when the item's currentTime is equal to kCMTimeZero. */
+@property (nonatomic, readonly) BOOL canStepBackward NS_AVAILABLE(10_8, 6_0);
 
 @end
 
@@ -289,6 +315,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @param				time
  @param				toleranceBefore
  @param				toleranceAfter
+ @param				completionHandler
  @discussion		Use this method to seek to a specified time for the item and to be notified when the seek operation is complete.
 					The time seeked to will be within the range [time-toleranceBefore, time+toleranceAfter] and may differ from the specified time for efficiency.
 					Pass kCMTimeZero for both toleranceBefore and toleranceAfter to request sample accurate seeking which may incur additional decoding delay. 
@@ -327,14 +354,39 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 - (BOOL)seekToDate:(NSDate *)date;
 
 /*!
+ @method		seekToDate:completionHandler:
+ @abstract		move playhead to a point corresponding to a particular date, and invokes the specified block when the seek operation has either been completed or been interrupted.
+ @discussion
+   For playback content that is associated with a range of dates, move the
+   playhead to point within that range and invokes the completion handler when the seek operation is complete. 
+   Will fail if the supplied date is outside the range or if the content is not associated with a range of dates.  
+   The completion handler for any prior seek request that is still in process will be invoked immediately with the finished parameter 
+   set to NO. If the new request completes without being interrupted by another seek request or by any other operation, the specified 
+   completion handler will be invoked with the finished parameter set to YES. 
+ @param			date				The new position for the playhead.
+ @param			completionHandler	The block to invoke when seek operation is complete
+ @result		Returns true if the playhead was moved to the supplied date.
+ */
+- (BOOL)seekToDate:(NSDate *)date completionHandler:(void (^)(BOOL finished))completionHandler NS_AVAILABLE(TBD, 6_0);
+
+/*!
  @method		stepByCount:
- @abstract      Moves player's current item's current time forward or backward by the specified number of steps.
+ @abstract     Moves player's current item's current time forward or backward by the specified number of steps.
  @param 		stepCount
    The number of steps by which to move. A positive number results in stepping forward, a negative number in stepping backward.
  @discussion
    The size of each step depends on the enabled AVPlayerItemTracks of the AVPlayerItem. 
  */
 - (void)stepByCount:(NSInteger)stepCount;
+
+/*!
+ @property		timebase
+ @abstract		The item's timebase.
+ @discussion 
+   You can examine the timebase to discover the relationship between the item's time and the master clock used for drift synchronization.
+   This timebase is read-only; you cannot set its time or rate to affect playback.
+ */
+@property (nonatomic, readonly) __attribute__((NSObject)) CMTimebaseRef timebase NS_AVAILABLE(10_8, 6_0);
 
 @end
 
@@ -344,6 +396,8 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 /*!
  @property audioMix
  @abstract Indicates the audio mix parameters to be applied during playback
+ @discussion
+   The inputParameters of the AVAudioMix must have trackIDs that correspond to a track of the receiver's asset. Otherwise they will be ignored. (See AVAudioMix.h for the declaration of AVAudioMixInputParameters and AVPlayerItem's asset property.)
  */
 @property (nonatomic, copy) AVAudioMix *audioMix;
 
@@ -352,6 +406,29 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @abstract Indicates the video composition settings to be applied during playback.
  */
 @property (nonatomic, copy) AVVideoComposition *videoComposition;
+
+/*!
+ @property seekingWaitsForVideoCompositionRendering
+ @abstract Indicates whether the item's timing follows the displayed video frame when seeking with a video composition
+ @discussion
+   By default, item timing is updated as quickly as possible, not waiting for media at new times to be rendered when seeking or 
+   during normal playback. The latency that occurs, for example, between the completion of a seek operation and the display of a 
+   video frame at a new time is negligible in most situations. However, when video compositions are in use, the processing of 
+   video for any particular time may introduce noticeable latency. Therefore it may be desirable when a video composition is in 
+   use for the item's timing be updated only after the video frame for a time has been displayed. This allows, for instance, an 
+   AVSynchronizedLayer associated with an AVPlayerItem to remain in synchronization with the displayed video and for the 
+   currentTime property to return the time of the displayed video.
+
+   This property has no effect on items for which videoComposition is nil.
+
+ */
+@property (nonatomic) BOOL seekingWaitsForVideoCompositionRendering NS_AVAILABLE(TBD, 6_0);
+
+/*!
+ @property textStyleRules
+ @abstract An array of AVTextStyleRules representing text styling that can be applied to subtitles and other legible media.
+*/
+@property (nonatomic, copy) NSArray *textStyleRules NS_AVAILABLE(TBD, 6_0);
 
 @end
 
@@ -406,7 +483,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
    all media selection options in the group.
    Note that if multiple options within a group meet your criteria for selection according to locale or other considerations, and if these options are otherwise indistinguishable to you according to media characteristics that are meaningful for your application, content is typically authored so that the first available option that meets your criteria is appropriate for selection.
  */
-- (void)selectMediaOption:(AVMediaSelectionOption *)mediaSelectionOption inMediaSelectionGroup:(AVMediaSelectionGroup *)mediaSelectionGroup NS_AVAILABLE(TBD, 5_0);
+- (void)selectMediaOption:(AVMediaSelectionOption *)mediaSelectionOption inMediaSelectionGroup:(AVMediaSelectionGroup *)mediaSelectionGroup NS_AVAILABLE(10_8, 5_0);
 
 /*!
  @method		selectedMediaOptionInMediaSelectionGroup:
@@ -416,7 +493,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @discussion
    If the value of the property allowsEmptySelection of the AVMediaSelectionGroup is YES, the currently selected option in the group may be nil.
  */
-- (AVMediaSelectionOption *)selectedMediaOptionInMediaSelectionGroup:(AVMediaSelectionGroup *)mediaSelectionGroup NS_AVAILABLE(TBD, 5_0);
+- (AVMediaSelectionOption *)selectedMediaOptionInMediaSelectionGroup:(AVMediaSelectionGroup *)mediaSelectionGroup NS_AVAILABLE(10_8, 5_0);
 
 @end
 
@@ -447,6 +524,41 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @result		An autoreleased AVPlayerItemErrorLog instance.
  */
 - (AVPlayerItemErrorLog *)errorLog NS_AVAILABLE(10_7, 4_3); 
+
+@end
+
+@class AVPlayerItemOutput;
+
+@interface AVPlayerItem (AVPlayerItemOutputs)
+
+/*!
+ @method		addOutput:
+ @abstract		Adds the specified instance of AVPlayerItemOutput to the receiver's collection of outputs.
+ @discussion	
+	The class of AVPlayerItemOutput provided dictates the data structure that decoded samples are vended in. 
+ 
+ 	When an AVPlayerItemOutput is associated with an AVPlayerItem, samples are provided for a media type in accordance with the rules for mixing, composition, or exclusion that the AVPlayer honors among multiple enabled tracks of that media type for its own rendering purposes. For example, video media will be composed according to the instructions provided via AVPlayerItem.videoComposition, if present. Audio media will be mixed according to the parameters provided via AVPlayerItem.audioMix, if present.
+ @param			output
+				An instance of AVPlayerItemOutput
+ */
+
+- (void)addOutput:(AVPlayerItemOutput *)output NS_AVAILABLE(10_8, 6_0);
+
+/*!
+ @method		removeOutput:
+ @abstract		Removes the specified instance of AVPlayerItemOutput from the receiver's collection of outputs.
+ @param			output
+				An instance of AVPlayerItemOutput
+ */
+
+- (void)removeOutput:(AVPlayerItemOutput *)output NS_AVAILABLE(10_8, 6_0);
+
+/*!
+ @property		outputs
+ @abstract		The collection of associated outputs.
+ */
+
+@property (nonatomic, readonly) NSArray *outputs NS_AVAILABLE(10_8, 6_0);
 
 @end
 
@@ -557,6 +669,16 @@ NS_CLASS_AVAILABLE(10_7, 4_3)
  				This property is not observable.
  */
 @property (nonatomic, readonly) NSInteger numberOfSegmentsDownloaded;
+
+/*!
+ @property		numberOfMediaRequests
+ @abstract		A count of media read requests.
+ @discussion	Value is negative if unknown. A count of media read requests from the server to this client. Corresponds to "sc-count".
+				For HTTP live Streaming, a count of media segments downloaded from the server to this client.
+				For progressive-style HTTP media downloads, a count of HTTP GET (byte-range) requests for the resource.
+ 				This property is not observable. 
+ */
+@property (nonatomic, readonly) NSInteger numberOfMediaRequests;
 
 /*!
  @property		playbackStartDate

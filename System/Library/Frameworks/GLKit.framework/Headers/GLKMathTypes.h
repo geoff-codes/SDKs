@@ -81,7 +81,7 @@ typedef union _GLKMatrix4 GLKMatrix4;
 struct _GLKVector2
 {
     float v[2];
-};
+} __attribute__((aligned(8)));
 typedef struct _GLKVector2 GLKVector2;
 #else
 union _GLKVector2
@@ -89,7 +89,7 @@ union _GLKVector2
     struct { float x, y; };
     struct { float s, t; };
     float v[2];
-};
+} __attribute__((aligned(8)));
 typedef union _GLKVector2 GLKVector2;
 #endif
     

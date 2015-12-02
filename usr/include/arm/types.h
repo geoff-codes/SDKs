@@ -70,7 +70,11 @@ typedef	long long		int64_t;
 #endif
 typedef	unsigned long long	u_int64_t;
 
+#if __LP64__
+typedef int64_t			register_t;
+#else
 typedef int32_t			register_t;
+#endif
 
 #ifndef _INTPTR_T
 #define _INTPTR_T
@@ -90,6 +94,7 @@ typedef int32_t			user_long_t;
 typedef u_int32_t		user_ulong_t;
 typedef int32_t			user_time_t;
 typedef int64_t			user_off_t;
+
 #define USER_ADDR_NULL	((user_addr_t) 0)
 #define CAST_USER_ADDR_T(a_ptr)   ((user_addr_t)((uintptr_t)(a_ptr)))
 
@@ -97,7 +102,11 @@ typedef int64_t			user_off_t;
 #endif /* !_ANSI_SOURCE && (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
 
 /* This defines the size of syscall arguments after copying into the kernel: */
+#if defined(__arm__)
 typedef u_int32_t		syscall_arg_t;
+#else
+#error Unknown architecture.
+#endif 
 
 #ifndef __offsetof
 #define __offsetof(type, field) ((size_t)(&((type *)0)->field))

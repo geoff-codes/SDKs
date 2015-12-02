@@ -32,6 +32,17 @@ extern "C" {
 */
 typedef struct __CVOpenGLESTextureCache *CVOpenGLESTextureCacheRef;
 
+#ifndef COREVIDEO_USE_EAGLCONTEXT_CLASS_IN_API
+#define COREVIDEO_USE_EAGLCONTEXT_CLASS_IN_API 1
+#endif
+
+#if defined(__OBJC__) && COREVIDEO_USE_EAGLCONTEXT_CLASS_IN_API
+@class EAGLContext;
+typedef EAGLContext *CVEAGLContext;
+#else
+typedef void *CVEAGLContext;
+#endif
+
 //
 // cacheAttributes
 //
@@ -59,7 +70,7 @@ CV_EXPORT CFTypeID CVOpenGLESTextureCacheGetTypeID(void) __OSX_AVAILABLE_STARTIN
 CV_EXPORT CVReturn CVOpenGLESTextureCacheCreate(
 					CFAllocatorRef allocator,
 					CFDictionaryRef cacheAttributes,
-					void *eaglContext,
+					CVEAGLContext eaglContext,
 					CFDictionaryRef textureAttributes,
 					CVOpenGLESTextureCacheRef *cacheOut) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
@@ -80,25 +91,28 @@ CV_EXPORT CVReturn CVOpenGLESTextureCacheCreate(
     @param      textureOut The newly created texture object will be placed here.
     @result     Returns kCVReturnSuccess on success
     @discussion Creates or returns a cached CVOpenGLESTexture texture object mapped to the CVImageBuffer and
-	            associated params.  This creates a live binding between the CVImageBuffer and underlying
-	            CVOpenGLESTexture texture object.  The EAGLContext associated with the cache may be modified,
-	            to create, delete, or bind textures.  When used as a source texture or GL_COLOR_ATTACHMENT,
-	            the CVImageBuffer must be unlocked before rendering.  The source or render buffer texture should
-				not be re-used until the rendering has completed.  This can be guaranteed by calling glFlush().
+                associated params.  This creates a live binding between the CVImageBuffer and underlying
+                CVOpenGLESTexture texture object.  The EAGLContext associated with the cache may be modified,
+                to create, delete, or bind textures.  When used as a source texture or GL_COLOR_ATTACHMENT,
+                the CVImageBuffer must be unlocked before rendering.  The source or render buffer texture should
+                not be re-used until the rendering has completed.  This can be guaranteed by calling glFlush().
 
-	            Here are some example mappings:
+                Here are some example mappings:
 
                 Mapping a BGRA buffer as a source texture:
-	            CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_RGBA, GL_UNSIGNED_BYTE, 0, &outTexture);
+                CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_RGBA, GL_UNSIGNED_BYTE, 0, &outTexture);
 
-	            Mapping a BGRA buffer as a renderbuffer:
-	            CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_RENDERBUFFER, GL_RGBA8_OES, width, height, GL_RGBA, GL_UNSIGNED_BYTE, 0, &outTexture);
+                Mapping a BGRA buffer as a renderbuffer:
+                CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_RENDERBUFFER, GL_RGBA8_OES, width, height, GL_RGBA, GL_UNSIGNED_BYTE, 0, &outTexture);
 
-				Mapping the luma plane of a 420v buffer as a source texture:
-				CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_LUMINANCE, width, height, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0, &outTexture);
+                Mapping the luma plane of a 420v buffer as a source texture:
+                CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_LUMINANCE, width, height, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0, &outTexture);
 
-				Mapping the chroma plane of a 420v buffer as a source texture:
-				CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, width/2, height/2, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 1, &outTexture);
+                Mapping the chroma plane of a 420v buffer as a source texture:
+                CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, width/2, height/2, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 1, &outTexture);
+
+                Mapping a yuvs buffer as a source texture (note: yuvs/f and 2vuy are unpacked and resampled -- not colorspace converted)
+                CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_RGB_422_APPLE, width, height, GL_RGB_422_APPLE, GL_UNSIGNED_SHORT_8_8_APPLE, 1, &outTexture);
 */
 CV_EXPORT CVReturn CVOpenGLESTextureCacheCreateTextureFromImage(CFAllocatorRef allocator,
 								       CVOpenGLESTextureCacheRef textureCache,

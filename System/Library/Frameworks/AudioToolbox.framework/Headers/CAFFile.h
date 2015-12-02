@@ -23,6 +23,7 @@
 
 #if TARGET_OS_WIN32
 #define ATTRIBUTE_PACKED
+#pragma pack(push, 1)
 #else
 #define ATTRIBUTE_PACKED __attribute__((__packed__))
 #endif
@@ -55,7 +56,8 @@ enum {
 	kCAF_OverviewChunkID			= 'ovvw',
 	kCAF_MIDIChunkID				= 'midi',
 	kCAF_UMIDChunkID				= 'umid',
-	kCAF_FormatListID				= 'ldsc'
+	kCAF_FormatListID				= 'ldsc',
+	kCAF_iXMLChunkID				= 'iXML'
 };
 
 
@@ -365,7 +367,9 @@ struct CAFUMIDChunk
 } ATTRIBUTE_PACKED;
 typedef struct CAFUMIDChunk CAFUMIDChunk;
 
-
+#if TARGET_OS_WIN32
+#pragma pack(pop)
+#endif
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 #endif

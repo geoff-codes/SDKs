@@ -1,5 +1,5 @@
 /* CoreGraphics - CGBitmapContext.h
-   Copyright (c) 2000-2009 Apple Inc.
+   Copyright (c) 2000-2011 Apple Inc.
    All rights reserved. */
 
 #ifndef CGBITMAPCONTEXT_H_

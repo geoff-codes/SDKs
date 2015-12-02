@@ -172,7 +172,7 @@ CORE_IMAGE_EXPORT NSString *kCIInputMaskImageKey __OSX_AVAILABLE_STARTING(__MAC_
 CORE_IMAGE_EXPORT NSString *kCIInputShadingImageKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
 CORE_IMAGE_EXPORT NSString *kCIInputTargetImageKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
 CORE_IMAGE_EXPORT NSString *kCIInputExtentKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
-
+CORE_IMAGE_EXPORT NSString *kCIInputVersionKey __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
 
 @class NSArray, NSDictionary;
 @class CIKernel, CIImage;
@@ -265,5 +265,23 @@ CORE_IMAGE_CLASS_EXPORT
     
  The URL can be a local file or a remote document on a webserver. It is possible, that this method returns nil (like filters that predate this feature). A client of this API has to handle this case gracefully. */
 + (NSURL *)localizedReferenceDocumentationForFilterName:(NSString *)filterName __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA);
+
+/* Given an array of filters, serialize the filters' parameters 
+   into XMP form that is suitable for embedding in to an image.
+   At this time the only filters classes that are serialized
+   are, CIAffineTransform, CICrop, and the filters returned by 
+   [CIImage autoAdjustmentFilters].  
+   The parameters of other filter classes will not be serialized.
+ */
++ (NSData*)serializedXMPFromFilters:(NSArray *)filters
+                   inputImageExtent:(CGRect)extent
+   __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
+
+/* Return an array of CIFilters de-serialized from XMP data.
+ */
++ (NSArray*)filterArrayFromSerializedXMP:(NSData *)xmpData
+                        inputImageExtent:(CGRect)extent
+                                   error:(NSError **)outError
+   __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
 
 @end

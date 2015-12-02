@@ -3,7 +3,7 @@
 	
 	Framework:  CoreMedia
  
-    Copyright 2005-2011 Apple Inc. All rights reserved.
+    Copyright 2005-2012 Apple Inc. All rights reserved.
  
 */
 
@@ -1273,6 +1273,49 @@ CM_EXPORT const CFStringRef kCMSampleBufferAttachmentKey_SampleReferenceByteOffs
 */
 CM_EXPORT const CFStringRef kCMSampleBufferAttachmentKey_GradualDecoderRefresh  // CFNumber, audio decoder refresh count
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_3);
+	
+/*!
+	@constant	kCMSampleBufferAttachmentKey_DroppedFrameReason
+	@abstract	Indicates the reason the current video frame was dropped.
+	@discussion
+		Sample buffers with this attachment contain no image or data buffer.  They mark a dropped video
+		frame.  This attachment identifies the reason for the droppage.
+*/
+CM_EXPORT const CFStringRef kCMSampleBufferAttachmentKey_DroppedFrameReason  // CFString, frame drop reason
+							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+
+/*!
+	@constant	kCMSampleBufferDroppedFrameReason_FrameWasLate
+	@abstract	The frame was dropped because it was late
+	@discussion
+		The value of kCMSampleBufferAttachmentKey_DroppedFrameReason if a video capture client has indicated 
+		that late video frames should be dropped and the current frame is late.  This condition is typically
+		caused by the client's processing taking too long.
+*/
+CM_EXPORT const CFStringRef kCMSampleBufferDroppedFrameReason_FrameWasLate
+							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+	
+/*!
+	@constant	kCMSampleBufferDroppedFrameReason_OutOfBuffers
+	@abstract	The frame was dropped because the module providing frames is out of buffers
+	@discussion
+		The value of kCMSampleBufferAttachmentKey_DroppedFrameReason if the module providing sample buffers
+		has run out of source buffers.  This condition is typically caused by the client holding onto
+		buffers for too long and can be alleviated by returning buffers to the provider.
+ */
+CM_EXPORT const CFStringRef kCMSampleBufferDroppedFrameReason_OutOfBuffers
+							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+	
+/*!
+	@constant	kCMSampleBufferDroppedFrameReason_Discontinuity
+	@abstract	An unknown number of frames were dropped
+	@discussion
+		The value of kCMSampleBufferAttachmentKey_DroppedFrameReason if the module providing sample buffers
+		has experienced a discontinuity, and an unknown number of frames have been lost.  This condition is 
+		typically caused by the system being too busy.
+ */
+CM_EXPORT const CFStringRef kCMSampleBufferDroppedFrameReason_Discontinuity
+							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 
 // Use CMAttachmentBearer APIs to set, get, and remove buffer-level attachments on the CMSampleBuffer itself
 

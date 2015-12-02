@@ -1,5 +1,5 @@
 /*	CFNotificationCenter.h
-	Copyright (c) 1998-2011, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2012, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFNOTIFICATIONCENTER__)
@@ -14,7 +14,7 @@ typedef struct __CFNotificationCenter * CFNotificationCenterRef;
 
 typedef void (*CFNotificationCallback)(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo);
 
-enum {
+typedef CF_ENUM(CFIndex, CFNotificationSuspensionBehavior) {
     CFNotificationSuspensionBehaviorDrop = 1,
         // The server will not queue any notifications with this name and object while the process/app is in the background.
     CFNotificationSuspensionBehaviorCoalesce = 2,
@@ -24,7 +24,6 @@ enum {
     CFNotificationSuspensionBehaviorDeliverImmediately = 4
         // The server will deliver notifications matching this registration whether or not the process is in the background.  When a notification with this suspension behavior is matched, it has the effect of first flushing any queued notifications.
 };
-typedef CFIndex CFNotificationSuspensionBehavior;
 
 CF_EXPORT CFTypeID CFNotificationCenterGetTypeID(void);
 

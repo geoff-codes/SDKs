@@ -2,7 +2,7 @@
  *	CTFramesetter.h
  *	CoreText
  *
- *	Copyright (c) 2003-2011 Apple Inc. All rights reserved.
+ *	Copyright (c) 2003-2012 Apple Inc. All rights reserved.
  *
  */
 

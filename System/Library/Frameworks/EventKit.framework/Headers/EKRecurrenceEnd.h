@@ -26,8 +26,7 @@
                 A EKRecurrenceEnd initialized with an end date will return 0 for occurrenceCount.
                 One initialized with a number of occurrences will return nil for its endDate.
 */
-
-EVENTKIT_CLASS_AVAILABLE(4_0)
+EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
 @interface EKRecurrenceEnd : NSObject <NSCopying> {
 }
 
@@ -54,5 +53,5 @@ EVENTKIT_CLASS_AVAILABLE(4_0)
     @abstract   The maximum occurrence count, or 0 if it's date-based.
 */
 @property(nonatomic, readonly) NSUInteger occurrenceCount;
-@end
 
+@end

@@ -2,7 +2,7 @@
 //  UILabel.h
 //  UIKit
 //
-//  Copyright (c) 2006-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,47 +13,18 @@
 
 @class UIColor, UIFont;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UILabel : UIView <NSCoding>
-{
-  @private
-    CGSize     _size;
-    NSString  *_text;
-    UIColor   *_color;
-    UIColor   *_highlightedColor;
-    UIColor   *_shadowColor;
-    UIFont    *_font;
-    CGSize     _shadowOffset;
-    CGFloat    _minFontSize;
-    CGFloat    _actualFontSize;
-    NSInteger  _numberOfLines;
-    CGFloat    _lastLineBaseline;
-    NSInteger  _lineSpacing;
-    CGFloat    _shadowBlur;
-    struct {
-        unsigned int lineBreakMode:3;
-        unsigned int highlighted:1;
-        unsigned int autosizeTextToFit:1;
-        unsigned int autotrackTextToFit:1;
-        unsigned int baselineAdjustment:2;
-        unsigned int alignment:2;
-        unsigned int enabled:1;
-        unsigned int wordRoundingEnabled:1;
-        unsigned int explicitAlignment:1;
-        unsigned int marqueeEnabled:1;
-        unsigned int marqueeRunable:1;
-        unsigned int marqueeRequired:1;
-        unsigned int drawsLetterpress:1;
-        unsigned int drawsUnderline:1;
-    } _textLabelFlags;
-}
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UILabel : UIView <NSCoding>
 
-@property(nonatomic,copy)   NSString       *text;            // default is nil
-@property(nonatomic,retain) UIFont         *font;            // default is nil (system font 17 plain)
-@property(nonatomic,retain) UIColor        *textColor;       // default is nil (text draws black)
-@property(nonatomic,retain) UIColor        *shadowColor;     // default is nil (no shadow)
-@property(nonatomic)        CGSize          shadowOffset;    // default is CGSizeMake(0, -1) -- a top shadow
-@property(nonatomic)        UITextAlignment textAlignment;   // default is UITextAlignmentLeft
-@property(nonatomic)        UILineBreakMode lineBreakMode;   // default is UILineBreakModeTailTruncation. used for single and multiple lines of text
+@property(nonatomic,copy)   NSString           *text;            // default is nil
+@property(nonatomic,retain) UIFont             *font;            // default is nil (system font 17 plain)
+@property(nonatomic,retain) UIColor            *textColor;       // default is nil (text draws black)
+@property(nonatomic,retain) UIColor            *shadowColor;     // default is nil (no shadow)
+@property(nonatomic)        CGSize             shadowOffset;    // default is CGSizeMake(0, -1) -- a top shadow
+@property(nonatomic)        NSTextAlignment    textAlignment;   // default is NSLeftTextAlignment
+@property(nonatomic)        NSLineBreakMode    lineBreakMode;   // default is NSLineBreakByTruncatingTail. used for single and multiple lines of text
+
+// the underlying attributed string drawn by the label, if set, the label ignores the properties above.
+@property(nonatomic,copy)   NSAttributedString *attributedText NS_AVAILABLE_IOS(6_0);  // default is nil
 
 // the 'highlight' property is used by subclasses for such things as pressed states. it's useful to make it part of the base class as a user property
 
@@ -69,17 +40,23 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UILabel : UIView <NSCoding>
 
 @property(nonatomic) NSInteger numberOfLines;
 
-// these next 3 property allow the label to be autosized to fit a certain width by shrinking the font size to a minimum font size
+// these next 3 property allow the label to be autosized to fit a certain width by scaling the font size(s) by a scaling factor >= the minimum scaling factor
 // and to specify how the text baseline moves when it needs to shrink the font. this only affects single line text (lineCount == 1)
 
-@property(nonatomic) BOOL adjustsFontSizeToFitWidth;          // default is NO
-@property(nonatomic) CGFloat minimumFontSize;                 // default is 0.0
+@property(nonatomic) BOOL adjustsFontSizeToFitWidth;         // default is NO
+@property(nonatomic) BOOL adjustsLetterSpacingToFitWidth NS_AVAILABLE_IOS(6_0); // default is NO, adjust letter spacing to make text fit. Note: setting this property to YES will cause the value of -[NSParagraphStyle tighteningFactorForTruncation] to be disgregarded.
+@property(nonatomic) CGFloat minimumFontSize NS_DEPRECATED_IOS(2_0, 6_0); // NOTE: deprecated - use minimumScaleFactor. default is 0.0
 @property(nonatomic) UIBaselineAdjustment baselineAdjustment; // default is UIBaselineAdjustmentAlignBaselines
+@property(nonatomic) CGFloat minimumScaleFactor NS_AVAILABLE_IOS(6_0); // default is 0.0
 
-// override points. can adjust rect before calling super. draw may be called twice to also draw shadow
+// override points. can adjust rect before calling super.
 // label has default content mode of UIViewContentModeRedraw
 
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines;
 - (void)drawTextInRect:(CGRect)rect;
 
+
+// Support for constraint-based layout (auto layout)
+// If nonzero, this is used when determining -intrinsicContentSize for multiline labels
+@property(nonatomic) CGFloat preferredMaxLayoutWidth NS_AVAILABLE_IOS(6_0);
 @end

@@ -45,7 +45,7 @@ NS_CLASS_AVAILABLE(NA, 2_0)
             unsigned            allowsSounds:1;
             unsigned            allowsVibrations:1;
             unsigned            hidesSearchableSources:1;
-            unsigned            hidesAggregateAllGroup:1;
+            unsigned            hidesPromptInLandscape:1;
         } _flags;
     
         BOOL                    _navigationBarIsAnimating;

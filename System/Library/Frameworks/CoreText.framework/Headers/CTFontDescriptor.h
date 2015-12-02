@@ -2,7 +2,7 @@
  *  CTFontDescriptor.h
  *  CoreText
  *
- *  Copyright (c) 2006-2011 Apple Inc. All rights reserved.
+ *  Copyright (c) 2006-2012 Apple Inc. All rights reserved.
  *
  */
 
@@ -167,12 +167,15 @@ extern const CFStringRef kCTFontOrientationAttribute CT_AVAILABLE_STARTING( __MA
     @enum       CTFontOrientation
     @abstract   Specifies the intended rendering orientation of the font for obtaining glyph metrics.
 */
-enum {
-    kCTFontDefaultOrientation       = 0,
-    kCTFontHorizontalOrientation    = 1,
-    kCTFontVerticalOrientation      = 2
+typedef CF_ENUM(uint32_t, CTFontOrientation) {
+    kCTFontOrientationDefault       = 0,
+    kCTFontOrientationHorizontal    = 1,
+    kCTFontOrientationVertical      = 2,
+
+    kCTFontDefaultOrientation = kCTFontOrientationDefault,
+    kCTFontHorizontalOrientation = kCTFontOrientationHorizontal,
+    kCTFontVerticalOrientation = kCTFontOrientationVertical
 };
-typedef uint32_t CTFontOrientation;
 
 /*!
     @defined    kCTFontFormatAttribute
@@ -187,7 +190,7 @@ extern const CFStringRef kCTFontFormatAttribute CT_AVAILABLE_STARTING( __MAC_10_
     @constant   kCTFontFormatOpenTypePostScript
                 The font is an OpenType format containing PostScript data
     @constant   kCTFontFormatOpenTypeTrueType
-    			The font is an OpenType format containing TrueType data
+                The font is an OpenType format containing TrueType data
     @constant   kCTFontFormatTrueType
                 The font is a recognized TrueType format
     @constant   kCTFontFormatPostScript
@@ -195,7 +198,7 @@ extern const CFStringRef kCTFontFormatAttribute CT_AVAILABLE_STARTING( __MAC_10_
     @constant   kCTFontFormatBitmap
                 The font is a bitmap only format
 */
-enum {
+typedef CF_ENUM(uint32_t, CTFontFormat) {
     kCTFontFormatUnrecognized       = 0,
     kCTFontFormatOpenTypePostScript = 1,
     kCTFontFormatOpenTypeTrueType   = 2,
@@ -203,7 +206,6 @@ enum {
     kCTFontFormatPostScript         = 4,
     kCTFontFormatBitmap             = 5
 };
-typedef uint32_t CTFontFormat;
 
 /*!
     @defined    kCTFontRegistrationScopeAttribute
@@ -371,6 +373,81 @@ CTFontDescriptorRef CTFontDescriptorCreateMatchingFontDescriptor(
     CTFontDescriptorRef     descriptor,
     CFSetRef                mandatoryAttributes ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
 
+
+/*
+    Progress state
+ */
+
+typedef CF_ENUM(uint32_t, CTFontDescriptorMatchingState) {
+    kCTFontDescriptorMatchingDidBegin,              // called once at the beginning.
+    kCTFontDescriptorMatchingDidFinish,             // called once at the end.
+    
+    kCTFontDescriptorMatchingWillBeginQuerying,     // called once before talking to the server. Skipped if not necessary.
+    kCTFontDescriptorMatchingStalled,               // called when stalled. (e.g. while waiting for server response.)
+    
+    // Downloading and activating are repeated for each descriptor.
+    kCTFontDescriptorMatchingWillBeginDownloading,  // Downloading part may be skipped if all the assets are already downloaded
+    kCTFontDescriptorMatchingDownloading,
+    kCTFontDescriptorMatchingDidFinishDownloading,
+    kCTFontDescriptorMatchingDidMatch,              // called when font descriptor is matched.
+    
+    kCTFontDescriptorMatchingDidFailWithError       // called when an error occurred. (may be called multiple times.)
+};
+
+/*
+    keys for progressParameter dictionary.
+ */
+
+/* CTFontDescriptorRef: the current font descriptor. Valid when state is kCTFontDescriptorMatchingDidMatch. */
+extern const CFStringRef kCTFontDescriptorMatchingSourceDescriptor CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
+
+/* CFArrayRef: descriptors to be queried. Valid while downloading or when state is kCTFontDescriptorMatchingWillBeginQuerying. */
+extern const CFStringRef kCTFontDescriptorMatchingDescriptors CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
+
+/* CFArrayRef: matched font descriptors. Valid when state is kCTFontDescriptorMatchingDidMatch or CTFontDescriptorMatchingEnd. */
+extern const CFStringRef kCTFontDescriptorMatchingResult CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
+
+/* CFNumberRef: progress in 0 - 100 for the current descriptor. Valid when state is kCTFontDescriptorMatchingDownloading. */
+extern const CFStringRef kCTFontDescriptorMatchingPercentage CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
+
+/* CFNumberRef: size in bytes to be downloaded for the current descriptor. Valid when state is kCTFontDescriptorMatchingDownloading. */
+extern const CFStringRef kCTFontDescriptorMatchingCurrentAssetSize CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
+
+/* CFNumberRef: total downloaded size in bytes. Valid when state is kCTFontDescriptorMatchingDownloading. */
+extern const CFStringRef kCTFontDescriptorMatchingTotalDownloadedSize CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
+
+/* CFNumberRef: total size in bytes to be downloaded. Always valid, but may be zero when information is not available. */
+extern const CFStringRef kCTFontDescriptorMatchingTotalAssetSize CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
+
+/* CFErrorRef. Valid when state is kCTFontDescriptorMatchingDidFailWithError. */
+extern const CFStringRef kCTFontDescriptorMatchingError CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
+
+#if defined(__BLOCKS__)
+/* Progress callback type */
+typedef bool (^CTFontDescriptorProgressHandler)( CTFontDescriptorMatchingState state, CFDictionaryRef progressParameter );
+
+/*!
+    @function   CTFontDescriptorMatchFontDescriptorsWithProgressHandler
+                This function returns immediately, but can potentially take long time to process. The progress is notified via progressBlock.
+
+    @param      descriptors
+                An array of descriptors to process.
+
+    @param      mandatoryAttributes
+
+    @param      progressBlock
+                Callback block to indicate the progress.
+                Return true to continue, and return false to cancel the process.
+
+    @result     false if it couldn't start the work.
+*/
+    
+bool CTFontDescriptorMatchFontDescriptorsWithProgressHandler(
+    CFArrayRef                          descriptors,
+    CFSetRef                            mandatoryAttributes,
+    CTFontDescriptorProgressHandler     progressBlock ) CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
+#endif // defined(__BLOCKS__)
+    
 /*! --------------------------------------------------------------------------
     @group Descriptor Accessors
 *///--------------------------------------------------------------------------

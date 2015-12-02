@@ -47,7 +47,7 @@ typedef const struct __SecRandom * SecRandomRef;
 /* This is a synonym for NULL, if you'd rather use a named constant.   This
    refers to a cryptographically secure random number generator.  */
 extern const SecRandomRef kSecRandomDefault
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 /*!
 	@function SecRandomCopyBytes
@@ -56,7 +56,7 @@ extern const SecRandomRef kSecRandomDefault
     to find out the real error.
 */
 int SecRandomCopyBytes(SecRandomRef rnd, size_t count, uint8_t *bytes)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 #if defined(__cplusplus)
 }

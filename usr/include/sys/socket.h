@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2011 Apple Inc. All rights reserved.
+ * Copyright (c) 2000-2012 Apple Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
@@ -171,9 +171,10 @@ struct iovec {
 #else
 #define SO_DONTTRUNC	0x2000		/* APPLE: Retain unread data */
 					/*  (ATOMIC proto) */
-#define SO_WANTMORE		0x4000		/* APPLE: Give hint when more data ready */
+#define SO_WANTMORE	0x4000		/* APPLE: Give hint when more data ready */
 #define SO_WANTOOBFLAG	0x8000		/* APPLE: Want OOB in MSG_FLAG on receive */
-#endif
+
+#endif  /* (!__APPLE__) */
 #endif	/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
 
 /*

@@ -75,7 +75,7 @@ NS_CLASS_AVAILABLE(NA, 5_0)
 
 /*
  Binds the context and drawable. This needs to be called when the currently bound framebuffer
- or renderbuffer has been changed during the draw method.
+ has been changed during the draw method.
  */
 - (void)bindDrawable;
 

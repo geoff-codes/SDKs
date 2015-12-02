@@ -5,7 +5,7 @@
 #ifndef	_MACH_ARM_EXCEPTION_H_
 #define _MACH_ARM_EXCEPTION_H_
 
-#define EXC_TYPES_COUNT         11      /* incl. illegal exception 0 */
+#define EXC_TYPES_COUNT         13      /* incl. illegal exception 0 */
 
 #define EXC_MASK_MACHINE         0
 

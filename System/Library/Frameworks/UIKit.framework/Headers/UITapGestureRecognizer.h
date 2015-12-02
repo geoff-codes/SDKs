@@ -2,7 +2,7 @@
 //  UITapGestureRecognizer.h
 //  UIKit
 //
-//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,7 +15,7 @@
 //     locationInView:         location of the tap, from the first tap in the sequence if numberOfTapsRequired > 1. this is the centroid if numberOfTouchesRequired > 1
 //     locationOfTouch:inView: location of a particular touch, from the first tap in the sequence if numberOfTapsRequired > 1
 
-UIKIT_CLASS_AVAILABLE(3_2) @interface UITapGestureRecognizer : UIGestureRecognizer {
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UITapGestureRecognizer : UIGestureRecognizer {
   @package
     CGPoint      _locationInView;
     id           _imp;

@@ -2,7 +2,7 @@
 //  ExternalAccessoryDefines.h
 //  ExternalAccessory
 //
-//  Copyright 2008 Apple, Inc. All rights reserved.
+//  Copyright (c) 2008-2012 Apple, Inc. All rights reserved.
 //
 
 #ifdef __cplusplus

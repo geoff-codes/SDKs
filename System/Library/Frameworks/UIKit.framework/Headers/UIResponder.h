@@ -2,14 +2,14 @@
 //  UIResponder.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UIEvent.h>
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIResponder : NSObject {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIResponder : NSObject {
   @private
 }
 
@@ -33,37 +33,40 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIResponder : NSObject {
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event;
 
-- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)motionCancelled:(UIEventSubtype)motion withEvent:(UIEvent *)event __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event NS_AVAILABLE_IOS(3_0);
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event NS_AVAILABLE_IOS(3_0);
+- (void)motionCancelled:(UIEventSubtype)motion withEvent:(UIEvent *)event NS_AVAILABLE_IOS(3_0);
 
-- (void)remoteControlReceivedWithEvent:(UIEvent *)event __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)remoteControlReceivedWithEvent:(UIEvent *)event NS_AVAILABLE_IOS(4_0);
 
-- (BOOL)canPerformAction:(SEL)action withSender:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-@property(nonatomic,readonly) NSUndoManager *undoManager __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender NS_AVAILABLE_IOS(3_0);
+@property(nonatomic,readonly) NSUndoManager *undoManager NS_AVAILABLE_IOS(3_0);
 
 @end
 
 @interface NSObject(UIResponderStandardEditActions)   // these methods are not implemented in NSObject
 
-- (void)cut:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)copy:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)paste:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)select:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)selectAll:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)delete:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
-- (void)makeTextWritingDirectionLeftToRight:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-- (void)makeTextWritingDirectionRightToLeft:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (void)cut:(id)sender NS_AVAILABLE_IOS(3_0);
+- (void)copy:(id)sender NS_AVAILABLE_IOS(3_0);
+- (void)paste:(id)sender NS_AVAILABLE_IOS(3_0);
+- (void)select:(id)sender NS_AVAILABLE_IOS(3_0);
+- (void)selectAll:(id)sender NS_AVAILABLE_IOS(3_0);
+- (void)delete:(id)sender NS_AVAILABLE_IOS(3_2);
+- (void)makeTextWritingDirectionLeftToRight:(id)sender NS_AVAILABLE_IOS(5_0);
+- (void)makeTextWritingDirectionRightToLeft:(id)sender NS_AVAILABLE_IOS(5_0);
+- (void)toggleBoldface:(id)sender NS_AVAILABLE_IOS(6_0);
+- (void)toggleItalics:(id)sender NS_AVAILABLE_IOS(6_0);
+- (void)toggleUnderline:(id)sender NS_AVAILABLE_IOS(6_0);
 
 @end
 
 @interface UIResponder (UIResponderInputViewAdditions)
 
 // Called and presented when object becomes first responder.  Goes up the responder chain.
-@property (readonly, retain) UIView *inputView __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);            
-@property (readonly, retain) UIView *inputAccessoryView __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); 
+@property (readonly, retain) UIView *inputView NS_AVAILABLE_IOS(3_2);            
+@property (readonly, retain) UIView *inputAccessoryView NS_AVAILABLE_IOS(3_2); 
 
 // If called while object is first responder, reloads inputView and inputAccessoryView.  Otherwise ignored.
-- (void)reloadInputViews __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+- (void)reloadInputViews NS_AVAILABLE_IOS(3_2);
 
 @end

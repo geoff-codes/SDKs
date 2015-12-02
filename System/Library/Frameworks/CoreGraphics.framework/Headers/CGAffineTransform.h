@@ -1,5 +1,5 @@
 /* CoreGraphics - CGAffineTransform.h
-   Copyright (c) 1998-2009 Apple Inc.
+   Copyright (c) 1998-2011 Apple Inc.
    All rights reserved. */
 
 #ifndef CGAFFINETRANSFORM_H_

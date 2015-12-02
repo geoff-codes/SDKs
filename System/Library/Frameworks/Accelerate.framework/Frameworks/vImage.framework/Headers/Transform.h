@@ -116,7 +116,10 @@ vImage_Error vImageMatrixMultiply_PlanarF(          const vImage_Buffer *srcs[],
                                                     const float 	*post_bias,	//A packed array of float values. NULL is okay
                                                     vImage_Flags flags )		__OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 
-                
+/*
+ * vImageMatrixMultiply_ARGB8888 will also work for other channel orders such as RGBA8888.  The ordering of terms in the matrix, pre_bias and 
+ * post_bias should be adjusted to compensate.
+ */
 vImage_Error vImageMatrixMultiply_ARGB8888(         const vImage_Buffer *src,
                                                     const vImage_Buffer *dest,
                                                     const int16_t	matrix[4*4],
@@ -125,6 +128,10 @@ vImage_Error vImageMatrixMultiply_ARGB8888(         const vImage_Buffer *src,
                                                     const int32_t 	*post_bias,	//Must be an array of 4 int32_t's. NULL is okay. 
                                                     vImage_Flags 	flags )		__OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 
+/*
+ * vImageMatrixMultiply_ARGBFFFF will also work for other channel orders such as RGBAFFFF.  The ordering of terms in the matrix, pre_bias and 
+ * post_bias should be adjusted to compensate.
+ */
 vImage_Error vImageMatrixMultiply_ARGBFFFF(         const vImage_Buffer *src,
                                                     const vImage_Buffer *dest,
                                                     const float		matrix[4*4],
@@ -174,6 +181,9 @@ vImage_Error vImageMatrixMultiply_ARGBFFFF(         const vImage_Buffer *src,
  * vImageGamma_PlanarF will work in place. 
  * vImageGamma_PlanarFToPlanar8 will work in place. 
  * vImageGamma_Planar8ToPlanarF will NOT work in place. 
+ *
+ * These functions will also work for multichannel data, such as RGBAFFFF buffers by adjusting the width of the buffer to 
+ * reflect the additional channels. Note that this will cause the alpha channel if there is one to become gamma corrected.
  */
 
 /*
@@ -244,6 +254,9 @@ vImage_Error    vImageGamma_PlanarF(                const vImage_Buffer *src,
  *     NaNs will return NaNs. The last polynomial also operates on Inf.  N must be an integer power of 2.
  *     Values found in the distination array are undefined until after the function returns.
  *	   The behavior is undefined if boundaries are NaN.
+ *
+ *  These functions will also work for multichannel data, such as RGBAFFFF buffers by adjusting the width of the buffer to 
+ *  reflect the additional channels. Note that this will cause the alpha channel, if there is one, to become modified like the other channels.
  *
  *  The input parameters are as follows:
  *
@@ -389,6 +402,10 @@ vImage_Error    vImagePiecewisePolynomial_PlanarFtoPlanar8( const vImage_Buffer 
  *      this problem should be avoidable by wise choice of polynomials. Developers who require IEEE-754 
  *      correct results should call the polynomial evaluator above twice and do the division themselves. 
  *
+ *      These functions will also work for multichannel data, such as RGBAFFFF buffers by adjusting the 
+ *      width of the buffer to reflect the additional channels. Note that this will cause the alpha channel, 
+ *      if there is one, to become modified like the other channels.
+ *
  *      Performance Advisory:
  *        Approximate cost of evaluating a rational (in the same units as polynomial above) is:
  *
@@ -426,6 +443,9 @@ vImage_Error    vImagePiecewiseRational_PlanarF(  const vImage_Buffer *src,     
  *
  *	Note: It is okay to use this to convert Planar8 data to other 32 bit types as well, such as a ARGB8888 pixel. 
  *			Simply pass a Pixel_8888[256] array instead of a Pixel_F[256] array.
+ *
+ *  This function can also work for multichannel data by scaling the width of the image to compensate for the 
+ *  additional channels. All channels will use the same table.
  */
 
 vImage_Error    vImageLookupTable_Planar8toPlanarF(     const vImage_Buffer *src,          /* 8-bit pixels */
@@ -440,7 +460,9 @@ vImage_Error    vImageLookupTable_Planar8toPlanarF(     const vImage_Buffer *src
  *          uint32_t index =  (uint32_t) MIN( MAX( input_float_pixel * 4096.0f, 0.0f), 4095.0f);
  *          uint8_t result_pixel = table[ index ];
  *
- *  The input is a buffer of 8-bit pixels. The output is a buffer of floating point pixels. 
+ *  The input is a buffer of floating-point pixels. The output is a buffer of 8-bit pixels. 
+ *  This function can also work for multichannel data by scaling the width of the image to compensate for the 
+ *  additional channels. All channels will use the same table.
  */
 vImage_Error    vImageLookupTable_PlanarFtoPlanar8(     const vImage_Buffer *src,          /* floating point pixels */
                                                         const vImage_Buffer *dest,         /* 8-bit pixels */
@@ -478,6 +500,8 @@ vImage_Error    vImageLookupTable_PlanarFtoPlanar8(     const vImage_Buffer *src
  *				behavior is undefined.
  *
  *  The function will work in place. 
+ *  This function may be used on multichannel images by scaling the width by the number of channels.
+ *  The same table will be used for all the channels, including alpha, if there is an alpha channel.
  */
 vImage_Error    vImageInterpolatedLookupTable_PlanarF(  const vImage_Buffer *src,
                                                         const vImage_Buffer *dest,

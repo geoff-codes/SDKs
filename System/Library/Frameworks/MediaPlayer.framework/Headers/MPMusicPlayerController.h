@@ -10,6 +10,7 @@
 #import <MediaPlayer/MPMediaItemCollection.h>
 #import <MediaPlayer/MPMediaItem.h>
 #import <MediaPlayer/MPMediaQuery.h>
+#import <MediaPlayer/MPMediaPlayback.h>
 
 @class MPMediaItem, MPMediaQuery, MPMusicPlayerControllerInternal;
 
@@ -41,9 +42,7 @@ typedef NSInteger MPMusicShuffleMode;
 
 // MPMusicPlayerController allows playback of MPMediaItems through the iPod application.
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMusicPlayerController : NSObject {
-    MPMusicPlayerControllerInternal *_internal;
-}
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMusicPlayerController : NSObject <MPMediaPlayback>
 
 // Playing media items with the applicationMusicPlayer will restore the user's iPod state after the application quits.
 + (MPMusicPlayerController *)applicationMusicPlayer;
@@ -54,6 +53,8 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMusicPlayerController : NSObject {
 @end
 
 @interface MPMusicPlayerController (MPPlaybackControl)
+
+// See MPMediaPlayback.h for basic playback control.
 
 // Returns the current playback state of the music player
 @property(nonatomic, readonly) MPMusicPlaybackState playbackState;
@@ -73,28 +74,11 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMusicPlayerController : NSObject {
 
 // Returns the index of the now playing item in the current playback queue.
 // May return NSNotFound if the index is not valid (e.g. an empty queue or an infinite playlist).
-@property(nonatomic, readonly) NSUInteger indexOfNowPlayingItem NS_AVAILABLE_IPHONE(5_0);
+@property(nonatomic, readonly) NSUInteger indexOfNowPlayingItem NS_AVAILABLE_IOS(5_0);
 
 // Call -play to begin playback after setting an item queue source. Setting a query will implicitly use MPMediaGroupingTitle.
 - (void)setQueueWithQuery:(MPMediaQuery *)query;
 - (void)setQueueWithItemCollection:(MPMediaItemCollection *)itemCollection;
-
-// Plays items from the current queue, resuming paused playback if possible.
-- (void)play;
-
-// Pauses playback if the music player is playing.
-- (void)pause;
-
-// Ends playback. Calling -play again will start from the beginning of the queue.
-- (void)stop;
-
-// The current time of the now playing item in seconds.
-@property(nonatomic) NSTimeInterval currentPlaybackTime;
-
-// The seeking rate will increase the longer seeking is active.
-- (void)beginSeekingForward;
-- (void)beginSeekingBackward;
-- (void)endSeeking;
 
 // Skips to the next item in the queue. If already at the last item, this will end playback.
 - (void)skipToNextItem;

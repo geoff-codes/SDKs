@@ -97,16 +97,16 @@
 #pragma mark Constants
 
 /*!
-	@constant	kAudioComponentFlag_Unsearchable
+    @constant   kAudioComponentFlag_Unsearchable
 
-	When this bit in AudioComponentDescription's componentFlags is set, AudioComponentFindNext
-	will only return this component when performing a specific, non-wildcard search for the
-	component, i.e. with non-zero values of componentType, componentSubType, and
-	componentManufacturer. This can be useful when privately registering a component.
-	Available starting in Mac OS X 10.7 and iOS 5.0
+    When this bit in AudioComponentDescription's componentFlags is set, AudioComponentFindNext
+    will only return this component when performing a specific, non-wildcard search for the
+    component, i.e. with non-zero values of componentType, componentSubType, and
+    componentManufacturer. This can be useful when privately registering a component.
+    Available starting in Mac OS X 10.7 and iOS 5.0
 */
 enum {
-	kAudioComponentFlag_Unsearchable = 1
+    kAudioComponentFlag_Unsearchable = 1
 };
 
 //=====================================================================================================================
@@ -181,11 +181,11 @@ typedef struct OpaqueAudioComponent *   AudioComponent;
     @typedef        AudioComponentMethod
     @abstract       The broad prototype for an audio plugin method
     @discussion     Every audio plugin will implement a collection of methods that match a particular
-					selector. For example, the AudioUnitInitialize API call is implemented by a
-					plugin implementing the kAudioUnitInitializeSelect selector. Any function implementing
-					an audio plugin selector conforms to the basic pattern where the first argument
-					is a pointer to the plugin instance structure, has 0 or more specific arguments,  
-					and returns an OSStatus.
+                    selector. For example, the AudioUnitInitialize API call is implemented by a
+                    plugin implementing the kAudioUnitInitializeSelect selector. Any function implementing
+                    an audio plugin selector conforms to the basic pattern where the first argument
+                    is a pointer to the plugin instance structure, has 0 or more specific arguments,  
+                    and returns an OSStatus.
 */
 typedef OSStatus (*AudioComponentMethod) (void *self,...);
 
@@ -198,15 +198,15 @@ typedef OSStatus (*AudioComponentMethod) (void *self,...);
                         the function used to close (or dispose) an audio plugin instance
     @field          Lookup
                         this is used to return a function pointer for a given selector, 
-						or NULL if that selector is not implemented
+                        or NULL if that selector is not implemented
     @field          reserved
                         must be NULL
 */
 typedef struct AudioComponentPlugInInterface {
-	OSStatus						(*Open)(void *self, AudioComponentInstance mInstance);
-	OSStatus						(*Close)(void *self);
-	AudioComponentMethod			(*Lookup) (SInt16 selector);
-	void *							reserved; // set to NULL
+    OSStatus                        (*Open)(void *self, AudioComponentInstance mInstance);
+    OSStatus                        (*Close)(void *self);
+    AudioComponentMethod            (*Lookup) (SInt16 selector);
+    void *                          reserved; // set to NULL
 } AudioComponentPlugInInterface;
 
 /*!
@@ -219,11 +219,7 @@ typedef struct AudioComponentPlugInInterface {
     
     @param          inDesc
                         The AudioComponentDescription specifying the component to be instantiated.
-    @result         A pointer to a structure whose first member is a pointer to an
-                    AudioComponentPlugInInterface. Thus the return type could be considered
-                    AudioComponentPlugInInterface **, but since in practice it is never
-                    this basic type, but rather, AudioUnitPlugInInterface, AudioCodecPlugInInterface,
-                    etc., it is declared void * for simplicity.
+    @result         A pointer to a AudioComponentPlugInInterface structure.
 */
 typedef AudioComponentPlugInInterface *  (*AudioComponentFactoryFunction)(const AudioComponentDescription *inDesc);
 
@@ -411,7 +407,7 @@ AudioComponentRegister(     const AudioComponentDescription *   inDesc,
                             CFStringRef                         inName,
                             UInt32                              inVersion,
                             AudioComponentFactoryFunction       inFactory)
-																			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+                                                    __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_5_0);
 
 #ifdef __cplusplus
 }

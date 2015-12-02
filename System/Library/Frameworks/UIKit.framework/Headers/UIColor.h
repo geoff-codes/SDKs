@@ -2,7 +2,7 @@
 //  UIColor.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 
 @class UIImage;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIColor : NSObject <NSCoding> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIColor : NSObject <NSCoding, NSCopying> {
   @private
 }
 
@@ -22,7 +22,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIColor : NSObject <NSCoding> {
 + (UIColor *)colorWithRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
 + (UIColor *)colorWithCGColor:(CGColorRef)cgColor;
 + (UIColor *)colorWithPatternImage:(UIImage *)image;
-+ (UIColor *)colorWithCIColor:(CIColor *)ciColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
++ (UIColor *)colorWithCIColor:(CIColor *)ciColor NS_AVAILABLE_IOS(5_0);
 
 // Initializers for creating non-autoreleased colors
 - (UIColor *)initWithWhite:(CGFloat)white alpha:(CGFloat)alpha;
@@ -30,7 +30,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIColor : NSObject <NSCoding> {
 - (UIColor *)initWithRed:(CGFloat)red green:(CGFloat)green blue:(CGFloat)blue alpha:(CGFloat)alpha;
 - (UIColor *)initWithCGColor:(CGColorRef)cgColor;
 - (UIColor *)initWithPatternImage:(UIImage*)image;
-- (UIColor *)initWithCIColor:(CIColor *)ciColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (UIColor *)initWithCIColor:(CIColor *)ciColor NS_AVAILABLE_IOS(5_0);
 
 // Some convenience methods to create colors.  These colors will be as calibrated as possible.
 // These colors are cached.
@@ -59,9 +59,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIColor : NSObject <NSCoding> {
 
 // Convenience methods for getting components.
 // If the receiver is of a compatible color space, any non-NULL parameters are populated and 'YES' is returned. Otherwise, the parameters are left unchanged and 'NO' is returned.
-- (BOOL)getWhite:(CGFloat *)white alpha:(CGFloat *)alpha;
-- (BOOL)getHue:(CGFloat *)hue saturation:(CGFloat *)saturation brightness:(CGFloat *)brightness alpha:(CGFloat *)alpha;
-- (BOOL)getRed:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha;
+- (BOOL)getWhite:(CGFloat *)white alpha:(CGFloat *)alpha NS_AVAILABLE_IOS(5_0);
+- (BOOL)getHue:(CGFloat *)hue saturation:(CGFloat *)saturation brightness:(CGFloat *)brightness alpha:(CGFloat *)alpha NS_AVAILABLE_IOS(5_0);
+- (BOOL)getRed:(CGFloat *)red green:(CGFloat *)green blue:(CGFloat *)blue alpha:(CGFloat *)alpha NS_AVAILABLE_IOS(5_0);
 
 // Returns a color in the same color space as the receiver with the specified alpha component.
 - (UIColor *)colorWithAlphaComponent:(CGFloat)alpha;
@@ -74,6 +74,6 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIColor : NSObject <NSCoding> {
 
 @interface CIColor(UIKitAdditions)
 
-- (id)initWithColor:(UIColor *)color __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (id)initWithColor:(UIColor *)color NS_AVAILABLE_IOS(5_0);
 
 @end

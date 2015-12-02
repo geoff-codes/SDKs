@@ -248,7 +248,8 @@ enum {
 	errSSLBadRecordMac			= -9846,	/* bad MAC */
 	errSSLRecordOverflow		= -9847,	/* record overflow */
 	errSSLBadConfiguration		= -9848,	/* configuration error */
-	errSSLLast					= -9849,	/* end of range, to be deleted */
+	errSSLUnexpectedRecord      = -9849,	/* unexpected (skipped) record in DTLS */
+    errSSLLast                  = -9849,    /* Last one */
 
     /* DEPRECATED aliases for errSSLPeerAuthCompleted */
     errSSLServerAuthCompleted   = -9841,	/* server cert is valid, or was ignored if verification disabled DEPRECATED */

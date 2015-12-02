@@ -2,7 +2,7 @@
 //  UINavigationController.h
 //  UIKit
 //
-//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -16,10 +16,9 @@
  UINavigationController manages a stack of view controllers and a navigation bar.
  It performs horizontal view transitions for pushed and popped views while keeping the navigation bar in sync.
  
- To use in your application, add its view to the view hierarchy, then push and pop controllers.
  Most clients will not need to subclass UINavigationController.
  
- If a navigation controller is nested in a toolbar controller, it uses the title and toolbar attributes of the bottom view controller on the stack.
+ If a navigation controller is nested in a tabbar controller, it uses the title and toolbar attributes of the bottom view controller on the stack.
  
  UINavigationController is rotatable if its top view controller is rotatable.
  Navigation between controllers with non-uniform rotatability is currently not supported.
@@ -30,7 +29,7 @@ UIKIT_EXTERN const CGFloat UINavigationControllerHideShowBarDuration;
 @class UIView, UINavigationBar, UINavigationItem, UIToolbar, UILayoutContainerView;
 @protocol UINavigationControllerDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationController : UIViewController {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationController : UIViewController {
   @package
     UIView           *_containerView;
     UINavigationBar  *_navigationBar;
@@ -67,8 +66,15 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationController : UIViewController 
         unsigned int avoidMovingNavBarOffscreenBeforeUnhiding:1;
         unsigned int searchBarHidNavBar:1; 
         unsigned int useSystemPopoverBarAppearance:1;
+        unsigned int isCustomTransition:1;        
     } _navigationControllerFlags;
 }
+
+/* Use this initializer to make the navigation controller use your custom bar class. 
+   Passing nil for navigationBarClass will get you UINavigationBar, nil for toolbarClass gets UIToolbar.
+   The arguments must otherwise be subclasses of the respective UIKit classes.
+ */
+- (instancetype)initWithNavigationBarClass:(Class)navigationBarClass toolbarClass:(Class)toolbarClass NS_AVAILABLE_IOS(5_0);
 
 - (id)initWithRootViewController:(UIViewController *)rootViewController; // Convenience method pushes the root view controller without animation.
 
@@ -82,15 +88,15 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationController : UIViewController 
 @property(nonatomic,readonly,retain) UIViewController *visibleViewController; // Return modal view controller if it exists. Otherwise the top view controller.
 
 @property(nonatomic,copy) NSArray *viewControllers; // The current view controller stack.
-- (void)setViewControllers:(NSArray *)viewControllers animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // If animated is YES, then simulate a push or pop depending on whether the new top view controller was previously in the stack.
+- (void)setViewControllers:(NSArray *)viewControllers animated:(BOOL)animated NS_AVAILABLE_IOS(3_0); // If animated is YES, then simulate a push or pop depending on whether the new top view controller was previously in the stack.
 
 @property(nonatomic,getter=isNavigationBarHidden) BOOL navigationBarHidden;
 - (void)setNavigationBarHidden:(BOOL)hidden animated:(BOOL)animated; // Hide or show the navigation bar. If animated, it will transition vertically using UINavigationControllerHideShowBarDuration.
 @property(nonatomic,readonly) UINavigationBar *navigationBar; // The navigation bar managed by the controller. Pushing, popping or setting navigation items on a managed navigation bar is not supported.
 
-@property(nonatomic,getter=isToolbarHidden) BOOL toolbarHidden __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // Defaults to YES, i.e. hidden.
-- (void)setToolbarHidden:(BOOL)hidden animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // Hide or show the toolbar at the bottom of the screen. If animated, it will transition vertically using UINavigationControllerHideShowBarDuration.
-@property(nonatomic,readonly) UIToolbar *toolbar __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // For use when presenting an action sheet.
+@property(nonatomic,getter=isToolbarHidden) BOOL toolbarHidden NS_AVAILABLE_IOS(3_0); // Defaults to YES, i.e. hidden.
+- (void)setToolbarHidden:(BOOL)hidden animated:(BOOL)animated NS_AVAILABLE_IOS(3_0); // Hide or show the toolbar at the bottom of the screen. If animated, it will transition vertically using UINavigationControllerHideShowBarDuration.
+@property(nonatomic,readonly) UIToolbar *toolbar NS_AVAILABLE_IOS(3_0); // For use when presenting an action sheet.
 
 @property(nonatomic, assign) id<UINavigationControllerDelegate> delegate;
 
@@ -116,7 +122,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationController : UIViewController 
 
 @interface UIViewController (UINavigationControllerContextualToolbarItems)
 
-@property (nonatomic, retain) NSArray *toolbarItems __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)setToolbarItems:(NSArray *)toolbarItems animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property (nonatomic, retain) NSArray *toolbarItems NS_AVAILABLE_IOS(3_0);
+- (void)setToolbarItems:(NSArray *)toolbarItems animated:(BOOL)animated NS_AVAILABLE_IOS(3_0);
 
 @end

@@ -285,13 +285,36 @@ CFN_EXPORT const CFStringRef kCFStreamSSLAllowsAnyRoot				   __OSX_STREAM_PROPER
  * are documented below.  Most streams should not need to set this
  * property.
  */
-CFN_EXPORT const CFStringRef kCFStreamNetworkServiceType		__OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceType		__OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_4_0);
 
 /* supported network service types: */
-CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVoIP __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);		// voice over IP control
-CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVideo __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);		// video
-CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeBackground __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);	// background
-CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVoice __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);		// voice data
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVoIP __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_4_0);		// voice over IP control
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVideo __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0);		// interactive video
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeBackground __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0);	// background
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVoice __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0);		// interactive voice data
+
+/*
+ *  kCFStreamPropertyNoCellular
+ *  
+ *  Discussion:
+ *  Stream property value, for both set and copy operations.
+ *  The value is a CFBooleanRef which indicates whether the connection
+ *  is allowed to use the build in celluar radios.  A value of kCFBooleanTrue 
+ *  disallows use of cellular interfaces.  kCFBooleanFalse (the default)
+ *  allows use of cellular interfaces.
+ *  
+ */
+CFN_EXPORT const CFStringRef kCFStreamPropertyNoCellular __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+/*	kCFStreamPropertyConnectionIsCellular
+ *
+ * Discussion:
+ * Stream property key for copy operations.  Returns a CFBooleanRef value
+ * of kCFBooleanTrue if the stream has connected using the built in cellular radios.
+ * It returns kCFBooleanFalse if the stream is conneceted over a non-cellular
+ * interface or has not yet established a connection.
+ */
+CFN_EXPORT const CFStringRef kCFStreamPropertyConnectionIsCellular __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
 
 /*
  *  kCFStreamErrorDomainWinSock

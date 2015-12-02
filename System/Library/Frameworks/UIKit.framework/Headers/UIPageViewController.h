@@ -2,44 +2,46 @@
 //  UIPageViewController.h
 //  UIKit
 //
-//  Copyright 2011 Apple Inc. All rights reserved.
+//  Copyright 2011-2012, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIViewController.h>
 
-enum {
+typedef NS_ENUM(NSInteger, UIPageViewControllerNavigationOrientation) {
     UIPageViewControllerNavigationOrientationHorizontal = 0,
     UIPageViewControllerNavigationOrientationVertical = 1
 };
-typedef NSInteger UIPageViewControllerNavigationOrientation;
 
-enum {
+typedef NS_ENUM(NSInteger, UIPageViewControllerSpineLocation) {
     UIPageViewControllerSpineLocationNone = 0, // Returned if 'spineLocation' is queried when 'transitionStyle' is not 'UIPageViewControllerTransitionStylePageCurl'.
     UIPageViewControllerSpineLocationMin = 1,  // Requires one view controller.
     UIPageViewControllerSpineLocationMid = 2,  // Requires two view controllers.
     UIPageViewControllerSpineLocationMax = 3   // Requires one view controller.
-};
-typedef NSInteger UIPageViewControllerSpineLocation; // Only pertains to 'UIPageViewControllerTransitionStylePageCurl'.
+};   // Only pertains to 'UIPageViewControllerTransitionStylePageCurl'.
 
-enum {
+typedef NS_ENUM(NSInteger, UIPageViewControllerNavigationDirection) {
     UIPageViewControllerNavigationDirectionForward,
     UIPageViewControllerNavigationDirectionReverse
-};
-typedef NSInteger UIPageViewControllerNavigationDirection; // For 'UIPageViewControllerNavigationOrientationHorizontal', 'forward' is right-to-left, like pages in a book. For 'UIPageViewControllerNavigationOrientationVertical', bottom-to-top, like pages in a wall calendar.
+};  // For 'UIPageViewControllerNavigationOrientationHorizontal', 'forward' is right-to-left, like pages in a book. For 'UIPageViewControllerNavigationOrientationVertical', bottom-to-top, like pages in a wall calendar.
 
-enum {
-    UIPageViewControllerTransitionStylePageCurl = 0 // Navigate between views via a page curl transition.
+typedef NS_ENUM(NSInteger, UIPageViewControllerTransitionStyle) {
+    UIPageViewControllerTransitionStylePageCurl = 0, // Navigate between views via a page curl transition.
+    UIPageViewControllerTransitionStyleScroll = 1 // Navigate between views by scrolling.
 };
-typedef NSInteger UIPageViewControllerTransitionStyle;
 
 // Key for specifying spine location in options dictionary argument to initWithTransitionStyle:navigationOrientation:options:.
 // Value should be a 'UIPageViewControllerSpineLocation' wrapped in an NSNumber.
 // Only valid for use with page view controllers with transition style 'UIPageViewControllerTransitionStylePageCurl'.
 UIKIT_EXTERN NSString * const UIPageViewControllerOptionSpineLocationKey;
 
+// Key for specifying spacing between pages in options dictionary argument to initWithTransitionStyle:navigationOrientation:options:.
+// Value should be a CGFloat wrapped in an NSNumber. Default is '0'.
+// Only valid for use with page view controllers with transition style 'UIPageViewControllerTransitionStyleScroll'.
+UIKIT_EXTERN NSString * const UIPageViewControllerOptionInterPageSpacingKey NS_AVAILABLE_IOS(6_0);
+
 @protocol UIPageViewControllerDelegate, UIPageViewControllerDataSource;
 
-UIKIT_CLASS_AVAILABLE(5_0) @interface UIPageViewController : UIViewController {
+NS_CLASS_AVAILABLE_IOS(5_0) @interface UIPageViewController : UIViewController {
 }
 
 - (id)initWithTransitionStyle:(UIPageViewControllerTransitionStyle)style navigationOrientation:(UIPageViewControllerNavigationOrientation)navigationOrientation options:(NSDictionary *)options;
@@ -55,6 +57,7 @@ UIKIT_CLASS_AVAILABLE(5_0) @interface UIPageViewController : UIViewController {
 @property (nonatomic, getter=isDoubleSided) BOOL doubleSided; // Default is 'NO'.
 
 // An array of UIGestureRecognizers pre-configured to handle user interaction. Initially attached to a view in the UIPageViewController's hierarchy, they can be placed on an arbitrary view to change the region in which the page view controller will respond to user gestures.
+// Only populated if transition style is 'UIPageViewControllerTransitionStylePageCurl'.
 @property(nonatomic, readonly) NSArray *gestureRecognizers;
 
 @property (nonatomic, readonly) NSArray *viewControllers;
@@ -68,6 +71,9 @@ UIKIT_CLASS_AVAILABLE(5_0) @interface UIPageViewController : UIViewController {
 @protocol UIPageViewControllerDelegate <NSObject>
 
 @optional
+
+// Sent when a gesture-initiated transition begins.
+- (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers NS_AVAILABLE_IOS(6_0);
 
 // Sent when a gesture-initiated transition ends. The 'finished' parameter indicates whether the animation finished, while the 'completed' parameter indicates whether the transition completed or bailed out (if the user let go early).
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed;
@@ -87,5 +93,12 @@ UIKIT_CLASS_AVAILABLE(5_0) @interface UIPageViewController : UIViewController {
 // For gesture-initiated transitions, the page view controller obtains view controllers via these methods, so use of setViewControllers:direction:animated:completion: is not required.
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController;
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController;
+
+@optional
+
+// A page indicator will be visible if both methods are implemented, transition style is 'UIPageViewControllerTransitionStyleScroll', and navigation orientation is 'UIPageViewControllerNavigationOrientationHorizontal'.
+// Both methods are called in response to a 'setViewControllers:...' call, but the presentation index is updated automatically in the case of gesture-driven navigation.
+- (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController NS_AVAILABLE_IOS(6_0); // The number of items reflected in the page indicator.
+- (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController NS_AVAILABLE_IOS(6_0); // The selected item reflected in the page indicator.
 
 @end

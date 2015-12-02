@@ -2,14 +2,14 @@
 //  UIFont.h
 //  UIKit
 //
-//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIKitDefines.h>
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIFont : NSObject {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIFont : NSObject <NSCopying> {
   @private
 }
 
@@ -33,7 +33,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIFont : NSObject {
 @property(nonatomic,readonly)        CGFloat   descender;
 @property(nonatomic,readonly)        CGFloat   capHeight;
 @property(nonatomic,readonly)        CGFloat   xHeight;
-@property(nonatomic,readonly)        CGFloat   lineHeight __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic,readonly)        CGFloat   lineHeight NS_AVAILABLE_IOS(4_0);
 
 // Create a new font that is identical to the current font except the specified size
 - (UIFont *)fontWithSize:(CGFloat)fontSize;

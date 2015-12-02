@@ -53,6 +53,8 @@ EAGL_EXTERN_CLASS
 	struct _EAGLSharegroupPrivate *_private;
 }
 
+@property (copy, nonatomic) NSString* debugLabel NS_AVAILABLE_IOS(6_0);
+
 @end
 
 /************************************************************************/
@@ -74,6 +76,8 @@ EAGL_EXTERN_CLASS
 
 @property (readonly) EAGLRenderingAPI   API;
 @property (readonly) EAGLSharegroup*    sharegroup;
+
+@property (copy, nonatomic) NSString* debugLabel NS_AVAILABLE_IOS(6_0);
 
 @end
 

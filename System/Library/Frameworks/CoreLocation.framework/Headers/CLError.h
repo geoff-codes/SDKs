@@ -16,7 +16,7 @@
  *  Discussion:
  *    Error returned as code to NSError from CoreLocation.
  */
-typedef enum {
+enum {
     kCLErrorLocationUnknown  = 0,         // location is currently unknown, but CL will keep trying
     kCLErrorDenied,                       // CL access has been denied (eg, user declined location use)
     kCLErrorNetwork,                      // general, network-related error
@@ -27,8 +27,14 @@ typedef enum {
     kCLErrorRegionMonitoringResponseDelayed, // While events for this fence will be delivered, delivery will not occur immediately
     kCLErrorGeocodeFoundNoResult,         // A geocode request yielded no result
     kCLErrorGeocodeFoundPartialResult,    // A geocode request yielded a partial result
-    kCLErrorGeocodeCanceled               // A geocode request was cancelled
-} CLError;
+    kCLErrorGeocodeCanceled,              // A geocode request was cancelled
+    kCLErrorDeferredFailed,               // Deferred mode failed
+    kCLErrorDeferredNotUpdatingLocation,  // Deferred mode failed because location updates disabled or paused
+    kCLErrorDeferredAccuracyTooLow,       // Deferred mode not supported for the requested accuracy
+    kCLErrorDeferredDistanceFiltered,     // Deferred mode does not support distance filters
+    kCLErrorDeferredCanceled,             // Deferred mode request canceled a previous request
+};
+typedef NSInteger CLError;
 
 /*
  *  kCLErrorUserInfoAlternateRegionKey
@@ -37,4 +43,4 @@ typedef enum {
  *    When an error with code kCLErrorRegionMonitoringResponseDelayed is received, this key may be populated
  *    in the userInfo dictionary.  The value is a CLRegion that the location service can more effectively monitor.
  */
-extern NSString *const kCLErrorUserInfoAlternateRegionKey NS_AVAILABLE(NA, 5_0);
+extern NSString *const kCLErrorUserInfoAlternateRegionKey NS_AVAILABLE(10_7, 5_0);

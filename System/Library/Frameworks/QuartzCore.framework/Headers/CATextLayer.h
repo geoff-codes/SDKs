@@ -38,7 +38,7 @@
 @property CGColorRef foregroundColor;
 
 /* When true the string is wrapped to fit within the layer bounds.
- * Defaults to false.*/
+ * Defaults to NO.*/
 
 @property(getter=isWrapped) BOOL wrapped;
 

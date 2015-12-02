@@ -11,9 +11,6 @@
 
 #include <vImage/vImage_Types.h>
 
-
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -28,6 +25,7 @@ extern "C" {
  *             pixel = minFloat;
  *
  *  will work in place.
+ *  This function may be used for multichannel image formats, such as ARGBFFFF. Just scale the vImage_Buffer.width to compensate for the extra channels.
  */
 vImage_Error vImageClip_PlanarF(const vImage_Buffer* src, const vImage_Buffer* dest, Pixel_F maxFloat, Pixel_F minFloat, vImage_Flags flags)    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 
@@ -64,6 +62,7 @@ vImage_Error vImageConvert_PlanarFtoPlanar8(const vImage_Buffer *src, const vIma
  *          Pixel_88888 result = { pixelFromSrcA, pixelFromSrcR, pixelFromSrcG, pixelFromSrcB } 
  *
  *  will not work in place.
+ *  This function may be used to create other channel orderings such as RGBA8888 by passing in the planar8 images in the alternate order.
  */
 vImage_Error vImageConvert_Planar8toARGB8888(const vImage_Buffer *srcA, const vImage_Buffer *srcR, const vImage_Buffer *srcG, const vImage_Buffer *srcB, const vImage_Buffer *dest, vImage_Flags flags)    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 
@@ -75,6 +74,7 @@ vImage_Error vImageConvert_Planar8toARGB8888(const vImage_Buffer *srcA, const vI
  *          Pixel_FFFF result = { pixelFromSrcA, pixelFromSrcR, pixelFromSrcG, pixelFromSrcB } 
  *
  *  will not work in place.
+ *  This function may be used to create other channel orderings such as RGBAFFFF by passing in the planar8 images in the alternate order.
  */
 vImage_Error vImageConvert_PlanarFtoARGBFFFF(const vImage_Buffer *srcA, const vImage_Buffer *srcR, const vImage_Buffer *srcG, const vImage_Buffer *srcB, const vImage_Buffer *dest, vImage_Flags flags)    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 
@@ -89,6 +89,7 @@ vImage_Error vImageConvert_PlanarFtoARGBFFFF(const vImage_Buffer *srcA, const vI
  *          Pixel_8 destBResult = srcARGBPixel[3];
  *
  *  will not work in place.
+ *  This function may be used to deinterleave other channel orderings such as RGBA8888 by passing in the planar8 images in the alternate order.
  */
 vImage_Error vImageConvert_ARGB8888toPlanar8(const vImage_Buffer *srcARGB, const vImage_Buffer *destA, const vImage_Buffer *destR, const vImage_Buffer *destG, const vImage_Buffer *destB, vImage_Flags flags)    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 
@@ -103,6 +104,7 @@ vImage_Error vImageConvert_ARGB8888toPlanar8(const vImage_Buffer *srcARGB, const
  *          Pixel_F destBResult = srcARGBPixel[3];
  *
  *  will not work in place.
+ *  This function may be used to deinterleave other channel orderings such as RGBAFFFF by passing in the planar8 images in the alternate order.
  */
 vImage_Error vImageConvert_ARGBFFFFtoPlanarF(const vImage_Buffer *srcARGB, const vImage_Buffer *destA, const vImage_Buffer *destR, const vImage_Buffer *destG, const vImage_Buffer *destB, vImage_Flags flags)    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 
@@ -170,6 +172,8 @@ vImage_Error vImageConvert_16UToF( const vImage_Buffer *src, const vImage_Buffer
  *              vImageConvert_FTo16S( float_buffer, int16_buffer, myOffset, myScale, kvImageNoFlags );   //Convert back to int16_t
  *
  *  will not work in place.
+ *  To convert multichannel interleaved floating point formats (e.g. ARGB_FFFF) to a multichannel 16-bit image format with the same channel ordering, 
+ *  simply multiply the vImage_Buffer.width by the number of channels.
  */
 vImage_Error vImageConvert_FTo16S( const vImage_Buffer *src, const vImage_Buffer *dest, float offset, float scale, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 
@@ -189,6 +193,8 @@ vImage_Error vImageConvert_FTo16S( const vImage_Buffer *src, const vImage_Buffer
  *              vImageConvert_FTo16U( float_buffer, uint16_buffer, myOffset, myScale, kvImageNoFlags );   //Convert back to uint16_t
  *
  *  will not work in place.
+ *  To convert multichannel interleaved floating point formats (e.g. ARGB_FFFF) to a multichannel 16-bit image format with the same channel ordering, 
+ *  simply multiply the vImage_Buffer.width by the number of channels.
  */
 vImage_Error vImageConvert_FTo16U( const vImage_Buffer *src, const vImage_Buffer *dest, float offset, float scale, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 
@@ -200,6 +206,8 @@ vImage_Error vImageConvert_FTo16U( const vImage_Buffer *src, const vImage_Buffer
  *      A different lookup table is used for each channel in the ARGB image
  *
  *  will work in place.
+ *  This function may be used to do table lookups on other 4 channel 8-bit/channel formats (e.g. RGBA8888) by adjusting the order of the tables
+ *  passed into the function accordingly.
  *
  *	Performance Advisory:  For 8-bit monochrome -> ARGB8888  or 8-bit indexed -> ARGB8888 conversions, it is probably significantly faster
  *							to use vImageLookupTable_Planar8toPlanarF. Use the desired ARGB8888 (32 bits/pixel) pixels in place of the planar 
@@ -216,20 +224,26 @@ vImage_Error vImageTableLookUp_ARGB8888(const vImage_Buffer *src, const vImage_B
 vImage_Error vImageTableLookUp_Planar8(const vImage_Buffer *src, const vImage_Buffer *dest, const Pixel_8 table[256], vImage_Flags flags)    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 
 
-//origSrc and dest may overlap, if they share the same origin. 
-//origSrc should be at least as big as dest
-//
-// origSrc and dest can be the same buffer
+/*
+ * origSrc and dest may overlap, if they share the same origin. 
+ * origSrc should be at least as big as dest
+ *
+ * origSrc and dest can be the same buffer
+ * This function may be used with other channel orderings (e.g. origSrc -> a RGBA8888 buffer) by adjusting the order of the bits in the copyMask.
+ */
 vImage_Error vImageOverwriteChannels_ARGB8888(	const vImage_Buffer *newSrc,       /* A planar buffer */
                                                 const vImage_Buffer *origSrc,      /* A ARGB interleaved buffer */
                                                 const vImage_Buffer *dest,      /* A ARGB interleaved buffer */
                                                 uint8_t copyMask,               /* Copy plane into  0x8  -- alpha, 0x4 -- red, 0x2 --- green, 0x1 --- blue */ 
                                                 vImage_Flags    flags )		__OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 
-//origSrc and dest may overlap, if they share the same origin. 
-//origSrc should be at least as big as dest
-//
-// origSrc and dest can be the same buffer
+/*
+ * origSrc and dest may overlap, if they share the same origin. 
+ * origSrc should be at least as big as dest
+ *
+ * origSrc and dest can be the same buffer
+ * This function may be used with other channel orderings (e.g. origSrc -> a RGBA8888 buffer) by adjusting the order of the bits in the copyMask.
+ */
 vImage_Error vImageOverwriteChannels_ARGBFFFF(	const vImage_Buffer *newSrc,       /* A planar buffer */
                                                 const vImage_Buffer *origSrc,      /* A ARGB interleaved buffer */
                                                 const vImage_Buffer *dest,      /* A ARGB interleaved buffer */
@@ -252,9 +266,10 @@ vImage_Error vImageOverwriteChannelsWithScalar_PlanarF( Pixel_F     scalar,
 
 
 
-//
-// Fill a buffer with a color. Use vImageOverwriteChannelsWithScalar_* to fill planar buffers with a color.
-//
+/*
+ * Fill a buffer with a color. Use vImageOverwriteChannelsWithScalar_* to fill planar buffers with a color.
+ * These functions work for any 4-channel 8-bit/channel or floating-point format, such as RGBAFFFF or BGRA8888.
+ */
 vImage_Error vImageBufferFill_ARGB8888( const vImage_Buffer *dest, const Pixel_8888 color, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 vImage_Error vImageBufferFill_ARGBFFFF( const vImage_Buffer *dest, const Pixel_FFFF color, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 
@@ -283,6 +298,7 @@ vImage_Error vImageBufferFill_ARGBFFFF( const vImage_Buffer *dest, const Pixel_F
  *	The src buffer must be at least as large as the dest buffer. (src.height >= dest.height && src.width >= dest.width)
  *
  * Will work in place. 
+ * These functions may be used for images with other channel orderings such as RGBA8888 by adjusting the ordering of the bits in copyMask.
  */
 vImage_Error vImageOverwriteChannelsWithScalar_ARGB8888(	Pixel_8     scalar,
                                                                 const vImage_Buffer *src,      /* A ARGB interleaved buffer */
@@ -316,6 +332,7 @@ vImage_Error vImageOverwriteChannelsWithScalar_ARGB8888(	Pixel_8     scalar,
  *	The src buffer must be at least as large as the dest buffer. (src.height >= dest.height && src.width >= dest.width)
  *
  * Will work in place. 
+ * These functions may be used for images with other channel orderings such as RGBAFFFF by adjusting the ordering of the bits in copyMask.
  */
 vImage_Error vImageOverwriteChannelsWithScalar_ARGBFFFF(	Pixel_F     scalar,
                                                                 const vImage_Buffer *src,      /* A ARGB interleaved buffer */
@@ -335,6 +352,7 @@ vImage_Error vImageOverwriteChannelsWithScalar_ARGBFFFF(	Pixel_F     scalar,
  * The src buffer must be at least as large as the dest buffer in each dimension. (src.height >= dest.height && src.width >= dest.width)
  *
  * Will work in place. 
+ * This function may be used with any 4 channel 8-bit/channel format, such as RGBA8888, BGRA8888 or AYUV8888.
  */
 vImage_Error vImagePermuteChannels_ARGB8888(    const vImage_Buffer *src,
                                                 const vImage_Buffer *dest,
@@ -353,6 +371,7 @@ vImage_Error vImagePermuteChannels_ARGB8888(    const vImage_Buffer *src,
  * The src buffer must be at least as large as the dest buffer in each dimension. (src.height >= dest.height && src.width >= dest.width)
  *
  * Will work in place. 
+ * This function may be used with any 4 channel floating-point format, such as RGBAFFFF, BGRAFFFF or AYUVFFF.
  */
 vImage_Error vImagePermuteChannels_ARGBFFFF(    const vImage_Buffer *src,
                                                 const vImage_Buffer *dest,
@@ -379,7 +398,7 @@ vImage_Error vImagePermuteChannels_ARGBFFFF(    const vImage_Buffer *src,
  *      uint32_t blue  = (8bitBlueChannel  * 31 + 127) / 255;
  *      uint16_t ARGB1555pixel =  (alpha << 15) | (red << 10) | (green << 5) | blue;
  *
- *  Does work in place
+ *  Does work in place.
  */
 vImage_Error    vImageConvert_ARGB1555toPlanar8( const vImage_Buffer *src, const vImage_Buffer *destA, const vImage_Buffer *destR, const vImage_Buffer *destG, const vImage_Buffer *destB, vImage_Flags flags )  __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 vImage_Error    vImageConvert_ARGB1555toARGB8888( const vImage_Buffer *src, const vImage_Buffer *dest, vImage_Flags flags )  __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
@@ -426,6 +445,7 @@ vImage_Error    vImageConvert_ARGB8888toRGB565( const vImage_Buffer *src, const 
  *
  *  vImageConvert_Planar16FtoPlanarF does not work in place. 
  *  vImageConvert_PlanarFtoPlanar16F does work in place, though the contents of the unused half of the buffer are undefined 
+ *  These functions may also be used with multichannel images formats, such as RGBAFFFF by scaling the width by the number of channels.
  */
 vImage_Error    vImageConvert_Planar16FtoPlanarF( const vImage_Buffer *src, const vImage_Buffer *dest, vImage_Flags flags )  __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 vImage_Error    vImageConvert_PlanarFtoPlanar16F( const vImage_Buffer *src, const vImage_Buffer *dest, vImage_Flags flags )  __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
@@ -440,6 +460,7 @@ vImage_Error    vImageConvert_PlanarFtoPlanar16F( const vImage_Buffer *src, cons
  *      To convert 4 channel interleaved unsigned 16 bit data to ARGB_8888, simply multiply the vImage_Buffer.width by 4.
  *
  *  Will work in place, though the contents of the unused half of the source buffer are undefined after conversion.
+ *  This function may also be used with multichannel images formats, such as RGBA16U -> RGBA8888 by scaling the width by the number of channels.
  */
 vImage_Error vImageConvert_16UToPlanar8( const vImage_Buffer *src, const vImage_Buffer *dest, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 
@@ -451,6 +472,7 @@ vImage_Error vImageConvert_16UToPlanar8( const vImage_Buffer *src, const vImage_
  *          uint16_t result = (srcPixel * 65535 + 127 ) / 255;      
  *
  *  will not work in place.
+ *  This function may also be used with multichannel images formats, such as RGBA8888 -> RGBA16U  by scaling the width by the number of channels.
  */
 vImage_Error vImageConvert_Planar8To16U( const vImage_Buffer *src, const vImage_Buffer *dest, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 
@@ -465,23 +487,44 @@ vImage_Error vImageConvert_Planar8To16U( const vImage_Buffer *src, const vImage_
  *
  *  will not work in place.
  */
- vImage_Error vImageConvert_RGB888toARGB8888(   const vImage_Buffer *rgbSrc, 
-                                                const vImage_Buffer *aSrc, 
-                                                Pixel_8 alpha, 
-                                                const vImage_Buffer *argbDest, 
-                                                bool premultiply,  /* Boolean 1 or 0 */ 
-                                                vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
-
+ vImage_Error vImageConvert_RGB888toARGB8888(   const vImage_Buffer* /* rgbSrc */, 
+                                                const vImage_Buffer* /* aSrc */, 
+                                                Pixel_8 /* alpha */, 
+                                                const vImage_Buffer* /*argbDest*/, 
+                                                bool /* premultiply */,  /* Boolean 1 or 0 */ 
+                                                vImage_Flags /* flags */ ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
+vImage_Error vImageConvert_RGB888toRGBA8888(    const vImage_Buffer * /* rgbSrc */, 
+                                                const vImage_Buffer * /* aSrc */, 
+                                                Pixel_8 /* alpha */, 
+                                                const vImage_Buffer * /* rgbaDest */, 
+                                                bool /* premultiply */,  /* Boolean 1 or 0 */ 
+                                                vImage_Flags /* flags */ ) __OSX_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0 );
+vImage_Error vImageConvert_RGB888toBGRA8888(    const vImage_Buffer * /* rgbSrc, */,
+                                                const vImage_Buffer * /* aSrc */, 
+                                                Pixel_8 /* alpha */, 
+                                                const vImage_Buffer * /* bgraDest */, 
+                                                bool /* premultiply */,  /* Boolean 1 or 0 */ 
+                                                vImage_Flags /* flags */ ) __OSX_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0 );
+#define vImageConvert_BGR888toBGRA8888( _bgrSrc, _aSrc, _alpha, _bgraDest, _premultiply, _flags )   vImageConvert_RGB888toRGBA8888((_bgrSrc), (_aSrc), (_alpha), (_bgraDest), (_premultiply), (_flags) ) 
+#define vImageConvert_BGR888toRGBA8888( _bgrSrc, _aSrc, _alpha, _rgbaDest, _premultiply, _flags )   vImageConvert_RGB888toBGRA8888((_bgrSrc), (_aSrc), (_alpha), (_rgbaDest), (_premultiply), (_flags) ) 
+    
 /*
  *  Convert 4 channel buffer to a 3 channel one, by removing the 1st channel.
  *  The R,G and B channels are simply copied into the new buffer.
  *
  *  Will work in place
  */
- vImage_Error vImageConvert_ARGB8888toRGB888(   const vImage_Buffer *argbSrc, 
-                                                const vImage_Buffer *rgbDest, 
-                                                vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
-
+vImage_Error vImageConvert_ARGB8888toRGB888(    const vImage_Buffer * /*argbSrc*/, 
+                                                const vImage_Buffer * /*rgbDest*/, 
+                                                vImage_Flags /* flags */ ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
+vImage_Error vImageConvert_RGBA8888toRGB888(    const vImage_Buffer * /*rgbaSrc*/, 
+                                                const vImage_Buffer * /*rgbDest*/, 
+                                                vImage_Flags /* flags */ ) __OSX_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0 );
+vImage_Error vImageConvert_BGRA8888toRGB888(    const vImage_Buffer * /* bgraSrc */, 
+                                                const vImage_Buffer * /* rgbDest */, 
+                                                vImage_Flags /* flags */ ) __OSX_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0 );
+#define vImageConvert_RGBA8888toBGR888( _rgbaSrc, _bgrDest, _flags )    vImageConvert_BGRA8888toRGB888((_rgbaSrc), (_bgrDest), (_flags))
+#define vImageConvert_BGRA8888toBGR888( _bgraSrc, _bgrDest, _flags )    vImageConvert_RGBA8888toRGB888((_bgraSrc), (_bgrDest), (_flags))
 
 /*
  * Flatten a ARGB8888 image to a RGB888 image against an opaque background of a certain color. 
@@ -498,26 +541,63 @@ vImage_Error vImageConvert_Planar8To16U( const vImage_Buffer *src, const vImage_
  *           color = color + (1.0f - alpha) * backgroundColor
  *       else
  *           color = color * alpha + (1.0f - alpha) * backgroundColor
+ *
+ *  backgroundColor.alpha is ignored.
+ *  These functions will work in place provided that rowBytes and the position of row starts is the same between src and dest images.
  */
 vImage_Error  vImageFlatten_ARGB8888ToRGB888( 
-                                                const vImage_Buffer *argb8888Src, 
-                                                const vImage_Buffer *rgb888dest, 
-                                                Pixel_8888  backgroundColor,    /* background color is assumed to have a 255 alpha channel */
-                                                bool     isImagePremultiplied,
-                                                vImage_Flags    flags
+                                                const vImage_Buffer * /* argb8888Src */, 
+                                                const vImage_Buffer * /* rgb888dest */, 
+                                                Pixel_8888   /* backgroundColor */,    /* background color is assumed to have a 255 alpha channel */
+                                                bool      /* isImagePremultiplied */,
+                                                vImage_Flags     /* flags */
                                             ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 vImage_Error  vImageFlatten_ARGBFFFFToRGBFFF( 
-                                                const vImage_Buffer *argbFFFFSrc, 
-                                                const vImage_Buffer *rgbFFFdest, 
-                                                Pixel_FFFF  backgroundColor,    /* background color is assumed to have a 1.0f alpha channel */
-                                                bool     isImagePremultiplied,
-                                                vImage_Flags    flags
+                                                const vImage_Buffer * /* argbFFFFSrc */, 
+                                                const vImage_Buffer * /* rgbFFFdest */, 
+                                                Pixel_FFFF   /* backgroundColor */,    /* background color is assumed to have a 1.0f alpha channel */
+                                                bool      /* isImagePremultiplied */,
+                                                vImage_Flags     /* flags */
                                             ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
+vImage_Error  vImageFlatten_RGBA8888ToRGB888( 
+                                             const vImage_Buffer * /* rgba8888Src */, 
+                                             const vImage_Buffer * /* rgb888dest */, 
+                                             Pixel_8888   /* backgroundColor */,    /* background color is assumed to have a 255 alpha channel */
+                                             bool      /* isImagePremultiplied */,
+                                             vImage_Flags     /* flags */
+                                             ) __OSX_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0 );
+vImage_Error  vImageFlatten_RGBAFFFFToRGBFFF( 
+                                             const vImage_Buffer * /* rgbaFFFFSrc */, 
+                                             const vImage_Buffer * /* rgbFFFdest */, 
+                                             Pixel_FFFF   /* backgroundColor */,    /* background color is assumed to have a 1.0f alpha channel */
+                                             bool      /* isImagePremultiplied */,
+                                             vImage_Flags     /* flags */
+                                             ) __OSX_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0 );
+vImage_Error  vImageFlatten_BGRA8888ToRGB888( 
+                                             const vImage_Buffer * /* bgra8888Src */, 
+                                             const vImage_Buffer * /* rgb888dest */, 
+                                             Pixel_8888   /* backgroundColor */,    /* background color is assumed to have a 255 alpha channel */
+                                             bool      /* isImagePremultiplied */,
+                                             vImage_Flags     /* flags */
+                                             ) __OSX_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0 );
+vImage_Error  vImageFlatten_BGRAFFFFToRGBFFF( 
+                                             const vImage_Buffer * /* bgraFFFFSrc */, 
+                                             const vImage_Buffer * /* rgbFFFdest */, 
+                                             Pixel_FFFF   /* backgroundColor */,    /* background color is assumed to have a 1.0f alpha channel */
+                                             bool      /* isImagePremultiplied */,
+                                             vImage_Flags     /* flags */
+                                             ) __OSX_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0 );
+#define vImageFlatten_BGRA8888ToBGR888( _bgra8888Src, _bgr888Dest, _backgroundColor, _isImagePremultiplied, _flags )        \
+        vImageFlatten_RGBA8888ToRGB888( (_bgra8888Src), (_bgr888Dest), (_backgroundColor), (_isImagePremultiplied), (_flags) )
+#define vImageFlatten_RGBA8888ToBGR888( _rgba8888Src, _bgr888Dest, _backgroundColor, _isImagePremultiplied, _flags )        \
+        vImageFlatten_BGRA8888ToRGB888( (_rgba8888Src), (_bgr888Dest), (_backgroundColor), (_isImagePremultiplied), (_flags) )
 
+    
 /*
  *  Convert 3 planar buffers to a 3 channel interleave buffer.
  *
  *  Does not work in place
+ *  This may be used to produce other channel orderings by changing the order of the planar buffers passed into the function.
  */
 vImage_Error vImageConvert_Planar8toRGB888( const vImage_Buffer *planarRed, const vImage_Buffer *planarGreen, const vImage_Buffer *planarBlue, const vImage_Buffer *rgbDest, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 ); 
 vImage_Error vImageConvert_PlanarFtoRGBFFF( const vImage_Buffer *planarRed, const vImage_Buffer *planarGreen, const vImage_Buffer *planarBlue, const vImage_Buffer *rgbDest, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 ); 
@@ -526,6 +606,7 @@ vImage_Error vImageConvert_PlanarFtoRGBFFF( const vImage_Buffer *planarRed, cons
  *  Convert a 3 channel interleave buffer to 3 planar buffers.
  *
  *  Does not work in place
+ *  This may be used to consume other channel orderings by changing the order of the planar buffers passed into the function.
  */
 vImage_Error vImageConvert_RGB888toPlanar8( const vImage_Buffer *rgbSrc, const vImage_Buffer *redDest, const vImage_Buffer *greenDest, const vImage_Buffer *blueDest, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 ); 
 vImage_Error vImageConvert_RGBFFFtoPlanarF( const vImage_Buffer *rgbSrc, const vImage_Buffer *redDest, const vImage_Buffer *greenDest, const vImage_Buffer *blueDest, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 ); 
@@ -535,6 +616,7 @@ vImage_Error vImageConvert_RGBFFFtoPlanarF( const vImage_Buffer *rgbSrc, const v
  *  Does the same thing as vImageOverwriteChannels_ARGB8888 except that the newSrc buffer is formatted as ARGB8888
  *  If the appropriate copyMask bit is set, then the color channel from newSrc is used. Otherwise the color channel from origSrc is used.
  *  We note that functions of this kind only exist for interleaved buffers. If you had been using planar data, this would just be a pointer swap.
+ *  This will work for other channel orderings, such as RGBA8888.  You need to adjust the ordering of the bits in copyMask to compensate.
  */
 vImage_Error	vImageSelectChannels_ARGB8888( const vImage_Buffer *newSrc,       /* A ARGB interleaved buffer */
                                                 const vImage_Buffer *origSrc,      /* A ARGB interleaved buffer */
@@ -550,20 +632,19 @@ vImage_Error	vImageSelectChannels_ARGBFFFF( const vImage_Buffer *newSrc,       /
 
 /*
  *  The following are like vImageOverwriteChannelsWithScalar_ARGB*, except that they take a ARGB input pixel, instead of a planar one. 
- *  This allows you to write in different constant values for different channels. This is the interface that we should have put in X.4. 
- *  Alas, better late than never. We anticipate performance to be identical to the older function.
+ *  This will work for other channel orderings, such as RGBA8888. You will need to adjust the ordering of bits in copyMask to compensate.
  */
 vImage_Error vImageOverwriteChannelsWithPixel_ARGB8888( const Pixel_8888     the_pixel,
-                                                                const vImage_Buffer *src,      /* A ARGB interleaved buffer */
-                                                                const vImage_Buffer *dest,      /* A ARGB interleaved buffer */
-                                                                uint8_t copyMask,               /* Copy plane into  0x8  -- alpha, 0x4 -- red, 0x2 --- green, 0x1 --- blue */ 
-                                                                vImage_Flags    flags )     __OSX_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_5_0 );
+                                                        const vImage_Buffer *src,      /* A ARGB interleaved buffer */
+                                                        const vImage_Buffer *dest,      /* A ARGB interleaved buffer */
+                                                        uint8_t copyMask,               /* Copy plane into  0x8  -- alpha, 0x4 -- red, 0x2 --- green, 0x1 --- blue */ 
+                                                        vImage_Flags    flags )     __OSX_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_5_0 );
 
 vImage_Error vImageOverwriteChannelsWithPixel_ARGBFFFF( const Pixel_FFFF     the_pixel,
-                                                                const vImage_Buffer *src,      /* A ARGB interleaved buffer */
-                                                                const vImage_Buffer *dest,      /* A ARGB interleaved buffer */
-                                                                uint8_t copyMask,               /* Copy plane into  0x8  -- alpha, 0x4 -- red, 0x2 --- green, 0x1 --- blue */ 
-                                                                vImage_Flags    flags )     __OSX_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_5_0 );
+                                                        const vImage_Buffer *src,      /* A ARGB interleaved buffer */
+                                                        const vImage_Buffer *dest,      /* A ARGB interleaved buffer */
+                                                        uint8_t copyMask,               /* Copy plane into  0x8  -- alpha, 0x4 -- red, 0x2 --- green, 0x1 --- blue */ 
+                                                        vImage_Flags    flags )     __OSX_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_5_0 );
 
 
 /*
@@ -579,10 +660,10 @@ vImage_Error vImageOverwriteChannelsWithPixel_ARGBFFFF( const Pixel_FFFF     the
  */
 vImage_Error    vImageConvert_Planar8ToXRGB8888( Pixel_8 alpha, const vImage_Buffer *red, const vImage_Buffer *green, const vImage_Buffer *blue, const vImage_Buffer *dest, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
 vImage_Error    vImageConvert_Planar8ToBGRX8888( const vImage_Buffer *blue, const vImage_Buffer *green, const vImage_Buffer *red, Pixel_8 alpha, const vImage_Buffer *dest, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
-#define         vImageConvert_Planar8ToRGBX8888( _red, _green, _blue, _alpha, _dest, _flags )   vImageConvert_Planar8ToBGRX8888( _red, _green, _blue, _alpha, _dest, _flags )
+#define         vImageConvert_Planar8ToRGBX8888( _red, _green, _blue, _alpha, _dest, _flags )   vImageConvert_Planar8ToBGRX8888((_red), (_green), (_blue), (_alpha), (_dest), (_flags))
 vImage_Error    vImageConvert_PlanarFToXRGBFFFF( Pixel_F alpha, const vImage_Buffer *red, const vImage_Buffer *green, const vImage_Buffer *blue, const vImage_Buffer *dest, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
 vImage_Error    vImageConvert_PlanarFToBGRXFFFF( const vImage_Buffer *blue, const vImage_Buffer *green, const vImage_Buffer *red, Pixel_F alpha, const vImage_Buffer *dest, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
-#define         vImageConvert_PlanarFToRGBXFFFF( _red, _green, _blue, _alpha, _dest, _flags )   vImageConvert_PlanarFToBGRXFFFF( _red, _green, _blue, _alpha, _dest, _flags )
+#define         vImageConvert_PlanarFToRGBXFFFF( _red, _green, _blue, _alpha, _dest, _flags )   vImageConvert_PlanarFToBGRXFFFF( (_red), (_green), (_blue), (_alpha), (_dest), (_flags))
     
 /*
  *  vImageConvert_Planar8ToARGBFFFF
@@ -618,7 +699,7 @@ vImage_Error    vImageConvert_PlanarFToBGRXFFFF( const vImage_Buffer *blue, cons
 vImage_Error    vImageConvert_Planar8ToARGBFFFF( const vImage_Buffer *alpha, const vImage_Buffer *red, const vImage_Buffer *green, const vImage_Buffer *blue, const vImage_Buffer *dest, const Pixel_FFFF maxFloat, const Pixel_FFFF minFloat, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
 vImage_Error    vImageConvert_Planar8ToXRGBFFFF( Pixel_F alpha, const vImage_Buffer *red, const vImage_Buffer *green, const vImage_Buffer *blue, const vImage_Buffer *dest, const Pixel_FFFF maxFloat, const Pixel_FFFF minFloat, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
 vImage_Error    vImageConvert_Planar8ToBGRXFFFF(const vImage_Buffer *blue, const vImage_Buffer *green, const vImage_Buffer *red, Pixel_F alpha, const vImage_Buffer *dest, const Pixel_FFFF maxFloat, const Pixel_FFFF minFloat, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
-#define         vImageConvert_Planar8ToRGBXFFFF(_red, _green, _blue, _alpha, _dest, _maxFloat, _minFloat, _flags)  vImageConvert_Planar8ToBGRXFFFF(_red, _green, _blue, _alpha, _dest, _maxFloat, _minFloat, _flags)
+#define         vImageConvert_Planar8ToRGBXFFFF(_red, _green, _blue, _alpha, _dest, _maxFloat, _minFloat, _flags)  vImageConvert_Planar8ToBGRXFFFF((_red), (_green), (_blue), (_alpha), (_dest), (_maxFloat), (_minFloat), (_flags))
     
 /*
  *  vImageConvert_PlanarFToARGB8888
@@ -670,7 +751,7 @@ vImage_Error    vImageConvert_Planar8ToBGRXFFFF(const vImage_Buffer *blue, const
 vImage_Error    vImageConvert_PlanarFToARGB8888( const vImage_Buffer *alpha, const vImage_Buffer *red, const vImage_Buffer *green, const vImage_Buffer *blue, const vImage_Buffer *dest, const Pixel_FFFF maxFloat, const Pixel_FFFF minFloat, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
 vImage_Error    vImageConvert_PlanarFToXRGB8888( Pixel_8 alpha, const vImage_Buffer *red, const vImage_Buffer *green, const vImage_Buffer *blue, const vImage_Buffer *dest, const Pixel_FFFF maxFloat, const Pixel_FFFF minFloat, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
 vImage_Error    vImageConvert_PlanarFToBGRX8888( const vImage_Buffer *blue, const vImage_Buffer *green, const vImage_Buffer *red, Pixel_8 alpha, const vImage_Buffer *dest, const Pixel_FFFF maxFloat, const Pixel_FFFF minFloat, vImage_Flags flags ) __OSX_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_5_0 );
-#define         vImageConvert_PlanarFToRGBX8888( _red, _green, _blue, _alpha, _dest, _maxFloat, _minFloat, _flags )     vImageConvert_PlanarFToBGRX8888( _red, _green, _blue, _alpha, _dest, _maxFloat, _minFloat, _flags )
+#define         vImageConvert_PlanarFToRGBX8888( _red, _green, _blue, _alpha, _dest, _maxFloat, _minFloat, _flags )     vImageConvert_PlanarFToBGRX8888((_red), (_green), (_blue), (_alpha), (_dest), (_maxFloat), (_minFloat), (_flags))
 
 #ifdef __cplusplus
 }

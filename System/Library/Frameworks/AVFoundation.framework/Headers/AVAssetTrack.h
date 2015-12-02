@@ -52,7 +52,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 @property (nonatomic, readonly) NSArray *formatDescriptions;
 
 /* Indicates whether the receiver is playable in the current environment; if YES, an AVPlayerItemTrack of an AVPlayerItem initialized with the receiver's asset can be enabled for playback.  */
-@property (nonatomic, readonly, getter=isPlayable) BOOL playable NS_AVAILABLE(TBD, 5_0);
+@property (nonatomic, readonly, getter=isPlayable) BOOL playable NS_AVAILABLE(10_8, 5_0);
 
 /* indicates whether the track is enabled according to state stored in its container or construct;
    note that its presentation state can be changed from this default via AVPlayerItemTrack */

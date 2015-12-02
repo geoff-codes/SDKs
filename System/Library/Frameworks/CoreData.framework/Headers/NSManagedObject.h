@@ -1,11 +1,11 @@
 /*
     NSManagedObject.h
     Core Data
-    Copyright (c) 2004-2010 Apple Inc.
+    Copyright (c) 2004-2012 Apple Inc.
     All rights reserved.
 */
 
-#import <Foundation/NSObject.h>
+#import <Foundation/NSArray.h>
 #import <Foundation/NSKeyValueObserving.h>
 
 @class NSDictionary;
@@ -13,7 +13,6 @@
 @class NSError;
 @class NSManagedObjectContext;
 @class NSManagedObjectID;
-@class NSString;
 
 enum {
 	NSSnapshotEventUndoInsertion = 1 << 1,
@@ -26,7 +25,7 @@ enum {
 
 typedef NSUInteger NSSnapshotEventType;
 
-NS_CLASS_AVAILABLE(10_4,3_0)
+NS_CLASS_AVAILABLE(10_4,3_0) NS_REQUIRES_PROPERTY_DEFINITIONS
 @interface NSManagedObject : NSObject {
 @private
     int32_t             _cd_rc;

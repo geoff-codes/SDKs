@@ -4,11 +4,6 @@
 //
 //  Copyright 2009-2010 Apple Inc. All rights reserved.
 //
-//  This class describes the recurrence pattern for a repeating event. The recurrence rules that can be expressed are 
-//  not restricted to the recurrence patterns that can be set in Calendar's UI. It is currently not possible to directly
-//  modify a EKRecurrenceRule or any of its properties. This functionality is achieved by creating a new EKRecurrenceRule, and 
-//  setting an event to use the new rule. When a new recurrence rule is set on an EKEvent, that change is not saved 
-//  until the client has passed the modified event to EKEventStore's saveEvent: method.
 
 #import <Foundation/Foundation.h>
 #import <EventKit/EventKitDefines.h>
@@ -22,8 +17,15 @@
 /*!
     @class      EKRecurrenceRule
     @abstract   Represents how an event repeats.
-*/
-EVENTKIT_CLASS_AVAILABLE(4_0)
+    @discussion This class describes the recurrence pattern for a repeating event. The recurrence rules that 
+                can be expressed are not restricted to the recurrence patterns that can be set in Calendar's UI. 
+ 
+                It is currently not possible to directly modify a EKRecurrenceRule or any of its properties. 
+                This functionality is achieved by creating a new EKRecurrenceRule, and setting an event to use the new rule. 
+                When a new recurrence rule is set on an EKEvent, that change is not saved until the client 
+                has passed the modified event to EKEventStore's saveEvent: method.
+ */
+EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
 @interface EKRecurrenceRule : EKObject <NSCopying> {
 }
 
@@ -133,8 +135,8 @@ EVENTKIT_CLASS_AVAILABLE(4_0)
 
 /*!
     @property       daysOfTheWeek
-    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKWeeklyRecurrence, EKMonthlyRecurrence, or 
-                    EKYearlyRecurrence. This property can be accessed as an array containing one or more EKRecurrenceDayOfWeek objects
+    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKRecurrenceFrequencyWeekly, EKRecurrenceFrequencyMonthly, or 
+                    EKRecurrenceFrequencyYearly. This property can be accessed as an array containing one or more EKRecurrenceDayOfWeek objects
                     corresponding to the days of the week the event recurs. For all other EKRecurrenceRules, this property is nil.
                     This property corresponds to BYDAY in the iCalendar specification.
 */
@@ -142,8 +144,8 @@ EVENTKIT_CLASS_AVAILABLE(4_0)
 
 /*!
     @property       daysOfTheMonth
-    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKMonthlyRecurrence, and that were initialized with one
-                    or more specific days of the month (not with a day of the week and week of the month). This property can be
+    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKRecurrenceFrequencyMonthly, and that were initialized 
+                    with one or more specific days of the month (not with a day of the week and week of the month). This property can be
                     accessed as an array containing one or more NSNumbers corresponding to the days of the month the event recurs.
                     For all other EKRecurrenceRules, this property is nil. This property corresponds to BYMONTHDAY in the iCalendar 
                     specification.
@@ -152,8 +154,8 @@ EVENTKIT_CLASS_AVAILABLE(4_0)
 
 /*!
     @property       daysOfTheYear
-    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKYearlyRecurrence. This property can be accessed as an
-                    array containing one or more NSNumbers corresponding to the days of the year the event recurs. For all other 
+    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKRecurrenceFrequencyYearly. This property can be accessed 
+                    as an array containing one or more NSNumbers corresponding to the days of the year the event recurs. For all other 
                     EKRecurrenceRules, this property is nil. This property corresponds to BYYEARDAY in the iCalendar specification. It should
                     contain values between 1 to 366 or -366 to -1.
 */
@@ -161,8 +163,8 @@ EVENTKIT_CLASS_AVAILABLE(4_0)
 
 /*!
     @property       weeksOfTheYear
-    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKYearlyRecurrence. This property can be accessed as an
-                    array containing one or more NSNumbers corresponding to the weeks of the year the event recurs. For all other 
+    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKRecurrenceFrequencyYearly. This property can be accessed 
+                    as an array containing one or more NSNumbers corresponding to the weeks of the year the event recurs. For all other 
                     EKRecurrenceRules, this property is nil. This property corresponds to BYWEEK in the iCalendar specification. It should
                     contain integers from 1 to 53 or -1 to -53.
 */
@@ -170,16 +172,16 @@ EVENTKIT_CLASS_AVAILABLE(4_0)
 
 /*!
     @property       monthsOfTheYear
-    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKYearlyRecurrence. This property can be accessed as an
-                    array containing one or more NSNumbers corresponding to the months of the year the event recurs. For all other 
+    @discussion     This property is valid for rules whose EKRecurrenceFrequency is EKRecurrenceFrequencyYearly. This property can be accessed 
+                    as an array containing one or more NSNumbers corresponding to the months of the year the event recurs. For all other 
                     EKRecurrenceRules, this property is nil. This property corresponds to BYMONTH in the iCalendar specification.
 */
 @property(nonatomic, readonly) NSArray *monthsOfTheYear;
 
 /*!
     @property       setPositions
-    @discussion     This property is valid for rules which have a valid daysOfTheWeek, daysOfTheMonth, weeksOfTheYear, or monthsOfTheYear property. It
-                    allows you to specify a set of ordinal numbers to help choose which objects out of the set of selected events should be
+    @discussion     This property is valid for rules which have a valid daysOfTheWeek, daysOfTheMonth, weeksOfTheYear, or monthsOfTheYear property. 
+                    It allows you to specify a set of ordinal numbers to help choose which objects out of the set of selected events should be
                     included. For example, setting the daysOfTheWeek to Monday-Friday and including a value of -1 in the array would indicate
                     the last weekday in the recurrence range (month, year, etc). This value corresponds to the iCalendar BYSETPOS property.
 */

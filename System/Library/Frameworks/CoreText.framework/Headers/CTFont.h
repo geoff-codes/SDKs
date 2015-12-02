@@ -2,7 +2,7 @@
  *  CTFont.h
  *  CoreText
  *
- *  Copyright (c) 2006-2011 Apple Inc. All rights reserved.
+ *  Copyright (c) 2006-2012 Apple Inc. All rights reserved.
  *
  */
 
@@ -20,9 +20,6 @@
 #include <CoreText/CTDefines.h>
 #include <CoreText/CTFontDescriptor.h>
 
-#if !TARGET_OS_IPHONE
-#include <ATS/ATSTypes.h>
-#endif // !TARGET_OS_IPHONE
 #include <CoreGraphics/CGFont.h>
 #include <CoreGraphics/CGPath.h>
 #include <CoreGraphics/CGContext.h>
@@ -199,12 +196,11 @@ CTFontRef CTFontCreateWithFontDescriptor(
     @constant   kCTFontOptionsPreferSystemFont
                 Font matching will prefer to match Apple system fonts.
 */
-enum {
+typedef CF_OPTIONS(CFOptionFlags, CTFontOptions) {
     kCTFontOptionsDefault               = 0,
     kCTFontOptionsPreventAutoActivation = 1 << 0,
     kCTFontOptionsPreferSystemFont      = 1 << 2
 };
-typedef CFOptionFlags CTFontOptions;
 
 
 /*!
@@ -260,37 +256,65 @@ CTFontRef CTFontCreateWithFontDescriptorAndOptions(
     @abstract   These constants represent the specific user interface purpose to specify for font creation.
     @discussion Use these constants with CTFontCreateUIFontForLanguage to indicate the intended user interface usage of the font reference to be created.
 */
-enum {
-    kCTFontNoFontType                           = (uint32_t)-1,
-    kCTFontUserFontType                         =  0,
-    kCTFontUserFixedPitchFontType               =  1,
-    kCTFontSystemFontType                       =  2,
-    kCTFontEmphasizedSystemFontType             =  3,
-    kCTFontSmallSystemFontType                  =  4,
-    kCTFontSmallEmphasizedSystemFontType        =  5,
-    kCTFontMiniSystemFontType                   =  6,
-    kCTFontMiniEmphasizedSystemFontType         =  7,
-    kCTFontViewsFontType                        =  8,
-    kCTFontApplicationFontType                  =  9,
-    kCTFontLabelFontType                        = 10,
-    kCTFontMenuTitleFontType                    = 11,
-    kCTFontMenuItemFontType                     = 12,
-    kCTFontMenuItemMarkFontType                 = 13,
-    kCTFontMenuItemCmdKeyFontType               = 14,
-    kCTFontWindowTitleFontType                  = 15,
-    kCTFontPushButtonFontType                   = 16,
-    kCTFontUtilityWindowTitleFontType           = 17,
-    kCTFontAlertHeaderFontType                  = 18,
-    kCTFontSystemDetailFontType                 = 19,
-    kCTFontEmphasizedSystemDetailFontType       = 20,
-    kCTFontToolbarFontType                      = 21,
-    kCTFontSmallToolbarFontType                 = 22,
-    kCTFontMessageFontType                      = 23,
-    kCTFontPaletteFontType                      = 24,
-    kCTFontToolTipFontType                      = 25,
-    kCTFontControlContentFontType               = 26
+typedef CF_ENUM(uint32_t, CTFontUIFontType) {
+    kCTFontUIFontNone                           = (uint32_t)-1,
+    kCTFontUIFontUser                           =  0,
+    kCTFontUIFontUserFixedPitch                 =  1,
+    kCTFontUIFontSystem                         =  2,
+    kCTFontUIFontEmphasizedSystem               =  3,
+    kCTFontUIFontSmallSystem                    =  4,
+    kCTFontUIFontSmallEmphasizedSystem          =  5,
+    kCTFontUIFontMiniSystem                     =  6,
+    kCTFontUIFontMiniEmphasizedSystem           =  7,
+    kCTFontUIFontViews                          =  8,
+    kCTFontUIFontApplication                    =  9,
+    kCTFontUIFontLabel                          = 10,
+    kCTFontUIFontMenuTitle                      = 11,
+    kCTFontUIFontMenuItem                       = 12,
+    kCTFontUIFontMenuItemMark                   = 13,
+    kCTFontUIFontMenuItemCmdKey                 = 14,
+    kCTFontUIFontWindowTitle                    = 15,
+    kCTFontUIFontPushButton                     = 16,
+    kCTFontUIFontUtilityWindowTitle             = 17,
+    kCTFontUIFontAlertHeader                    = 18,
+    kCTFontUIFontSystemDetail                   = 19,
+    kCTFontUIFontEmphasizedSystemDetail         = 20,
+    kCTFontUIFontToolbar                        = 21,
+    kCTFontUIFontSmallToolbar                   = 22,
+    kCTFontUIFontMessage                        = 23,
+    kCTFontUIFontPalette                        = 24,
+    kCTFontUIFontToolTip                        = 25,
+    kCTFontUIFontControlContent                 = 26,
+
+    kCTFontNoFontType = kCTFontUIFontNone,
+    kCTFontUserFontType = kCTFontUIFontUser,
+    kCTFontUserFixedPitchFontType = kCTFontUIFontUserFixedPitch,
+    kCTFontSystemFontType = kCTFontUIFontSystem,
+    kCTFontEmphasizedSystemFontType = kCTFontUIFontEmphasizedSystem,
+    kCTFontSmallSystemFontType = kCTFontUIFontSmallSystem,
+    kCTFontSmallEmphasizedSystemFontType = kCTFontUIFontSmallEmphasizedSystem,
+    kCTFontMiniSystemFontType = kCTFontUIFontMiniSystem,
+    kCTFontMiniEmphasizedSystemFontType = kCTFontUIFontMiniEmphasizedSystem,
+    kCTFontViewsFontType = kCTFontUIFontViews,
+    kCTFontApplicationFontType = kCTFontUIFontApplication,
+    kCTFontLabelFontType = kCTFontUIFontLabel,
+    kCTFontMenuTitleFontType = kCTFontUIFontMenuTitle,
+    kCTFontMenuItemFontType = kCTFontUIFontMenuItem,
+    kCTFontMenuItemMarkFontType = kCTFontUIFontMenuItemMark,
+    kCTFontMenuItemCmdKeyFontType = kCTFontUIFontMenuItemCmdKey,
+    kCTFontWindowTitleFontType = kCTFontUIFontWindowTitle,
+    kCTFontPushButtonFontType = kCTFontUIFontPushButton,
+    kCTFontUtilityWindowTitleFontType = kCTFontUIFontUtilityWindowTitle,
+    kCTFontAlertHeaderFontType = kCTFontUIFontAlertHeader,
+    kCTFontSystemDetailFontType = kCTFontUIFontSystemDetail,
+    kCTFontEmphasizedSystemDetailFontType = kCTFontUIFontEmphasizedSystemDetail,
+    kCTFontToolbarFontType = kCTFontUIFontToolbar,
+    kCTFontSmallToolbarFontType = kCTFontUIFontSmallToolbar,
+    kCTFontMessageFontType = kCTFontUIFontMessage,
+    kCTFontPaletteFontType = kCTFontUIFontPalette,
+    kCTFontToolTipFontType = kCTFontUIFontToolTip,
+    kCTFontControlContentFontType = kCTFontUIFontControlContent
 };
-typedef uint32_t CTFontUIFontType;
 
 /*!
     @function   CTFontCreateUIFontForLanguage
@@ -398,6 +422,8 @@ CTFontRef CTFontCreateCopyWithFamily(
     @function   CTFontCreateForString
     @abstract   Returns a new font reference that can best map the given string range based on the current font.
 
+    @discussion This function is to be used when the current font does not cover the given range of the string. The current font itself will not be returned, but preference is given to fonts in its cascade list.
+
     @param      currentFont
                 The current font that contains a valid cascade list.
 
@@ -407,7 +433,11 @@ CTFontRef CTFontCreateCopyWithFamily(
     @param      range
                 A CFRange specifying the range of the string that needs to be mapped.
 
-    @result     This function returns the best substitute font from the cascade list of the current font that can encode the specified string range. If the current font is capable of encoding the string range then it will be retained and returned.
+    @result     This function returns the best substitute font that can encode the specified string range.
+
+    @seealso    CTFontCopyCharacterSet
+    @seealso    CTFontGetGlyphsForCharacters
+    @seealso    kCTFontCascadeListAttribute
 */
 CTFontRef CTFontCreateForString(
     CTFontRef       currentFont,
@@ -564,15 +594,15 @@ CFStringRef CTFontCopyName(
     @param      nameKey
                 The name specifier. See name specifier constants.
 
-    @param      language
-                Pointer to a CFStringRef to receive the language string of the returned name string. The format of the language identifier will conform to the BCP 47 standard.
+    @param      actualLanguage
+                Pointer to a CFStringRef to receive the language identifier of the returned name string. The format of the language identifier will conform to the BCP 47 standard.
 
     @result     This function returns a specific localized name from the font reference. The name is localized based on the user's global language precedence. If the font does not have an entry for the requested name, NULL will be returned. The matched language will be returned in the caller's buffer.
 */
 CFStringRef CTFontCopyLocalizedName(
     CTFontRef       font,
     CFStringRef     nameKey,
-    CFStringRef     *language ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+    CFStringRef*    actualLanguage ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
 
 /*! --------------------------------------------------------------------------
     @group Font Encoding
@@ -784,7 +814,6 @@ CGGlyph CTFontGetGlyphWithName(
     CTFontRef           font,
     CFStringRef         glyphName ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
 
-
 /*!
     @function   CTFontGetBoundingRectsForGlyphs
     @abstract   Calculates the bounding rects for an array of glyphs and returns the overall bounding rect for the run.
@@ -798,7 +827,7 @@ CGGlyph CTFontGetGlyphWithName(
     @param      glyphs
                 An array of count number of glyphs.
 
-    @param      boundingRect
+    @param      boundingRects
                 An array of count number of CGRects to receive the computed glyph rects. Can be NULL, in which case only the overall bounding rect is calculated.
 
     @param      count
@@ -812,6 +841,36 @@ CGRect CTFontGetBoundingRectsForGlyphs(
     const CGGlyph       glyphs[],
     CGRect              boundingRects[],
     CFIndex             count ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+
+/*!
+    @function   CTFontGetOpticalBoundsForGlyphs
+    @abstract   Calculates the optical bounding rects for an array of glyphs and returns the overall optical bounding rect for the run.
+
+    @discussion Fonts may specify the optical edges of glyphs that can be used to make the edges of lines of text line up in a more visually pleasing way. This function returns bounding rects corresponding to this information if present in a font, otherwise it returns typographic bounding rects (composed of the font's ascent and descent and a glyph's advance width).
+
+    @param      font
+                The font reference.
+
+    @param      glyphs
+                An array of count number of glyphs.
+
+    @param      boundingRects
+                An array of count number of CGRects to receive the computed glyph rects. Can be NULL, in which case only the overall bounding rect is calculated.
+
+    @param      count
+                The capacity of the glyphs and boundingRects buffers.
+
+    @param      options
+                Reserved, set to zero.
+
+    @result     This function returns the overall bounding rectangle for an array or run of glyphs. The bounding rects of the individual glyphs are returned through the boundingRects parameter. These are the design metrics from the font transformed in font space.
+*/
+CGRect CTFontGetOpticalBoundsForGlyphs(
+    CTFontRef           font,
+    const CGGlyph       glyphs[],
+    CGRect              boundingRects[],
+    CFIndex             count,
+    CFOptionFlags       options ) CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
 
 /*!
     @function   CTFontGetAdvancesForGlyphs
@@ -1064,6 +1123,12 @@ CTFontRef CTFontCreateWithGraphicsFont(
     CTFontDescriptorRef         attributes ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
 
 #if !TARGET_OS_IPHONE
+
+#ifndef ATSFONTREF_DEFINED
+typedef UInt32 ATSFontRef;
+#define ATSFONTREF_DEFINED 1
+#endif
+
 /*!
     @function   CTFontGetPlatformFont
     @abstract   Returns the ATSFontRef and attributes.
@@ -1079,7 +1144,7 @@ CTFontRef CTFontCreateWithGraphicsFont(
 
 ATSFontRef CTFontGetPlatformFont(
     CTFontRef               font,
-    CTFontDescriptorRef     *attributes ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+    CTFontDescriptorRef     *attributes ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_NA);
 
 /*!
     @function   CTFontCreateWithPlatformFont
@@ -1103,7 +1168,7 @@ CTFontRef CTFontCreateWithPlatformFont(
     ATSFontRef                  platformFont,
     CGFloat                     size,
     const CGAffineTransform     *matrix,
-    CTFontDescriptorRef         attributes ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+    CTFontDescriptorRef         attributes ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_NA);
 
 /*!
     @function   CTFontCreateWithQuickdrawInstance
@@ -1129,7 +1194,7 @@ CTFontRef CTFontCreateWithQuickdrawInstance(
     ConstStr255Param    name,
     int16_t             identifier,
     uint8_t             style,
-    CGFloat             size ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+    CGFloat             size ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_NA);
 
 #endif // !TARGET_OS_IPHONE
 /*! --------------------------------------------------------------------------
@@ -1154,6 +1219,7 @@ enum {
     kCTFontTableVORG    = 'VORG',   // Vertical origin
     kCTFontTableZapf    = 'Zapf',   // Glyph reference
     kCTFontTableAcnt    = 'acnt',   // Accent attachment
+    kCTFontTableAnkr    = 'ankr',   // Anchor points
     kCTFontTableAvar    = 'avar',   // Axis variation
     kCTFontTableBdat    = 'bdat',   // Bitmap data
     kCTFontTableBhed    = 'bhed',   // Bitmap font header
@@ -1194,13 +1260,12 @@ enum {
     kCTFontTableVhea    = 'vhea',   // Vertical header
     kCTFontTableVmtx    = 'vmtx'    // Vertical metrics
 };
-typedef uint32_t CTFontTableTag;
+typedef FourCharCode CTFontTableTag;
 
-enum {
+typedef CF_OPTIONS(uint32_t, CTFontTableOptions) {
     kCTFontTableOptionNoOptions = 0,
-    kCTFontTableOptionExcludeSynthetic = (1 << 0)
+    kCTFontTableOptionExcludeSynthetic CT_DEPRECATED_ENUMERATOR = (1 << 0)
 };
-typedef uint32_t CTFontTableOptions;
 
 /*!
     @function   CTFontCopyAvailableTables
@@ -1292,12 +1357,103 @@ void CTFontDrawGlyphs(
                 The maximum number of positions to return.
  
     @result     Returns the number of caret positions for the specified glyph.
- */
+*/
 CFIndex CTFontGetLigatureCaretPositions(
     CTFontRef       font,
     CGGlyph         glyph,
     CGFloat         positions[],
     CFIndex         maxPositions ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+
+/*! --------------------------------------------------------------------------
+    @group Baseline Alignment
+ *///--------------------------------------------------------------------------
+
+/*!
+    @defined    kCTBaselineClassRoman
+
+    @abstract   Key to reference the Roman baseline class.
+ 
+    @discussion This key can be used with a baseline info dictionary to offset to the Roman baseline as a CFNumberRef float. It can also be used as the value for kCTBaselineClassAttributeName.
+*/
+extern const CFStringRef kCTBaselineClassRoman CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+
+/*!
+    @defined    kCTBaselineClassIdeographicCentered
+ 
+    @abstract   Key to reference the Ideographic Centered baseline class.
+ 
+    @discussion This key can be used with a baseline info dictionary to offset to the Ideographic Centered baseline as a CFNumberRef float. It can also be used as the value for kCTBaselineClassAttributeName.
+*/
+extern const CFStringRef kCTBaselineClassIdeographicCentered CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+    
+/*!
+    @defined    kCTBaselineClassIdeographicLow
+ 
+    @abstract   Key to reference the Ideographic Low baseline class.
+ 
+    @discussion This key can be used with a baseline info dictionary to offset to the Ideographic Low baseline as a CFNumberRef float. It can also be used as the value for kCTBaselineClassAttributeName.
+*/
+extern const CFStringRef kCTBaselineClassIdeographicLow CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+    
+/*!
+    @defined    kCTBaselineClassIdeographicHigh
+
+    @abstract   Key to reference the Ideographic High baseline class.
+
+    @discussion This key can be used with a baseline info dictionary to offset to the Ideographic High baseline as a CFNumberRef float. It can also be used as the value for kCTBaselineClassAttributeName.
+*/
+extern const CFStringRef kCTBaselineClassIdeographicHigh CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+
+/*!
+    @defined    kCTBaselineClassHanging
+ 
+    @abstract   Key to reference the Hanging baseline class.
+ 
+    @discussion This key can be used with a baseline info dictionary to offset to the Hanging baseline as a CFNumberRef float. It can also be used as the value for kCTBaselineClassAttributeName.
+*/
+extern const CFStringRef kCTBaselineClassHanging CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+
+/*!
+    @defined    kCTBaselineClassMathKey
+
+    @abstract   Key to reference the Math baseline class.
+
+    @discussion This key can be used with a baseline info dictionary to offset to the Math baseline as a CFNumberRef float. It can also be used as the value for kCTBaselineClassAttributeName.
+*/
+extern const CFStringRef kCTBaselineClassMath CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+
+/*!
+    @defined    kCTBaselineReferenceFont
+ 
+    @abstract   Key to reference a font for the reference baseline.
+ 
+    @discussion This key can be used to specify a font for the reference baseline. The value is a CTFontRef or the kCTBaselineOriginalFont constant.
+*/
+extern const CFStringRef kCTBaselineReferenceFont CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+
+/*!
+    @defined    kCTBaselineOriginalFont
+    
+    @abstract   Use the original font for setting the reference baseline.
+ 
+    @discussion This constant can be used as the value for kCTBaselineReferenceFont to specify that the original font should be used for the reference baseline.
+*/
+extern const CFStringRef kCTBaselineOriginalFont CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+
+
+/*!
+    @function   CTFontCopyDefaultCascadeListForLanguages
+    @abstract   Return an ordered list of CTFontDescriptorRef's for font fallback drived from the system default fallback regine according to the given language preferences. The style of the given is also matched as well as the weight and width of the font is not one of the system UI font, otherwise the UI font fallback is applied.
+
+    @param      font
+                The font reference.
+ 
+    @param      languagePrefList
+                The language preference list - ordered array of CFStringRef's of ISO langauge codes.
+
+    @result     The ordered list of fallback fonts - ordered array of CTFontDescriptors.
+*/
+CFArrayRef CTFontCopyDefaultCascadeListForLanguages( CTFontRef font, CFArrayRef languagePrefList ) CT_AVAILABLE_STARTING( __MAC_NA, __IPHONE_6_0);
 
 #if defined(__cplusplus)
 }

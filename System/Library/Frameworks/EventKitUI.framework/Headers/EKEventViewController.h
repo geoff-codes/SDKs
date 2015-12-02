@@ -40,7 +40,7 @@ EVENTKITUI_CLASS_AVAILABLE(4_0)
     id<EKEventViewDelegate> _delegate;
     id                      _editor;
     
-    UIButton*               _responseButtons[3];
+    UIBarButtonItem        *_responseButtons[3];
     UIToolbar              *_buttonBar;
     UIInterfaceOrientation  _lastOrientation;
     
@@ -59,6 +59,7 @@ EVENTKITUI_CLASS_AVAILABLE(4_0)
     unsigned                _icsPreview:1;
     unsigned                _needsReload:1;    
     unsigned                _showsDoneButton:1;
+    unsigned                _showsDelegateMessage:1;
     
     NSArray                *_items;
     NSArray                *_currentSections;

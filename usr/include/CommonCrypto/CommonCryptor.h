@@ -117,7 +117,8 @@ enum {
     kCCMemoryFailure    = -4302,
     kCCAlignmentError   = -4303,
     kCCDecodeError      = -4304,
-    kCCUnimplemented    = -4305
+    kCCUnimplemented    = -4305,
+    kCCOverflow         = -4306
 };
 typedef int32_t CCCryptorStatus;
 
@@ -305,7 +306,7 @@ CCCryptorStatus CCCryptorCreate(
     size_t keyLength,   
     const void *iv,             /* optional initialization vector */
     CCCryptorRef *cryptorRef)  /* RETURNED */
-__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
+__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_2_0);
 
 /*!
     @function   CCCryptorCreateFromData
@@ -369,7 +370,7 @@ CCCryptorStatus CCCryptorCreateFromData(
     size_t dataLength,          /* length of data in bytes */
     CCCryptorRef *cryptorRef,   /* RETURNED */
     size_t *dataUsed)           /* optional, RETURNED */
-__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
+__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_2_0);
 
 /*!
     @function   CCCryptorRelease
@@ -383,7 +384,7 @@ __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
 */
 CCCryptorStatus CCCryptorRelease(
     CCCryptorRef cryptorRef)
-__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
+__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_2_0);
     
 /*!
     @function   CCCryptorUpdate
@@ -446,7 +447,7 @@ CCCryptorStatus CCCryptorUpdate(
     void *dataOut,              /* data RETURNED here */
     size_t dataOutAvailable,
     size_t *dataOutMoved)       /* number of bytes written */
-__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
+__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_2_0);
 
 /*!
     @function   CCCryptorFinal
@@ -493,7 +494,7 @@ CCCryptorStatus CCCryptorFinal(
     void *dataOut,
     size_t dataOutAvailable,
     size_t *dataOutMoved)       /* number of bytes written */
-__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
+__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_2_0);
 
 /*!
     @function   CCCryptorGetOutputLength
@@ -533,7 +534,7 @@ size_t CCCryptorGetOutputLength(
     CCCryptorRef cryptorRef,
     size_t inputLength,
     bool final)
-__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
+__OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_2_0);
 
     
 /*!
@@ -558,7 +559,7 @@ __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
 CCCryptorStatus CCCryptorReset(
     CCCryptorRef cryptorRef,
     const void *iv)
-    __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_2_0);
 
 
 /*!
@@ -637,7 +638,7 @@ CCCryptorStatus CCCrypt(
     void *dataOut,          /* data RETURNED here */
     size_t dataOutAvailable,
     size_t *dataOutMoved)
-    __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_2_0);
 
 
 /*!
@@ -765,7 +766,7 @@ CCCryptorStatus CCCryptorCreateWithMode(
     int				numRounds,		/* 0 == default */
     CCModeOptions 	options,
     CCCryptorRef	*cryptorRef)	/* RETURNED */
-__OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+__OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0);
     
 #ifdef __cplusplus
 }

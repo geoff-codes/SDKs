@@ -13,11 +13,8 @@
 #ifndef __ABRecord__
 #define __ABRecord__
 
+#include <AddressBook/AddressBookDefines.h>
 #include <CoreFoundation/CoreFoundation.h>
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
         
 typedef CFTypeRef ABRecordRef;
 
@@ -50,18 +47,14 @@ enum {
     kABMultiDictionaryPropertyType = kABMultiValueMask | kABDictionaryPropertyType,
 };
 
-extern ABRecordID ABRecordGetRecordID(ABRecordRef record);
-extern ABRecordType ABRecordGetRecordType(ABRecordRef record);
+AB_EXTERN ABRecordID ABRecordGetRecordID(ABRecordRef record);
+AB_EXTERN ABRecordType ABRecordGetRecordType(ABRecordRef record);
 
-extern CFTypeRef ABRecordCopyValue(ABRecordRef record, ABPropertyID property);
-extern bool ABRecordSetValue(ABRecordRef record, ABPropertyID property, CFTypeRef value, CFErrorRef* error);
-extern bool ABRecordRemoveValue(ABRecordRef record, ABPropertyID property, CFErrorRef* error);
+AB_EXTERN CFTypeRef ABRecordCopyValue(ABRecordRef record, ABPropertyID property);
+AB_EXTERN bool ABRecordSetValue(ABRecordRef record, ABPropertyID property, CFTypeRef value, CFErrorRef* error);
+AB_EXTERN bool ABRecordRemoveValue(ABRecordRef record, ABPropertyID property, CFErrorRef* error);
     
-extern CFStringRef ABRecordCopyCompositeName(ABRecordRef record);
-
-#if defined(__cplusplus)
-}
-#endif
+AB_EXTERN CFStringRef ABRecordCopyCompositeName(ABRecordRef record);
 
 #endif
 

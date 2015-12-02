@@ -1,6 +1,6 @@
 /* CoreGraphics - CoreGraphics.h
- * Copyright (c) 2000-2008 Apple Inc.
- * All rights reserved. */
+   Copyright (c) 2000-2011 Apple Inc.
+   All rights reserved. */
 
 #ifndef COREGRAPHICS_H_
 #define COREGRAPHICS_H_

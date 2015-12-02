@@ -2,7 +2,7 @@
 //  UIApplication.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,66 +13,75 @@
 #import <UIKit/UIDevice.h>
 #import <UIKit/UIAlert.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIStatusBarStyle) {
     UIStatusBarStyleDefault,
     UIStatusBarStyleBlackTranslucent,
     UIStatusBarStyleBlackOpaque
-} UIStatusBarStyle;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIStatusBarAnimation) {
     UIStatusBarAnimationNone,
 #if __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
     UIStatusBarAnimationFade,
     UIStatusBarAnimationSlide,
 #endif
-} UIStatusBarAnimation;
+};
 
 // Note that UIInterfaceOrientationLandscapeLeft is equal to UIDeviceOrientationLandscapeRight (and vice versa).
 // This is because rotating the device to the left requires rotating the content to the right.
-typedef enum {
+typedef NS_ENUM(NSInteger, UIInterfaceOrientation) {
     UIInterfaceOrientationPortrait           = UIDeviceOrientationPortrait,
     UIInterfaceOrientationPortraitUpsideDown = UIDeviceOrientationPortraitUpsideDown,
     UIInterfaceOrientationLandscapeLeft      = UIDeviceOrientationLandscapeRight,
     UIInterfaceOrientationLandscapeRight     = UIDeviceOrientationLandscapeLeft
-} UIInterfaceOrientation;
+};
+
+/* This exception is raised if supportedInterfaceOrientations returns 0, or if preferredInterfaceOrientationForPresentation
+   returns an orientation that is not supported.
+*/
+UIKIT_EXTERN NSString *const UIApplicationInvalidInterfaceOrientationException NS_AVAILABLE_IOS(6_0);
+
+typedef NS_OPTIONS(NSUInteger, UIInterfaceOrientationMask) {
+    UIInterfaceOrientationMaskPortrait = (1 << UIInterfaceOrientationPortrait),
+    UIInterfaceOrientationMaskLandscapeLeft = (1 << UIInterfaceOrientationLandscapeLeft),
+    UIInterfaceOrientationMaskLandscapeRight = (1 << UIInterfaceOrientationLandscapeRight),
+    UIInterfaceOrientationMaskPortraitUpsideDown = (1 << UIInterfaceOrientationPortraitUpsideDown),
+    UIInterfaceOrientationMaskLandscape = (UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight),
+    UIInterfaceOrientationMaskAll = (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight | UIInterfaceOrientationMaskPortraitUpsideDown),
+    UIInterfaceOrientationMaskAllButUpsideDown = (UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight),
+};
 
 #define UIDeviceOrientationIsValidInterfaceOrientation(orientation) ((orientation) == UIDeviceOrientationPortrait || (orientation) == UIDeviceOrientationPortraitUpsideDown || (orientation) == UIDeviceOrientationLandscapeLeft || (orientation) == UIDeviceOrientationLandscapeRight)
 #define UIInterfaceOrientationIsPortrait(orientation)  ((orientation) == UIInterfaceOrientationPortrait || (orientation) == UIInterfaceOrientationPortraitUpsideDown)
 #define UIInterfaceOrientationIsLandscape(orientation) ((orientation) == UIInterfaceOrientationLandscapeLeft || (orientation) == UIInterfaceOrientationLandscapeRight)
 
-#if __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-typedef enum {
+typedef NS_OPTIONS(NSUInteger, UIRemoteNotificationType) {
     UIRemoteNotificationTypeNone    = 0,
     UIRemoteNotificationTypeBadge   = 1 << 0,
     UIRemoteNotificationTypeSound   = 1 << 1,
     UIRemoteNotificationTypeAlert   = 1 << 2,
     UIRemoteNotificationTypeNewsstandContentAvailability = 1 << 3,
-} UIRemoteNotificationType;
-#endif
+} NS_ENUM_AVAILABLE_IOS(3_0);
 
-#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-typedef enum {
+typedef NS_ENUM(NSInteger, UIApplicationState) {
     UIApplicationStateActive,
     UIApplicationStateInactive,
     UIApplicationStateBackground
-} UIApplicationState;
+} NS_ENUM_AVAILABLE_IOS(4_0);
 
 typedef NSUInteger UIBackgroundTaskIdentifier;
-UIKIT_EXTERN const UIBackgroundTaskIdentifier UIBackgroundTaskInvalid  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-UIKIT_EXTERN const NSTimeInterval UIMinimumKeepAliveTimeout  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-#endif
+UIKIT_EXTERN const UIBackgroundTaskIdentifier UIBackgroundTaskInvalid  NS_AVAILABLE_IOS(4_0);
+UIKIT_EXTERN const NSTimeInterval UIMinimumKeepAliveTimeout  NS_AVAILABLE_IOS(4_0);
 
-#if __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-typedef enum {
+typedef NS_ENUM(NSInteger, UIUserInterfaceLayoutDirection) {
     UIUserInterfaceLayoutDirectionLeftToRight,
     UIUserInterfaceLayoutDirectionRightToLeft,
-} UIUserInterfaceLayoutDirection;
-#endif
+} NS_ENUM_AVAILABLE_IOS(5_0);
 
 @class UIView, UIWindow, UIStatusBar, UIStatusBarWindow, UILocalNotification;
 @protocol UIApplicationDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheetDelegate>
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionSheetDelegate>
 {
   @package
     id <UIApplicationDelegate>  _delegate;
@@ -86,11 +95,16 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
     NSArray                    *_topLevelNibObjects;
     NSInteger                   _networkResourcesCurrentlyLoadingCount;
     NSTimer                    *_hideNetworkActivityIndicatorTimer;
-    id                          _editAlertView;
+    UIAlertView                *_editAlertView;
     UIStatusBar                *_statusBar;
+    UIStatusBarStyle            _statusBarRequestedStyle;
     UIStatusBarWindow          *_statusBarWindow;
     NSMutableArray             *_observerBlocks;
+    NSMutableArray             *_deferredAnimationBlocks;    
     NSString                   *_mainStoryboardName;
+    NSMutableArray             *_tintViewDurationStack;
+    NSMutableArray             *_statusBarTintColorLockingControllers;
+    NSInteger                   _statusBarTintColorLockingCount;
     struct {
         unsigned int deactivatingReasonFlags:8;
         unsigned int isSuspended:1;
@@ -101,7 +115,6 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
         unsigned int isHandlingRemoteNotification:1;
         unsigned int isHandlingLocalNotification:1;
         unsigned int statusBarShowsProgress:1;
-        unsigned int statusBarRequestedStyle:4;
         unsigned int statusBarHidden:1;
         unsigned int blockInteractionEvents:4;
         unsigned int receivesMemoryWarnings:1;
@@ -112,7 +125,6 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
         unsigned int isResuming:1;
         unsigned int isSuspendedUnderLock:1;
         unsigned int shouldExitAfterSendSuspend:1;
-        unsigned int shouldExitAfterTaskCompletion:1;
         unsigned int terminating:1;
         unsigned int isHandlingShortCutURL:1;
         unsigned int idleTimerDisabled:1;
@@ -136,6 +148,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
         unsigned int delegateWillEnterForeground:1;
         unsigned int delegateWillSuspend:1;
         unsigned int delegateDidResume:1;
+        unsigned int delegateSupportsStateRestoration:1;
+        unsigned int delegateSupportedInterfaceOrientations:1;        
         unsigned int userDefaultsSyncDisabled:1;
         unsigned int headsetButtonClickCount:4;
         unsigned int isHeadsetButtonDown:1;
@@ -153,10 +167,21 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
         unsigned int disableViewContentScaling:1;
         unsigned int singleUseLaunchOrientation:3;
         unsigned int defaultInterfaceOrientation:3;
+        unsigned int supportedInterfaceOrientationsMask:5;
         unsigned int delegateWantsNextResponder:1;
         unsigned int isRunningInApplicationSwitcher:1;
         unsigned int isSendingEventForProgrammaticTouchCancellation:1;
-        unsigned int calledInitializationDelegates:1;
+        unsigned int delegateWantsStatusBarTouchesEnded:1;
+        unsigned int interfaceLayoutDirectionIsValid:1;
+        unsigned int interfaceLayoutDirection:3;
+        unsigned int restorationExtended:1;
+        unsigned int normalRestorationInProgress:1;
+        unsigned int normalRestorationCompleted:1;                        
+        unsigned int isDelayingTintViewChange:1;
+        unsigned int isUpdatingTintViewColor:1;
+        unsigned int isHandlingMemoryWarning:1;
+        unsigned int forceStatusBarTintColorChanges:1;
+        unsigned int disableLegacyAutorotation:1;               
     } _applicationFlags;
 }
 
@@ -171,7 +196,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
 @property(nonatomic,getter=isIdleTimerDisabled)       BOOL idleTimerDisabled;	  // default is NO
 
 - (BOOL)openURL:(NSURL*)url;
-- (BOOL)canOpenURL:(NSURL *)url __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (BOOL)canOpenURL:(NSURL *)url NS_AVAILABLE_IOS(3_0);
 
 - (void)sendEvent:(UIEvent *)event;
 
@@ -186,60 +211,70 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
 - (void)setStatusBarStyle:(UIStatusBarStyle)statusBarStyle animated:(BOOL)animated;
 
 @property(nonatomic,getter=isStatusBarHidden) BOOL statusBarHidden;
-- (void)setStatusBarHidden:(BOOL)hidden withAnimation:(UIStatusBarAnimation)animation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+- (void)setStatusBarHidden:(BOOL)hidden withAnimation:(UIStatusBarAnimation)animation NS_AVAILABLE_IOS(3_2);
 
 // Rotate to a specific orientation.  This only rotates the status bar and updates the statusBarOrientation property.
 // This does not change automatically if the device changes orientation.
+// Explicit setting of the status bar orientation is more limited in iOS 6.0 and later.
 @property(nonatomic) UIInterfaceOrientation statusBarOrientation;
 - (void)setStatusBarOrientation:(UIInterfaceOrientation)interfaceOrientation animated:(BOOL)animated;
+
+// The system only calls this method if the application delegate has not
+// implemented the delegate equivalent. It returns the orientations specified by
+// the application's info.plist. If no supported interface orientations were
+// specified it will return UIInterfaceOrientationMaskAll on an iPad and
+// UIInterfaceOrientationMaskAllButUpsideDown on a phone.  The return value
+// should be one of the UIInterfaceOrientationMask values which indicates the
+// orientations supported by this application.
+- (NSUInteger)supportedInterfaceOrientationsForWindow:(UIWindow *)window NS_AVAILABLE_IOS(6_0);
 
 @property(nonatomic,readonly) NSTimeInterval statusBarOrientationAnimationDuration; // Returns the animation duration for the status bar during a 90 degree orientation change.  It should be doubled for a 180 degree orientation change.
 @property(nonatomic,readonly) CGRect statusBarFrame; // returns CGRectZero if the status bar is hidden
 
 @property(nonatomic) NSInteger applicationIconBadgeNumber;  // set to 0 to hide. default is 0
 
-@property(nonatomic) BOOL applicationSupportsShakeToEdit __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property(nonatomic) BOOL applicationSupportsShakeToEdit NS_AVAILABLE_IOS(3_0);
 
-@property(nonatomic,readonly) UIApplicationState applicationState __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-@property(nonatomic,readonly) NSTimeInterval backgroundTimeRemaining __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic,readonly) UIApplicationState applicationState NS_AVAILABLE_IOS(4_0);
+@property(nonatomic,readonly) NSTimeInterval backgroundTimeRemaining NS_AVAILABLE_IOS(4_0);
 
-- (UIBackgroundTaskIdentifier)beginBackgroundTaskWithExpirationHandler:(void(^)(void))handler  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)endBackgroundTask:(UIBackgroundTaskIdentifier)identifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (UIBackgroundTaskIdentifier)beginBackgroundTaskWithExpirationHandler:(void(^)(void))handler  NS_AVAILABLE_IOS(4_0);
+- (void)endBackgroundTask:(UIBackgroundTaskIdentifier)identifier NS_AVAILABLE_IOS(4_0);
 
-- (BOOL)setKeepAliveTimeout:(NSTimeInterval)timeout handler:(void(^)(void))keepAliveHandler __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)clearKeepAliveTimeout __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (BOOL)setKeepAliveTimeout:(NSTimeInterval)timeout handler:(void(^)(void))keepAliveHandler NS_AVAILABLE_IOS(4_0);
+- (void)clearKeepAliveTimeout NS_AVAILABLE_IOS(4_0);
 
-@property(nonatomic,readonly,getter=isProtectedDataAvailable) BOOL protectedDataAvailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic,readonly,getter=isProtectedDataAvailable) BOOL protectedDataAvailable NS_AVAILABLE_IOS(4_0);
 
-@property(nonatomic,readonly) UIUserInterfaceLayoutDirection userInterfaceLayoutDirection __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+@property(nonatomic,readonly) UIUserInterfaceLayoutDirection userInterfaceLayoutDirection NS_AVAILABLE_IOS(5_0);
 
 @end
 
 @interface UIApplication (UIRemoteNotifications)
 
-- (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)unregisterForRemoteNotifications __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);       // calls -registerForRemoteNotificationTypes with UIRemoteNotificationTypeNone
+- (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types NS_AVAILABLE_IOS(3_0);
+- (void)unregisterForRemoteNotifications NS_AVAILABLE_IOS(3_0);       // calls -registerForRemoteNotificationTypes with UIRemoteNotificationTypeNone
 
 // returns the enabled types, also taking into account any systemwide settings; doesn't relate to connectivity
-- (UIRemoteNotificationType)enabledRemoteNotificationTypes __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (UIRemoteNotificationType)enabledRemoteNotificationTypes NS_AVAILABLE_IOS(3_0);
 
 @end
 
 @interface UIApplication (UILocalNotifications)
 
-- (void)presentLocalNotificationNow:(UILocalNotification *)notification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)presentLocalNotificationNow:(UILocalNotification *)notification NS_AVAILABLE_IOS(4_0);
 
-- (void)scheduleLocalNotification:(UILocalNotification *)notification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);  // copies notification
-- (void)cancelLocalNotification:(UILocalNotification *)notification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)cancelAllLocalNotifications __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-@property(nonatomic,copy) NSArray *scheduledLocalNotifications __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);         // setter added in iOS 4.2
+- (void)scheduleLocalNotification:(UILocalNotification *)notification NS_AVAILABLE_IOS(4_0);  // copies notification
+- (void)cancelLocalNotification:(UILocalNotification *)notification NS_AVAILABLE_IOS(4_0);
+- (void)cancelAllLocalNotifications NS_AVAILABLE_IOS(4_0);
+@property(nonatomic,copy) NSArray *scheduledLocalNotifications NS_AVAILABLE_IOS(4_0);         // setter added in iOS 4.2
 
 @end
 
 @interface UIApplication (UIRemoteControlEvents)
 
-- (void)beginReceivingRemoteControlEvents __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)endReceivingRemoteControlEvents __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)beginReceivingRemoteControlEvents NS_AVAILABLE_IOS(4_0);
+- (void)endReceivingRemoteControlEvents NS_AVAILABLE_IOS(4_0);
 
 @end
 
@@ -247,17 +282,26 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
 - (void)setNewsstandIconImage:(UIImage *)image;
 @end
 
+@interface UIApplication (UIStateRestoration)
+// These methods are used to inform the system that state restoration is occuring asynchronously after the application
+// has processed its restoration archive on launch. In the even of a crash, the system will be able to detect that it may
+// have been caused by a bad restoration archive and arrange to ignore it on a subsequent application launch.
+- (void)extendStateRestoration  NS_AVAILABLE_IOS(6_0);
+- (void)completeStateRestoration  NS_AVAILABLE_IOS(6_0);
+@end
+
 @protocol UIApplicationDelegate<NSObject>
 
 @optional
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application;
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions NS_AVAILABLE_IOS(6_0);
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions NS_AVAILABLE_IOS(3_0);
 
 - (void)applicationDidBecomeActive:(UIApplication *)application;
 - (void)applicationWillResignActive:(UIApplication *)application;
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url;  // Will be deprecated at some point, please replace with application:openURL:sourceApplication:annotation:
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2); // no equiv. notification. return NO if the application can't open for some reason
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation NS_AVAILABLE_IOS(4_2); // no equiv. notification. return NO if the application can't open for some reason
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application;      // try to clean up as much memory as possible. next step is to terminate app
 - (void)applicationWillTerminate:(UIApplication *)application;
@@ -270,26 +314,35 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
 - (void)application:(UIApplication *)application didChangeStatusBarFrame:(CGRect)oldStatusBarFrame;
 
 // one of these will be called after calling -registerForRemoteNotifications
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken NS_AVAILABLE_IOS(3_0);
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error NS_AVAILABLE_IOS(3_0);
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo NS_AVAILABLE_IOS(3_0);
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification NS_AVAILABLE_IOS(4_0);
 
-- (void)applicationDidEnterBackground:(UIApplication *)application __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)applicationWillEnterForeground:(UIApplication *)application __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)applicationDidEnterBackground:(UIApplication *)application NS_AVAILABLE_IOS(4_0);
+- (void)applicationWillEnterForeground:(UIApplication *)application NS_AVAILABLE_IOS(4_0);
 
-- (void)applicationProtectedDataWillBecomeUnavailable:(UIApplication *)application __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)applicationProtectedDataDidBecomeAvailable:(UIApplication *)application    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)applicationProtectedDataWillBecomeUnavailable:(UIApplication *)application NS_AVAILABLE_IOS(4_0);
+- (void)applicationProtectedDataDidBecomeAvailable:(UIApplication *)application    NS_AVAILABLE_IOS(4_0);
 
-@property (nonatomic, retain) UIWindow *window __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+@property (nonatomic, retain) UIWindow *window NS_AVAILABLE_IOS(5_0);
 
+- (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window  NS_AVAILABLE_IOS(6_0);
+
+#pragma mark -- State Restoration protocol adopted by UIApplication delegate --
+
+- (UIViewController *) application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder NS_AVAILABLE_IOS(6_0);
+- (BOOL) application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder NS_AVAILABLE_IOS(6_0);
+- (BOOL) application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder NS_AVAILABLE_IOS(6_0);
+- (void) application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder NS_AVAILABLE_IOS(6_0);
+- (void) application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder NS_AVAILABLE_IOS(6_0);
 @end
 
 @interface UIApplication(UIApplicationDeprecated)
 
-@property(nonatomic,getter=isProximitySensingEnabled) BOOL proximitySensingEnabled __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0); // default is NO. see UIDevice for replacement
-- (void)setStatusBarHidden:(BOOL)hidden animated:(BOOL)animated __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2); // use -setStatusBarHidden:withAnimation:
+@property(nonatomic,getter=isProximitySensingEnabled) BOOL proximitySensingEnabled NS_DEPRECATED_IOS(2_0, 3_0); // default is NO. see UIDevice for replacement
+- (void)setStatusBarHidden:(BOOL)hidden animated:(BOOL)animated NS_DEPRECATED_IOS(2_0, 3_2); // use -setStatusBarHidden:withAnimation:
 
 @end
 
@@ -300,8 +353,8 @@ UIKIT_EXTERN int UIApplicationMain(int argc, char *argv[], NSString *principalCl
 UIKIT_EXTERN NSString *const UITrackingRunLoopMode;
 
 // These notifications are sent out after the equivalent delegate message is called
-UIKIT_EXTERN NSString *const UIApplicationDidEnterBackgroundNotification       __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-UIKIT_EXTERN NSString *const UIApplicationWillEnterForegroundNotification      __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+UIKIT_EXTERN NSString *const UIApplicationDidEnterBackgroundNotification       NS_AVAILABLE_IOS(4_0);
+UIKIT_EXTERN NSString *const UIApplicationWillEnterForegroundNotification      NS_AVAILABLE_IOS(4_0);
 UIKIT_EXTERN NSString *const UIApplicationDidFinishLaunchingNotification;
 UIKIT_EXTERN NSString *const UIApplicationDidBecomeActiveNotification;
 UIKIT_EXTERN NSString *const UIApplicationWillResignActiveNotification;
@@ -314,13 +367,13 @@ UIKIT_EXTERN NSString *const UIApplicationStatusBarOrientationUserInfoKey;      
 UIKIT_EXTERN NSString *const UIApplicationWillChangeStatusBarFrameNotification;       // userInfo contains NSValue with new frame
 UIKIT_EXTERN NSString *const UIApplicationDidChangeStatusBarFrameNotification;        // userInfo contains NSValue with old frame
 UIKIT_EXTERN NSString *const UIApplicationStatusBarFrameUserInfoKey;                  // userInfo dictionary key for status bar frame
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsURLKey                __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // userInfo contains NSURL with launch URL
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsSourceApplicationKey  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // userInfo contains NSString with launch app bundle ID
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsRemoteNotificationKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // userInfo contains NSDictionary with payload
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocalNotificationKey  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // userInfo contains a UILocalNotification
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsAnnotationKey         __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // userInfo contains object with annotation property list
-UIKIT_EXTERN NSString *const UIApplicationProtectedDataWillBecomeUnavailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-UIKIT_EXTERN NSString *const UIApplicationProtectedDataDidBecomeAvailable    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocationKey           __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // app was launched in response to a CoreLocation event.
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsNewsstandDownloadsKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // userInfo contains an NSArray of NKAssetDownload identifiers
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsURLKey                NS_AVAILABLE_IOS(3_0); // userInfo contains NSURL with launch URL
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsSourceApplicationKey  NS_AVAILABLE_IOS(3_0); // userInfo contains NSString with launch app bundle ID
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsRemoteNotificationKey NS_AVAILABLE_IOS(3_0); // userInfo contains NSDictionary with payload
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocalNotificationKey  NS_AVAILABLE_IOS(4_0); // userInfo contains a UILocalNotification
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsAnnotationKey         NS_AVAILABLE_IOS(3_2); // userInfo contains object with annotation property list
+UIKIT_EXTERN NSString *const UIApplicationProtectedDataWillBecomeUnavailable NS_AVAILABLE_IOS(4_0);
+UIKIT_EXTERN NSString *const UIApplicationProtectedDataDidBecomeAvailable    NS_AVAILABLE_IOS(4_0);
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocationKey           NS_AVAILABLE_IOS(4_0); // app was launched in response to a CoreLocation event.
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsNewsstandDownloadsKey NS_AVAILABLE_IOS(5_0); // userInfo contains an NSArray of NKAssetDownload identifiers
 

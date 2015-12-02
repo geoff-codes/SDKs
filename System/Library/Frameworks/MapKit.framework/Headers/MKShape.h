@@ -2,7 +2,7 @@
 //  MKShape.h
 //  MapKit
 //
-//  Copyright (c) 2010-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

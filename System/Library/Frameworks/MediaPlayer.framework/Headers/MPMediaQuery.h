@@ -46,8 +46,8 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaQuery : NSObject <NSCoding, NSC
 
 // Returns an array of MPMediaQuerySection instances representing the section grouping of the query's items or collections.
 // May be nil in cases where no section grouping of the items or collections is appropriate.
-@property (nonatomic, readonly) NSArray *itemSections NS_AVAILABLE_IPHONE(4_2);
-@property (nonatomic, readonly) NSArray *collectionSections NS_AVAILABLE_IPHONE(4_2);
+@property (nonatomic, readonly) NSArray *itemSections NS_AVAILABLE_IOS(4_2);
+@property (nonatomic, readonly) NSArray *collectionSections NS_AVAILABLE_IOS(4_2);
 
 // Base queries which can be used directly or as the basis for custom queries.
 // The groupingType for these queries is preset to the appropriate type for the query.
@@ -98,11 +98,11 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPropertyPredicate : MPMediaPred
 
 // Returns the item property for a given grouping type.
 // For example, [MPMediaItem persistentIDPropertyForGroupingType:MPMediaGroupingAlbum] returns MPMediaItemPropertyAlbumPersistentID.
-+ (NSString *)persistentIDPropertyForGroupingType:(MPMediaGrouping)groupingType NS_AVAILABLE_IPHONE(4_2);
++ (NSString *)persistentIDPropertyForGroupingType:(MPMediaGrouping)groupingType NS_AVAILABLE_IOS(4_2);
 
 // Returns the item property to determine a title for a given grouping type.
 // For example, [MPMediaItem titlePropertyForGroupingType:MPMediaGroupingAlbum] returns MPMediaItemPropertyAlbumTitle.
 // Note that distinct collections will not necessarily have unique titles, e.g. an album may exist with the title "Greatest Hits" for multiple artists.
-+ (NSString *)titlePropertyForGroupingType:(MPMediaGrouping)groupingType NS_AVAILABLE_IPHONE(4_2);
++ (NSString *)titlePropertyForGroupingType:(MPMediaGrouping)groupingType NS_AVAILABLE_IOS(4_2);
 
 @end

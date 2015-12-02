@@ -2,7 +2,7 @@
 //  UIAccessibilityIdentification.h
 //  UIKit
 //
-//  Copyright 2010 Apple Inc. All rights reserved.
+//  Copyright 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -16,7 +16,7 @@
  A string that identifies the user interface element.
  default == nil
 */
-@property(nonatomic, copy) NSString *accessibilityIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property(nonatomic, copy) NSString *accessibilityIdentifier NS_AVAILABLE_IOS(5_0);
 
 @end
 

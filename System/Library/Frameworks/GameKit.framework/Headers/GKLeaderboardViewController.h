@@ -7,12 +7,13 @@
 
 #import <UIKit/UIKit.h>
 #import <GameKit/GKLeaderboard.h>
+#import <GameKit/GKGameCenterViewController.h>
 
 @protocol GKLeaderboardViewControllerDelegate;
 
 // View controller that provides the standard user interface for leaderboards.  Present modally from the top view controller.
 NS_CLASS_AVAILABLE(NA, 4_1)
-@interface GKLeaderboardViewController : UINavigationController
+@interface GKLeaderboardViewController : GKGameCenterViewController
 
 @property (nonatomic, assign) GKLeaderboardTimeScope timeScope;
 @property (nonatomic, retain) NSString *category;

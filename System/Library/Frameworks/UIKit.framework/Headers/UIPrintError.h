@@ -2,7 +2,7 @@
 //  UIPrintError.h
 //  UIKit
 //
-//  Copyright 2010 Apple Inc. All rights reserved.
+//  Copyright 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

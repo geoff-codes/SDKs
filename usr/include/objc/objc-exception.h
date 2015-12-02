@@ -79,7 +79,7 @@ OBJC_EXPORT id objc_begin_catch(void *exc_buf)
 OBJC_EXPORT void objc_end_catch(void)
     __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
 OBJC_EXPORT void objc_terminate(void)
-    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_6_0);
 
 OBJC_EXPORT objc_exception_preprocessor objc_setExceptionPreprocessor(objc_exception_preprocessor fn)
     __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);

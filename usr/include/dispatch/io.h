@@ -140,7 +140,8 @@ dispatch_read(dispatch_fd_t fd,
  *				zero if the write was successful.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_5_0)
-DISPATCH_EXPORT DISPATCH_NONNULL2 DISPATCH_NONNULL3 DISPATCH_NONNULL4 DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL2 DISPATCH_NONNULL3 DISPATCH_NONNULL4
+DISPATCH_NOTHROW
 void
 dispatch_write(dispatch_fd_t fd,
 	dispatch_data_t data,
@@ -167,7 +168,8 @@ DISPATCH_DECL(dispatch_io);
  * @param data		The data object to be handled.
  * @param error		An errno condition for the operation.
  */
-typedef void (^dispatch_io_handler_t)(bool done, dispatch_data_t data, int error);
+typedef void (^dispatch_io_handler_t)(bool done, dispatch_data_t data,
+		int error);
 
 /*!
  * @typedef dispatch_io_type_t
@@ -218,7 +220,8 @@ typedef unsigned long dispatch_io_type_t;
  *		occurred.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_5_0)
-DISPATCH_EXPORT DISPATCH_MALLOC DISPATCH_WARN_RESULT DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_MALLOC DISPATCH_RETURNS_RETAINED DISPATCH_WARN_RESULT
+DISPATCH_NOTHROW
 dispatch_io_t
 dispatch_io_create(dispatch_io_type_t type,
 	dispatch_fd_t fd,
@@ -253,7 +256,8 @@ dispatch_io_create(dispatch_io_type_t type,
 *		occurred.
 */
 __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_5_0)
-DISPATCH_EXPORT DISPATCH_MALLOC DISPATCH_NONNULL2 DISPATCH_WARN_RESULT DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL2 DISPATCH_MALLOC DISPATCH_RETURNS_RETAINED
+DISPATCH_WARN_RESULT DISPATCH_NOTHROW
 dispatch_io_t
 dispatch_io_create_with_path(dispatch_io_type_t type,
 	const char *path, int oflag, mode_t mode,
@@ -292,7 +296,8 @@ dispatch_io_create_with_path(dispatch_io_type_t type,
  *		occurred.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_5_0)
-DISPATCH_EXPORT DISPATCH_NONNULL2 DISPATCH_MALLOC DISPATCH_WARN_RESULT DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL2 DISPATCH_MALLOC DISPATCH_RETURNS_RETAINED
+DISPATCH_WARN_RESULT DISPATCH_NOTHROW
 dispatch_io_t
 dispatch_io_create_with_io(dispatch_io_type_t type,
 	dispatch_io_t io,
@@ -342,7 +347,8 @@ dispatch_io_create_with_io(dispatch_io_type_t type,
  *			the read was successful.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_5_0)
-DISPATCH_EXPORT DISPATCH_NONNULL1 DISPATCH_NONNULL4 DISPATCH_NONNULL5 DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL1 DISPATCH_NONNULL4 DISPATCH_NONNULL5
+DISPATCH_NOTHROW
 void
 dispatch_io_read(dispatch_io_t channel,
 	off_t offset,
@@ -394,7 +400,8 @@ dispatch_io_read(dispatch_io_t channel,
  *			if the write was successful.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_5_0)
-DISPATCH_EXPORT DISPATCH_NONNULL1 DISPATCH_NONNULL3 DISPATCH_NONNULL4 DISPATCH_NONNULL5 DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL1 DISPATCH_NONNULL3 DISPATCH_NONNULL4
+DISPATCH_NONNULL5 DISPATCH_NOTHROW
 void
 dispatch_io_write(dispatch_io_t channel,
 	off_t offset,
@@ -540,7 +547,7 @@ dispatch_io_set_low_water(dispatch_io_t channel, size_t low_water);
  * interval setting even if the amount of data ready to be delivered is inferior
  * to the low water mark (or zero).
  */
-#define	DISPATCH_IO_STRICT_INTERVAL 0x1
+#define DISPATCH_IO_STRICT_INTERVAL 0x1
 
 typedef unsigned long dispatch_io_interval_flags_t;
 

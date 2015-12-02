@@ -2,7 +2,7 @@
 //  UISegmentedControl.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,28 +13,28 @@
 #import <UIKit/UIGeometry.h>
 #import <UIKit/UIBarButtonItem.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UISegmentedControlStyle) {
     UISegmentedControlStylePlain,     // large plain
     UISegmentedControlStyleBordered,  // large bordered
     UISegmentedControlStyleBar,       // small button/nav bar style. tintable
     UISegmentedControlStyleBezeled,   // DEPRECATED. Do not use this style.
-} UISegmentedControlStyle;
+};
 
 enum {
     UISegmentedControlNoSegment = -1   // segment index for no selected segment
 };
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UISegmentedControlSegment) {
     UISegmentedControlSegmentAny = 0,
     UISegmentedControlSegmentLeft = 1,   // The capped, leftmost segment. Only applies when numSegments > 1.
     UISegmentedControlSegmentCenter = 2, // Any segment between the left and rightmost segments. Only applies when numSegments > 2.
     UISegmentedControlSegmentRight = 3,  // The capped,rightmost segment. Only applies when numSegments > 1.
     UISegmentedControlSegmentAlone = 4,  // The standalone segment, capped on both ends. Only applies when numSegments = 1.
-} UISegmentedControlSegment;
+};
 
 @class UIImage, UIColor;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UISegmentedControl : UIControl <NSCoding>
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UISegmentedControl : UIControl <NSCoding>
 {
   @private
   // Note: all instance variables will become private in the future. Do not access directly.
@@ -65,6 +65,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISegmentedControl : UIControl <NSCoding>
         unsigned int transparentBackground:1;
         unsigned int useProportionalWidthSegments:1;
         unsigned int translucentBackground:1;
+        unsigned int appearanceNeedsUpdate:1;
     } _segmentedControlFlags;
 }
 
@@ -75,7 +76,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISegmentedControl : UIControl <NSCoding>
 @property(nonatomic,readonly) NSUInteger numberOfSegments;
 
 // For segments whose width value is 0, setting this property to YES attempts to adjust segment widths based on their content widths. Default is NO.
-@property(nonatomic) BOOL apportionsSegmentWidthsByContent __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property(nonatomic) BOOL apportionsSegmentWidthsByContent NS_AVAILABLE_IOS(5_0);
 
 - (void)insertSegmentWithTitle:(NSString *)title atIndex:(NSUInteger)segment animated:(BOOL)animated; // insert before segment number. 0..#segments. value pinned
 - (void)insertSegmentWithImage:(UIImage *)image  atIndex:(NSUInteger)segment animated:(BOOL)animated;
@@ -112,23 +113,23 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISegmentedControl : UIControl <NSCoding>
  Similarly, when a property is dependent on the bar metrics (on the iPhone in landscape orientation, bars have a different height from standard), be sure to specify a value for UIBarMetricsDefault.
  In the case of the segmented control, appearance properties for UIBarMetricsLandscapePhone are only respected for segmented controls in the smaller navigation and toolbars that are used in landscape orientation on the iPhone.
  */
-- (void)setBackgroundImage:(UIImage *)backgroundImage forState:(UIControlState)state barMetrics:(UIBarMetrics)barMetrics __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR; 
-- (UIImage *)backgroundImageForState:(UIControlState)state barMetrics:(UIBarMetrics)barMetrics __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (void)setBackgroundImage:(UIImage *)backgroundImage forState:(UIControlState)state barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; 
+- (UIImage *)backgroundImageForState:(UIControlState)state barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 /* To customize the segmented control appearance you will need to provide divider images to go between two unselected segments (leftSegmentState:UIControlStateNormal rightSegmentState:UIControlStateNormal), selected on the left and unselected on the right (leftSegmentState:UIControlStateSelected rightSegmentState:UIControlStateNormal), and unselected on the left and selected on the right (leftSegmentState:UIControlStateNormal rightSegmentState:UIControlStateSelected).
  */
-- (void)setDividerImage:(UIImage *)dividerImage forLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState barMetrics:(UIBarMetrics)barMetrics __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
-- (UIImage *)dividerImageForLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState barMetrics:(UIBarMetrics)barMetrics  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (void)setDividerImage:(UIImage *)dividerImage forLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+- (UIImage *)dividerImageForLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState barMetrics:(UIBarMetrics)barMetrics  NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 /* You may specify the font, text color, text shadow color, and text shadow offset for the title in the text attributes dictionary, using the keys found in UIStringDrawing.h.
  */
-- (void)setTitleTextAttributes:(NSDictionary *)attributes forState:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
-- (NSDictionary *)titleTextAttributesForState:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (void)setTitleTextAttributes:(NSDictionary *)attributes forState:(UIControlState)state NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+- (NSDictionary *)titleTextAttributesForState:(UIControlState)state NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 /* For adjusting the position of a title or image within the given segment of a segmented control.
  */
-- (void)setContentPositionAdjustment:(UIOffset)adjustment forSegmentType:(UISegmentedControlSegment)leftCenterRightOrAlone barMetrics:(UIBarMetrics)barMetrics __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR; 
-- (UIOffset)contentPositionAdjustmentForSegmentType:(UISegmentedControlSegment)leftCenterRightOrAlone barMetrics:(UIBarMetrics)barMetrics __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (void)setContentPositionAdjustment:(UIOffset)adjustment forSegmentType:(UISegmentedControlSegment)leftCenterRightOrAlone barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; 
+- (UIOffset)contentPositionAdjustmentForSegmentType:(UISegmentedControlSegment)leftCenterRightOrAlone barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 @end
 

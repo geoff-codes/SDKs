@@ -2,11 +2,7 @@
 //  MKMapView.h
 //  MapKit
 //
-//  Important: The MapKit framework uses Google services to provide map data. Use of this class and 
-//  the associated interfaces binds you to the Google Maps/Google Earth API terms of service. You can
-//  find these terms of service at http://code.google.com/apis/maps/iphone/terms.html
-//
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <MapKit/MKAnnotationView.h>

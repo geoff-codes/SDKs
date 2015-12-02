@@ -2,7 +2,7 @@
 //  UIWindow.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,7 +15,7 @@ typedef CGFloat UIWindowLevel;
 
 @class UIEvent, UIScreen, NSUndoManager, UIViewController;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIWindow : UIView {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIWindow : UIView {
   @package
     id                       _delegate;
     CGFloat                  _windowLevel;
@@ -35,6 +35,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIWindow : UIView {
     UIViewController        *_rootViewController;
     UIColor                 *_savedBackgroundColor;
     NSMutableSet            *_subtreeMonitoringViews;
+    NSMutableSet            *_tintViews;
+    id                      _currentTintView;
     struct {
 	unsigned int delegateWillRotate:1;
         unsigned int delegateDidRotate:1;
@@ -48,7 +50,6 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIWindow : UIView {
         unsigned int dontBecomeKeyOnOrderFront:1;
         unsigned int output:1;
         unsigned int inGesture:1;
-        unsigned int cancelScroller:1;
         unsigned int bitsPerComponent:4;
         unsigned int autorotates:1;
         unsigned int isRotating:1;
@@ -64,12 +65,14 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIWindow : UIView {
         unsigned int ignoreSetHidden:1;
         unsigned int forceVisibleOnInit:1;
         unsigned int settingFirstResponder:1;
+        unsigned int legacyOrientationChecks:1;
+        unsigned int windowResizedToFullScreen:1;
     } _windowFlags;
     
     id _windowController;
 }
 
-@property(nonatomic,retain) UIScreen *screen __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);  // default is [UIScreen mainScreen]. changing the screen may be an expensive operation and should not be done in performance-sensitive code
+@property(nonatomic,retain) UIScreen *screen NS_AVAILABLE_IOS(3_2);  // default is [UIScreen mainScreen]. changing the screen may be an expensive operation and should not be done in performance-sensitive code
 
 @property(nonatomic) UIWindowLevel windowLevel;                   // default = 0.0
 @property(nonatomic,readonly,getter=isKeyWindow) BOOL keyWindow;
@@ -79,7 +82,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIWindow : UIView {
 - (void)makeKeyWindow;
 - (void)makeKeyAndVisible;                             // convenience. most apps call this to show the main window and also make it key. otherwise use view hidden property
 
-@property(nonatomic,retain) UIViewController *rootViewController __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);  // default is nil
+@property(nonatomic,retain) UIViewController *rootViewController NS_AVAILABLE_IOS(4_0);  // default is nil
 
 - (void)sendEvent:(UIEvent *)event;                    // called by UIApplication to dispatch events to views inside the window
 
@@ -108,17 +111,17 @@ UIKIT_EXTERN NSString *const UIKeyboardDidShowNotification;
 UIKIT_EXTERN NSString *const UIKeyboardWillHideNotification; 
 UIKIT_EXTERN NSString *const UIKeyboardDidHideNotification;
 
-UIKIT_EXTERN NSString *const UIKeyboardFrameBeginUserInfoKey        __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // NSValue of CGRect
-UIKIT_EXTERN NSString *const UIKeyboardFrameEndUserInfoKey          __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // NSValue of CGRect
-UIKIT_EXTERN NSString *const UIKeyboardAnimationDurationUserInfoKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // NSNumber of double
-UIKIT_EXTERN NSString *const UIKeyboardAnimationCurveUserInfoKey    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // NSNumber of NSUInteger (UIViewAnimationCurve)
+UIKIT_EXTERN NSString *const UIKeyboardFrameBeginUserInfoKey        NS_AVAILABLE_IOS(3_2); // NSValue of CGRect
+UIKIT_EXTERN NSString *const UIKeyboardFrameEndUserInfoKey          NS_AVAILABLE_IOS(3_2); // NSValue of CGRect
+UIKIT_EXTERN NSString *const UIKeyboardAnimationDurationUserInfoKey NS_AVAILABLE_IOS(3_0); // NSNumber of double
+UIKIT_EXTERN NSString *const UIKeyboardAnimationCurveUserInfoKey    NS_AVAILABLE_IOS(3_0); // NSNumber of NSUInteger (UIViewAnimationCurve)
 
 // Like the standard keyboard notifications above, these additional notifications include
 // a nil object and begin/end frames of the keyboard in screen coordinates in the userInfo dictionary.
-UIKIT_EXTERN NSString *const UIKeyboardWillChangeFrameNotification  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-UIKIT_EXTERN NSString *const UIKeyboardDidChangeFrameNotification   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+UIKIT_EXTERN NSString *const UIKeyboardWillChangeFrameNotification  NS_AVAILABLE_IOS(5_0);
+UIKIT_EXTERN NSString *const UIKeyboardDidChangeFrameNotification   NS_AVAILABLE_IOS(5_0);
 
 // These keys are superseded by UIKeyboardFrameBeginUserInfoKey and UIKeyboardFrameEndUserInfoKey.
-UIKIT_EXTERN NSString *const UIKeyboardCenterBeginUserInfoKey   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2);
-UIKIT_EXTERN NSString *const UIKeyboardCenterEndUserInfoKey     __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2);
-UIKIT_EXTERN NSString *const UIKeyboardBoundsUserInfoKey        __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2);
+UIKIT_EXTERN NSString *const UIKeyboardCenterBeginUserInfoKey   NS_DEPRECATED_IOS(2_0, 3_2);
+UIKIT_EXTERN NSString *const UIKeyboardCenterEndUserInfoKey     NS_DEPRECATED_IOS(2_0, 3_2);
+UIKIT_EXTERN NSString *const UIKeyboardBoundsUserInfoKey        NS_DEPRECATED_IOS(2_0, 3_2);

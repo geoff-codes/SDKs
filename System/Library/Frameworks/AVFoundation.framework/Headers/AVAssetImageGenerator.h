@@ -65,6 +65,9 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 	AVAssetImageGeneratorInternal		*_priv;
 }
 
+/* Indicates the instance of AVAsset with which the AVAssetImageGenerator was initialized  */ 
+@property (nonatomic, readonly) AVAsset *asset NS_AVAILABLE(TBD, 6_0);
+
 /* Specifies whether or not to apply the track's preferredTransform (see -[AVAssetTrack preferredTransform]) when extracting an image from the asset.
    Default is NO.  Only rotation by 90, 180, or 270 degrees is supported. */
 @property (nonatomic) BOOL appliesPreferredTrackTransform;

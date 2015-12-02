@@ -14,7 +14,7 @@
     @discussion This error domain is used as the domain for all NSError instances stemming from the
                 EventKit Framework.
 */
-EVENTKIT_EXTERN NSString *const EKErrorDomain __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+EVENTKIT_EXTERN NSString *const EKErrorDomain __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_4_0);
 
 /*!
     @enum       EKErrorCode
@@ -40,6 +40,15 @@ EVENTKIT_EXTERN NSString *const EKErrorDomain __OSX_AVAILABLE_STARTING(__MAC_NA,
     @constant   EKErrorCalendarSourceCannotBeModified   The calendar cannot be moved to another source.
     @constant   EKErrorCalendarIsImmutable              The calendar is immutable and cannot be modified or deleted.
     @constant   EKErrorSourceDoesNotAllowCalendarAddDelete   Some sources (accounts) do not allow calendars to be added or removed.
+    @constant   EKErrorRecurringReminderRequiresDueDate A recurring reminder requires a due date.
+    @constant   EKErrorStructuredLocationsNotSupported  The source this calendar belongs to does not support structured locations.
+    @constant   EKErrorReminderLocationsNotSupported    This source doesn't support locations on Reminders.
+    @constant   EKErrorAlarmProximityNotSupported       This source doesn't allow alarm proximity (geofencing).
+    @constant   EKErrorCalendarDoesNotAllowEvents       You are trying to add an event to a calendar that does not allow events.
+    @constant   EKErrorCalendarDoesNotAllowReminders    You are trying to add a reminder to a calendar that does not allow reminders.
+    @constant   EKErrorSourceDoesNotAllowReminders      You are trying to add a calendar that allows reminders to a source that does not allow them.
+    @constant   EKErrorPriorityIsInvalid                You have set an invalid priority for a reminder.  Priorities must be between 0 and 9.
+    @constant   EKErrorInvalidEntityType                This is not a valid EKEntityType
 */
 
 #if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
@@ -62,6 +71,15 @@ typedef enum EKErrorCode {
     EKErrorCalendarSourceCannotBeModified,
     EKErrorCalendarIsImmutable,
     EKErrorSourceDoesNotAllowCalendarAddDelete,
+    EKErrorRecurringReminderRequiresDueDate,
+    EKErrorStructuredLocationsNotSupported,
+    EKErrorReminderLocationsNotSupported,
+    EKErrorAlarmProximityNotSupported,
+    EKErrorCalendarDoesNotAllowEvents,
+    EKErrorCalendarDoesNotAllowReminders,
+    EKErrorSourceDoesNotAllowReminders,
+    EKErrorPriorityIsInvalid,
+    EKErrorInvalidEntityType,
 
     EKErrorLast // used internally
 } EKErrorCode;

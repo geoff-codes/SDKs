@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2010 Apple Inc. All rights reserved.
+ * Copyright (c) 2006-2011 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -20,14 +20,24 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
+
+
+/*
+ * This header is deprecated and may be removed in a future release.
+ * Developers who wish to sandbox an app should instead adopt the App Sandbox
+ * feature described in the App Sandbox Design Guide.
+ */
+
+
 #ifndef _SANDBOX_H_
 #define _SANDBOX_H_
 
+#include <Availability.h>
 #include <sys/cdefs.h>
 #include <stdint.h>
-#include <unistd.h>
 
 __BEGIN_DECLS
+
 /*
  * @function sandbox_init
  * Places the current process in a sandbox with a profile as
@@ -51,6 +61,7 @@ __BEGIN_DECLS
  *
  * @result 0 on success, -1 otherwise.
  */
+__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_8,__IPHONE_2_0,__IPHONE_6_0)
 int sandbox_init(const char *profile, uint64_t flags, char **errorbuf);
 
 /*
@@ -59,54 +70,30 @@ int sandbox_init(const char *profile, uint64_t flags, char **errorbuf);
  */
 #define SANDBOX_NAMED		0x0001
 
-#ifdef __APPLE_API_PRIVATE
-
-/* The following flags are reserved for Mac OS X.  Developers should not
- * depend on their availability.
- */
-
-/*
- * @define SANDBOX_NAMED_BUILTIN   The `profile' argument specifies the
- * name of a builtin profile that is statically compiled into the
- * system.
- */
-#define SANDBOX_NAMED_BUILTIN	0x0002
-
-/*
- * @define SANDBOX_NAMED_EXTERNAL   The `profile' argument specifies the
- * pathname of a Sandbox profile.  The pathname may be abbreviated: If
- * the name does not start with a `/' it is treated as relative to
- * /usr/share/sandbox and a `.sb' suffix is appended.
- */
-#define SANDBOX_NAMED_EXTERNAL	0x0003
-
-/*
- * @define SANDBOX_NAMED_MASK   Mask for name types: 4 bits, 15 possible
- * name types, 3 currently defined.
- */
-#define SANDBOX_NAMED_MASK	0x000f
-
-#endif /* __APPLE_API_PRIVATE */
-
 /*
  * Available Sandbox profiles.
  */
 
 /* TCP/IP networking is prohibited. */
+__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_8,__IPHONE_2_0,__IPHONE_6_0)
 extern const char kSBXProfileNoInternet[];
 
 /* All sockets-based networking is prohibited. */
+__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_8,__IPHONE_2_0,__IPHONE_6_0)
 extern const char kSBXProfileNoNetwork[];
 
 /* File system writes are prohibited. */
+__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_8,__IPHONE_2_0,__IPHONE_6_0)
 extern const char kSBXProfileNoWrite[];
 
 /* File system writes are restricted to temporary folders /var/tmp and
  * confstr(_CS_DARWIN_USER_DIR, ...).
  */
+__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_8,__IPHONE_2_0,__IPHONE_6_0)
 extern const char kSBXProfileNoWriteExceptTemporary[];
 
 /* All operating system services are prohibited. */
+__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_8,__IPHONE_2_0,__IPHONE_6_0)
 extern const char kSBXProfilePureComputation[];
 
 /*
@@ -118,64 +105,9 @@ extern const char kSBXProfilePureComputation[];
  *
  * @result void
  */
+__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_8,__IPHONE_2_0,__IPHONE_6_0)
 void sandbox_free_error(char *errorbuf);
 
-
-#ifdef __APPLE_API_PRIVATE
-
-/* The following definitions are reserved for Mac OS X.  Developers should not
- * depend on their availability.
- */
-
-int sandbox_init_with_parameters(const char *profile, uint64_t flags, const char *const parameters[], char **errorbuf);
-
-int sandbox_init_with_extensions(const char *profile, uint64_t flags, const char *const extensions[], char **errorbuf);
-
-enum sandbox_filter_type {
-	SANDBOX_FILTER_NONE,
-	SANDBOX_FILTER_PATH,
-	SANDBOX_FILTER_GLOBAL_NAME,
-	SANDBOX_FILTER_LOCAL_NAME,
-	SANDBOX_FILTER_APPLEEVENT_DESTINATION,
-	SANDBOX_FILTER_RIGHT_NAME,
-};
-
-extern const enum sandbox_filter_type SANDBOX_CHECK_NO_REPORT;
-
-enum sandbox_extension_flags {
-	FS_EXT_DEFAULTS =              0,
-	FS_EXT_FOR_PATH =       (1 << 0),
-	FS_EXT_FOR_FILE =       (1 << 1),
-	FS_EXT_READ =           (1 << 2),
-	FS_EXT_WRITE =          (1 << 3),
-	FS_EXT_PREFER_FILEID =  (1 << 4),
-};
-
-int sandbox_check(pid_t pid, const char *operation, enum sandbox_filter_type type, ...);
-
-int sandbox_note(const char *note);
-
-int sandbox_suspend(pid_t pid);
-int sandbox_unsuspend(void);
-
-int sandbox_issue_extension(const char *path, char **ext_token);
-int sandbox_issue_fs_extension(const char *path, uint64_t flags, char **ext_token);
-int sandbox_issue_fs_rw_extension(const char *path, char **ext_token);
-int sandbox_issue_mach_extension(const char *name, char **ext_token);
-
-int sandbox_consume_extension(const char *path, const char *ext_token);
-int sandbox_consume_fs_extension(const char *ext_token, char **path);
-int sandbox_consume_mach_extension(const char *ext_token, char **name);
-
-int sandbox_release_fs_extension(const char *ext_token);
-
-int sandbox_container_path_for_pid(pid_t pid, char *buffer, size_t bufsize);
-
-int sandbox_wakeup_daemon(char **errorbuf);
-
-const char *_amkrtemp(const char *);
-
-#endif /* __APPLE_API_PRIVATE */
-
 __END_DECLS
+
 #endif /* _SANDBOX_H_ */

@@ -28,8 +28,7 @@
 #ifndef _SECURITY_CIPHERSUITE_H_
 #define _SECURITY_CIPHERSUITE_H_
 
-/* fetch Uint32 */
-#include <CoreFoundation/CFBase.h>
+#include <stdint.h>
 
 /*
  * Defined as enum for debugging, but in the protocol

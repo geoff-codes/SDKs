@@ -11,7 +11,7 @@
 @protocol ABPersonViewControllerDelegate;
 
 NS_CLASS_AVAILABLE(NA, 2_0)
-@interface ABPersonViewController : UIViewController
+@interface ABPersonViewController : UIViewController <UIViewControllerRestoration>
 {
     @private
         id<ABPersonViewControllerDelegate> _personViewDelegate;

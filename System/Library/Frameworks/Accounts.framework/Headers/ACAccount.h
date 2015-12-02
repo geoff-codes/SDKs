@@ -2,7 +2,7 @@
 //  ACAccount.h
 //  Accounts
 //
-//  Copyright 2011 Apple, Inc. All rights reserved.
+//  Copyright (c) 2011-2012 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,30 +13,30 @@
 // Accounts are created not bound to any store. Once an account is saved it belongs
 // to the store it was saved into.
 
-ACCOUNTS_CLASS_AVAILABLE(5_0)
+ACCOUNTS_CLASS_AVAILABLE(NA, 5_0)
 @interface ACAccount : NSObject
 
 // Creates a new account object with a specified account type.
 - (id)initWithAccountType:(ACAccountType *)type;
 
 // This identifier can be used to look up the account using [ACAccountStore accountWithIdentifier:].
-@property (nonatomic, readonly) NSString            *identifier;
+@property (readonly, weak, NS_NONATOMIC_IOSONLY) NSString      *identifier;
 
 // Accounts are stored with a particular account type. All available accounts of a particular type 
 // can be looked up using [ACAccountStore accountsWithAccountType:]. When creating new accounts
 // this property is required.
-@property (nonatomic, retain)   ACAccountType       *accountType;
+@property (strong, NS_NONATOMIC_IOSONLY)   ACAccountType       *accountType;
 
 // A human readable description of the account.
 // This property is only available to applications that have been granted access to the account by the user.
-@property (nonatomic, copy)     NSString            *accountDescription;
+@property (copy, NS_NONATOMIC_IOSONLY)     NSString            *accountDescription;
 
 // The username for the account. This property can be set and saved during account creation. The username is
 // only available to applications that have been granted access to the account by the user.
-@property (nonatomic, copy)     NSString            *username;
+@property (copy, NS_NONATOMIC_IOSONLY)     NSString            *username;
 
 // The credential for the account. This property can be set and saved during account creation. It is 
 // inaccessible once the account has been saved.
-@property (nonatomic, retain)   ACAccountCredential *credential;
+@property (strong, NS_NONATOMIC_IOSONLY)   ACAccountCredential *credential;
 
 @end

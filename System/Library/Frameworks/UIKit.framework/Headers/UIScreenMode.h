@@ -2,14 +2,14 @@
 //  UIScreenMode.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
 #import <CoreGraphics/CoreGraphics.h>
 
-UIKIT_CLASS_AVAILABLE(3_2) @interface UIScreenMode : NSObject {
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UIScreenMode : NSObject {
   @private
     id _mode;
 }

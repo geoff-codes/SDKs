@@ -96,7 +96,7 @@
 	@constant		kAudioUnitScope_Layer	A context which functions as a layer within a part and allows
 											grouped control of LayerItem-scope parameters.
 											An example is the percussive attack layer for an electric organ instrument
-	@constant		kAudioUnitScope_LayerItem	A scope which represents an indivual element within a particular Layer scope.
+	@constant		kAudioUnitScope_LayerItem	A scope which represents an individual element within a particular Layer scope.
 											The individual sample zones, envelope generators, and filters within a synth are
 											examples of this.
 */
@@ -125,7 +125,20 @@ enum {
 						Access:			Read / Write
 						
 						The complete state of an audio unit if on global scope. An audio unit that supports part scope, may also support presets on the part scope
-						that apply to individual parts
+						that apply to individual parts.
+						
+						After a host sets this property it needs to notify the parameter listeners that the values of the parameters of an AU may have changed (so
+						views, etc, can update their state). Something like the following code should be used:
+						
+						<code>
+						#include <AudioToolbox/AudioUnitUtilities.h>
+						
+						AudioUnitParameter changedUnit;
+						changedUnit.mAudioUnit = theChangedAU;
+						changedUnit.mParameterID = kAUParameterListener_AnyParameter;
+						AUParameterListenerNotify (NULL, NULL, &changedUnit);
+						</code>
+
 						
 	@constant		kAudioUnitProperty_MakeConnection
 						Scope:			Input
@@ -709,6 +722,21 @@ enum {
 						For parameters which have kAudioUnitParameterFlag_PlotHistory set, getting this property fills out the 
 						AudioUnitParameterHistoryInfo struct containing the recommended update rate and history duration.
 
+     @constant		kAudioUnitProperty_NickName
+                         Scope:			Global
+                         Value Type:	CFStringRef
+                         Access: 		read/write
+                         
+                        Provides a way for a host to set a custom name on an AU. 
+ 
+                        An example of when this is useful is when a host is managing a processing chain that contains multiple AU
+                        instances of the same subtype (and type and manufacturer). The host uses this property to assign a 
+                        unique name to each AU instance indicating what that particular instance's function is in the processing
+                        chain and can later query the property to distinguish between AU instances with the same type/subtype/manu
+                        tuple. It is the host's responsibility to keep the names unique if uniqueness is required. 
+ 
+                        When getting this property, ownership follows Core Foundation's 'Copy Rule'. This property may return NULL 
+                        which indicates that no name has been set on the AU.
  */	
 enum
 {
@@ -737,8 +765,12 @@ enum
 	kAudioUnitProperty_ElementName					= 30,
 	kAudioUnitProperty_SupportedChannelLayoutTags	= 32,
 	kAudioUnitProperty_PresentPreset				= 36,
+	kAudioUnitProperty_DependentParameters			= 45,
+	kAudioUnitProperty_InputSamplesInOutput			= 49,
 	kAudioUnitProperty_ShouldAllocateBuffer			= 51,
-	kAudioUnitProperty_ParameterHistoryInfo			= 53
+	kAudioUnitProperty_ParameterHistoryInfo			= 53,
+	kAudioUnitProperty_NickName                     = 54,
+    kAudioUnitProperty_OfflineRender				= 37
 
 #if !TARGET_OS_IPHONE
 	,
@@ -750,15 +782,12 @@ enum
 	kAudioUnitProperty_ParameterIDName				= 34,
 	kAudioUnitProperty_ParameterClumpName			= 35,
 	kAudioUnitProperty_ParameterStringFromValue		= 33,
-	kAudioUnitProperty_OfflineRender				= 37,
 	kAudioUnitProperty_ParameterValueFromString		= 38,
 	kAudioUnitProperty_IconLocation					= 39,
 	kAudioUnitProperty_PresentationLatency			= 40,
-	kAudioUnitProperty_DependentParameters			= 45,
 	kAudioUnitProperty_AUHostIdentifier				= 46,
 	kAudioUnitProperty_MIDIOutputCallbackInfo		= 47,
 	kAudioUnitProperty_MIDIOutputCallback			= 48,
-	kAudioUnitProperty_InputSamplesInOutput			= 49,
 	kAudioUnitProperty_ClassInfoFromDocument		= 50,
 	kAudioUnitProperty_FrequencyResponse			= 52
 #endif
@@ -971,6 +1000,17 @@ typedef struct HostCallbackInfo {
 } HostCallbackInfo;
 
 
+/*!
+	@struct			AUDependentParameter
+	@abstract		Used to represent a dependent parameter that can change as a result of its parent meta-parameter
+					changing
+*/
+typedef struct AUDependentParameter {
+	AudioUnitScope			mScope;
+	AudioUnitParameterID	mParameterID;
+} AUDependentParameter;
+
+
 #if !TARGET_OS_IPHONE
 /*!
 	@struct			AudioUnitCocoaViewInfo
@@ -984,16 +1024,6 @@ typedef struct AudioUnitCocoaViewInfo {
 	CFURLRef	mCocoaAUViewBundleLocation;
 	CFStringRef	mCocoaAUViewClass[1];
 } AudioUnitCocoaViewInfo;
-
-/*!
-	@struct			AUDependentParameter
-	@abstract		Used to represent a dependent parameter that can change as a result of its parent meta-parameter
-					changing
-*/
-typedef struct AUDependentParameter {
-	AudioUnitScope			mScope;
-	AudioUnitParameterID	mParameterID;
-} AUDependentParameter;
 
 /*!
 	@struct			AUHostVersionIdentifier
@@ -1029,6 +1059,7 @@ typedef struct AUMIDIOutputCallbackStruct {
 	AUMIDIOutputCallback	midiOutputCallback;
 	void*					userData;
 } AUMIDIOutputCallbackStruct;
+#endif //!TARGET_OS_IPHONE
 
 /*!
 	@struct			AUInputSamplesInOutputCallbackStruct
@@ -1040,7 +1071,6 @@ typedef struct AUInputSamplesInOutputCallbackStruct {
 	void *								userData;
 } AUInputSamplesInOutputCallbackStruct;
 
-#endif //!TARGET_OS_IPHONE
 
 /*!
 	@struct			AudioUnitParameterHistoryInfo
@@ -2020,44 +2050,28 @@ typedef struct AudioOutputUnitStartAtTimeParams {
 	UInt32					mFlags;
 } AudioOutputUnitStartAtTimeParams;
 
-#if TARGET_OS_IPHONE
 //=====================================================================================================================
 #pragma mark - AUVoiceProcessing unit
 /*!
-	@enum           Apple Voice Processing Property IDs
-	@abstract       The collection of property IDs for Apple voice processing units. These properties are only available with iPhone 3.0 or greater
-	 
+	@enum           Apple Voice Processing Property IDs for OS X and iOS
+	@abstract       The collection of property IDs for Apple voice processing units.
+
 	@constant		kAUVoiceIOProperty_BypassVoiceProcessing
 	@discussion			Scope: Global
 						Value Type: UInt32
 						Access: read/write
-							Bypass all processing done by the voice processing unit. When set to 0 (default),
-							the processing is activated otherwise it is disabled.
+							Bypass all processing done by the voice processing unit. When set to 0 
+							(default), the processing is activated otherwise it is disabled.
 
 	@constant		kAUVoiceIOProperty_VoiceProcessingEnableAGC
 	@discussion			Scope: Global
 						Value Type: UInt32
 						Access: read/write
-							Enable automatic gain control on the processed signal. On by default.
+							Enable automatic gain control on the processed microphone/uplink 
+                            signal. On by default.
  
-	@constant		kAUVoiceIOProperty_DuckNonVoiceAudio
-	@discussion			Scope: Global
-						Value Type: UInt32
-						Access: read/write
-							Enable ducking of the non voice audio signal. Since music signals are typically
-							louder than voice, ducking the music signal can increase the intelligibility 
-							of voice chats. Note that the amount of duking is dependent on the audio route.
-							Set to 0 to turn off or 1 to turn on. On by default.
- 
-	@constant		kAUVoiceIOProperty_VoiceProcessingQuality
-	@discussion			Scope: Global
-						Value Type: UInt32
-						Access: read/write
-							Sets the quality of the voice processing unit. Quality values are comprised between
-							0 (lowest) and 127 (highest).
- 
-	@constant		kAUVoiceIOProperty_MuteOutput
-	@discussion			Scope: Global
+	 @constant		kAUVoiceIOProperty_MuteOutput
+	 @discussion		Scope: Global
 						Value Type: UInt32
 						Access: read/write
 							Mutes the output of the voice processing unit. 
@@ -2066,11 +2080,45 @@ typedef struct AudioOutputUnitStartAtTimeParams {
 enum {
 	kAUVoiceIOProperty_BypassVoiceProcessing		= 2100,
 	kAUVoiceIOProperty_VoiceProcessingEnableAGC		= 2101,
-	kAUVoiceIOProperty_DuckNonVoiceAudio			= 2102,
-	kAUVoiceIOProperty_VoiceProcessingQuality		= 2103, 
 	kAUVoiceIOProperty_MuteOutput					= 2104 
 	
 };
+
+
+#pragma mark - AUVoiceProcessing unit deprecated properties
+/*!
+ @enum           Apple Voice Processing Property IDs that are being deprecated
+ @abstract       The collection of property IDs for Apple voice processing units that are
+ 				 being deprecated.
+ 
+ @constant		kAUVoiceIOProperty_DuckNonVoiceAudio
+ @discussion			Scope: Global
+                        Value Type: UInt32
+                        Access: read/write
+                 DEPRECATED. iOS only.  Enable ducking of the non voice audio signal. Since
+                 music signals are typically louder than voice, ducking the music signal 
+                 can increase the intelligibility of voice chats. Note that the amount of
+                 ducking is dependent on the audio route. Set to 0 to turn off or 1 to 
+                 turn on. On by default. Deprecation note: What is being deprecated is the
+                 ability to turn off this feature via this property. In the future, ducking
+                 will always be on.
+
+ @constant		kAUVoiceIOProperty_VoiceProcessingQuality
+ @discussion		Scope: Global
+                    Value Type: UInt32
+                    Access: read/write
+                DEPRECATED. Sets the quality of the voice processing unit. Quality values
+                are comprised between 0 (lowest) and 127 (highest).
+ */
+enum {
+#if TARGET_OS_IPHONE
+	kAUVoiceIOProperty_DuckNonVoiceAudio			= 2102, // deprecated
+#endif
+	kAUVoiceIOProperty_VoiceProcessingQuality		= 2103, // deprecated
+
+};
+
+#if TARGET_OS_IPHONE
 
 //=====================================================================================================================
 #pragma mark - AUNBandEQ unit
@@ -2092,12 +2140,30 @@ enum {
 						Access: read-only
 							Returns the maximum number of equalizer bands.
 */
+
 enum {
 	kAUNBandEQProperty_NumberOfBands			= 2200,
 	kAUNBandEQProperty_MaxNumberOfBands			= 2201
 };
 #endif // TARGET_OS_IPHONE
 
+#if !TARGET_OS_IPHONE
+
+/*!
+ @enum         Apple Voice Processing AudioUnit Error IDs
+ @abstract     These are the various error IDs returned by Voice Processing audio unit.
+ 
+ @constant     kAUVoiceIOErr_UnexpectedNumberOfInputChannels
+               This error indicates that an unexpected number of input channels was encountered during initialization of voice processing audio unit
+
+*/
+
+enum {
+    
+    kAUVoiceIOErr_UnexpectedNumberOfInputChannels     = -66784,
+};
+
+#endif
 
 //=====================================================================================================================
 #pragma mark - Mixers
@@ -2139,8 +2205,6 @@ enum {
 						from all input channels to all output channels.
 						The size required is the number of (input channels) * (output channels).
 						The matrix stores only the crosspoint gains, there are no overall input or output channel gains.
-						
-						
 						
 	@constant		kAudioUnitProperty_MatrixDimensions
 	@discussion			Scope:			Global
@@ -2190,6 +2254,16 @@ typedef struct AudioUnitMeterClipping
     @enum           Apple Mixer Property IDs
     @abstract       The collection of property IDs for Apple mixers
 	
+	@constant		kAudioUnitProperty_ReverbRoomType
+	@discussion			Scope:
+						Value Type:
+						Access:
+
+	@constant		kAudioUnitProperty_UsesInternalReverb
+	@discussion			Scope:
+						Value Type:
+						Access:
+
 	@constant		kAudioUnitProperty_MeteringMode
 	@discussion			Scope: { scope / element }
 						Value Type: UInt32
@@ -2333,147 +2407,6 @@ enum {
 	k3DMixerRenderingFlags_LinearDistanceAttenuation	= (1L << 5),
 	k3DMixerRenderingFlags_ConstantReverbBlend		= (1L << 6)
 };
-
-
-
-//=====================================================================================================================
-#pragma mark -
-#pragma mark Desktop Apple Specific Properties
-
-
-#if !TARGET_OS_IPHONE
-
-//=====================================================================================================================
-#pragma mark - DLSMusicDevice and Internal Reverb
-/*!
-    @enum           Generic Property IDs
-    @abstract       The collection of general audio unit property IDs
-	
-	@constant		kAudioUnitProperty_ReverbRoomType
-	@discussion			Scope:
-						Value Type:
-						Access:
-
-	@constant		kAudioUnitProperty_UsesInternalReverb
-	@discussion			Scope:
-						Value Type:
-						Access:
-
-	@constant		kMusicDeviceProperty_InstrumentName
-	@discussion			Scope:
-						Value Type:
-						Access:
-
-	@constant		kMusicDeviceProperty_InstrumentNumber
-	@discussion			Scope:
-						Value Type:
-						Access:
-
-	@constant		kMusicDeviceProperty_BankName
-	@discussion			Scope:
-						Value Type:
-						Access:
-
-	@constant		kMusicDeviceProperty_SoundBankData
-	@discussion			Scope:
-						Value Type:
-						Access:
-
-	@constant		kMusicDeviceProperty_StreamFromDisk
-	@discussion			Scope:
-						Value Type:
-						Access:
-
-	@constant		kMusicDeviceProperty_SoundBankFSRef
-	@discussion			Scope:
-						Value Type:
-						Access:
-
-	@constant		kMusicDeviceProperty_SoundBankURL
-	@discussion			Scope:
-						Value Type:
-						Access:
-*/
-enum {
-	// DLS Music Device
-	kMusicDeviceProperty_InstrumentName				= 1001,
-	kMusicDeviceProperty_InstrumentNumber 			= 1004,
-	kMusicDeviceProperty_UsesInternalReverb			= kAudioUnitProperty_UsesInternalReverb,
-	kMusicDeviceProperty_BankName					= 1007,
-	kMusicDeviceProperty_SoundBankData				= 1008,
-	kMusicDeviceProperty_StreamFromDisk				= 1011,
-	kMusicDeviceProperty_SoundBankFSRef				= 1012,
-	kMusicDeviceProperty_SoundBankURL				= 1100
-};
-
-#endif	// !TARGET_OS_IPHONE
-
-//=====================================================================================================================
-#pragma mark - AUSampler
-/*!
-	@enum			Apple AUSampler Property IDs
-	@abstract		The collection of property IDs for the Apple AUSampler audio unit.
-
-	@discussion		The AUSampler audio unit lets a client create an editable, interactive
-					sampler synthesizer instrument.
-
-	@constant		kAUSamplerProperty_LoadPresetFromBank
-	@discussion		Scope:			Global
-					Value Type:		AUSamplerBankPresetData
-					Access:			Write
-						Load a preset from an external DLS or Soundfont2 bank file.
- 
-	@constant		kAUSamplerProperty_LoadAudioFiles
-	@discussion		Scope:			Global
-					Value Type:		CFArrayRef
-					Access:			Write
-						Create a new preset from a list of audio file paths.  The CFArray should contain a set
-						of CFURLRefs, one per file.  The previous preset will be completely cleared.
-*/
-enum {
-// range (4100->4999)
-	kAUSamplerProperty_LoadPresetFromBank			= 4100,
-	kAUSamplerProperty_LoadAudioFiles				= 4101
-};
-
-/*
-	@struct			AUSamplerBankPresetData
-	@abstract		Used for loading a preset from an external bank file (i.e. DLS or SoundFont).  
-					The property accepts an AUSamplerBankPresetData struct. The fields of this struct represent values for MIDI controllers 0 and 32 
-					and the MIDI present change message that would be sent to a GM2-compatible synth for program changes.
-					Use the provided constants (kAUSampler_DefaultMelodicBankMSB , kAUSampler_DefaultPercussionBankMSB) to designate 
-					melodic or percussion banks per the GM2 specification (GM-compatible DLS or Soundfont banks).
-					For custom non-GM-compatible DLS and Soundfont banks, use the actual MSB/LSB values associated with the desired preset.
-
-	@field			bankURL
-						The URL of the path to the bank file.   Caller is responsible for releasing the provided CFURLRef.
-	@field			bankMSB
-						The most significant byte value for a particular bank variation within that file.  Range is 0 to 127.  
-						Use kAUSampler_DefaultMelodicBankMSB by default.
-	@field			bankLSB
-						The least significant byte value for a particular bank variation within that file.  Range is 0 to 127.
-						Use kAUSampler_DefaultBankLSB by default.
-	@field			presetID
-						The numeric ID of a particular preset within that bank to load.  Range is 0 to 127.
-	@field			reserved
-						Reserved for future use
- */
-
-enum 
-{
-	kAUSampler_DefaultPercussionBankMSB	=	0x78,
-	kAUSampler_DefaultMelodicBankMSB	=	0x79,
-	kAUSampler_DefaultBankLSB			=	0x00
-};
-
-typedef struct AUSamplerBankPresetData {
-	CFURLRef				bankURL;
-	UInt8					bankMSB;
-	UInt8					bankLSB;
-	UInt8					presetID;
-	UInt8					reserved;
-} AUSamplerBankPresetData;
-
 
 //=====================================================================================================================
 #pragma mark - AUScheduledSoundPlayer
@@ -2804,7 +2737,174 @@ struct ScheduledAudioFileRegion {
 	UInt32						mFramesToPlay;
 };
 
+//=====================================================================================================================
+#pragma mark -
+#pragma mark Desktop Apple Specific Properties
+
+
 #if !TARGET_OS_IPHONE
+
+//=====================================================================================================================
+#pragma mark - DLSMusicDevice and Internal Reverb
+/*!
+    @enum           Generic Property IDs
+    @abstract       The collection of general audio unit property IDs
+	
+	@constant		kMusicDeviceProperty_InstrumentName
+	@discussion			Scope:
+						Value Type:
+						Access:
+
+	@constant		kMusicDeviceProperty_InstrumentNumber
+	@discussion			Scope:
+						Value Type:
+						Access:
+
+	@constant		kMusicDeviceProperty_BankName
+	@discussion			Scope:
+						Value Type:
+						Access:
+
+	@constant		kMusicDeviceProperty_SoundBankData
+	@discussion			Scope:
+						Value Type:
+						Access:
+
+	@constant		kMusicDeviceProperty_StreamFromDisk
+	@discussion			Scope:
+						Value Type:
+						Access:
+
+	@constant		kMusicDeviceProperty_SoundBankFSRef
+	@discussion			Scope:
+						Value Type:
+						Access:
+
+	@constant		kMusicDeviceProperty_SoundBankURL
+	@discussion			Scope:
+						Value Type:
+						Access:
+*/
+
+enum {
+	// DLS Music Device
+	kMusicDeviceProperty_InstrumentName				= 1001,
+	kMusicDeviceProperty_InstrumentNumber 			= 1004,
+	kMusicDeviceProperty_UsesInternalReverb			= kAudioUnitProperty_UsesInternalReverb,
+	kMusicDeviceProperty_BankName					= 1007,
+	kMusicDeviceProperty_SoundBankData				= 1008,
+	kMusicDeviceProperty_StreamFromDisk				= 1011,
+	kMusicDeviceProperty_SoundBankFSRef				= 1012,
+	kMusicDeviceProperty_SoundBankURL				= 1100
+};
+
+#endif	//!TARGET_OS_IPHONE
+
+//=====================================================================================================================
+#pragma mark - AUSampler
+
+/*!
+	@enum			Apple AUSampler Property IDs
+	@abstract		The collection of property IDs for the Apple AUSampler audio unit.
+ 
+	@discussion		The AUSampler audio unit lets a client create an editable, interactive
+					sampler synthesizer instrument.
+ 
+	@constant		kAUSamplerProperty_LoadInstrument
+	@discussion			Scope:			Global
+						Value Type:		AUSamplerInstrumentData
+						Access:			Write
+							Load an instrument from an external DLS or Soundfont2 bank file, or from other file formats.
+ 
+	@constant		kAUSamplerProperty_LoadAudioFiles
+	@discussion			Scope:			Global
+						Value Type:		CFArrayRef
+						Access:			Write
+							Create a new preset from a list of audio file paths.  The CFArray should contain a set
+							of CFURLRefs, one per file.  The previous preset will be completely cleared.
+ */
+enum {
+	// range (4100->4999)
+	kAUSamplerProperty_LoadInstrument				= 4102,
+	kAUSamplerProperty_LoadAudioFiles				= 4101
+};
+
+/*
+	@struct			AUSamplerInstrumentData
+	@abstract		Used for loading an instrument from either an external bank file (i.e. DLS or SoundFont), an Apple
+ 					.aupreset, a Logic or GarageBand EXS24 sampler instrument, or creating a new default instrument from
+ 					a single audio file.  The path to the bank or instrument file is specified in the fileURL field.
+ 					The instrumentType field distinguishes between the instrument types.  The remaining fields of this
+ 					struct are used only for the kInstrumentType_DLSPreset and kInstrumentType_SF2Preset types to
+ 					identify the particular bank and preset IDs for the instrument you wish to load from the bank.
+ 					They represent values for MIDI controllers 0 and 32 and the MIDI present change message that would be
+ 					sent to a GM2-compatible synth for program changes.  Use the provided constants
+ 					(kAUSampler_DefaultMelodicBankMSB,  kAUSampler_DefaultPercussionBankMSB) to designate  melodic or
+ 					percussion banks per the GM2 specification (GM-compatible DLS or Soundfont banks).  For custom
+ 					non-GM-compatible DLS and Soundfont banks, use the actual MSB/LSB values associated with the desired preset.
+
+	@field			fileURL
+						The URL of the path to the bank or instrument file.   Caller is responsible for releasing the
+ 						provided CFURLRef.
+	@field			instrumentType
+						The type of instrument being loaded or created.  For example, use kInstrumentType_DLSPreset to load an
+ 						instrument from a DLS bank file.
+	@field			bankMSB
+						For the preset instruments, the most significant byte value for a particular bank variation within that
+ 						file.  Range is 0 to 127.  Use kAUSampler_DefaultMelodicBankMSB by default.
+	@field			bankLSB
+						For the preset instruments, the least significant byte value for a particular bank variation within that
+ 						file.  Range is 0 to 127.  Use kAUSampler_DefaultBankLSB by default.
+	@field			presetID
+						For the preset instruments, the numeric ID of a particular preset within that bank to load.
+ 						Range is 0 to 127.
+ */
+
+typedef struct AUSamplerInstrumentData {
+	CFURLRef				fileURL;
+	UInt8					instrumentType;
+	UInt8					bankMSB;
+	UInt8					bankLSB;
+	UInt8					presetID;
+} AUSamplerInstrumentData;
+
+/*
+	@enum			InstrumentTypes
+	@abstract		Values to specify the type of instrument being loaded.
+
+	@constant		kInstrumentType_DLSPreset
+	@discussion			A preset from a DLS bank file.  Bank MSB, LSB and preset ID must be specified.
+ 
+	@constant		kInstrumentType_SF2Preset
+	@discussion			A preset from a SoundFont2 bank file.  Bank MSB, LSB and preset ID must be specified.
+ 
+	@constant		kInstrumentType_AUPreset
+	@discussion			A native Apple .aupreset file created using the AUSampler's custom view.
+ 
+	@constant		kInstrumentType_Audiofile
+	@discussion			An audio file which will be used to create a default instrument with that file as its sole sample.
+	
+ 	@constant		kInstrumentType_EXS24
+	@discussion			A Logic or GarageBand sampler instrument.
+
+ */
+
+enum
+{
+	kInstrumentType_DLSPreset	= 1,
+	kInstrumentType_SF2Preset	= kInstrumentType_DLSPreset,
+	kInstrumentType_AUPreset	= 2,
+	kInstrumentType_Audiofile	= 3,
+	kInstrumentType_EXS24		= 4
+};
+
+enum 
+{
+	kAUSampler_DefaultPercussionBankMSB	=	0x78,
+	kAUSampler_DefaultMelodicBankMSB	=	0x79,
+	kAUSampler_DefaultBankLSB			=	0x00
+};
+
 
 //=====================================================================================================================
 #pragma mark - AUDeferredRenderer
@@ -2861,19 +2961,28 @@ enum {
 	kAudioUnitProperty_DeferredRendererWaitFrames   = 3322
 };
 
+#if !TARGET_OS_IPHONE
+
 //=====================================================================================================================
 #pragma mark - AUNetReceive
 /*!
 	@enum			AUNetReceive
 	@constant		kAUNetReceiveProperty_Hostname
-	@discussion			Scope:
-						Value Type:
+	@discussion			Scope: Global
+						Value Type: CFStringRef
 						Access:
+						The hostname from which you wish to receive audio.
+						For GetProperty, the returned CFStringRef is a copy and therefore must be released by the caller.
+						The UI view for AUNetReceive does the resolution of Bonjour service names to hostnames. 
+						Clients who are using this AU programmatically using Bonjour will have to do this resolution themselves. 
+						It is not done by the AU.
 
 	@constant		kAUNetReceiveProperty_Password
-	@discussion			Scope:
-						Value Type:
-						Access:
+	@discussion			Scope: Global
+						Value Type: CFStringRef
+						Access: Read / Write
+						The password to send to the sender. Leave unset or set to the empty string for no password.
+						For GetProperty, the returned CFStringRef is a copy and therefore must be released by the caller.
 */
 enum {
 	kAUNetReceiveProperty_Hostname                  = 3511,
@@ -2885,34 +2994,49 @@ enum {
 /*!
 	@enum			AUNetSend
 	@constant		kAUNetSendProperty_PortNum
-	@discussion			Scope:
-						Value Type:
-						Access:
+	@discussion			Scope: Global
+						Value Type: UInt32
+						Access: Read / Write
+						The network port number on which to send.
 
 	@constant		kAUNetSendProperty_TransmissionFormat
-	@discussion			Scope:
-						Value Type:
-						Access:
+	@discussion			Scope: Global
+						Value Type: AudioStreamBasicDescription
+						Access: Read / Write
+						Get or set an arbitrary format that will be used to transmit the audio.
+						For compressed formats, it is recommended to use kAUNetSendProperty_TransmissionFormatIndex instead of this property,
+						since there is no way to specify a bit rate with this property.
 
 	@constant		kAUNetSendProperty_TransmissionFormatIndex
-	@discussion			Scope:
-						Value Type:
-						Access:
+	@discussion			Scope: Global
+						Value Type: UInt32
+						Access: Read / Write
+						Get or set the index of the preset format that will be used to transmit the audio.
+						The format indices can be found in the NetSendPresetFormat enum.
 
 	@constant		kAUNetSendProperty_ServiceName
-	@discussion			Scope:
-						Value Type:
-						Access:
+	@discussion			Scope: Global
+						Value Type: CFStringRef
+						Access: Read / Write
+						The name you want to publish for this network service.
+						For GetProperty, the returned CFStringRef is a copy and therefore must be released by the caller.
 
 	@constant		kAUNetSendProperty_Disconnect
-	@discussion			Scope:
-						Value Type:
-						Access:
+	@discussion			Scope: Global
+						Value Type: UInt32
+						Access: Read / Write
+						In order to disconnect, call this with a non-zero value.
+						In order to connect, call this with a zero value. 
+						For GetProperty, the returned value the last value set by the caller.
+						To get the current connection status, get the value of the parameter kAUNetReceiveParam_Status.
 
 	@constant		kAUNetSendProperty_Password
-	@discussion			Scope:
-						Value Type:
-						Access:
+	@discussion			Scope: Global
+						Value Type: CFStringRef
+						Access: Read / Write
+						The password that must be used by the receiver. Leave unset or set to the empty string for no password.
+						For GetProperty, the returned CFStringRef is a copy and therefore must be released by the caller.
+
 */
 enum {
 	kAUNetSendProperty_PortNum                      = 3513,
@@ -2952,7 +3076,7 @@ enum {
 	@constant		kAUNetSendPresetFormat_AAC_40kbpspc
 	@discussion			40 kilobits per second per channel
 	@constant		kAUNetSendPresetFormat_AAC_32kbpspc
-	@discussion			kilobits per second per channel
+	@discussion			32 kilobits per second per channel
 	@constant		kAUNetSendNumPresetFormats = 14
 */
 enum {
@@ -3089,7 +3213,23 @@ enum {
 	kSpeakerConfiguration_5_1				 		= kSpeakerConfiguration_5_0
 };
 
-
 #endif // !TARGET_OS_IPHONE
+
+// Deprecated in favor of the newer AUSamplerInstrumentData
+// structure and its supporting property.
+
+typedef struct AUSamplerBankPresetData {
+	CFURLRef				bankURL;
+	UInt8					bankMSB;
+	UInt8					bankLSB;
+	UInt8					presetID;
+	UInt8					reserved;
+} AUSamplerBankPresetData;
+
+enum
+{
+	kAUSamplerProperty_LoadPresetFromBank			= 4100,
+	kAUSamplerProperty_BankAndPreset				= kAUSamplerProperty_LoadPresetFromBank
+};
 
 #endif // __AudioUnitProperties

@@ -1,7 +1,7 @@
 /*
 	CoreDataErrors.h
 	Core Data
-    Copyright (c) 2004-2010 Apple Inc.
+    Copyright (c) 2004-2012 Apple Inc.
 	All rights reserved.
  */
 
@@ -59,7 +59,7 @@ enum {
 
     NSCoreDataError                                  = 134060, // general Core Data error
     NSPersistentStoreOperationError                  = 134070, // the persistent store operation failed 
-    NSPersistentStoreOpenError                       = 134080, // an error occured while attempting to open the persistent store
+    NSPersistentStoreOpenError                       = 134080, // an error occurred while attempting to open the persistent store
     NSPersistentStoreTimeoutError                    = 134090, // failed to connect to the persistent store within the specified timeout (see NSPersistentStoreTimeoutOption)
 	NSPersistentStoreUnsupportedRequestTypeError	 = 134091, // an NSPersistentStore subclass was passed an NSPersistentStoreRequest that it did not understand
 

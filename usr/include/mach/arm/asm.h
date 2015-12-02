@@ -39,13 +39,6 @@
 #include <gprof.h>
 #endif	/* _KERNEL */
 
-#ifdef MACH_KERNEL
-#include <mach_kdb.h>
-#else	/* !MACH_KERNEL */
-#define	MACH_KDB 0
-#endif	/* !MACH_KERNEL */
-
-
 #if	defined(MACH_KERNEL) || defined(_KERNEL)
 #include <gprof.h>
 #endif	/* MACH_KERNEL || _KERNEL */
@@ -134,13 +127,6 @@
 #define Enddata(x)	End(x)
 
 #ifdef ASSEMBLER
-#if	MACH_KDB
-#include <ddb/stab.h>
-/*
- * This pseudo-assembler line is added so that there will be at least
- *	one N_SO entry in the symbol stable to define the current file name.
- */
-#endif	/* MACH_KDB */
 
 #define MCOUNT
 
@@ -179,11 +165,106 @@
 #endif
 
 #if defined (__thumb__)
+/* Provide a PI mechanism for thumb branching. */
 # define BRANCH_EXTERN(x)	ldr	pc, [pc, #-4] ;	\
 				.long	EXT(x)
 #else
 # define BRANCH_EXTERN(x)	b	EXT(x)
 #endif
+
+/* Macros for loading up addresses that are external to the .s file.
+ * LOAD_ADDR:  loads the address for (label) into (reg). Not safe for
+ *   loading to the PC.
+ * LOAD_ADDR_PC:  Variant for loading to the PC; load the address of (label)
+ *   into the pc.
+ * LOAD_ADDR_GEN_DEF:  The general definition needed to support loading
+ *   a label address.
+ *
+ * Usage:  For any label accessed, we require one (and only one) instance
+ *   of LOAD_ADDR_GEN_DEF(label).
+ * 
+ * Example:
+ *   LOAD_ADDR(r0, arm_init)
+ *   LOAD_ADDR(lr, arm_init_cpu)
+ *   LOAD_ADDR_PC(arm_init)
+ *   ...
+ *
+ *   LOAD_ADDR_GEN_DEF(arm_init)
+ *   LOAD_ADDR_GEN_DEF(arm_init_cpu)
+ */
+
+#if SLIDABLE
+/* Definitions for a position dependent kernel using non-lazy pointers.
+ */
+
+/* TODO: Make this work with thumb .s files. */
+#define PC_INC	0x8
+
+/* We need wrapper macros in order to ensure that __LINE__ is expanded.
+ *
+ * There is some small potential for duplicate labels here, but because
+ *   we do not export the generated labels, it should not be an issue.
+ */
+
+#define GLUE_LABEL_GUTS(label, tag) L_##label##_##tag##_glue
+#define GLUE_LABEL(label, tag) GLUE_LABEL_GUTS(label, tag)
+
+#define LOAD_ADDR(reg, label)                                                                   \
+	movw	reg, :lower16:(label##$non_lazy_ptr - (GLUE_LABEL(label, __LINE__) + PC_INC)) ; \
+	movt	reg, :upper16:(label##$non_lazy_ptr - (GLUE_LABEL(label, __LINE__) + PC_INC)) ; \
+GLUE_LABEL(label, __LINE__): ;                                                                  \
+	ldr	reg, [pc, reg]
+
+/* Designed with the understanding that directly branching to thumb code
+ *   is unreliable; this should allow for dealing with __thumb__ in
+ *   assembly; the non-thumb variant still needs to provide the glue label
+ *   to avoid failing to build on undefined symbols.
+ *
+ * TODO: Make this actually use a scratch register; this macro is convenient
+ *   for translating (ldr pc, [?]) to a slidable format without the risk of
+ *   clobbering registers, but it is also wasteful.
+ */
+#if defined(__thumb__)
+#define LOAD_ADDR_PC(label)    \
+	stmfd	sp!, { r0 } ;  \
+	stmfd	sp!, { r0 } ;  \
+	LOAD_ADDR(r0, label) ; \
+	str	r0, [sp, #4] ; \
+	ldmfd	sp!, { r0 } ;  \
+	ldmfd	sp!, { pc }
+#else
+#define LOAD_ADDR_PC(label) \
+	b	EXT(label)
+#endif
+
+#define LOAD_ADDR_GEN_DEF(label)                                   \
+	.section __DATA,__nl_symbol_ptr,non_lazy_symbol_pointers ; \
+	.align 2 ;                                                 \
+label##$non_lazy_ptr: ;                                            \
+	.indirect_symbol	EXT(label) ;                       \
+	.long			0
+
+#else /* !SLIDABLE */
+
+/* Definitions for a position dependent kernel */
+#define LOAD_ADDR(reg, label)  \
+	ldr	reg, L_##label
+
+#if defined(__thumb__)
+#define LOAD_ADDR_PC(label)   \
+	ldr	pc, L_##label
+#else
+#define LOAD_ADDR_PC(label) \
+	b	EXT(label)
+#endif
+
+#define LOAD_ADDR_GEN_DEF(label)  \
+	.text ;                   \
+	.align 2 ;                \
+L_##label: ;                      \
+	.long	EXT(label)
+
+#endif /* SLIDABLE */
 
 #endif /* ASSEMBLER */
 

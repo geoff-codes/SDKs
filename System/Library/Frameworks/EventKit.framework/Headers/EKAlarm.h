@@ -7,8 +7,9 @@
 
 #import <EventKit/EventKitDefines.h>
 #import <EventKit/EKObject.h>
+#import <EventKit/EKTypes.h>
 
-@class EKCalendarItem;
+@class EKCalendarItem, EKStructuredLocation;
 
 /*!
     @class          EKAlarm
@@ -16,7 +17,7 @@
     @discussion     The EKAlarm class represents alarms on an event. An alarm can be relative (e.g. 15 mins before) 
                     or absolute (specific time).
 */
-EVENTKIT_CLASS_AVAILABLE(4_0)
+EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
 @interface EKAlarm : EKObject <NSCopying> {
 }
 
@@ -38,7 +39,7 @@ EVENTKIT_CLASS_AVAILABLE(4_0)
 + (EKAlarm *)alarmWithRelativeOffset:(NSTimeInterval)offset;
 
 /*!
-    @property   triggerInterval
+    @property   relativeOffset
     @abstract   Specifies a relative offset from an event start date to fire an alarm.
     @discussion Set this property to an appropriate negative value to establish an alarm trigger
                 relative to the start date/time of an event. Setting this clears any existing
@@ -53,5 +54,21 @@ EVENTKIT_CLASS_AVAILABLE(4_0)
                 clears any relative interval trigger.
 */
 @property(nonatomic, copy) NSDate *absoluteDate;
+
+/*!
+    @property   structuredLocation
+    @discussion Allows you to set a structured location (a location with a potential geo-coordinate)
+                on an alarm. This is used in conjunction with proximity to do geofence-based
+                triggering of reminders.
+ */
+@property(nonatomic, copy) EKStructuredLocation   *structuredLocation;
+
+/*!
+    @property   proximity
+    @discussion Defines whether this alarm triggers via entering/exiting a geofence as defined by
+                structuredLocation.
+ */
+@property(nonatomic) EKAlarmProximity    proximity;
+
 
 @end

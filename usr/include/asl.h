@@ -49,10 +49,6 @@ typedef struct __aslresponse *aslresponse;
  * the prototypes of asl_log and asl_vlog correctly.
  * The "-p" option to headerdoc2html is required.
  */
-#ifndef __DARWIN_LDBL_COMPAT2
-/*! @parseOnly */
-#define __DARWIN_LDBL_COMPAT2(a)
-#endif
 #ifndef __printflike
 /*! @parseOnly */
 #define __printflike(a,b)
@@ -176,7 +172,36 @@ typedef struct __aslresponse *aslresponse;
 #define ASL_LOG_DESCRIPTOR_READ  1
 #define ASL_LOG_DESCRIPTOR_WRITE 2
 
+/*!
+ * ASL_PREFILTER_LOG is a macro similar to asl_log(), but it first checks
+ * if the message will simply be ignored due to local filter settings.
+ * This prevents the variable argument list from being evaluated.
+ * Note that the message may still be processed if it will be written
+ * to a file or stderr.
+ *
+ * @param asl
+ *    (input) An ASL client handle
+ * @param msg
+ *    (input) An aslmsg (default attributes will be supplied if msg is NULL)
+ * @param level
+ *    (input) Log level (ASL_LEVEL_DEBUG to ASL_LEVEL_EMERG)
+ * @param format
+ *    (input) A printf() - style format string followed by a list of arguments
+ */
+#define ASL_PREFILTER_LOG(asl, msg, level, format, ...) \
+	do { \
+		aslclient _asl = (asl); \
+		aslmsg _msg = (msg); \
+		uint32_t _asl_eval = _asl_evaluate_send(_asl, _msg, (level)); \
+		if (_asl_eval != 0) _asl_lib_log(_asl, _asl_eval, _msg, (format), ## __VA_ARGS__); \
+	} while (0)
+
 __BEGIN_DECLS
+
+/* ASL Library SPI - do not call directly */
+int _asl_lib_log(aslclient asl, uint32_t eval, aslmsg msg, const char *format, ...) __printflike(4, 5);
+
+uint32_t _asl_evaluate_send(aslclient asl, aslmsg msg, int level);
 
 /*!
  * Initialize a connection to the ASL server.
@@ -330,11 +355,7 @@ const char *asl_get(aslmsg msg, const char *key);
  *    (input) A printf() - style format string followed by a list of arguments
  * @result Returns 0 for success, non-zero for failure
  */
-#ifdef __DARWIN_LDBL_COMPAT2
-int asl_log(aslclient asl, aslmsg msg, int level, const char *format, ...) __DARWIN_LDBL_COMPAT2(asl_log) __printflike(4, 5);
-#else
 int asl_log(aslclient asl, aslmsg msg, int level, const char *format, ...) __printflike(4, 5);
-#endif
 
 /*!
  * Log a message with a particular log level.
@@ -352,11 +373,7 @@ int asl_log(aslclient asl, aslmsg msg, int level, const char *format, ...) __pri
  *    (input) A va_list containing the values for the format string
  * @result Returns 0 for success, non-zero for failure
  */
-#ifdef __DARWIN_LDBL_COMPAT2
-int asl_vlog(aslclient asl, aslmsg msg, int level, const char *format, va_list ap) __DARWIN_LDBL_COMPAT2(asl_vlog) __printflike(4, 0);
-#else
 int asl_vlog(aslclient asl, aslmsg msg, int level, const char *format, va_list ap) __printflike(4, 0);
-#endif
 
 /*!
  * Log a message.

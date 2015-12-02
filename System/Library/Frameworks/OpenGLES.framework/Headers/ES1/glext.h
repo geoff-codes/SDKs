@@ -46,6 +46,7 @@ extern "C" {
 ** compliant with the OpenGL(R) version 1.2.1 Specification.
 */
 
+#define GL_APPLE_copy_texture_levels                            1
 #define GL_APPLE_framebuffer_multisample                        1
 #define GL_APPLE_texture_2D_limited_npot                        1
 #define GL_APPLE_texture_format_BGRA8888                        1
@@ -54,9 +55,11 @@ extern "C" {
 #define GL_EXT_debug_label                                      1
 #define GL_EXT_debug_marker                                     1
 #define GL_EXT_discard_framebuffer                              1
+#define GL_EXT_map_buffer_range                                 1
 #define GL_EXT_read_format_bgra                                 1
 #define GL_EXT_texture_filter_anisotropic                       1
 #define GL_EXT_texture_lod_bias                                 1
+#define GL_EXT_texture_storage                                  1
 #define GL_IMG_read_format                                      1
 #define GL_IMG_texture_compression_pvrtc                        1
 #define GL_OES_blend_equation_separate                          1
@@ -119,6 +122,15 @@ extern "C" {
 #define GL_STENCIL_EXT                                          0x1802
 #endif
 
+#if GL_EXT_map_buffer_range
+#define GL_MAP_READ_BIT_EXT                                     0x0001
+#define GL_MAP_WRITE_BIT_EXT                                    0x0002
+#define GL_MAP_INVALIDATE_RANGE_BIT_EXT                         0x0004
+#define GL_MAP_INVALIDATE_BUFFER_BIT_EXT                        0x0008
+#define GL_MAP_FLUSH_EXPLICIT_BIT_EXT                           0x0010
+#define GL_MAP_UNSYNCHRONIZED_BIT_EXT                           0x0020
+#endif
+
 #if GL_EXT_read_format_bgra
 #define GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT                       0x8365
 #define GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT                       0x8366
@@ -138,6 +150,14 @@ extern "C" {
 #define GL_MAX_TEXTURE_LOD_BIAS_EXT                             0x84FD
 #define GL_TEXTURE_FILTER_CONTROL_EXT                           0x8500
 #define GL_TEXTURE_LOD_BIAS_EXT                                 0x8501
+#endif
+
+#if GL_EXT_texture_storage
+#define GL_TEXTURE_IMMUTABLE_FORMAT_EXT                         0x912F
+#define GL_ALPHA8_EXT                                           0x803C
+#define GL_LUMINANCE8_EXT                                       0x8040
+#define GL_LUMINANCE8_ALPHA8_EXT                                0x8045
+#define GL_BGRA8_EXT                                            0x93A1
 #endif
 
 /*------------------------------------------------------------------------*
@@ -260,6 +280,10 @@ extern "C" {
 /*------------------------------------------------------------------------*
  * APPLE extension functions
  *------------------------------------------------------------------------*/
+#if GL_APPLE_copy_texture_levels
+GL_API GLvoid glCopyTextureLevelsAPPLE(GLuint destinationTexture, GLuint sourceTexture, GLint sourceBaseLevel, GLsizei sourceLevelCount) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+#endif
+
 #if GL_APPLE_framebuffer_multisample
 GL_API GLvoid glRenderbufferStorageMultisampleAPPLE(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 GL_API GLvoid glResolveMultisampleFramebufferAPPLE(void)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
@@ -281,6 +305,15 @@ GL_API GLvoid glPopGroupMarkerEXT(void)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPH
 
 #if GL_EXT_discard_framebuffer
 GL_API GLvoid GL_APIENTRY glDiscardFramebufferEXT(GLenum target, GLsizei numAttachments, const GLenum *attachments)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+#endif
+
+#if GL_EXT_map_buffer_range
+GL_API GLvoid *glMapBufferRangeEXT(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+GL_API GLvoid glFlushMappedBufferRangeEXT(GLenum target, GLintptr offset, GLsizeiptr length) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+#endif
+
+#if GL_EXT_texture_storage
+GL_API GLvoid glTexStorage2DEXT(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 #endif
 
 /*------------------------------------------------------------------------*

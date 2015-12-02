@@ -2,7 +2,7 @@
 //  UISearchDisplayController.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,7 +14,7 @@
 @class UISearchBar, UITableView, UIViewController, UIPopoverController;
 @protocol UITableViewDataSource, UITableViewDelegate, UISearchDisplayDelegate;
 
-UIKIT_CLASS_AVAILABLE(3_0) @interface UISearchDisplayController : NSObject {
+NS_CLASS_AVAILABLE_IOS(3_0) @interface UISearchDisplayController : NSObject {
   @private
     UIViewController           *_viewController;
     UITableView                *_tableView;
@@ -44,6 +44,8 @@ UIKIT_CLASS_AVAILABLE(3_0) @interface UISearchDisplayController : NSObject {
         unsigned int isRotatingWithPopover:1;
         unsigned int cancelButtonManagementDisabled:1;
         unsigned int allowDisablingNavigationBarHiding:1;
+        unsigned int showsResultsForEmptyField:1;
+        unsigned int adjustsSearchBarContentInsetForIndexBar:1;
     } _searchDisplayControllerFlags;
 }
 
@@ -59,7 +61,7 @@ UIKIT_CLASS_AVAILABLE(3_0) @interface UISearchDisplayController : NSObject {
 @property(nonatomic,readonly)                         UITableView                *searchResultsTableView;   // will return non-nil. create if requested
 @property(nonatomic,assign)                           id<UITableViewDataSource>   searchResultsDataSource;  // default is nil. delegate can provide
 @property(nonatomic,assign)                           id<UITableViewDelegate>     searchResultsDelegate;    // default is nil. delegate can provide
-@property(nonatomic,copy)                             NSString                   *searchResultsTitle __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // default is nil. If nil, the controller uses the default title string
+@property(nonatomic,copy)                             NSString                   *searchResultsTitle NS_AVAILABLE_IOS(5_0); // default is nil. If nil, the controller uses the default title string
 
 @end
 

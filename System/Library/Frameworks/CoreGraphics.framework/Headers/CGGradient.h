@@ -1,17 +1,17 @@
 /* CoreGraphics - CGGradient.h
- * Copyright (c) 2006-2008 Apple Inc.
- * All rights reserved. */
+   Copyright (c) 2006-2011 Apple Inc.
+   All rights reserved. */
 
 #ifndef CGGRADIENT_H_
 #define CGGRADIENT_H_
 
-#include <stdint.h>
-
 typedef struct CGGradient *CGGradientRef;
 
+#include <stdint.h>
+
 enum {
-    kCGGradientDrawsBeforeStartLocation = (1 << 0),
-    kCGGradientDrawsAfterEndLocation = (1 << 1)
+  kCGGradientDrawsBeforeStartLocation = (1 << 0),
+  kCGGradientDrawsAfterEndLocation = (1 << 1)
 };
 typedef uint32_t CGGradientDrawingOptions;
 
@@ -32,7 +32,7 @@ typedef uint32_t CGGradientDrawingOptions;
 /* Return the CFTypeID for CGGradients. */
 
 CG_EXTERN CFTypeID CGGradientGetTypeID(void)
-    CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
+  CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
 
 /* Creates a gradient by pairing the color components provided in
    `components' with locations provided in `locations'. If `locations' is
@@ -48,8 +48,8 @@ CG_EXTERN CFTypeID CGGradientGetTypeID(void)
    for those values. */
 
 CG_EXTERN CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef
-    space, const CGFloat components[], const CGFloat locations[], size_t count)
-    CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
+  space, const CGFloat components[], const CGFloat locations[], size_t count)
+  CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
 
 /* Creates a gradient by pairing the colors provided in `colors' with the
    locations provided in `locations'. `colors' should be a non-empty array
@@ -68,19 +68,19 @@ CG_EXTERN CGGradientRef CGGradientCreateWithColorComponents(CGColorSpaceRef
    values. */
 
 CG_EXTERN CGGradientRef CGGradientCreateWithColors(CGColorSpaceRef space,
-    CFArrayRef colors, const CGFloat locations[])
-    CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
+  CFArrayRef colors, const CGFloat locations[])
+  CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
 
 /* Equivalent to `CFRetain' except that it doesn't crash (as `CFRetain'
    does) if `gradient' is NULL. */
 
 CG_EXTERN CGGradientRef CGGradientRetain(CGGradientRef gradient)
-    CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
+  CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
 
 /* Equivalent to `CFRelease' except that it doesn't crash (as `CFRelease'
    does) if `gradient' is NULL. */
 
 CG_EXTERN void CGGradientRelease(CGGradientRef gradient)
-    CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
+  CG_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
 
-#endif	/* CGGRADIENT_H_ */
+#endif /* CGGRADIENT_H_ */

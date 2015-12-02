@@ -2,7 +2,7 @@
 //  UITextInput.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -28,40 +28,41 @@
 
 @class UITextPosition;
 @class UITextRange;
+@class UITextSelectionRect;
 
 @protocol UITextInputTokenizer;
 @protocol UITextInputDelegate;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITextStorageDirection) {
     UITextStorageDirectionForward = 0,
     UITextStorageDirectionBackward
-} UITextStorageDirection;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITextLayoutDirection) {
     UITextLayoutDirectionRight = 2,
     UITextLayoutDirectionLeft,
     UITextLayoutDirectionUp,
     UITextLayoutDirectionDown
-} UITextLayoutDirection;
+};
 
 typedef NSInteger UITextDirection;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITextWritingDirection) {
     UITextWritingDirectionNatural = -1,
     UITextWritingDirectionLeftToRight = 0,
     UITextWritingDirectionRightToLeft,
-} UITextWritingDirection;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITextGranularity) {
     UITextGranularityCharacter,
     UITextGranularityWord,
     UITextGranularitySentence,
     UITextGranularityParagraph,
     UITextGranularityLine,
     UITextGranularityDocument
-} UITextGranularity;
+};
 
-UIKIT_CLASS_AVAILABLE(5_1) @interface UIDictationPhrase : NSObject {
+NS_CLASS_AVAILABLE_IOS(5_1) @interface UIDictationPhrase : NSObject {
     @private
         NSString *_text;
         NSArray *_alternativeInterpretations;
@@ -130,6 +131,7 @@ UIKIT_CLASS_AVAILABLE(5_1) @interface UIDictationPhrase : NSObject {
 /* Geometry used to provide, for example, a correction rect. */
 - (CGRect)firstRectForRange:(UITextRange *)range;
 - (CGRect)caretRectForPosition:(UITextPosition *)position;
+- (NSArray *)selectionRectsForRange:(UITextRange *)range NS_AVAILABLE_IOS(6_0);       // Returns an array of UITextSelectionRects
 
 /* Hit testing. */
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point;
@@ -138,6 +140,7 @@ UIKIT_CLASS_AVAILABLE(5_1) @interface UIDictationPhrase : NSObject {
 
 @optional
 
+- (BOOL)shouldChangeTextInRange:(UITextRange *)range replacementText:(NSString *)text NS_AVAILABLE_IOS(6_0);   // return NO to not change text
 
 /* Text styling information can affect, for example, the appearance of a correction rect. */
 - (NSDictionary *)textStylingAtPosition:(UITextPosition *)position inDirection:(UITextStorageDirection)direction;
@@ -161,9 +164,18 @@ UIKIT_CLASS_AVAILABLE(5_1) @interface UIDictationPhrase : NSObject {
  * dictationResult is an array of UIDictationPhrases. */
 - (void)insertDictationResult:(NSArray *)dictationResult;
 
-/* These are optional methods for clients that wish know when there are pending dictation results. */
+/* These are optional methods for clients that wish to know when there are pending dictation results. */
 - (void)dictationRecordingDidEnd;
 - (void)dictationRecognitionFailed;
+
+/* The following three optional methods are for clients that wish to support a placeholder for 
+ * pending dictation results. -insertDictationPlaceholder must return a reference to the 
+ * placeholder. This reference will be used to identify the placeholder by the other methods
+ * (there may be more than one placeholder). */
+- (id)insertDictationResultPlaceholder;
+- (CGRect)frameForDictationResultPlaceholder:(id)placeholder;
+/* willInsertResult will be NO if the recognition failed. */
+- (void)removeDictationResultPlaceholder:(id)placeholder willInsertResult:(BOOL)willInsertResult;
 
 @end
 
@@ -179,15 +191,28 @@ UIKIT_EXTERN NSString *const UITextInputTextFontKey;            // Key to a UIFo
  * evaluating characters at indices is an expensive proposition, a position within a text input
  * document is represented as an object, not an integer.  UITextRange and UITextPosition are abstract
  * classes provided to be subclassed when adopting UITextInput */
-UIKIT_CLASS_AVAILABLE(3_2) @interface UITextPosition : NSObject
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UITextPosition : NSObject
 
 @end
 
-UIKIT_CLASS_AVAILABLE(3_2) @interface UITextRange : NSObject
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UITextRange : NSObject
 
 @property (nonatomic, readonly, getter=isEmpty) BOOL empty;     //  Whether the range is zero-length.
 @property (nonatomic, readonly) UITextPosition *start;
 @property (nonatomic, readonly) UITextPosition *end;
+
+@end
+
+/* UITextSelectionRect defines an annotated selection rect used by the system to
+ * offer rich text interaction experience.  It also serves as an abstract class
+ * provided to be subclassed when adopting UITextInput */
+NS_CLASS_AVAILABLE_IOS(6_0) @interface UITextSelectionRect : NSObject
+
+@property (nonatomic, readonly) CGRect rect;
+@property (nonatomic, readonly) UITextWritingDirection writingDirection;
+@property (nonatomic, readonly) BOOL containsStart; // Returns YES if the rect contains the start of the selection.
+@property (nonatomic, readonly) BOOL containsEnd; // Returns YES if the rect contains the end of the selection.
+@property (nonatomic, readonly) BOOL isVertical; // Returns YES if the rect is for vertically oriented text.
 
 @end
 
@@ -217,7 +242,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UITextRange : NSObject
 
 /* A recommended base implementation of the tokenizer protocol. Subclasses are responsible
  * for handling directions and granularities affected by layout.*/
-UIKIT_CLASS_AVAILABLE(3_2) @interface UITextInputStringTokenizer : NSObject <UITextInputTokenizer> {
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UITextInputStringTokenizer : NSObject <UITextInputTokenizer> {
   @package
     UIResponder <UITextInput> *_textInput;
 }
@@ -226,7 +251,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UITextInputStringTokenizer : NSObject <UIT
 
 @end
 
-UIKIT_CLASS_AVAILABLE(4_2) @interface UITextInputMode : NSObject
+NS_CLASS_AVAILABLE_IOS(4_2) @interface UITextInputMode : NSObject
 
 @property (nonatomic, readonly, retain) NSString *primaryLanguage; // The primary language, if any, of the input mode.  A BCP 47 language identifier such as en-US
 
@@ -235,4 +260,4 @@ UIKIT_CLASS_AVAILABLE(4_2) @interface UITextInputMode : NSObject
 
 @end
 
-UIKIT_EXTERN NSString *const UITextInputCurrentInputModeDidChangeNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2);
+UIKIT_EXTERN NSString *const UITextInputCurrentInputModeDidChangeNotification NS_AVAILABLE_IOS(4_2);

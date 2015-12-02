@@ -96,30 +96,10 @@ extern kern_return_t _kernelrpc_mach_vm_allocate_trap(
 				mach_vm_size_t size,
 				int flags);
 
-extern kern_return_t _kernelrpc_vm_allocate_trap(
-				mach_port_name_t target,
-				vm_offset_t *addr,
-				vm_size_t size,
-				int flags);
-
-extern kern_return_t _kernelrpc_vm_deallocate_trap(
-				mach_port_name_t target,
-				vm_address_t address,
-				vm_size_t size
-);
-
 extern kern_return_t _kernelrpc_mach_vm_deallocate_trap(
 				mach_port_name_t target,
 				mach_vm_address_t address,
 				mach_vm_size_t size
-);
-
-extern kern_return_t _kernelrpc_vm_protect_trap(
-				mach_port_name_t target,
-				vm_address_t address,
-				vm_size_t size,
-				boolean_t set_maximum,
-				vm_prot_t new_protection
 );
 
 extern kern_return_t _kernelrpc_mach_vm_protect_trap(

@@ -2,7 +2,7 @@
 //  UISlider.h
 //  UIKit
 //
-//  Copyright (c) 2006-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 
 @class UIImageView, UIImage;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UISlider : UIControl <NSCoding> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UISlider : UIControl <NSCoding> {
   @package
     float _value;
     float _minValue;
@@ -26,6 +26,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISlider : UIControl <NSCoding> {
     UIImageView *_thumbView;
     UIImageView *_minTrackView;
     UIImageView *_maxTrackView;
+    UIView      *_maxTrackClipView;
 
     struct {
 	unsigned int continuous:1;
@@ -54,9 +55,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISlider : UIControl <NSCoding> {
 
 @property(nonatomic,getter=isContinuous) BOOL continuous;        // if set, value change events are generated any time the value changes due to dragging. default = YES
 
-@property(nonatomic,retain) UIColor *minimumTrackTintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
-@property(nonatomic,retain) UIColor *maximumTrackTintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
-@property(nonatomic,retain) UIColor *thumbTintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *minimumTrackTintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *maximumTrackTintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *thumbTintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 - (void)setValue:(float)value animated:(BOOL)animated; // move slider at fixed velocity (i.e. duration depends on distance). does not send action
 

@@ -2,7 +2,7 @@
 //  UINavigationBar.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -17,7 +17,7 @@
 @class UINavigationItem, UIBarButtonItem, UIImage, UIColor;
 @protocol UINavigationBarDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationBar : UIView <NSCoding> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationBar : UIView <NSCoding> {
   @private
     NSMutableArray *_itemStack;
     CGFloat         _rightMargin;
@@ -31,11 +31,13 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationBar : UIView <NSCoding> {
     UIView         *_accessoryView;
     UIColor        *_tintColor;
     id              _appearanceStorage;
+    id              _currentAlert;
     struct {
         unsigned int animate:1;
         unsigned int animationDisabledCount:10;
         unsigned int transitioningBarStyle:1;
         unsigned int newBarStyle:3;
+        unsigned int transitioningToTranslucent:1;
         unsigned int barStyle:3;
         unsigned int isTranslucent:1;
         unsigned int disableLayout:1;
@@ -55,12 +57,16 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationBar : UIView <NSCoding> {
         unsigned int animationCleanupCancelled:1;
         unsigned int forceLayout:1;
         unsigned int layoutInProgress:1;
+        unsigned int dynamicDuration:1;
+        unsigned int isInteractive:1;
+        unsigned int cancelledTransition:1;
+        unsigned int animationCount:4;
     } _navbarFlags;
 }
 
 @property(nonatomic,assign) UIBarStyle barStyle;
 @property(nonatomic,assign) id delegate;
-@property(nonatomic,assign,getter=isTranslucent) BOOL translucent __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // Default is NO. Always YES if barStyle is set to UIBarStyleBlackTranslucent
+@property(nonatomic,assign,getter=isTranslucent) BOOL translucent NS_AVAILABLE_IOS(3_0); // Default is NO. Always YES if barStyle is set to UIBarStyleBlackTranslucent
 
 // Pushing a navigation item displays the item's title in the center of the navigation bar.
 // The previous top navigation item (if it exists) is displayed as a "back" button on the left.
@@ -84,15 +90,19 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationBar : UIView <NSCoding> {
  the bar buttons (unless otherwise customized) will inherit the underlying
  barStyle or tintColor.
  */
-- (void)setBackgroundImage:(UIImage *)backgroundImage forBarMetrics:(UIBarMetrics)barMetrics __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
-- (UIImage *)backgroundImageForBarMetrics:(UIBarMetrics)barMetrics __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (void)setBackgroundImage:(UIImage *)backgroundImage forBarMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+- (UIImage *)backgroundImageForBarMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+
+/* Default is nil. When non-nil, a custom shadow image to show instead of the default shadow image. For a custom shadow to be shown, a custom background image must also be set with -setBackgroundImage:forBarMetrics: (if the default background image is used, the default shadow image will be used).
+ */
+@property(nonatomic,retain) UIImage *shadowImage NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
 
 /* You may specify the font, text color, text shadow color, and text shadow offset for the title in the text attributes dictionary, using the keys found in UIStringDrawing.h.
  */
-@property(nonatomic,copy) NSDictionary *titleTextAttributes __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,copy) NSDictionary *titleTextAttributes NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
-- (void)setTitleVerticalPositionAdjustment:(CGFloat)adjustment forBarMetrics:(UIBarMetrics)barMetrics __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
-- (CGFloat)titleVerticalPositionAdjustmentForBarMetrics:(UIBarMetrics)barMetrics __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (void)setTitleVerticalPositionAdjustment:(CGFloat)adjustment forBarMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+- (CGFloat)titleVerticalPositionAdjustmentForBarMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 @end
 
@@ -107,7 +117,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationBar : UIView <NSCoding> {
 
 @end
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationItem : NSObject <NSCoding> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationItem : NSObject <NSCoding> {
  @private
     NSString        *_title;
     NSString        *_backButtonTitle;
@@ -151,17 +161,17 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationItem : NSObject <NSCoding> {
    rightBarButtonItems are placed right to left with the first item in the list at
  the right outside edge and right aligned.
  */
-@property(nonatomic,copy) NSArray *leftBarButtonItems __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-@property(nonatomic,copy) NSArray *rightBarButtonItems __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-- (void)setLeftBarButtonItems:(NSArray *)items animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); 
-- (void)setRightBarButtonItems:(NSArray *)items animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+@property(nonatomic,copy) NSArray *leftBarButtonItems NS_AVAILABLE_IOS(5_0);
+@property(nonatomic,copy) NSArray *rightBarButtonItems NS_AVAILABLE_IOS(5_0);
+- (void)setLeftBarButtonItems:(NSArray *)items animated:(BOOL)animated NS_AVAILABLE_IOS(5_0); 
+- (void)setRightBarButtonItems:(NSArray *)items animated:(BOOL)animated NS_AVAILABLE_IOS(5_0);
 
 /* By default, the leftItemsSupplementBackButton property is NO. In this case, 
  the back button is not drawn and the left item or items replace it. If you
  would like the left items to appear in addition to the back button (as opposed to instead of it)
  set leftItemsSupplementBackButton to YES.
  */
-@property(nonatomic) BOOL leftItemsSupplementBackButton __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+@property(nonatomic) BOOL leftItemsSupplementBackButton NS_AVAILABLE_IOS(5_0);
 
 
 // Some navigation items want to display a custom left or right item when they're on top of the stack.

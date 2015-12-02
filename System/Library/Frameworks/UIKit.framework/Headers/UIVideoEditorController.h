@@ -2,7 +2,7 @@
 //  UIVideoEditorController.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc.. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc.. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 
 @protocol UIVideoEditorControllerDelegate;
 
-UIKIT_CLASS_AVAILABLE(3_1) @interface UIVideoEditorController : UINavigationController {
+NS_CLASS_AVAILABLE_IOS(3_1) @interface UIVideoEditorController : UINavigationController {
   @private
     int                               _previousStatusBarStyle;
     NSMutableDictionary              *_properties;
@@ -24,7 +24,7 @@ UIKIT_CLASS_AVAILABLE(3_1) @interface UIVideoEditorController : UINavigationCont
     } _flags;
 }
 
-+ (BOOL)canEditVideoAtPath:(NSString *)videoPath __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_1);
++ (BOOL)canEditVideoAtPath:(NSString *)videoPath NS_AVAILABLE_IOS(3_1);
 
 @property(nonatomic,assign)    id <UINavigationControllerDelegate, UIVideoEditorControllerDelegate> delegate;
 

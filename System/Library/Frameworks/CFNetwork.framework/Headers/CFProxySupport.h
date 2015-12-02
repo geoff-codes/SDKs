@@ -325,7 +325,7 @@ CFN_EXPORT const CFStringRef kCFProxyAutoConfigurationURLKey			 __OSX_AVAILABLE_
  *	CarbonLib:		not available
  *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFProxyAutoConfigurationJavaScriptKey			 __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+CFN_EXPORT const CFStringRef kCFProxyAutoConfigurationJavaScriptKey			 __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_3_0);
 
 
 /*
@@ -427,7 +427,7 @@ CFN_EXPORT const CFStringRef kCFProxyTypeAutoConfigurationURL			__OSX_AVAILABLE_
  *
  *
  */
-CFN_EXPORT const CFStringRef kCFProxyTypeAutoConfigurationJavaScript    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+CFN_EXPORT const CFStringRef kCFProxyTypeAutoConfigurationJavaScript    __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_3_0);
 	
 /*
  *  kCFProxyAutoConfigHTTPResponse
@@ -634,7 +634,7 @@ CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoConfigURLString	__OSX_AVA
  * Key for the string which is the full JavaScript source of the ProxyAutoConfig (PAC) script;  value is a
  * CFString with is the full text source of the PAC script.
  */
-CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoConfigJavaScript	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+CFN_EXPORT const CFStringRef kCFNetworkProxiesProxyAutoConfigJavaScript	__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_3_0);
 	
 /*
  *  kCFNetworkProxiesProxyAutoDiscoveryEnable

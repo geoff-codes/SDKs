@@ -10,6 +10,7 @@
 #ifndef __ABSource__
 #define __ABSource__
 
+#include <AddressBook/AddressBookDefines.h>
 #include <AddressBook/ABAddressBook.h>
 #include <AddressBook/ABRecord.h>
 #include <AddressBook/ABPerson.h>
@@ -36,21 +37,13 @@ typedef int ABSourceType;
 
 #endif
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+AB_EXTERN const ABPropertyID kABSourceNameProperty __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // string
+AB_EXTERN const ABPropertyID kABSourceTypeProperty __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // CFNumberRef of ABSourceType (int)
 
-extern const ABPropertyID kABSourceNameProperty __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // string
-extern const ABPropertyID kABSourceTypeProperty __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // CFNumberRef of ABSourceType (int)
+AB_EXTERN ABRecordRef ABAddressBookCopyDefaultSource(ABAddressBookRef addressBook) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
-extern ABRecordRef ABAddressBookCopyDefaultSource(ABAddressBookRef addressBook) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+AB_EXTERN ABRecordRef ABAddressBookGetSourceWithRecordID(ABAddressBookRef addressBook, ABRecordID sourceID) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
-extern ABRecordRef ABAddressBookGetSourceWithRecordID(ABAddressBookRef addressBook, ABRecordID sourceID) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-
-extern CFArrayRef ABAddressBookCopyArrayOfAllSources(ABAddressBookRef addressBook) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-
-#if defined(__cplusplus)
-}
-#endif
+AB_EXTERN CFArrayRef ABAddressBookCopyArrayOfAllSources(ABAddressBookRef addressBook) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 #endif

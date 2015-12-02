@@ -45,6 +45,16 @@ enum {
 };
 typedef NSUInteger ALAssetsGroupType;
 
+typedef NS_ENUM(NSInteger, ALAuthorizationStatus) {
+    ALAuthorizationStatusNotDetermined = 0, // User has not yet made a choice with regards to this application
+    ALAuthorizationStatusRestricted,        // This application is not authorized to access photo data.
+                                            // The user cannot change this application’s status, possibly due to active restrictions
+                                            //  such as parental controls being in place.
+    ALAuthorizationStatusDenied,            // User has explicitly denied this application access to photos data.
+    ALAuthorizationStatusAuthorized         // User has authorized this application to access photos data.
+} __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+
+
 // This block is executed when a match is found during enumeration. The match is passed to the block in the group argument.
 // When the enumeration is done, the block will be called with group set to nil.
 // Setting the output argument stop to YES will finish the enumeration.
@@ -111,15 +121,27 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 - (void)writeVideoAtPathToSavedPhotosAlbum:(NSURL *)videoPathURL completionBlock:(ALAssetsLibraryWriteVideoCompletionBlock)completionBlock;
 - (BOOL)videoAtPathIsCompatibleWithSavedPhotosAlbum:(NSURL *)videoPathURL;
 
+// Returns photo data authorization status for this application
++ (ALAuthorizationStatus)authorizationStatus __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+
+// Disable retrieval and notifications for Shared Photo Streams
++ (void)disableSharedPhotoStreamsSupport __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+
 @end
 
 // Notifications
 
 // This notification will be sent when the contents of the ALAssetsLibrary have changed from under the app that is using the data.
 // The API user should retain the library object to receive this notification.
-// The API user should discard any cached information and query ALAssetsLibrary again. Any ALAsset, ALAssetRepresentation, or ALAssetsGroup
-// the user is holding on to should be considered invalid after finishing procesing the notification.
+// The userInfo may include the keys listed below, which identify specific ALAssets or ALAssetGroups that have become invalid and should be discarded. The values are NSSets of NSURLs which match the ALAssetPropertyURL and ALAssetsGroupPropertyURL properties. 
+// If the userInfo is nil, all ALAssets and ALAssetGroups should be considered invalid and discarded.
+// Modified ALAssets will be identified by the ALAssetLibraryUpdatedAssetsKey, but inserted or deleted ALAssets are identified by invalidating the containing ALAssetGroups.
 extern NSString *const ALAssetsLibraryChangedNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); 
+
+extern NSString *const ALAssetLibraryUpdatedAssetsKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+extern NSString *const ALAssetLibraryInsertedAssetGroupsKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+extern NSString *const ALAssetLibraryUpdatedAssetGroupsKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+extern NSString *const ALAssetLibraryDeletedAssetGroupsKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 
 // Errors
 

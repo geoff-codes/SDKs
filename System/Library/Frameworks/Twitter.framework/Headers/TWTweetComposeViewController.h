@@ -5,19 +5,31 @@
 //  Copyright 2011 Apple Inc. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+// This class has been  deprecated in iOS 6. Please use SLComposeViewController (in the Social framework) instead.
 
-enum TWTweetComposeViewControllerResult {
-    TWTweetComposeViewControllerResultCancelled,
-    TWTweetComposeViewControllerResultDone
+#import <UIKit/UIKit.h>
+#import <Social/SLComposeViewController.h>
+
+enum {
+    TWTweetComposeViewControllerResultCancelled = SLComposeViewControllerResultCancelled,
+    TWTweetComposeViewControllerResultDone = SLComposeViewControllerResultDone
 };
-typedef enum TWTweetComposeViewControllerResult TWTweetComposeViewControllerResult;   // available in iPhone 5.0
+
+typedef SLComposeViewControllerResult TWTweetComposeViewControllerResult;   // available in iPhone 5.0
 
 // Completion handler for TWTweetComposeViewController
-typedef void (^TWTweetComposeViewControllerCompletionHandler)(TWTweetComposeViewControllerResult result); 
+typedef SLComposeViewControllerCompletionHandler TWTweetComposeViewControllerCompletionHandler;
 
-UIKIT_CLASS_AVAILABLE(5_0) @interface TWTweetComposeViewController : UIViewController {
-}
+// Although you may perform requests on behalf of the user, you cannot append
+// text, images, or URLs without the user's knowledge. Hence, you can set the
+// initial text and other content before presenting the view to the user, but
+// cannot change the content after the user views it. All of the methods used
+// to set the content return a Boolean value. The methods return NO if the
+// content doesn't fit or if the view was already presented to the user and the
+// content can no longer be changed.
+
+NS_DEPRECATED(NA, NA, 5_0, 6_0) __attribute__((visibility("default")))
+@interface TWTweetComposeViewController : UIViewController
 
 // Returns if Twitter is accessible and at least one account has been setup.
 + (BOOL)canSendTweet;
@@ -46,7 +58,7 @@ UIKIT_CLASS_AVAILABLE(5_0) @interface TWTweetComposeViewController : UIViewContr
 - (BOOL)removeAllURLs;
 
 // Specify a block to be called when the user is finished. This block is not guaranteed
-// to be called on any particular thread.
+// to be called on any particular thread. It is cleared after being called.
 @property (nonatomic, copy) TWTweetComposeViewControllerCompletionHandler completionHandler;
 
 @end

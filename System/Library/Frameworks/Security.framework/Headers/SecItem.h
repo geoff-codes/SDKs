@@ -49,7 +49,7 @@ extern "C" {
         that contains the item class code.
 */
 extern CFTypeRef kSecClass
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
     @enum Class Value Constants
@@ -63,15 +63,15 @@ extern CFTypeRef kSecClass
     @constant kSecClassIdentity Specifies identity items.
 */
 extern CFTypeRef kSecClassGenericPassword
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 extern CFTypeRef kSecClassInternetPassword
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecClassCertificate
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 extern CFTypeRef kSecClassKey
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 extern CFTypeRef kSecClassIdentity
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 
 /*!
@@ -331,87 +331,87 @@ extern CFTypeRef kSecClassIdentity
         unwrap another key.
 */
 extern CFTypeRef kSecAttrAccessible
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 extern CFTypeRef kSecAttrAccessGroup
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_3_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_3_0);
 extern CFTypeRef kSecAttrCreationDate
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrModificationDate
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrDescription
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrComment
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCreator
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrType
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrLabel
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrIsInvisible
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrIsNegative
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrAccount
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrService
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrGeneric
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrSecurityDomain
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrServer
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocol
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrAuthenticationType
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrPort
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrPath
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrSubject
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrIssuer
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrSerialNumber
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrSubjectKeyID
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrPublicKeyHash
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCertificateType
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCertificateEncoding
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrKeyClass
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrApplicationLabel
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrIsPermanent
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrApplicationTag
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrKeyType
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrKeySizeInBits
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrEffectiveKeySize
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCanEncrypt
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCanDecrypt
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCanDerive
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCanSign
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCanVerify
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCanWrap
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrCanUnwrap
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
     @enum kSecAttrAccessible Value Constants
@@ -453,17 +453,17 @@ extern CFTypeRef kSecAttrCanUnwrap
         restored to a new device these items will be missing.
 */
 extern CFTypeRef kSecAttrAccessibleWhenUnlocked
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 extern CFTypeRef kSecAttrAccessibleAfterFirstUnlock
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 extern CFTypeRef kSecAttrAccessibleAlways
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 extern CFTypeRef kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 extern CFTypeRef kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 extern CFTypeRef kSecAttrAccessibleAlwaysThisDeviceOnly
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 
 /*!
     @enum kSecAttrProtocol Value Constants
@@ -503,67 +503,67 @@ extern CFTypeRef kSecAttrAccessibleAlwaysThisDeviceOnly
     @constant kSecAttrProtocolPOP3S.
 */
 extern CFTypeRef kSecAttrProtocolFTP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolFTPAccount
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolHTTP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolIRC
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolNNTP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolPOP3
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolSMTP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolSOCKS
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolIMAP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolLDAP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolAppleTalk
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolAFP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolTelnet
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolSSH
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolFTPS
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolHTTPS
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolHTTPProxy
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolHTTPSProxy
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolFTPProxy
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolSMB
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolRTSP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolRTSPProxy
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolDAAP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolEPPC
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolIPP
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolNNTPS
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolLDAPS
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolTelnetS
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolIMAPS
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolIRCS
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrProtocolPOP3S
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
     @enum kSecAttrAuthenticationType Value Constants
@@ -580,21 +580,21 @@ extern CFTypeRef kSecAttrProtocolPOP3S
     @constant kSecAttrAuthenticationTypeDefault.
 */
 extern CFTypeRef kSecAttrAuthenticationTypeNTLM
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrAuthenticationTypeMSN
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrAuthenticationTypeDPA
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrAuthenticationTypeRPA
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrAuthenticationTypeHTTPBasic
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrAuthenticationTypeHTTPDigest
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrAuthenticationTypeHTMLForm
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecAttrAuthenticationTypeDefault
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
     @enum kSecAttrKeyClass Value Constants
@@ -606,11 +606,11 @@ extern CFTypeRef kSecAttrAuthenticationTypeDefault
     @constant kSecAttrKeyClassSymmetric.
 */
 extern CFTypeRef kSecAttrKeyClassPublic
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 extern CFTypeRef kSecAttrKeyClassPrivate
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 extern CFTypeRef kSecAttrKeyClassSymmetric
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 /*!
     @enum kSecAttrKeyType Value Constants
@@ -621,9 +621,9 @@ extern CFTypeRef kSecAttrKeyClassSymmetric
     @constant kSecAttrKeyTypeEC.
 */
 extern CFTypeRef kSecAttrKeyTypeRSA
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 extern CFTypeRef kSecAttrKeyTypeEC
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 
 /*!
     @enum Search Constants
@@ -669,29 +669,29 @@ extern CFTypeRef kSecAttrKeyTypeEC
         key.
 */
 extern CFTypeRef kSecMatchPolicy
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchItemList
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchSearchList
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchIssuers
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchEmailAddressIfPresent
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchSubjectContains
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchCaseInsensitive
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchTrustedOnly
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchValidOnDate
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchLimit
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchLimitOne
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecMatchLimitAll
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 
 /*!
@@ -721,13 +721,13 @@ extern CFTypeRef kSecMatchLimitAll
         persistent reference to an item (CFDataRef) should be returned.
 */
 extern CFTypeRef kSecReturnData
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecReturnAttributes
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecReturnRef
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecReturnPersistentRef
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 
 /*!
@@ -748,11 +748,11 @@ extern CFTypeRef kSecReturnPersistentRef
         even a different application) to retrieve the item referenced by it.
 */
 extern CFTypeRef kSecValueData
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecValueRef
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFTypeRef kSecValuePersistentRef
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 
 /*!
@@ -767,7 +767,7 @@ extern CFTypeRef kSecValuePersistentRef
         type. When this attribute is provided, no keychains are searched.
 */
 extern CFTypeRef kSecUseItemList
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
     @function SecItemCopyMatching
@@ -826,7 +826,7 @@ extern CFTypeRef kSecUseItemList
     reference), and a kSecReturnRef whose value is kCFBooleanTrue.
 */
 OSStatus SecItemCopyMatching(CFDictionaryRef query, CFTypeRef *result)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
     @function SecItemAdd
@@ -863,7 +863,7 @@ OSStatus SecItemCopyMatching(CFDictionaryRef query, CFTypeRef *result)
       * If a result type is not specified, no results are returned.
 */
 OSStatus SecItemAdd(CFDictionaryRef attributes, CFTypeRef *result)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
     @function SecItemUpdate
@@ -883,7 +883,7 @@ OSStatus SecItemAdd(CFDictionaryRef attributes, CFTypeRef *result)
 */
 OSStatus SecItemUpdate(CFDictionaryRef query,
     CFDictionaryRef attributesToUpdate)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
     @function SecItemDelete
@@ -912,7 +912,7 @@ OSStatus SecItemUpdate(CFDictionaryRef query,
         undefined.
 */
 OSStatus SecItemDelete(CFDictionaryRef query)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 #if defined(__cplusplus)
 }

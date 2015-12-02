@@ -2,7 +2,7 @@
 //  UITabBar.h
 //  UIKit
 //
-//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,12 +10,14 @@
 #import <UIKit/UIView.h>
 
 @class UITabBarItem;
+@class UIImageView;
 @protocol UITabBarDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBar : UIView {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UITabBar : UIView {
   @private
     UIView                *_customizeView;
     UIView                *_backgroundView;
+    UIImageView           *_shadowView;
     id<UITabBarDelegate>   _delegate;
     NSArray               *_items;
     UITabBarItem          *_selectedItem;
@@ -47,22 +49,26 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBar : UIView {
 
 /* tintColor will be applied to the tab bar background
  */
-@property(nonatomic,retain) UIColor *tintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *tintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 /* selectedImageTintColor will be applied to the gradient image used when creating the
  selected image. Default is nil and will result in the system bright blue for selected
  tab item images. If you wish to also customize the unselected image appearance, you must
  use -setFinishedSelectedImage:finishedUnselectedImage: on individual tab bar items.
  */
-@property(nonatomic,retain) UIColor *selectedImageTintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *selectedImageTintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 /* The background image will be tiled to fit, even if it was not created via the UIImage resizableImage methods.
  */
-@property(nonatomic,retain) UIImage *backgroundImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIImage *backgroundImage NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 /* The selection indicator image is drawn on top of the tab bar, behind the bar item icon.
  */
-@property(nonatomic,retain) UIImage *selectionIndicatorImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR; 
+@property(nonatomic,retain) UIImage *selectionIndicatorImage NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; 
+
+/* Default is nil. When non-nil, a custom shadow image to show instead of the default shadow image. For a custom shadow to be shown, a custom background image must also be set with -setBackgroundImage: (if the default background image is used, the default shadow image will be used).
+ */
+@property(nonatomic,retain) UIImage *shadowImage NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
 
 @end
 

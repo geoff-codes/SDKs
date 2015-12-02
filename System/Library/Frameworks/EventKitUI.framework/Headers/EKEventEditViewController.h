@@ -67,6 +67,15 @@ EVENTKITUI_CLASS_AVAILABLE(4_0)
 */
 @property(nonatomic, retain) EKEvent *event;
 
+/*!
+    @method     cancelEditing
+    @abstract   Ends the editing session discarding any changes to the event.
+    @discussion This method simulates the user tapping the Cancel button. The delegate will not 
+                receive the eventEditViewController:didCompleteWithAction: message, so you are
+                responsible for dismissing the controller after calling this method.
+ */
+- (void)cancelEditing;
+
 @end
 
 /*!
@@ -81,7 +90,9 @@ EVENTKITUI_CLASS_AVAILABLE(4_0)
     @method     eventEditViewController:didCompleteWithAction:
     @abstract   Called to let delegate know the controller is done editing.
     @discussion When the user presses Cancel, presses Done, or deletes the event, this method
-                is called. Your delegate is responsible for dismissing the controller.
+                is called. Your delegate is responsible for dismissing the controller. If the editing
+                session is terminated programmatically using cancelEditing, 
+                this method will not be called.
  
     @param      controller          the controller in question
     @param      action              the action that is causing the dismissal

@@ -20,7 +20,7 @@
 @class AVMediaSelectionOption;
 @class AVMediaSelectionGroupInternal;
 
-NS_CLASS_AVAILABLE(TBD, 5_0)
+NS_CLASS_AVAILABLE(10_8, 5_0)
 @interface AVMediaSelectionGroup : NSObject <NSCopying> {
 	AVMediaSelectionGroupInternal	*_mediaSelectionGroup;
 }
@@ -66,46 +66,57 @@ NS_CLASS_AVAILABLE(TBD, 5_0)
 /*!
   @method		playableMediaSelectionOptionsFromArray:
   @abstract		Filters an array of AVMediaSelectionOptions according to whether they are playable.
-  @param		array
+  @param		mediaSelectionOptions
   				An array of AVMediaSelectionOption to be filtered according to whether they are playable.
   @result		An instance of NSArray containing the media selection options of the specified NSArray that are playable.
 */
-+ (NSArray *)playableMediaSelectionOptionsFromArray:(NSArray *)array;
++ (NSArray *)playableMediaSelectionOptionsFromArray:(NSArray *)mediaSelectionOptions;
+
+/*!
+ @method		mediaSelectionOptionsFromArray:filteredAndSortedAccordingToPreferredLanguages:
+ @abstract		Filters an array of AVMediaSelectionOptions according to whether their locales match any language identifier in the specified array of preferred languages. The returned array is sorted according to the order of preference of the language each matches.
+ @param			mediaSelectionOptions
+				An array of AVMediaSelectionOptions to be filtered and sorted.
+ @param			preferredLanguages
+				An array of language identifiers in order of preference, each of which is an IETF BCP 47 (RFC 4646) language identifier. Use +[NSLocale preferredLanguages] to obtain the user's list of preferred languages.
+ @result		An instance of NSArray containing media selection options of the specified NSArray that match a preferred language, sorted according to the order of preference of the language each matches.
+*/
++ (NSArray *)mediaSelectionOptionsFromArray:(NSArray *)mediaSelectionOptions filteredAndSortedAccordingToPreferredLanguages:(NSArray *)preferredLanguages NS_AVAILABLE(10_8, 6_0);
 
 /*!
   @method		mediaSelectionOptionsFromArray:withLocale:
   @abstract		Filters an array of AVMediaSelectionOptions according to locale.
-  @param		array
+  @param		mediaSelectionOptions
 				An array of AVMediaSelectionOption to be filtered by locale.
   @param		locale
   				The NSLocale that must be matched for a media selection option to be copied to the output array.
   @result		An instance of NSArray containing the media selection options of the specified NSArray that match the specified locale.
 */
-+ (NSArray *)mediaSelectionOptionsFromArray:(NSArray *)array withLocale:(NSLocale *)locale;
++ (NSArray *)mediaSelectionOptionsFromArray:(NSArray *)mediaSelectionOptions withLocale:(NSLocale *)locale;
 
 /*!
   @method		mediaSelectionOptionsFromArray:withMediaCharacteristics:
   @abstract		Filters an array of AVMediaSelectionOptions according to one or more media characteristics.
-  @param		array
+  @param		mediaSelectionOptions
   				An array of AVMediaSelectionOptions to be filtered by media characteristic.
   @param		mediaCharacteristics
   				The media characteristics that must be matched for a media selection option to be copied to the output array.
   @result		An instance of NSArray containing the media selection options of the specified NSArray that match the specified
 				media characteristics.
 */
-+ (NSArray *)mediaSelectionOptionsFromArray:(NSArray *)array withMediaCharacteristics:(NSArray *)mediaCharacteristics;
++ (NSArray *)mediaSelectionOptionsFromArray:(NSArray *)mediaSelectionOptions withMediaCharacteristics:(NSArray *)mediaCharacteristics;
 
 /*!
   @method		mediaSelectionOptionsFromArray:withoutMediaCharacteristics:
   @abstract		Filters an array of AVMediaSelectionOptions according to whether they lack one or more media characteristics.
-  @param		array
+  @param		mediaSelectionOptions
   				An array of AVMediaSelectionOptions to be filtered by media characteristic.
   @param		mediaCharacteristics
   				The media characteristics that must not be present for a media selection option to be copied to the output array.
   @result		An instance of NSArray containing the media selection options of the specified NSArray that lack the specified
 				media characteristics.
 */
-+ (NSArray *)mediaSelectionOptionsFromArray:(NSArray *)array withoutMediaCharacteristics:(NSArray *)mediaCharacteristics;
++ (NSArray *)mediaSelectionOptionsFromArray:(NSArray *)mediaSelectionOptions withoutMediaCharacteristics:(NSArray *)mediaCharacteristics;
 
 @end
 
@@ -119,7 +130,7 @@ NS_CLASS_AVAILABLE(TBD, 5_0)
 
 @class AVMediaSelectionOptionInternal;
 
-NS_CLASS_AVAILABLE(TBD, 5_0)
+NS_CLASS_AVAILABLE(10_8, 5_0)
 @interface AVMediaSelectionOption : NSObject <NSCopying> {
 	AVMediaSelectionOptionInternal	*_mediaSelectionOption;
 }
@@ -169,27 +180,19 @@ NS_CLASS_AVAILABLE(TBD, 5_0)
  @property		commonMetadata
  @abstract		Provides an array of AVMetadataItems for each common metadata key for which a value is available.
  @discussion
-   The array of AVMetadataItems can be filtered according to locale via +[AVMetadataItem metadataItemsFromArray:withLocale:]
+   The array of AVMetadataItems can be filtered according to language via +[AVMetadataItem metadataItemsFromArray:filteredAndSortedAccordingToPreferredLanguages:], according to locale via +[AVMetadataItem metadataItemsFromArray:withLocale:],
    or according to key via +[AVMetadataItem metadataItemsFromArray:withKey:keySpace:].
-   Example: to obtain the name (or title) of a media selection option in the current locale.
+   Example: to obtain the name (or title) of a media selection option in any of the user's preferred languages.
 
+	NSString *title = nil;
 	NSArray *titles = [AVMetadataItem metadataItemsFromArray:[mediaSelectionOption commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
 	if ([titles count] > 0)
 	{
 		// Try to get a title that matches one of the user's preferred languages.
-		NSArray *preferredLanguages = [NSLocale preferredLanguages];
-		
-		for (NSString *thisLanguage in preferredLanguages)
+		NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
+		if ([titlesForPreferredLanguages count] > 0)
 		{
-			NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:thisLanguage];
-			NSArray *titlesForLocale = [AVMetadataItem metadataItemsFromArray:titles withLocale:locale];
-			[locale release];
-			if ([titlesForLocale count] > 0)
-			{
-				title = [[titlesForLocale objectAtIndex:0] stringValue];
-				break;
-			}
-	
+			title = [[titlesForPreferredLanguages objectAtIndex:0] stringValue];
 		}
 		
 		// No matches in any of the preferred languages. Just use the primary title metadata we find.

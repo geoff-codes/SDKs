@@ -3,7 +3,7 @@
 
     Contains:   AudioQueue Interfaces for the AudioToolbox
 
-    Copyright:  © 2006-2011 by Apple, Inc., all rights reserved.
+    Copyright:   2006-2012 by Apple, Inc., all rights reserved.
 
     Bugs?:      For bug reports, consult the following page on
                 the World Wide Web:
@@ -119,6 +119,8 @@ extern "C" {
                                                     audio queue.
     @constant   kAudioQueueErr_InvalidTapContext    GetTapSourceAudio can only be called from the
                                                     tap's callback.
+    @constant   kAudioQueueErr_InvalidTapType       GetTapQueueTime can only be called on an output queue's
+                                                    tap.
     @constant   kAudioQueueErr_RecordUnderrun       During recording, data was lost because there
                                                     was no enqueued buffer into which to store it.
     @constant   kAudioQueueErr_EnqueueDuringReset   During Reset, Stop, or Dispose, it is not
@@ -146,7 +148,10 @@ enum {
     kAudioQueueErr_CodecNotFound        = -66673,
     kAudioQueueErr_InvalidCodecAccess   = -66672,
     kAudioQueueErr_QueueInvalidated     = -66671,
+    kAudioQueueErr_TooManyTaps          = -66670,
+    kAudioQueueErr_InvalidTapContext    = -66669,
     kAudioQueueErr_RecordUnderrun       = -66668,
+    kAudioQueueErr_InvalidTapType       = -66667,
     kAudioQueueErr_EnqueueDuringReset   = -66632,
     kAudioQueueErr_InvalidOfflineMode   = -66626,
 };
@@ -257,9 +262,9 @@ enum {
 #endif
 
 #if TARGET_OS_IPHONE
-/*
+/*!
     @enum Audio Queue Property IDs
-    @asbtract Audio Queue Property IDs (iPhone 3.0 or greater only)
+    @abstract Audio Queue Property IDs (iOS 3.0 or greater only)
     
     @constant   kAudioQueueProperty_HardwareCodecPolicy
         A UInt32 describing how the audio queue is to choose between a hardware or
@@ -286,7 +291,7 @@ enum {
 
 /*!
     @enum       AudioQueueHardwareCodecPolicy constants
-    @abstract   Values of kAudioQueueProperty_HardwareCodecPolicy (iPhone 3.0 or greater only)
+    @abstract   Values of kAudioQueueProperty_HardwareCodecPolicy (iOS 3.0 or greater only)
     
     @constant kAudioQueueHardwareCodecPolicy_Default
         If the required codec is available in both hardware and software forms, the audio queue
@@ -311,6 +316,20 @@ enum {
     kAudioQueueHardwareCodecPolicy_PreferSoftware       = 3,
     kAudioQueueHardwareCodecPolicy_PreferHardware       = 4
 };
+
+/*!
+    @enum Audio Queue Property IDs
+    @abstract Audio Queue Property IDs (iOS 6.0 or greater only)
+
+    @constant   kAudioQueueProperty_ChannelAssignments
+        A write-only property whose value is an array of AudioQueueChannelAssignment. There must be
+        one array element for each channel of the queue's format as specified in the
+        AudioStreamBasicDescription passed to AudioQueueNewOutput or AudioQueueNewInput.
+        (New in iOS 6.0).
+*/
+enum {
+    kAudioQueueProperty_ChannelAssignments      = 'aqca'
+} __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 #endif
 
 /*!
@@ -358,6 +377,45 @@ enum    // typedef UInt32 AudioQueueParameterID;
 #endif
     kAudioQueueParam_VolumeRampTime = 4,
     kAudioQueueParam_Pan            = 13
+};
+
+/*!
+    @enum       AudioQueueProcessingTap flags
+    @abstract   Flags used in conjunction with processing taps
+
+    @discussion
+        In the flags passed to AudioQueueProcessingTapNew, either the PreEffects
+        or PostEffects flag must be set, but not both. 
+
+    @constant   kAudioQueueProcessingTap_PreEffects
+        Signifies that the processing tap is inserted before any effects.
+        Passed to AudioQueueProcessingTapNew and to the callback.
+    @constant   kAudioQueueProcessingTap_PostEffects
+        Signifies that the processing tap is inserted after any effects.
+        Passed to AudioQueueProcessingTapNew and to the callback.
+    @constant   kAudioQueueProcessingTap_Siphon
+        Signifies that the processing tap is a siphon; it does not call
+        GetSourceAudio. The callback instead receives the source audio
+        and may not modify it. Passed to AudioQueueProcessingTapNew and to the callback.
+    @constant   kAudioQueueProcessingTap_StartOfStream
+        Signifies that the source audio is the beginning of a continuous stream,
+        i.e. following the beginning or resumption of playback or recording.
+        Returned from GetSourceAudio.
+    @constant   kAudioQueueProcessingTap_EndOfStream
+        Signifies that the source audio is past the end of stream. This happens when
+        the audio queue is being stopped asynchronously and has finished playing
+        all of its data. Returned from GetSourceAudio and should be propagated
+        on return from the callback.
+*/
+enum {
+    //  these are flags that are passed to both the constructor and the callback
+    kAudioQueueProcessingTap_PreEffects         = (1 << 0),     // 0x01
+    kAudioQueueProcessingTap_PostEffects        = (1 << 1),     // 0x02
+    kAudioQueueProcessingTap_Siphon             = (1 << 2),     // 0x04
+
+    //  these are flags that are passed to the callback and from GetSourceAudio
+    kAudioQueueProcessingTap_StartOfStream      = (1 << 8),     // 0x100
+    kAudioQueueProcessingTap_EndOfStream        = (1 << 9),     // 0x200
 };
 
 #pragma mark -
@@ -507,6 +565,30 @@ typedef struct AudioQueueLevelMeterState {
     Float32     mPeakPower;
 } AudioQueueLevelMeterState;
 
+/*!
+    @struct     AudioQueueProcessingTapRef
+    @abstract   An object for intercepting and processing audio within an audio queue.
+    @discussion
+*/
+typedef struct OpaqueAudioQueueProcessingTap *   AudioQueueProcessingTapRef;
+
+#if TARGET_OS_IPHONE
+/*!
+    @struct     AudioQueueChannelAssignment
+    @abstract   Specifies an audio device channel to which the queue will play or from which
+                it will record.
+    @discussion
+    @field      mDeviceUID
+        On iOS, this is a port UID obtained from AVAudioSession. On OS X, this is the UID
+        obtained from an AudioDeviceID.
+    @field      mChannelNumber
+        The 1-based index of the channel.
+*/
+typedef struct AudioQueueChannelAssignment {
+    CFStringRef     mDeviceUID;
+    UInt32          mChannelNumber;
+} AudioQueueChannelAssignment;
+#endif
 
 #pragma mark -
 #pragma mark Callbacks
@@ -642,6 +724,110 @@ typedef void (*AudioQueuePropertyListenerProc)(
                                     AudioQueueRef           inAQ,
                                     AudioQueuePropertyID    inID);
 
+/*!
+@typedef    AudioQueueProcessingTapCallback
+@abstract   A function called when an audio queue has data to be processed by its tap
+
+@discussion
+    A processing callback is invoked when the audio queue has data that can be processed by a given
+    tap.
+
+    The audio queue will call the processing callback when it has sufficient data to provide for
+    processing.
+
+    In the case of a siphoning tap, the callback function can inspect the audio data in ioData, but
+    should not otherwise modify it. The callback should not call
+    AudioQueueProcessingTapGetSourceAudio.
+
+    A non-siphoning callback should call AudioQueueProcessingTapGetSourceAudio to request from the
+    queue as much source data as it needs in order to produce the requested number of output
+    samples. When the callback requests source data it may receive less data than it requests.
+
+    In the case of a tap on an audio output queue, the tap must emit the exact number of sample
+    frames that the queue requests. In normal circumstances, the tap's requests for source data will
+    be satisfied (as the client running the audio queue is also providing the queue with the audio
+    source material). If there is insufficient source data available (this is indicated by the
+    outNumberFrames from the GetSource call), then the processing tap should deal as best as it can;
+    it can either return less data than was requested or insert silence, noise, etc. itself. If it
+    returns less data than requested, the hosting audio queue will fill in the remainder with
+    silence.
+
+    In the case of a tap on an audio input queue, the tap may provide back less audio data than is
+    being requested. Typically this will occur because the tap will ask for source data that is not
+    available at this time (the audio input hasn't arrived yet), so the tap should cache the source
+    data that it needs and return as many processed samples as it can. If the processing tap falls
+    behind and is not providing data quickly enough silence will be generated in the data provided
+    to the client (and there is no signal about this either).
+
+    A processing tap executes in a semi-real-time context, so the general limitations for real-time
+    processing apply. Avoid using API's which may block. In particular, it is not safe to call the
+    audio queue on which the tap was installed, with the exceptions of
+    AudioQueueProcessingTapGetSourceAudio and AudioQueueProcessingTapGetQueueTime.
+
+    In normal operation the source data will be continuous from the last time the callback was
+    called and the processed samples should be continuous from the previous samples returned. If
+    there is any discontinuity between the last samples provided for processing the audio queue will
+    set the bit for kAudioQueueProcessing_StartOfStream in the inFlags. After a discontinuity the
+    first sample that the processing tap outputs should correspond to the first sample that was
+    provided in the source samples (so a reset and then consequent process serves to re-anchor a
+    relationship between the processing tap's source and processed samples). In this case the
+    processing tap will typically discard any previous state (for instance, if a processing tap was
+    adding a reverb to a signal, then the discontinuity flag would act the same as AudioUnitReset;
+    any previous source information in the processing tap should be discarded).
+
+    The caller is responsible for absorbing any processing delays. For example, if the processing is
+    to be done by an audio unit that reports a processing latency, then the caller should remove
+    those latency samples from the audio unit's rendering and not return them to the audio queue.
+
+    The processing tap is able to operate on the provided source data in place (that is, it can do
+    "in place processing") and return pointers to that buffer rather than its own. This works in a
+    similar way as AudioUnit render operations.
+
+    When an output audio queue is being stopped asynchronously, the processing tap will see the
+    kAudioQueueProcessingTap_EndOfStream bit set on return from GetSourceAudio, and is responsible
+    for propagating this bit from the callback when its processing has reached this point.
+
+    A processing tap will NEVER see the same source data again, so, it should keep its own copy if
+    it needs to keep it for further reference past the duration of this call. It also cannot assume
+    that the pointers to the source data that it retrieves will remain valid AFTER the processing
+    tap has executed.
+
+    The processing tap should ensure that the data pointers it provides in outProcessedData remain
+    valid until the tap is executed again.
+
+    A processing tap is destroyed implicitly when its audio queue is disposed. It may also be
+    removed explicitly, via AudioQueueProcessingTapDispose.
+
+    @param      inClientData
+                    the client data pointer passed to AudioQueueProcessingTapNew
+    @param      inAQ
+                    The audio queue that invoked the callback.
+    @param      inAQTap
+                    The tap for this callback.
+    @param      inNumberFrames
+                    The requested number of sample frames to be rendered.
+    @param      ioFlags
+                    On entry, the flags passed at construction time are provided. On exit,
+                    the start/end of stream flags should be set when appropriate.
+    @param      ioAudioTimeStamp
+                    On an input audio queue, the timestamp must be returned from this function.
+                    On an output audio queue, the callback is provided a continuous timestamp.
+    @param      outNumberFrames
+                    The number of frames of audio data provided in the processed data. Can be 0.
+    @param      ioData
+                    For non-siphoning taps, on entry, the buffer pointers are null and the lengths
+                    are zero. On exit, they should contain the tap's output.
+                    
+                    Siphoning taps receive valid buffers which they must not alter.
+*/
+typedef void (*AudioQueueProcessingTapCallback)(
+                                    void *                          inClientData,
+                                    AudioQueueProcessingTapRef      inAQTap,
+                                    UInt32                          inNumberFrames,
+                                    AudioTimeStamp *                ioTimeStamp,
+                                    UInt32 *                        ioFlags,
+                                    UInt32 *                        outNumberFrames,
+                                    AudioBufferList *               ioData);
 
 //==================================================================================================
 //  FUNCTIONS
@@ -1044,6 +1230,10 @@ AudioQueueStart(                    AudioQueueRef                   inAQ,
             2.  Call AudioQueuePrime, which waits if you pass 0 to have a default number of
                 frames decoded.
             3.  Call AudioQueueStart.
+
+        Calls to AudioQueuePrime following AudioQueueStart/AudioQueuePrime, and before
+        AudioQueueReset/AudioQueueStop, will have no useful effect. In this situation,
+        outNumberOfFramesPrepared will not have a useful return value.
     @param      inAQ
         The audio queue to be primed.
     @param      inNumberOfFramesToPrepare
@@ -1077,10 +1267,10 @@ AudioQueuePrime(                    AudioQueueRef           inAQ,
         stops. Also, a playback audio queue callback calls this function when there is no more
         audio to play.
 
-		Note that when stopping immediately, all pending buffer callbacks are normally invoked
-		during the process of stopping. But if the calling thread is responding to a buffer
-		callback, then it is possible for additional buffer callbacks to occur after
-		AudioQueueStop returns.
+        Note that when stopping immediately, all pending buffer callbacks are normally invoked
+        during the process of stopping. But if the calling thread is responding to a buffer
+        callback, then it is possible for additional buffer callbacks to occur after
+        AudioQueueStop returns.
     @result     An OSStatus result code.
 */
 extern OSStatus
@@ -1134,10 +1324,10 @@ AudioQueueFlush(                    AudioQueueRef           inAQ)            __O
         the decoder and DSP state information is reset. Hence, a discontinuity (that is, a
         "glitch") might occur.
 
-		Note that when resetting, all pending buffer callbacks are normally invoked
-		during the process of resetting. But if the calling thread is responding to a buffer
-		callback, then it is possible for additional buffer callbacks to occur after
-		AudioQueueReset returns.
+        Note that when resetting, all pending buffer callbacks are normally invoked
+        during the process of resetting. But if the calling thread is responding to a buffer
+        callback, then it is possible for additional buffer callbacks to occur after
+        AudioQueueReset returns.
     @param      inAQ
         The audio queue to reset.
 
@@ -1506,6 +1696,162 @@ AudioQueueOfflineRender(            AudioQueueRef           inAQ,
                                     const AudioTimeStamp *  inTimestamp,
                                     AudioQueueBufferRef     ioBuffer,
                                     UInt32                  inNumberFrames)     __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+
+#pragma mark -
+#pragma mark Processing Taps
+//=============================================================================
+//  Processing Taps
+//=============================================================================
+
+
+/*!
+    @function   AudioQueueProcessingTapNew
+    @abstract   Create a new processing tap
+    @discussion
+                This function creates a processing tap on a given audio queue. A
+                processing tap can only be established (or removed) on an audio queue that is
+                stopped (paused is not sufficient). The processing tap will then be used to
+                process either decoded data in the case of an output queue, or input data
+                (before it is encoded) in the case of an input queue.
+
+                The processing is performed on audio either before or after any effects or other
+                processing (varispeed, etc) is applied by the audio queue, depending on inFlags.
+    
+    @param      inAQ    
+                    The audio queue from which to create the processing tap
+    @param      inCallback
+                    A callback which the queue will call to process the audio
+    @param      inClientData
+                    Client data provided to the callback
+    @param      inFlags
+                    Flags that are used to control aspects of the processing tap.
+                    Valid flags are:
+                        - kAudioQueueProcessingTap_PreEffects: processing is done before any
+                            further effects are applied by the audio queue to the audio
+                        - kAudioQueueProcessingTap_PostEffects: processing is done after all
+                            processing is done, including that of other taps.
+                        - kAudioQueueProcessingTap_Siphon
+    @param      outMaxFrames
+                    The maximum number of sample frames that can be requested of a processing
+                    tap at any one time. Typically this will be approximately 50 msec of audio
+                    (2048 samples @ 44.1kHz)
+    @param      outProcessingFormat
+                    The format in which the client will receive the audio data to be processed.
+                    This will always be the same sample rate as the client format and usually
+                    the same number of channels as the client format of the audio queue. (NOTE:
+                    the number of channels may be different in some cases if the client format
+                    has some channel count restrictions, for instance the client provides 5.1
+                    AAC, but the decoder can only produce stereo). The channel order, if the
+                    same as the client format, will be the same as the client channel order. If
+                    the channel count is changed, it will be to either 1 (mono) or 2 (stereo, in
+                    which case the first channel is left, the second right).
+
+                    If the data is not in a convenient format for the client to process in, then
+                    the client should convert the data to and from that format. This is the most
+                    efficient mechanism to use (as the audio queue can chose a format that is
+                    most efficient from its playback (or recording) requirement.
+    @param      outProcessingTap
+                    The processing tap object.
+                    
+    @result     An OSStatus result code.
+*/
+extern OSStatus 
+AudioQueueProcessingTapNew(         AudioQueueRef                   inAQ,
+                                    AudioQueueProcessingTapCallback inCallback,
+                                    void *                          inClientData,
+                                    UInt32                          inFlags,
+                                    UInt32 *                        outMaxFrames,
+                                    AudioStreamBasicDescription *   outProcessingFormat,
+                                    AudioQueueProcessingTapRef *    outAQTap)
+                                        __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_6_0);
+
+/*!
+    @function   AudioQueueProcessingTapDispose
+    @abstract   Dispose a processing tap object
+    @discussion 
+                As with AudioQueueProcessingTapNew, this call can only be made on an
+                audio queue that is stopped (paused is not sufficient)
+    
+    @param      inAQ    
+                    The audio queue from which to remove the processing tap.
+    @param      inProcessingTap 
+                    The processing tap to remove.
+
+   @result     An OSStatus result code.
+*/
+extern OSStatus 
+AudioQueueProcessingTapDispose(     AudioQueueProcessingTapRef      inAQTap)
+                                        __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_6_0);
+
+/*!
+    @function   AudioQueueProcessingTapGetSourceAudio
+    @abstract   Used by a processing tap to retrieve source audio.
+    @discussion 
+        This function may only be called from the processing tap's callback.
+    
+    @param      inAQ
+                    The audio queue that invoked the processing callback.
+    @param      inAQTap
+                    the processing tap
+    @param      inNumberFrames
+                    the number of frames the processing tap requires for its processing
+    @param      ioAudioTimeStamp
+                    On an input audio queue, the timestamp is returned from this function.
+                    On an output audio queue, the caller must provide a continuous timestamp.
+    @param      outFlags
+                    flags to describe state about the input requested, e.g.
+                    discontinuity/complete
+    @param      outNumberFrames
+                    the number of source frames that have been provided by the parent audio
+                    queue. This can be less than the number of requested frames specified in
+                    inNumberFrames
+    @param      ioData
+                    the audio buffer list which will contain the source data. The audio queue owns
+                    the buffer pointers if NULL pointers were provided (recommended). In this case
+                    the source buffers are only valid for the duration of the processing tap
+                    callback. If the buffer pointers are non-NULL, then they must be big enough to
+                    hold inNumberFrames, and the audio queue will copy its source data into those
+                    buffers.
+                    
+   @result     An OSStatus result code.
+*/
+extern OSStatus
+AudioQueueProcessingTapGetSourceAudio(
+                                    AudioQueueProcessingTapRef      inAQTap,
+                                    UInt32                          inNumberFrames,
+                                    AudioTimeStamp *                ioTimeStamp,
+                                    UInt32 *                        outFlags,
+                                    UInt32 *                        outNumberFrames,
+                                    AudioBufferList *               ioData)
+                                        __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_6_0);
+
+/*!
+    @function   AudioQueueProcessingTapGetQueueTime
+    @abstract   Used by a processing tap to retrieve the queue's current time.
+    @discussion 
+        This function may only be called from the processing tap's callback, and only
+        for audio output queues. It must be called after calling
+        AudioQueueProcessingTapGetSourceAudio.
+    
+    @param      inAQTap
+                    the processing tap
+    @param      outQueueSampleTime
+                    the current sample time of the audio queue. This will appear to be stationary
+                    if the queue is paused.
+    @param      outQueueFrameCount
+                    the number of sample frames of queue time corresponding to the current chunk of
+                    audio being processed by the tap. This will differ from the frame count passed
+                    to the tap if the queue's playback rate is currently other than 1.0, due to the
+                    use of time compression/expansion. The frame count can also be 0 if the queue is
+                    paused.
+                    
+   @result     An OSStatus result code.
+*/
+extern OSStatus
+AudioQueueProcessingTapGetQueueTime(    AudioQueueProcessingTapRef  inAQTap,
+                                        Float64 *                   outQueueSampleTime,
+                                        UInt32 *                    outQueueFrameCount)
+                                        __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0);
 
 #ifdef __cplusplus
 }

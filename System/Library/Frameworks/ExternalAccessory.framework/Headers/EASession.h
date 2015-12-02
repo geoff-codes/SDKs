@@ -2,15 +2,17 @@
 //  EASession.h
 //  ExternalAccessory
 //
-//  Copyright 2008 Apple Inc.. All rights reserved.
+//  Copyright (c) 2008-2012 Apple Inc.. All rights reserved.
 //
+
+#import <Foundation/Foundation.h>
 
 @class EAAccessory;
 
 EA_EXTERN_CLASS_AVAILABLE(3_0) @interface EASession : NSObject {
 @private
     EAAccessory *_accessory;
-    NSUInteger _sessionID;
+    uint32_t _sessionID;
     NSString *_protocolString;
     NSInputStream *_inputStream;
     NSOutputStream *_outputStream;

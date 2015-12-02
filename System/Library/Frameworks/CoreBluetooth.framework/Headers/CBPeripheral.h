@@ -11,20 +11,16 @@
 
 #import <Foundation/Foundation.h>
 
-
-
 /*!
  *  @enum CBCharacteristicWriteType
  *
  *  @discussion Specifies which type of write is to be performed on a CBCharacteristic.
  *
  */
-enum {
+typedef NS_ENUM(NSInteger, CBCharacteristicWriteType) {
 	CBCharacteristicWriteWithResponse = 0,
 	CBCharacteristicWriteWithoutResponse,
 };
-typedef NSInteger CBCharacteristicWriteType;
-
 
 
 @protocol CBPeripheralDelegate;
@@ -34,8 +30,6 @@ typedef NSInteger CBCharacteristicWriteType;
  *  @class CBPeripheral
  *
  *  @discussion Represents a peripheral.
- *      Commands should only be issued when it is connected.
- *
  */
 NS_CLASS_AVAILABLE(10_7, 5_0)
 CB_EXTERN_CLASS @interface CBPeripheral : NSObject
@@ -54,18 +48,15 @@ CB_EXTERN_CLASS @interface CBPeripheral : NSObject
 /*!
  *  @property delegate
  *
- *  @discussion The delegate object you want to receive peripheral events.
- *
+ *  @discussion The delegate object that will receive peripheral events.
  */
 @property(assign, nonatomic) id<CBPeripheralDelegate> delegate;
 
 /*!
  *  @property UUID
  *
- *  @discussion The UUID of the peripheral.
- *      This UUID can be stored and then later used to retrieve this specific peripheral
- *      with another central instance.
- *
+ *  @discussion Once a peripheral has been connected at least once by the system, it is assigned a UUID. This UUID can be stored and later provided to a
+ *              <code>CBCentralManager</code> to retrieve the peripheral.
  */
 @property(readonly, nonatomic) CFUUIDRef UUID;
 
@@ -73,165 +64,151 @@ CB_EXTERN_CLASS @interface CBPeripheral : NSObject
  *  @property name
  *
  *  @discussion The name of the peripheral.
- *
  */
 @property(retain, readonly) NSString *name;
 
 /*!
  *  @property RSSI
  *
- *  @discussion While connected, the RSSI of the link in dB.
- *
+ *  @discussion While connected, the RSSI of the link in decibels.
  */
 @property(retain, readonly) NSNumber *RSSI;
 
 /*!
  *  @property isConnected
  *
- *  @discussion Whether the peripheral is currently connected or not.
- *
+ *  @discussion Whether or not the peripheral is currently connected.
  */
 @property(readonly) BOOL isConnected;
 
 /*!
  *  @property services
  *
- *  @discussion A list of CBServices that have so far been discovered on the peripheral.
- *
+ *  @discussion A list of <code>CBService</code> objects that have been discovered on the peripheral.
  */
 @property(retain, readonly) NSArray *services;
 
 /*!
  *  @method readRSSI
  *
- *  @discussion While connected, fetch the current RSSI of the link.
+ *	@discussion Retrieves the current RSSI of the link.
  *
- * @see peripheralDidUpdateRSSI:error:
+ *	@see		peripheralDidUpdateRSSI:error:
  */
 - (void)readRSSI;
 
 /*!
- *  @method discoverServices
+ *  @method discoverServices:
  *
- *  @param serviceUUIDs The array of servcice UUIDs to be discovered.
+ *  @param serviceUUIDs A list of <code>CBUUID</code> objects representing the service types to be discovered. If <i>nil</i>,
+ *						all services will be discovered, which is considerably slower and not recommended.
  *
- *  @discussion Discover available services on the peripheral.
- *      The relevant delegate callback will then be invoked with the status of the request.
- *      An array of CBUUIDs may be provided in "serviceUUIDs", in which case only services
- *      with matching UUIDs will be discovered (recommended).
- *      If nil, all services will be discovered (not recommmended).
+ *  @discussion			Discovers available service(s) on the peripheral.
  *
- *  @see peripheral:didDiscoverServices:
+ *  @see				peripheral:didDiscoverServices:
  */
 - (void)discoverServices:(NSArray *)serviceUUIDs;
 
 /*!
  *  @method discoverIncludedServices:forService:
  *
- *  @param includedServiceUUIDs The array of included service UUIDs to be discovered.
- *  @param service The service on which to discover the secondary services.
+ *  @param includedServiceUUIDs A list of <code>CBUUID</code> objects representing the included service types to be discovered. If <i>nil</i>,
+ *								all of <i>service</i>s included services will be discovered, which is considerably slower and not recommended.
+ *  @param service				A primary GATT service. 
  *
- *  @discussion Discover included services of a service.
- *      The relevant delegate callback will then be invoked with the status of the request.
- *      An array of CBUUIDs may be provided in "includedServiceUUIDs", in which case only
- *      included services with matching UUIDs will be discovered (recommended).
- *      If nil, all included services will be discovered (not recommmended).
+ *  @discussion					Discovers the specified included service(s) of <i>service</i>.
  *
- *  @see peripheral:didDiscoverIncludedServicesForService:error:
+ *  @see						peripheral:didDiscoverIncludedServicesForService:error:
  */
 - (void)discoverIncludedServices:(NSArray *)includedServiceUUIDs forService:(CBService *)service;
 
 /*!
  *  @method discoverCharacteristics:forService:
  *
- *  @param characteristicUUIDs The array of characteristic UUIDs.
- *  @param service The service on which to discover the characteristics.
+ *  @param characteristicUUIDs	A list of <code>CBUUID</code> objects representing the characteristic types to be discovered. If <i>nil</i>,
+ *								all characteristics of <i>service</i> will be discovered, which is considerably slower and not recommended.
+ *  @param service				A GATT service.
  *
- *  @discussion Discover characteristics of a service.
- *      The relevant delegate callback will then be invoked with the status of the request.
- *      An array of CBUUIDs may be provided in "characteristicUUIDs", in which case only
- *      characteristics with matching UUIDs will be discovered (recommended).
- *      If nil, all characteristics will be discovered (not recommmended).
+ *  @discussion					Discovers the specified characteristic(s) of <i>service</i>.
  *
- *  @see peripheral:didDiscoverCharacteristicsForService:error:
+ *  @see						peripheral:didDiscoverCharacteristicsForService:error:
  */
 - (void)discoverCharacteristics:(NSArray *)characteristicUUIDs forService:(CBService *)service;
 
 /*!
  *  @method readValueForCharacteristic:
  *
- *  @param characteristic The characteristic for which the value needs to be read.
+ *  @param characteristic	A GATT characteristic.
  *
- *  @discussion Fetch the value of a characteristic.
- *      The relevant delegate callback will then be invoked with the status of the request.
+ *  @discussion				Reads the characteristic value for <i>characteristic</i>.
  *
- *  @see peripheral:didUpdateValueForCharacteristic:error:
+ *  @see					peripheral:didUpdateValueForCharacteristic:error:
  */
 - (void)readValueForCharacteristic:(CBCharacteristic *)characteristic;
 
 /*!
- *  @method writeValue:forCharacteristic:withResponse:
+ *  @method writeValue:forCharacteristic:type:
  *
- *  @param data The value to write.
- *  @param characteristic The characteristic on which to perform the write operation.
- *  @param type The type of write to be executed.
+ *  @param data				The value to write.
+ *  @param characteristic	The characteristic whose characteristic value will be written.
+ *  @param type				The type of write to be executed.
  *
- *  @discussion Write the value of a characteristic.
- *      The passed data is copied and can be disposed of after the call finishes.
- *      The relevant delegate callback will then be invoked with the status of the request.
+ *  @discussion				Writes <i>value</i> to <i>characteristic</i>'s characteristic value.
  *
- *  @see peripheral:didWriteValueForCharacteristic:error:
+ *  @see					peripheral:didWriteValueForCharacteristic:error:
+ *	@see					CBCharacteristicWriteType
  */
 - (void)writeValue:(NSData *)data forCharacteristic:(CBCharacteristic *)characteristic type:(CBCharacteristicWriteType)type;
 
 /*!
  *  @method setNotifyValue:forCharacteristic:
  *
- *  @param notifyValue The value to set the client configuration descriptor to.
- *  @param characteristic The characteristic containing the client configuration.
+ *  @param enabled			Whether or not notifications/indications should be enabled.
+ *  @param characteristic	The characteristic containing the client characteristic configuration descriptor.
  *
- *  @discussion Ask to start/stop receiving notifications for a characteristic.
- *      The relevant delegate callback will then be invoked with the status of the request.
+ *  @discussion				Enables or disables notifications/indications for the characteristic value of <i>characteristic</i>. If <i>characteristic</i>
+ *							allows both, notifications will be used.
+ *                          When notifications/indications are enabled, updates to the characteristic value will be received via delegate method 
+ *                          @link peripheral:didUpdateValueForCharacteristic:error: @/link. Since it is the peripheral that chooses when to send an update,
+ *                          the application should be prepared to handle them as long as notifications/indications remain enabled.
  *
- *  @see peripheral:didUpdateNotificationStateForCharacteristic:error:
+ *  @see					peripheral:didUpdateNotificationStateForCharacteristic:error:
+ *  @seealso                CBConnectPeripheralOptionNotifyOnNotificationKey
  */
-- (void)setNotifyValue:(BOOL)notifyValue forCharacteristic:(CBCharacteristic *)characteristic;
+- (void)setNotifyValue:(BOOL)enabled forCharacteristic:(CBCharacteristic *)characteristic;
 
 /*!
  *  @method discoverDescriptorsForCharacteristic:
  *
- *  @param characteristic The characteristic for which to discover the descriptors.
+ *  @param characteristic	A GATT characteristic.
  *
- *  @discussion Discover the descriptors of a characteristic.
- *      The relevant delegate callback will then be invoked with the status of the request.
+ *  @discussion				Discovers the characteristic descriptor(s) of <i>characteristic</i>.
  *
- *  @see peripheral:didDiscoverDescriptorsForCharacteristic:error:
+ *  @see					peripheral:didDiscoverDescriptorsForCharacteristic:error:
  */
 - (void)discoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic;
 
 /*!
  *  @method readValueForDescriptor:
  *
- *  @param descriptor The descriptor to read from.
+ *  @param descriptor	A GATT characteristic descriptor.
  *
- *  @discussion Fetch the value of a descriptor.
- *      The relevant delegate callback will then be invoked with the status of the request.
+ *  @discussion			Reads the value of <i>descriptor</i>.
  *
- *  @see peripheral:didUpdateValueForDescriptor:error:
+ *  @see				peripheral:didUpdateValueForDescriptor:error:
  */
 - (void)readValueForDescriptor:(CBDescriptor *)descriptor;
 
 /*!
  *  @method writeValue:forDescriptor:
  *
- *  @param data The value to write to the descriptor.
- *  @param descriptor The descriptor to write to.
+ *  @param data			The value to write.
+ *  @param descriptor	A GATT characteristic descriptor.
  *
- *  @discussion Write the value of a descriptor.
- *      The passed data is copied and can be disposed of after the call finishes.
- *      The relevant delegate callback will then be invoked with the status of the request.
+ *  @discussion			Writes <i>data</i> to <i>descriptor</i>'s value. Client characteristic configuration descriptors cannot be written using
+ *						this method, and should instead use @link setNotifyValue:forCharacteristic: @/link.
  *
- *  @see peripheral:didWriteValueForCharacteristic:error:
+ *  @see				peripheral:didWriteValueForCharacteristic:error:
  */
 - (void)writeValue:(NSData *)data forDescriptor:(CBDescriptor *)descriptor;
 
@@ -250,22 +227,42 @@ CB_EXTERN_CLASS @interface CBPeripheral : NSObject
 @optional
 
 /*!
+ *  @method peripheralDidUpdateName:
+ *
+ *  @param peripheral	The peripheral providing this update.
+ *
+ *  @discussion			This method is invoked when the @link name @/link of <i>peripheral</i> changes.
+ */
+- (void)peripheralDidUpdateName:(CBPeripheral *)peripheral NS_AVAILABLE(NA, 6_0);
+
+/*!
+ *  @method peripheralDidInvalidateServices:
+ *
+ *  @param peripheral	The peripheral providing this update.
+ *
+ *  @discussion			This method is invoked when the @link services @/link of <i>peripheral</i> have been changed. At this point, 
+ *						all existing <code>CBService</code> objects are invalidated. Services can be re-discovered via @link discoverServices: @/link.
+ */
+- (void)peripheralDidInvalidateServices:(CBPeripheral *)peripheral NS_AVAILABLE(NA, 6_0);
+
+/*!
  *  @method peripheralDidUpdateRSSI:error:
  *
- *  @discussion Invoked upon completion of a -[readRSSI:] request.
- *      If successful, "error" is nil and the "RSSI" property of the peripheral has been updated.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral	The peripheral providing this update.
+ *	@param error		If an error occurred, the cause of the failure.
  *
+ *  @discussion			This method returns the result of a @link readRSSI: @/link call.
  */
 - (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error;
 
 /*!
  *  @method peripheral:didDiscoverServices:
  *
- *  @discussion Invoked upon completion of a -[discoverServices:] request.
- *      If successful, "error" is nil and discovered services, if any, have been merged into the
- *      "services" property of the peripheral.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral	The peripheral providing this information.
+ *	@param error		If an error occurred, the cause of the failure.
+ *
+ *  @discussion			This method returns the result of a @link discoverServices: @/link call. If the service(s) were read successfully, they can be retrieved via
+ *						<i>peripheral</i>'s @link services @/link property.
  *
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error;
@@ -273,78 +270,91 @@ CB_EXTERN_CLASS @interface CBPeripheral : NSObject
 /*!
  *  @method peripheral:didDiscoverIncludedServicesForService:error:
  *
- *  @discussion Invoked upon completion of a -[discoverIncludedServices:forService:] request.
- *      If successful, "error" is nil and discovered services, if any, have been merged into the
- *      "includedServices" property of the service.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral	The peripheral providing this information.
+ *  @param service		The <code>CBService</code> object containing the included services.
+ *	@param error		If an error occurred, the cause of the failure.
  *
+ *  @discussion			This method returns the result of a @link discoverIncludedServices:forService: @/link call. If the included service(s) were read successfully, 
+ *						they can be retrieved via <i>service</i>'s <code>includedServices</code> property.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error;
 
 /*!
  *  @method peripheral:didDiscoverCharacteristicsForService:error:
  *
- *  @discussion Invoked upon completion of a -[discoverCharacteristics:forService:] request.
- *      If successful, "error" is nil and discovered characteristics, if any, have been merged into the
- *      "characteristics" property of the service.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral	The peripheral providing this information.
+ *  @param service		The <code>CBService</code> object containing the characteristic(s).
+ *	@param error		If an error occurred, the cause of the failure.
  *
+ *  @discussion			This method returns the result of a @link discoverCharacteristics:forService: @/link call. If the characteristic(s) were read successfully, 
+ *						they can be retrieved via <i>service</i>'s <code>characteristics</code> property.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error;
 
 /*!
  *  @method peripheral:didUpdateValueForCharacteristic:error:
  *
- *  @discussion Invoked upon completion of a -[readValueForCharacteristic:] request or on the reception of a notification/indication.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral		The peripheral providing this information.
+ *  @param characteristic	A <code>CBCharacteristic</code> object.
+ *	@param error			If an error occurred, the cause of the failure.
  *
+ *  @discussion				This method is invoked after a @link readValueForCharacteristic: @/link call, or upon receipt of a notification/indication.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error;
 
 /*!
  *  @method peripheral:didWriteValueForCharacteristic:error:
  *
- *  @discussion Invoked upon completion of a -[writeValue:forCharacteristic:] request.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral		The peripheral providing this information.
+ *  @param characteristic	A <code>CBCharacteristic</code> object.
+ *	@param error			If an error occurred, the cause of the failure.
  *
+ *  @discussion				This method returns the result of a @link writeValue:forCharacteristic: @/link call.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error;
+ - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error;
 
 /*!
  *  @method peripheral:didUpdateNotificationStateForCharacteristic:error:
  *
- *  @discussion Invoked upon completion of a -[setNotifyValue:forCharacteristic:] request.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral		The peripheral providing this information.
+ *  @param characteristic	A <code>CBCharacteristic</code> object.
+ *	@param error			If an error occurred, the cause of the failure.
  *
+ *  @discussion				This method returns the result of a @link setNotifyValue:forCharacteristic: @/link call. 
  */
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error;
 
 /*!
  *  @method peripheral:didDiscoverDescriptorsForCharacteristic:error:
  *
- *  @discussion Invoked upon completion of a -[discoverDescriptorsForCharacteristic:] request.
- *      If successful, "error" is nil and discovered descriptors, if any, have been merged into the
- *      "descriptors" property of the characteristic.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral		The peripheral providing this information.
+ *  @param characteristic	A <code>CBCharacteristic</code> object.
+ *	@param error			If an error occurred, the cause of the failure.
  *
+ *  @discussion				This method returns the result of a @link discoverDescriptorsForCharacteristic: @/link call. If the descriptors were read successfully, 
+ *							they can be retrieved via <i>characteristic</i>'s <code>descriptors</code> property.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error;
 
 /*!
  *  @method peripheral:didUpdateValueForDescriptor:error:
  *
- *  @discussion Invoked upon completion of a -[readValueForDescriptor:] request.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral		The peripheral providing this information.
+ *  @param descriptor		A <code>CBDescriptor</code> object.
+ *	@param error			If an error occurred, the cause of the failure.
  *
+ *  @discussion				This method returns the result of a @link readValueForDescriptor: @/link call.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error;
 
 /*!
  *  @method peripheral:didWriteValueForDescriptor:error:
  *
- *  @discussion Invoked upon completion of a -[writeValue:forDescriptor:] request.
- *      If unsuccessful, "error" is set with the encountered failure.
+ *  @param peripheral		The peripheral providing this information.
+ *  @param descriptor		A <code>CBDescriptor</code> object.
+ *	@param error			If an error occurred, the cause of the failure.
  *
+ *  @discussion				This method returns the result of a @link writeValue:forDescriptor: @/link call.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error;
 

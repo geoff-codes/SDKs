@@ -3,7 +3,7 @@
  
      Contains:   AltiVec DSP Interfaces
  
-     Version:    vecLib-348.5
+     Version:    vecLib-387.12
  
      Copyright:  � 2000-2012 by Apple Computer, Inc., all rights reserved.
  
@@ -46,8 +46,8 @@ extern "C" {
 	vDSP_Version0 is a major version number.
 	vDSP_Version1 is a minor version number.
 */
-#define	vDSP_Version0	348
-#define	vDSP_Version1	5
+#define	vDSP_Version0	387
+#define	vDSP_Version1	12
 
 
 typedef unsigned long                   vDSP_Length;
@@ -104,7 +104,8 @@ enum {
   vDSP_HANN_NORM                = 2
 };
 
-
+typedef struct vDSP_biquad_SetupStruct	*vDSP_biquad_Setup;
+typedef struct vDSP_biquad_SetupStructD	*vDSP_biquad_SetupD;
 
 /*  create_fftsetup and create_ffsetupD allocate memory and prepare constants
     used by single- and double-precision FFT routines, respectively.
@@ -162,7 +163,38 @@ vDSP_create_fftsetupD(
 extern void 
 vDSP_destroy_fftsetupD(FFTSetupD __vDSP_setup) __OSX_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_4_0);
 
+/* vDSP_biquad_CreateSetup allocates memory and prepares the
+ coefficients for processing a cascaded biquad IIR filter. 
+ 
+ vDSP_biquad_DestroySetup frees the memory allocated by
+ vDSP_biquad_CreateSetup.
+ */
+/*
+ *  vDSP_biquad_CreateSetup()
+ */
+extern vDSP_biquad_Setup
+vDSP_biquad_CreateSetup(
+    const double *__vDSP_coeffs,
+    vDSP_Length  __vDSP_M) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
+    
+/*
+ *  vDSP_biquad_DestroySetup()
+ */
+extern void
+vDSP_biquad_DestroySetup(vDSP_biquad_Setup __vDSP_setup) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
+/*
+ *  vDSP_biquad_CreateSetupD()
+ */
+extern vDSP_biquad_SetupD
+vDSP_biquad_CreateSetupD(
+    const double *__vDSP_coeffs,
+    vDSP_Length   __vDSP_M) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
 
+/*
+ *  vDSP_biquad_DestroySetupD()
+ */
+extern void
+vDSP_biquad_DestroySetupD(vDSP_biquad_SetupD __vDSP_setup) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
 
 /*  ctoz and ctozD convert a complex array to a complex-split array.
     ztoc and ztocD convert a complex-split array to a complex array.
@@ -1382,6 +1414,28 @@ vDSP_fft5_zopD(
   vDSP_Length              __vDSP_log2n,
   FFTDirection             __vDSP_flag) __OSX_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_4_0);
 
+/*
+ *  vDSP_biquad()
+ */
+extern void
+vDSP_biquad(
+   const struct vDSP_biquad_SetupStruct *__vDSP_setup,
+   float       *__vDSP_delay,
+   const float *__vDSP_X, vDSP_Stride __vDSP_IX,
+   float       *__vDSP_Y, vDSP_Stride __vDSP_IY,
+   vDSP_Length  __vDSP_N) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
+
+/*
+ *  vDSP_biquadD()
+ */
+extern void
+vDSP_biquadD(
+    const struct vDSP_biquad_SetupStructD *__vDSP_setup,
+    double       *__vDSP_delay,
+    const double *__vDSP_X, vDSP_Stride __vDSP_IX,
+    double       *__vDSP_Y, vDSP_Stride __vDSP_IY,
+    vDSP_Length   __vDSP_N) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
+
 
 /* Convolution (or correlation), single-precision.*/
 /*
@@ -2053,7 +2107,7 @@ vDSP_distancesq(
   const float   __vDSP_input2[],
   vDSP_Stride   __vDSP_stride2,
   float *       __vDSP_result,
-  vDSP_Length   __vDSP_size) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+  vDSP_Length   __vDSP_size) __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_5_0);
 
 /* Dot product, single-precision.*/
 /*
@@ -4296,6 +4350,66 @@ vDSP_svesqD(
   vDSP_Length   __vDSP_N) __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
 
 
+/* Sum of vector elements and sum of vector elements' squares,
+ * single-precision.
+ *
+ * vDSP_sve_svesq()
+ */
+extern void vDSP_sve_svesq(
+	const float  *__vDSP_A,
+	vDSP_Stride   __vDSP_I,
+	float        *__vDSP_Sum,
+	float        *__vDSP_SumOfSquares,
+	vDSP_Length   __vDSP_N)
+	__OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_6_0);
+
+
+/* Sum of vector elements and sum of vector elements' squares,
+ * double-precision.
+ *
+ * vDSP_sve_svesqD()
+ */
+extern void vDSP_sve_svesqD(
+	const double *__vDSP_A,
+	vDSP_Stride   __vDSP_I,
+	double       *__vDSP_Sum,
+	double       *__vDSP_SumOfSquares,
+	vDSP_Length   __vDSP_N)
+	__OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_6_0);
+
+
+/* Normalize elements to zero mean and unit standard deviation,
+ * single-precision.
+ *
+ * vDSP_normalize()
+ */
+extern void vDSP_normalize(
+	const float  *__vDSP_A,
+	vDSP_Stride   __vDSP_IA,
+	float        *__vDSP_C,
+	vDSP_Stride   __vDSP_IC,
+	float        *__vDSP_Mean,
+	float        *__vDSP_StandardDeviation,
+	vDSP_Length   __vDSP_N)
+	__OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_6_0);
+
+
+/* Normalize elements to zero mean and unit standard deviation,
+ * double-precision.
+ *
+ * vDSP_normalize()
+ */
+extern void vDSP_normalizeD(
+	const double *__vDSP_A,
+	vDSP_Stride   __vDSP_IA,
+	double       *__vDSP_C,
+	vDSP_Stride   __vDSP_IC,
+	double       *__vDSP_Mean,
+	double       *__vDSP_StandardDeviation,
+	vDSP_Length   __vDSP_N)
+	__OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_6_0);
+
+
 /* Sum of vector elements' signed squares, single-precision.*/
 /*
  *  vDSP_svs()
@@ -5987,9 +6101,9 @@ vDSP_vmaD(
  */
 extern void 
 vDSP_vmax(
-  float *       __vDSP_A,
+  const float * __vDSP_A,
   vDSP_Stride   __vDSP_I,
-  float *       __vDSP_B,
+  const float * __vDSP_B,
   vDSP_Stride   __vDSP_J,
   float *       __vDSP_C,
   vDSP_Stride   __vDSP_K,
@@ -6067,9 +6181,9 @@ vDSP_vmaxmgD(
  */
 extern void 
 vDSP_vmin(
-  float *       __vDSP_A,
+  const float * __vDSP_A,
   vDSP_Stride   __vDSP_I,
-  float *       __vDSP_B,
+  const float * __vDSP_B,
   vDSP_Stride   __vDSP_J,
   float *       __vDSP_C,
   vDSP_Stride   __vDSP_K,
@@ -6998,6 +7112,28 @@ vDSP_vsmsbD(
   vDSP_Length   __vDSP_N) __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
 
 
+/* Vector-scalar multiply, vector-scalar multiply and vector add, single-precision.*/
+/*
+ *  vDSP_vsmsma()
+ *  
+ *  Availability:
+ *    Mac OS X:         not available in vecLib.framework
+ *    CarbonLib:        not available
+ *    Non-Carbon CFM:   not available
+ */
+extern void 
+vDSP_vsmsma(
+  const float *  __vDSP_A,
+  vDSP_Stride    __vDSP_I,
+  const float *  __vDSP_B,
+  const float *  __vDSP_C,
+  vDSP_Stride    __vDSP_K,
+  const float *  __vDSP_D,
+  float *        __vDSP_E,
+  vDSP_Stride    __vDSP_M,
+  vDSP_Length    __vDSP_N) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
+
+
 /* Vector sort, in-place, single-precision.*/
 /*
  *  vDSP_vsort()
@@ -7519,9 +7655,10 @@ void vDSP_FFT32_zopv(
 		__OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_4_0);
 
 
-/*	How to use the Discrete Fourier Transform (DFT) interface.
+/*	How to use the Discrete Fourier Transform (DFT) and Discrete Cosine
+	Transform (DCT) interfaces.
 
-	There are three steps to performing a DFT:
+	There are three steps to performing a DFT or DCT:
 
 		Call a setup routine (e.g., vDSP_DFT_zop_CreateSetup) to get a setup
 		object.
@@ -7532,8 +7669,8 @@ void vDSP_FFT32_zopv(
 			setup routine is slow and is called only once to prepare data that
 			can be used many times.
 
-		Call an execution routine (e.g., vDSP_DFT_Execute) to perform a DFT,
-		and pass it the setup object.
+		Call an execution routine (e.g., vDSP_DFT_Execute or vDSP_DCT_Execute)
+		to perform a DFT or DCT, and pass it the setup object.
 
 			The execution routine is fast (for selected cases) and is generally
 			called many times.
@@ -7549,27 +7686,30 @@ void vDSP_FFT32_zopv(
 
 		The current sequences of setup, execution, destroy routines are:
 
-			vDSP_DFT_zop_CreateSetup, vDSP_DFT_Execute, vDSP_DestroySetup, or
+			vDSP_DFT_zop_CreateSetup, vDSP_DFT_Execute, vDSP_DFT_DestroySetup;
 
-			vDSP_DFT_zrop_CreateSetup, vDSP_DFT_Execute, vDSP_DestroySetup, or
-		
-			vDSP_DFT_CreateSetup, vDSP_DFT_zop, vDSP_DestroySetup.
+			vDSP_DFT_zrop_CreateSetup, vDSP_DFT_Execute, vDSP_DFT_DestroySetup;
 
-		Sharing DFT setups:
+			vDSP_DCT_CreateSetup, vDSP_DCT_Execute, vDSP_DFT_DestroySetup;
 
-			Any setup returned by a DFT setup routine may be passed as input to
-			any DFT setup routine, in the parameter named Previous.  (This
-			allows the setups to share data, avoiding unnecessary duplication
-			of some setup data.)  Setup routines may be executed in any order.
-			Passing any setup of a group of setups sharing data will result in
-			a new setup sharing data with all of the group.
+			vDSP_DFT_CreateSetup, vDSP_DFT_zop, vDSP_DFT_DestroySetup.
+
+		Sharing DFT and DCT setups:
+
+			Any setup returned by a DFT or DCT setup routine may be passed as
+			input to any DFT or DCT setup routine, in the parameter named
+			Previous.  (This allows the setups to share data, avoiding
+			unnecessary duplication of some setup data.)  Setup routines may be
+			executed in any order.  Passing any setup of a group of setups
+			sharing data will result in a new setup sharing data with all of
+			the group.
 
 			When calling an execution routine, each setup can be used only with
 			its intended execution routine.  Thus the setup returned by
 			vDSP_DFT_CreateSetup can only be used with vDSP_DFT_zop and not
 			with vDSP_DFT_Execute.
 
-			vDSP_DestroySetup is used to destroy any DFT setup.
+			vDSP_DFT_DestroySetup is used to destroy any DFT setup.
 
 		History:
 
@@ -7590,18 +7730,18 @@ void vDSP_FFT32_zopv(
 
 	Multithreading:
 
-		Never call a setup or destroy routine in a thread when any DFT routine
-		(setup, execution, or destroy) that shares setup data may be
+		Never call a setup or destroy routine in a thread when any DFT or DCT
+		routine (setup, execution, or destroy) that shares setup data may be
 		executing.  (This applies not just to multiple threads but also to
-		calling DFT routines in signal handlers.)
+		calling DFT or DCT routines in signal handlers.)
 
-		Multiple DFT execution routines may be called simultaneously.  (Their
-		access to the setup data is read-only.)
+		Multiple DFT or DCT execution routines may be called simultaneously.
+		(Their access to the setup data is read-only.)
 
-		If you need to call setup and/or destroy routines while other DFT
-		routines might be executing, you can either use Grand Central Dispatch
-		or locks (costs time) to avoid simultaneous execution or you can create
-		separate setup objects for them (costs memory).
+		If you need to call setup and/or destroy routines while other DFT or
+		DCT routines might be executing, you can either use Grand Central
+		Dispatch or locks (costs time) to avoid simultaneous execution or you
+		can create separate setup objects for them (costs memory).
 */
 
 
@@ -7624,11 +7764,11 @@ typedef enum { vDSP_DFT_FORWARD = +1, vDSP_DFT_INVERSE = -1 }
 
 		vDSP_DFT_Setup Previous
 
-			Previous is either zero or a previous DFT setup.  If a previous
-			setup is passed, the new setup will share data with the previous
-			setup, if feasible (and with any other setups the previous setup
-			shares with).  If zero is passed, the routine will allocate and
-			initialize new memory.
+			Previous is either zero or a previous DFT or DCT setup.  If a
+			previous setup is passed, the new setup will share data with the
+			previous setup, if feasible (and with any other setups the previous
+			setup shares with).  If zero is passed, the routine will allocate
+			and initialize new memory.
 
 		vDSP_Length Length
 
@@ -7658,11 +7798,11 @@ vDSP_DFT_Setup vDSP_DFT_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 
 		vDSP_DFT_Setup Previous
 
-			Previous is either zero or a previous DFT setup.  If a previous
-			setup is passed, the new setup will share data with the previous
-			setup, if feasible (and with any other setups the previous setup
-			shares with).  If zero is passed, the routine will allocate and
-			initialize new memory.
+			Previous is either zero or a previous DFT or DCT setup.  If a
+			previous setup is passed, the new setup will share data with the
+			previous setup, if feasible (and with any other setups the previous
+			setup shares with).  If zero is passed, the routine will allocate
+			and initialize new memory.
 
 		vDSP_Length Length
 
@@ -7724,16 +7864,15 @@ vDSP_DFT_Setup vDSP_DFT_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 
 	In-Place Operation:
 
-		For the cases with good performance as described above, Or may equal Ir
-		and Oi may equal Ii (in the call to vDSP_DFT_Execute).  Otherwise, no
-		overlap of Or, Oi, Ir, and Ii is supported.
+		Or may equal Ir and Oi may equal Ii (in the call to vDSP_DFT_Execute).
+		Otherwise, no overlap of Or, Oi, Ir, and Ii is supported.
 
 	The returned setup object may be used only with vDSP_DFT_Execute for the
 	length given during setup.  Unlike previous vDSP FFT routines, the setup
 	may not be used to execute transforms with shorter lengths.
 
-	Do not call this routine while any DFT routine sharing setup data might be
-	executing.
+	Do not call this routine while any DFT or DCT routine sharing setup data
+	might be executing.
 */
 vDSP_DFT_Setup vDSP_DFT_zop_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 	vDSP_Length __vDSP_Length, vDSP_DFT_Direction __vDSP_Direction)
@@ -7748,11 +7887,11 @@ vDSP_DFT_Setup vDSP_DFT_zop_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 
 		vDSP_DFT_Setup Previous
 
-			Previous is either zero or a previous DFT setup.  If a previous
-			setup is passed, the new setup will share data with the previous
-			setup, if feasible (and with any other setups the previous setup
-			shares with).  If zero is passed, the routine will allocate and
-			initialize new memory.
+			Previous is either zero or a previous DFT or DCT setup.  If a
+			previous setup is passed, the new setup will share data with the
+			previous setup, if feasible (and with any other setups the previous
+			setup shares with).  If zero is passed, the routine will allocate
+			and initialize new memory.
 
 		vDSP_Length Length
 
@@ -7842,9 +7981,8 @@ vDSP_DFT_Setup vDSP_DFT_zop_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 
 	In-Place Operation:
 
-		For the cases with good performance as described above, Or may equal Ir
-		and Oi may equal Ii (in the call to vDSP_DFT_Execute).  Otherwise, no
-		overlap of Or, Oi, Ir, and Ii is supported.
+		Or may equal Ir and Oi may equal Ii (in the call to vDSP_DFT_Execute).
+		Otherwise, no overlap of Or, Oi, Ir, and Ii is supported.
 
 	The returned setup object may be used only with vDSP_DFT_Execute for the
 	length given during setup.  Unlike previous vDSP FFT routines, the setup
@@ -7866,15 +8004,16 @@ vDSP_DFT_Setup vDSP_DFT_zrop_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 		vDSP_DFT_Setup Setup
 
 			Setup is the setup object to be released.  The object may have
-			been previously allocated with any DFT setup routine, such as
-			vDSP_DFT_zop_CreateSetup or vDSP_DFT_zrop_CreateSetup.
+			been previously allocated with any DFT or DCT setup routine, such
+			as vDSP_DFT_zop_CreateSetup, vDSP_DFT_zrop_CreateSetup, or
+			vDSP_DCT_CreateSetup.
 
 	Destroying a setup with shared data is safe; it will release only memory
 	not needed by other undestroyed setups.  Memory (and the data it contains)
 	is freed only when all setup objects using it have been destroyed.
 
-	Do not call this routine while any DFT routine sharing setup data might be
-	executing.
+	Do not call this routine while any DFT or DCT routine sharing setup data
+	might be executing.
 */
 void vDSP_DFT_DestroySetup(vDSP_DFT_Setup __vDSP_Setup)
 		__OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_4_0);
@@ -7932,9 +8071,9 @@ void vDSP_DFT_DestroySetup(vDSP_DFT_Setup __vDSP_Setup)
 
 	In-Place Operation:
 
-		For the cases with good performance as described above, Or may equal Ir
-		and Oi may equal Ii.  Otherwise, no overlap of Or, Oi, Ir, and Ii is
-		supported.
+		For cases where the length is f * 2**n, where f is 3, 5, or 15 and 3 <=
+		n, Or may equal Ir and Oi may equal Ii.  Otherwise, no overlap of Or,
+		Oi, Ir, and Ii is supported.
 
 	This routine calculates:
 
@@ -8024,6 +8163,133 @@ void vDSP_DFT_Execute(
 	const float *__vDSP_Ir,  const float *__vDSP_Ii,
 	      float *__vDSP_Or,        float *__vDSP_Oi)
 	__OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_4_0);
+
+
+/*	vDSP_DCT_CreateSetup is a DCT setup routine.  It creates a setup object
+	for use with the vDSP_DCT_Execute routine.  See additional information
+	above, at "How to use the Discrete Fourier Transform (DFT) and Discrete
+	Cosine Transform (DCT) interfaces."
+
+	Parameters:
+
+		vDSP_DFT_Setup Previous
+
+			Previous is either zero or a previous DFT or DCT setup.  If a
+			previous setup is passed, the new setup will share data with the
+			previous setup, if feasible (and with any other setups the
+			previous setup shares with).  If zero is passed, the routine
+			will allocate and initialize new memory.
+
+		vDSP_Length Length
+
+			Length is the number of real elements to be transformed.
+
+		vDSP_DCT_Type Type
+
+			Type specifies which DCT variant to perform.  At present, the
+			supported DCT types are II and III, which are mutual inverses (up
+			to scaling).  Types II and III are specified with symbol names
+			vDSP_DCT_II and vDSP_DCT_III, respectively.
+
+	Return value:
+
+		Zero is returned if memory is unavailable or if there is no
+		implementation for the requested case.  Currently, the implemented
+		cases are:
+
+			Length = f * 2**n, where f is 3, 5, or 15 and 4 <= n.
+
+	Function:
+
+		When vDSP_DCT_Execute is called with a setup returned from this
+		routine, it calculates:
+
+			If Type is vDSP_DCT_II:
+
+				For 0 <= k < N,
+
+					Or[k] = sum(Ir[j] * cos(k * (j+1/2) * pi / N, 0 <= j < N).
+
+			If Type is vDSP_DCT_III
+
+				For 0 <= k < N,
+
+					Or[k] = Ir[0]/2
+						+ sum(Ir[j] * cos((k+1/2) * j * pi / N), 1 <= j < N).
+
+			Where:
+
+				N is the length given in the setup,
+
+				h is the array of real numbers passed to vDSP_DCT_Execute in
+				Input, and
+
+				H is the array of real numbers stored by vDSP_DCT_Execute in
+				the array passed to it in Output.
+
+	 Performance:
+
+		Performance is good for these cases:
+
+			All addresses are 16-byte aligned, all strides are one, and the
+			length is f * 2**n, where f is 3, 5, or 15 and 4 <= n.
+
+			Performance is extremely slow for all other cases.
+
+	In-Place Operation:
+
+		Output may equal Input (in the call the vDSP_DCT_Execute).  Otherwise,
+		no overlap is permitted between the two buffers.
+
+	The returned setup object may be used only with vDSP_DCT_Execute for the
+	length given during setup.
+
+	Do not call this routine while any DFT or DCT routine sharing setup data
+	might be executing.
+*/
+typedef enum
+{
+	vDSP_DCT_II  = 2,
+	vDSP_DCT_III = 3
+} vDSP_DCT_Type;
+
+vDSP_DFT_Setup vDSP_DCT_CreateSetup(
+	vDSP_DFT_Setup __vDSP_Previous,
+	vDSP_Length    __vDSP_Length,
+	vDSP_DCT_Type  __vDSP_Type)
+	__OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
+
+
+/*	vDSP_DCT_Execute is a DCT execution routine.  It performs a DCT, with the
+	aid of previously created setup data.  See additional information above, at
+	"How to use the Discrete Fourier Transform (DFT) and Discrete Cosine
+	Transform (DCT) interfaces."
+
+	Parameters:
+
+		vDSP_DFT_Setup Setup
+
+			A setup object returned by a previous call to vDSP_DCT_CreateSetup.
+
+		const float *Input
+
+			Pointer to the input buffer.
+
+		float *Output
+
+			Pointer to the output buffer.
+
+		Observe there are no separate length or type parameters.  They are
+		specified at the time that the Setup is created.
+
+		Because the DCT is real-to-real, the parameters for vDSP_DCT_Execute
+		are different from those used for a DFT.
+*/
+void vDSP_DCT_Execute(
+	const struct vDSP_DFT_SetupStruct *__vDSP_Setup,
+	const float                       *__vDSP_Input,
+	float                             *__vDSP_Output)
+	__OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
 
 
 /*	vDSP_dotpr2, vector single-precision stereo dot product.

@@ -45,7 +45,7 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaItemArtwork : NSObject
 // Initializes an MPMediaItemArtwork instance with the given full-size image.
 // The crop rect of the image is assumed to be equal to the bounds of the 
 // image as defined by the image's size in points, i.e. tightly cropped.
-- (id)initWithImage:(UIImage *)image NS_AVAILABLE_IPHONE(5_0);
+- (id)initWithImage:(UIImage *)image NS_AVAILABLE_IOS(5_0);
 
 // Returns the artwork image for an item at a given size (in points).
 - (UIImage *)imageWithSize:(CGSize)size;
@@ -65,19 +65,19 @@ MP_EXTERN NSString *const MPMediaItemPropertyPersistentID;     // @"persistentID
 MP_EXTERN NSString *const MPMediaItemPropertyMediaType;        // @"mediaType",           NSNumber of MPMediaType (NSInteger),          filterable
 MP_EXTERN NSString *const MPMediaItemPropertyTitle;            // @"title",               NSString,                                     filterable
 MP_EXTERN NSString *const MPMediaItemPropertyAlbumTitle;       // @"albumTitle",          NSString,                                     filterable
-MP_EXTERN NSString *const MPMediaItemPropertyAlbumPersistentID NS_AVAILABLE_IPHONE(4_2);
+MP_EXTERN NSString *const MPMediaItemPropertyAlbumPersistentID NS_AVAILABLE_IOS(4_2);
                                                                // @"albumPID",            NSNumber of uint64_t (unsigned long long),    filterable
 MP_EXTERN NSString *const MPMediaItemPropertyArtist;           // @"artist",              NSString,                                     filterable
-MP_EXTERN NSString *const MPMediaItemPropertyArtistPersistentID NS_AVAILABLE_IPHONE(4_2);
+MP_EXTERN NSString *const MPMediaItemPropertyArtistPersistentID NS_AVAILABLE_IOS(4_2);
                                                                // @"artistPID",           NSNumber of uint64_t (unsigned long long),    filterable
 MP_EXTERN NSString *const MPMediaItemPropertyAlbumArtist;      // @"albumArtist",         NSString,                                     filterable
-MP_EXTERN NSString *const MPMediaItemPropertyAlbumArtistPersistentID NS_AVAILABLE_IPHONE(4_2);
+MP_EXTERN NSString *const MPMediaItemPropertyAlbumArtistPersistentID NS_AVAILABLE_IOS(4_2);
                                                                // @"albumArtistPID",      NSNumber of uint64_t (unsigned long long),    filterable
 MP_EXTERN NSString *const MPMediaItemPropertyGenre;            // @"genre",               NSString,                                     filterable
-MP_EXTERN NSString *const MPMediaItemPropertyGenrePersistentID NS_AVAILABLE_IPHONE(4_2);
+MP_EXTERN NSString *const MPMediaItemPropertyGenrePersistentID NS_AVAILABLE_IOS(4_2);
                                                                // @"genrePID",            NSNumber of uint64_t (unsigned long long),    filterable
 MP_EXTERN NSString *const MPMediaItemPropertyComposer;         // @"composer",            NSString,                                     filterable
-MP_EXTERN NSString *const MPMediaItemPropertyComposerPersistentID NS_AVAILABLE_IPHONE(4_2);
+MP_EXTERN NSString *const MPMediaItemPropertyComposerPersistentID NS_AVAILABLE_IOS(4_2);
                                                                // @"composerPID",         NSNumber of uint64_t (unsigned long long),    filterable
 MP_EXTERN NSString *const MPMediaItemPropertyPlaybackDuration; // @"playbackDuration",    NSNumber of NSTimeInterval (double)
 MP_EXTERN NSString *const MPMediaItemPropertyAlbumTrackNumber; // @"albumTrackNumber",    NSNumber of NSUInteger
@@ -87,18 +87,20 @@ MP_EXTERN NSString *const MPMediaItemPropertyDiscCount;        // @"discCount", 
 MP_EXTERN NSString *const MPMediaItemPropertyArtwork;          // @"artwork",             MPMediaItemArtwork
 MP_EXTERN NSString *const MPMediaItemPropertyLyrics;           // @"lyrics",              NSString
 MP_EXTERN NSString *const MPMediaItemPropertyIsCompilation;    // @"isCompilation",       NSNumber of BOOL,                             filterable
-MP_EXTERN NSString *const MPMediaItemPropertyReleaseDate NS_AVAILABLE_IPHONE(4_0);
+MP_EXTERN NSString *const MPMediaItemPropertyReleaseDate NS_AVAILABLE_IOS(4_0);
                                                                // @"releaseDate",         NSDate
-MP_EXTERN NSString *const MPMediaItemPropertyBeatsPerMinute NS_AVAILABLE_IPHONE(4_0);
+MP_EXTERN NSString *const MPMediaItemPropertyBeatsPerMinute NS_AVAILABLE_IOS(4_0);
                                                                // @"beatsPerMinute",      NSNumber of NSUInteger
-MP_EXTERN NSString *const MPMediaItemPropertyComments NS_AVAILABLE_IPHONE(4_0);
+MP_EXTERN NSString *const MPMediaItemPropertyComments NS_AVAILABLE_IOS(4_0);
                                                                // @"comments",            NSString
-MP_EXTERN NSString *const MPMediaItemPropertyAssetURL NS_AVAILABLE_IPHONE(4_0);
+MP_EXTERN NSString *const MPMediaItemPropertyAssetURL NS_AVAILABLE_IOS(4_0);
                                                                // @"assetURL",            NSURL
+MP_EXTERN NSString *const MPMediaItemPropertyIsCloudItem NS_AVAILABLE_IOS(6_0);
+                                                               // @"isCloudItem",         NSNumber of BOOL,                             filterable
 
 // Podcast properties
 MP_EXTERN NSString *const MPMediaItemPropertyPodcastTitle;     // @"podcastTitle",        NSString,                                     filterable
-MP_EXTERN NSString *const MPMediaItemPropertyPodcastPersistentID NS_AVAILABLE_IPHONE(4_2);
+MP_EXTERN NSString *const MPMediaItemPropertyPodcastPersistentID NS_AVAILABLE_IOS(4_2);
                                                                // @"podcastPID",          NSNumber of uint64_t (unsigned long long),    filterable
 
 // User properties
@@ -106,5 +108,7 @@ MP_EXTERN NSString *const MPMediaItemPropertyPlayCount;        // @"playCount", 
 MP_EXTERN NSString *const MPMediaItemPropertySkipCount;        // @"skipCount",           NSNumber of NSUInteger
 MP_EXTERN NSString *const MPMediaItemPropertyRating;           // @"rating",              NSNumber of NSUInteger, 0...5
 MP_EXTERN NSString *const MPMediaItemPropertyLastPlayedDate;   // @"lastPlayedDate",      NSDate
-MP_EXTERN NSString *const MPMediaItemPropertyUserGrouping NS_AVAILABLE_IPHONE(4_0);
+MP_EXTERN NSString *const MPMediaItemPropertyUserGrouping NS_AVAILABLE_IOS(4_0);
                                                                // @"userGrouping",        NSString
+MP_EXTERN NSString *const MPMediaItemPropertyBookmarkTime NS_AVAILABLE_IOS(6_0);
+                                                               // @"bookmarkTime",        NSNumber of NSTimeInterval (double)

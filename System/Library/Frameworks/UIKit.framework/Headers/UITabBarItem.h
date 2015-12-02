@@ -2,7 +2,7 @@
 //  UITabBarItem.h
 //  UIKit
 //
-//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,7 +10,7 @@
 #import <UIKit/UIGeometry.h>
 #import <UIKit/UIKitDefines.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITabBarSystemItem) {
     UITabBarSystemItemMore,
     UITabBarSystemItemFavorites,
     UITabBarSystemItemFeatured,
@@ -23,11 +23,11 @@ typedef enum {
     UITabBarSystemItemDownloads,
     UITabBarSystemItemMostRecent,
     UITabBarSystemItemMostViewed,
-} UITabBarSystemItem;
+};
 
 @class UIView, UIImage;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBarItem : UIBarItem {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UITabBarItem : UIBarItem {
 @private
     NSString     *_title;
     NSSet        *_possibleTitles;
@@ -65,15 +65,15 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBarItem : UIBarItem {
  and unselected images in matching pairs for good results. Note that these methods are not tagged
  UI_APPEARANCE_SELECTOR and do not participate in the UIAppearance Proxy API.
  */
-- (void)setFinishedSelectedImage:(UIImage *)selectedImage withFinishedUnselectedImage:(UIImage *)unselectedImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-- (UIImage *)finishedSelectedImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-- (UIImage *)finishedUnselectedImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (void)setFinishedSelectedImage:(UIImage *)selectedImage withFinishedUnselectedImage:(UIImage *)unselectedImage NS_AVAILABLE_IOS(5_0);
+- (UIImage *)finishedSelectedImage NS_AVAILABLE_IOS(5_0);
+- (UIImage *)finishedUnselectedImage NS_AVAILABLE_IOS(5_0);
 
 /* To set item label text attributes use the appearance selectors available on the superclass, UIBarItem.
 
    Use the following to tweak the relative position of the label within the tab button (for handling visual centering corrections if needed because of custom text attributes)
  */
-- (void)setTitlePositionAdjustment:(UIOffset)adjustment __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR; 
-- (UIOffset)titlePositionAdjustment __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (void)setTitlePositionAdjustment:(UIOffset)adjustment NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; 
+- (UIOffset)titlePositionAdjustment NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 @end

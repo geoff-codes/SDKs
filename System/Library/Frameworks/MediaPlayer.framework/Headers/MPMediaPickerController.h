@@ -24,13 +24,15 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPickerController : UIViewContro
 
 - (id)init; // defaults to MPMediaTypeAny
 - (id)initWithMediaTypes:(MPMediaType)mediaTypes;
-@property(nonatomic, readonly) MPMediaType mediaTypes;
+@property (nonatomic, readonly) MPMediaType mediaTypes;
 
-@property(nonatomic, assign) id<MPMediaPickerControllerDelegate> delegate;
+@property (nonatomic, assign) id<MPMediaPickerControllerDelegate> delegate;
 
-@property(nonatomic) BOOL allowsPickingMultipleItems; // default is NO
+@property (nonatomic) BOOL allowsPickingMultipleItems; // default is NO
 
-@property(nonatomic, copy) NSString *prompt; // displays a prompt for the user above the navigation bar buttons
+@property (nonatomic) BOOL showsCloudItems NS_AVAILABLE_IOS(6_0); // default is YES
+
+@property (nonatomic, copy) NSString *prompt; // displays a prompt for the user above the navigation bar buttons
 
 @end
 

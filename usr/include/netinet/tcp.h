@@ -212,6 +212,8 @@ struct tcphdr {
 					 * prevent holding too many mbufs in socket 
 					 * buffer queues.
 					 */
+#define TCP_KEEPINTVL 0x101		/* interval between keepalives */
+#define TCP_KEEPCNT 0x102		/* number of keepalives before close */
 #endif /* (_POSIX_C_SOURCE && !_DARWIN_C_SOURCE) */
 
 #endif

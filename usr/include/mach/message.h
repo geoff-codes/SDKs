@@ -78,6 +78,7 @@
 #include <mach/machine/vm_types.h>
 
 #include <sys/cdefs.h>
+#include <sys/appleapiopts.h>
 
 /*
  *  The timeout mechanism uses mach_msg_timeout_t values,
@@ -127,7 +128,9 @@ typedef natural_t mach_msg_timeout_t;
 #define MACH_MSGH_BITS_USER             0x8000ffffU
 
 #define	MACH_MSGH_BITS_CIRCULAR		0x40000000	/* internal use only */
-#define	MACH_MSGH_BITS_USED		0xc000ffffU
+#define	MACH_MSGH_BITS_RAISEIMP		0x20000000	/* importance raise, internal use only */
+#define	MACH_MSGH_BITS_IMPHOLDASRT	0x10000000	/* holds assertion alredy, in userland */
+#define	MACH_MSGH_BITS_USED		0xf000ffffU
 
 #define	MACH_MSGH_BITS_PORTS_MASK				\
 		(MACH_MSGH_BITS_REMOTE_MASK|MACH_MSGH_BITS_LOCAL_MASK)
@@ -228,10 +231,8 @@ typedef struct
 typedef struct
 {
   mach_port_t			name;
-#if !(defined(KERNEL) && defined(__LP64__))
 // Pad to 8 bytes everywhere except the K64 kernel where mach_port_t is 8 bytes
   mach_msg_size_t		pad1;
-#endif
   unsigned int			pad2 : 16;
   mach_msg_type_name_t		disposition : 8;
   mach_msg_descriptor_type_t	type : 8;
@@ -270,9 +271,6 @@ typedef struct
 #if defined(__LP64__)
   mach_msg_size_t       	size;
 #endif
-#if defined(KERNEL) && !defined(__LP64__)
-  uint32_t          pad_end;
-#endif
 } mach_msg_ool_descriptor_t;
 
 typedef struct
@@ -308,9 +306,6 @@ typedef struct
 #if defined(__LP64__)
   mach_msg_size_t		count;
 #endif
-#if defined(KERNEL) && !defined(__LP64__)
-  uint32_t          pad_end;
-#endif
 } mach_msg_ool_ports_descriptor_t;
 
 /*
@@ -318,15 +313,6 @@ typedef struct
  * appropriate in LP64 mode because not all descriptors
  * are of the same size in that environment.
  */
-#if defined(__LP64__) && defined(KERNEL)
-typedef union
-{
-  mach_msg_port_descriptor_t		port;
-  mach_msg_ool_descriptor32_t		out_of_line;
-  mach_msg_ool_ports_descriptor32_t	ool_ports;
-  mach_msg_type_descriptor_t		type;
-} mach_msg_descriptor_t;
-#else
 typedef union
 {
   mach_msg_port_descriptor_t		port;
@@ -334,7 +320,6 @@ typedef union
   mach_msg_ool_ports_descriptor_t	ool_ports;
   mach_msg_type_descriptor_t		type;
 } mach_msg_descriptor_t;
-#endif
 
 typedef struct
 {
@@ -427,7 +412,6 @@ typedef struct
   mach_port_context_t		msgh_context;
 } mach_msg_context_trailer_t;
 
-
 typedef struct
 {
   mach_port_name_t sender;
@@ -512,9 +496,19 @@ typedef union
 /*
  *  There is no fixed upper bound to the size of Mach messages.
  */
-
 #define	MACH_MSG_SIZE_MAX	((mach_msg_size_t) ~0)
 
+#if defined(__APPLE_API_PRIVATE)
+/*
+ *  But architectural limits of a given implementation, or
+ *  temporal conditions may cause unpredictable send failures
+ *  for messages larger than MACH_MSG_SIZE_RELIABLE.
+ *
+ *  In either case, waiting for memory is [currently] outside
+ *  the scope of send timeout values provided to IPC.
+ */
+#define	MACH_MSG_SIZE_RELIABLE	((mach_msg_size_t) 256 * 1024)
+#endif
 /*
  *  Compatibility definitions, for code written
  *  when there was a msgh_kind instead of msgh_seqno.
@@ -576,16 +570,17 @@ typedef integer_t mach_msg_option_t;
 #define	MACH_RCV_MSG		0x00000002
 #define MACH_RCV_LARGE		0x00000004
 
-#define MACH_SEND_TIMEOUT	0x00000010
-#define MACH_SEND_INTERRUPT	0x00000040	/* libmach implements */
+#define MACH_SEND_TIMEOUT	0x00000010	/* timeout value applies to send */
+#define MACH_SEND_INTERRUPT	0x00000040	/* restart interrupted sends */
 #define MACH_SEND_NOTIFY	0x00000080	/* arm send-possible notify */
-#define MACH_SEND_ALWAYS	0x00010000	/* internal use only */
-#define MACH_SEND_TRAILER	0x00020000	
+#define MACH_SEND_ALWAYS	0x00010000	/* ignore qlimits - kernel only */
+#define MACH_SEND_TRAILER	0x00020000	/* sender-provided trailer */
+#define MACH_SEND_NOIMPORTANCE	0x00040000	/* msg wont carry importance */
 
-#define MACH_RCV_TIMEOUT	0x00000100
+#define MACH_RCV_TIMEOUT	0x00000100	/* timeout value applies to receive */	
 #define MACH_RCV_NOTIFY		0x00000200	/* reserved - legacy */
-#define MACH_RCV_INTERRUPT	0x00000400	/* libmach implements */
-#define MACH_RCV_OVERWRITE	0x00001000
+#define MACH_RCV_INTERRUPT	0x00000400	/* restart interrupted receive */
+#define MACH_RCV_OVERWRITE	0x00001000	/* scatter receive */
 
 /* 
  * NOTE: a 0x00------ RCV mask implies to ask for
@@ -606,9 +601,10 @@ typedef integer_t mach_msg_option_t;
 
 #define MACH_RCV_TRAILER_TYPE(x)     (((x) & 0xf) << 28) 
 #define MACH_RCV_TRAILER_ELEMENTS(x) (((x) & 0xf) << 24)  
-#define MACH_RCV_TRAILER_MASK 	     ((0xff << 24))
+#define MACH_RCV_TRAILER_MASK 	     ((0xf << 24))
 
 #define GET_RCV_ELEMENTS(y) (((y) >> 24) & 0xf)
+
 
 /* 
  * XXXMAC: note that in the case of MACH_RCV_TRAILER_LABELS, 
@@ -618,7 +614,8 @@ typedef integer_t mach_msg_option_t;
  * It also makes things work properly if MACH_RCV_TRAILER_LABELS is ORed 
  * with one of the other options.
  */
-#define REQUESTED_TRAILER_SIZE(y) 				\
+
+#define REQUESTED_TRAILER_SIZE_NATIVE(y)			\
 	((mach_msg_trailer_size_t)				\
 	 ((GET_RCV_ELEMENTS(y) == MACH_RCV_TRAILER_NULL) ?	\
 	  sizeof(mach_msg_trailer_t) :				\
@@ -633,6 +630,9 @@ typedef integer_t mach_msg_option_t;
 	     ((GET_RCV_ELEMENTS(y) == MACH_RCV_TRAILER_AV) ?	\
 	      sizeof(mach_msg_mac_trailer_t) :      		\
 	     sizeof(mach_msg_max_trailer_t))))))))
+
+
+#define REQUESTED_TRAILER_SIZE(y) REQUESTED_TRAILER_SIZE_NATIVE(y)
 
 /*
  *  Much code assumes that mach_msg_return_t == kern_return_t.

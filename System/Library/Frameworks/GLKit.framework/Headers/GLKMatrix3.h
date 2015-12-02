@@ -10,6 +10,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <string.h>
 #include <math.h>
 
 #if defined(__ARM_NEON__)
@@ -125,7 +126,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeAndTranspose(float m00, float m01, fl
 {
     GLKMatrix3 m = { m00, m10, m20,
                      m01, m11, m21,
-                     m02, m12, m22};
+                     m02, m12, m22 };
     return m;
 }
 
@@ -276,15 +277,8 @@ static __inline__ GLKVector3 GLKMatrix3GetRow(GLKMatrix3 matrix, int row)
 
 static __inline__ GLKVector3 GLKMatrix3GetColumn(GLKMatrix3 matrix, int column)
 {
-#if defined(__ARM_NEON__)
-    GLKVector3 v;
-    *((float32x2_t *)&v) = vld1_f32(&(matrix.m[column * 3]));
-    v.v[2] = matrix.m[column * 3 + 2];
-    return v;
-#else
     GLKVector3 v = { matrix.m[column * 3 + 0], matrix.m[column * 3 + 1], matrix.m[column * 3 + 2] };
     return v;
-#endif
 }
 
 static __inline__ GLKMatrix3 GLKMatrix3SetRow(GLKMatrix3 matrix, int row, GLKVector3 vector)
@@ -298,18 +292,11 @@ static __inline__ GLKMatrix3 GLKMatrix3SetRow(GLKMatrix3 matrix, int row, GLKVec
 
 static __inline__ GLKMatrix3 GLKMatrix3SetColumn(GLKMatrix3 matrix, int column, GLKVector3 vector)
 {
-#if defined(__ARM_NEON__)
-    float *dst = &(matrix.m[column * 3]);
-    vst1_f32(dst, vld1_f32(vector.v));
-    dst[2] = vector.v[2];
-    return matrix;
-#else
     matrix.m[column * 3 + 0] = vector.v[0];
     matrix.m[column * 3 + 1] = vector.v[1];
     matrix.m[column * 3 + 2] = vector.v[2];
     
     return matrix;
-#endif
 }
     
 static __inline__ GLKMatrix3 GLKMatrix3Transpose(GLKMatrix3 matrix)
@@ -328,13 +315,13 @@ static __inline__ GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix
     float32x4x3_t iMatrixRight;
     float32x4x3_t mm;
     
-    iMatrixLeft.val[0] = *(float32x4_t *)&matrixLeft.m[0]; // 0 1 2 3
-    iMatrixLeft.val[1] = *(float32x4_t *)&matrixLeft.m[3]; // 3 4 5 6
-    iMatrixLeft.val[2] = *(float32x4_t *)&matrixLeft.m[5]; // 5 6 7 8
-
-    iMatrixRight.val[0] = *(float32x4_t *)&matrixRight.m[0];
-    iMatrixRight.val[1] = *(float32x4_t *)&matrixRight.m[3];
-    iMatrixRight.val[2] = *(float32x4_t *)&matrixRight.m[5];
+    memcpy(&(iMatrixLeft.val[0]), (char *)&(matrixLeft.m[0]), 16); // 0 1 2 3
+    memcpy(&(iMatrixLeft.val[1]), (char *)&(matrixLeft.m[3]), 16); // 3 4 5 6
+    memcpy(&(iMatrixLeft.val[2]), (char *)&(matrixLeft.m[5]), 16); // 5 6 7 8
+    
+    memcpy(&(iMatrixRight.val[0]), (char *)&(matrixRight.m[0]), 16);
+    memcpy(&(iMatrixRight.val[1]), (char *)&(matrixRight.m[3]), 16);
+    memcpy(&(iMatrixRight.val[2]), (char *)&(matrixRight.m[5]), 16);
     
     iMatrixLeft.val[2] = vextq_f32(iMatrixLeft.val[2], iMatrixLeft.val[2], 1); // 6 7 8 x
     
@@ -350,9 +337,10 @@ static __inline__ GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix
     mm.val[1] = vmlaq_n_f32(mm.val[1], iMatrixLeft.val[2], vgetq_lane_f32(iMatrixRight.val[1], 2));
     mm.val[2] = vmlaq_n_f32(mm.val[2], iMatrixLeft.val[2], vgetq_lane_f32(iMatrixRight.val[2], 3));
 
-    *(float32x4_t *)&m.m[0] = mm.val[0];
-    *(float32x4_t *)&m.m[3] = mm.val[1];
-    *(float32x2_t *)&m.m[6] = vget_low_f32(mm.val[2]);
+    memcpy(&m.m[0], (char *)&(mm.val[0]), 16);
+    memcpy(&m.m[3], (char *)&(mm.val[1]), 16);
+    float32x2_t vlow = vget_low_f32(mm.val[2]);
+    memcpy(&m.m[6], (char *)&vlow, 8);
     m.m[8] = vgetq_lane_f32(mm.val[2], 2);
     
     return m;
@@ -377,15 +365,6 @@ static __inline__ GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix
 
 static __inline__ GLKMatrix3 GLKMatrix3Add(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight)
 {
-#if defined(__ARM_NEON__)
-    GLKMatrix3 m;
-    
-    *(float32x4_t *)&(m.m[0]) = vaddq_f32(*(float32x4_t *)&(matrixLeft.m[0]), *(float32x4_t *)&(matrixRight.m[0]));
-    *(float32x4_t *)&(m.m[4]) = vaddq_f32(*(float32x4_t *)&(matrixLeft.m[4]), *(float32x4_t *)&(matrixRight.m[4]));
-    m.m[8] = matrixLeft.m[8] + matrixRight.m[8];
-    
-    return m;
-#else
     GLKMatrix3 m;
     
     m.m[0] = matrixLeft.m[0] + matrixRight.m[0];
@@ -401,20 +380,10 @@ static __inline__ GLKMatrix3 GLKMatrix3Add(GLKMatrix3 matrixLeft, GLKMatrix3 mat
     m.m[8] = matrixLeft.m[8] + matrixRight.m[8];
     
     return m;
-#endif
 }
 
 static __inline__ GLKMatrix3 GLKMatrix3Subtract(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight)
 {
-#if defined(__ARM_NEON__)
-    GLKMatrix3 m;
-    
-    *(float32x4_t *)&(m.m[0]) = vsubq_f32(*(float32x4_t *)&(matrixLeft.m[0]), *(float32x4_t *)&(matrixRight.m[0]));
-    *(float32x4_t *)&(m.m[4]) = vsubq_f32(*(float32x4_t *)&(matrixLeft.m[4]), *(float32x4_t *)&(matrixRight.m[4]));
-    m.m[8] = matrixLeft.m[8] - matrixRight.m[8];
-    
-    return m;
-#else
     GLKMatrix3 m;
     
     m.m[0] = matrixLeft.m[0] - matrixRight.m[0];
@@ -430,7 +399,6 @@ static __inline__ GLKMatrix3 GLKMatrix3Subtract(GLKMatrix3 matrixLeft, GLKMatrix
     m.m[8] = matrixLeft.m[8] - matrixRight.m[8];
     
     return m;
-#endif
 }
     
 static __inline__ GLKMatrix3 GLKMatrix3Scale(GLKMatrix3 matrix, float sx, float sy, float sz)

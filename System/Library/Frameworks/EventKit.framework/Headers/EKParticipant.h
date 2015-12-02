@@ -12,9 +12,9 @@
 
 /*!
     @class      EKParticipant
-    @abstract   Abstract class representing a partipant attached to an event.
+    @abstract   Abstract class representing a participant attached to an event.
 */
-EVENTKIT_CLASS_AVAILABLE(4_0)
+EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
 @interface EKParticipant : EKObject <NSCopying> {
 }
 
@@ -52,12 +52,19 @@ EVENTKIT_CLASS_AVAILABLE(4_0)
 @property(nonatomic, readonly) EKParticipantType participantType;
 
 /*!
+    @property   isCurrentUser
+    @abstract   A boolean indicating whether this participant represents the
+                owner of this account.
+ */
+@property(nonatomic, readonly) BOOL isCurrentUser __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+
+/*!
     @method     ABRecordWithAddressBook
     @abstract   Returns the ABRecordRef that represents this participant.
     @discussion This method returns the ABRecordRef that represents this participant,
                 if a match can be found based on email address in the address book
                 passed. If we cannot find the participant, nil is returned.
 */
-- (ABRecordRef)ABRecordWithAddressBook:(ABAddressBookRef)addressBook;
+- (ABRecordRef)ABRecordWithAddressBook:(ABAddressBookRef)addressBook __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 @end

@@ -2,7 +2,7 @@
 //  MKOverlayView.h
 //  MapKit
 //
-//  Copyright (c) 2010-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -16,7 +16,7 @@ MK_CLASS_AVAILABLE(NA, 4_0)
 @package
     id <MKOverlay> _overlay;
     MKMapRect _boundingMapRect;
-    CGAffineTransform _mapTransform;
+    MKZoomScale _mapZoomScale;
     id _geometryDelegate;
     id _canDrawCache;
     

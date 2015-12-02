@@ -2,7 +2,7 @@
 //  UIKitDefines.h
 //  UIKit
 //
-//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
 //
 
 #import <Availability.h>
@@ -13,5 +13,13 @@
 #define UIKIT_EXTERN	        extern __attribute__((visibility ("default")))
 #endif
 
+#ifndef __has_feature
+#define __has_feature(x) 0
+#endif
+
+#if !__has_feature(objc_instancetype)
+#undef instancetype
+#define instancetype id
+#endif
+
 #define UIKIT_STATIC_INLINE	static inline
-#define UIKIT_CLASS_AVAILABLE(_iphoneIntro) __attribute__((visibility("default"))) NS_CLASS_AVAILABLE(NA, _iphoneIntro)

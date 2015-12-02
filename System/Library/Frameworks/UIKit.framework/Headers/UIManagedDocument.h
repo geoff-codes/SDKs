@@ -2,7 +2,7 @@
 //  UIManagedDocument.h
 //  UIKit
 //
-//  Copyright (c) 2011, Apple Inc.
+//  Copyright (c) 2011-2012, Apple Inc.
 //  All rights reserved.
 //
 
@@ -12,7 +12,7 @@
 @class NSManagedObjectContext;
 @class NSPersistentStoreCoordinator;
 
-UIKIT_CLASS_AVAILABLE(5_0) @interface UIManagedDocument : UIDocument {
+NS_CLASS_AVAILABLE_IOS(5_0) @interface UIManagedDocument : UIDocument {
 @private
     NSManagedObjectContext *_managedObjectContext;
     NSPersistentStoreCoordinator *_persistentStoreCoordinator;

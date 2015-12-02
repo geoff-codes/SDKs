@@ -733,10 +733,11 @@ MusicSequenceGetTempoTrack(	MusicSequence		inSequence,
 	@abstract	Set the graph to be associated with the sequence
 	@discussion	A sequence can be associated with an AUGraph and this graph will be used to render the events as 
 				controlled by the sequence when it is played. By default, all of the tracks of a sequence will
-				find the first AUNode that is an instance an Apple MusicDevice audio unit. This audio unit is a 
-				software synthesiser that is compatible with the GM and GS MIDI standards.
+				find the first AUNode that is an instance of an Apple MusicDevice audio unit (see MusicSequenceGetAUGraph).
+				To properly render a multi-channel sequence on iOS, a custom graph with multiple MusicDevices
+				should be created.
 				
-				Specific nodes of the graph can be targeted for different tracks as well (MusicTrackSetDestNode)
+				Specific nodes of the graph can be targeted for different tracks (see MusicTrackSetDestNode).
 	@param		inSequence		the sequence
 	@param		inGraph			the graph
 */
@@ -750,7 +751,9 @@ MusicSequenceSetAUGraph(	MusicSequence 	inSequence,
 	@abstract	Gets the graph currently associated with a sequence
 	@discussion	By default if no graph is assigned to a sequence then the sequence will create a default graph. 
 				This default graph contains a MusicDevice and a DynamicsProcessor and all tracks will be targeted
-				to the MusicDevice.
+				to the MusicDevice.  On Mac OS X, this MusicDevice is an instance of a software synthesizer that is 
+				compatible with the GM and GS MIDI standards.  On iOS, it is an instance of a monotimbral software 
+				synthesizer designed to render events from a single MIDI channel.
 				
 				This call will thus either return the graph as set by the user, or this default graph.
 	@param		inSequence		the sequence

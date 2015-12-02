@@ -2,7 +2,7 @@
 //  UIPasteboard.h
 //  UIKit
 //
-//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,7 +13,7 @@ UIKIT_EXTERN NSString *const UIPasteboardNameFind;
 
 @class UIColor, UIImage;
 
-UIKIT_CLASS_AVAILABLE(3_0) @interface UIPasteboard : NSObject { 
+NS_CLASS_AVAILABLE_IOS(3_0) @interface UIPasteboard : NSObject { 
   @private
     NSString *_name;
 }

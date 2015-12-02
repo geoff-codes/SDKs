@@ -2,7 +2,7 @@
 //  MKGeometry.h
 //  MapKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -169,3 +169,14 @@ MK_EXTERN BOOL MKMapRectSpans180thMeridian(MKMapRect rect) NS_AVAILABLE(NA, 4_0)
 // world.  The portion of the rect that lies inside the world rect can be 
 // determined with MKMapRectIntersection(rect, MKMapRectWorld).
 MK_EXTERN MKMapRect MKMapRectRemainder(MKMapRect rect) NS_AVAILABLE(NA, 4_0);
+
+
+@interface NSValue (NSValueMapKitGeometryExtensions)
+
++ (NSValue *)valueWithMKCoordinate:(CLLocationCoordinate2D)coordinate;
++ (NSValue *)valueWithMKCoordinateSpan:(MKCoordinateSpan)span;
+
+- (CLLocationCoordinate2D)MKCoordinateValue;
+- (MKCoordinateSpan)MKCoordinateSpanValue;
+
+@end

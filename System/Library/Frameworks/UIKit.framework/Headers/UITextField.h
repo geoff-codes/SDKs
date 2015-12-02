@@ -2,7 +2,7 @@
 //  UITextField.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -25,23 +25,23 @@
 @protocol UITextFieldDelegate;
 @protocol UITextSelecting;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITextBorderStyle) {
     UITextBorderStyleNone,
     UITextBorderStyleLine,
     UITextBorderStyleBezel,
     UITextBorderStyleRoundedRect
-} UITextBorderStyle;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITextFieldViewMode) {
     UITextFieldViewModeNever,
     UITextFieldViewModeWhileEditing,
     UITextFieldViewModeUnlessEditing,
     UITextFieldViewModeAlways
-} UITextFieldViewMode;
+};
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInput, NSCoding> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UITextField : UIControl <UITextInput, NSCoding> {
   @private
-    NSString           *_text;
+    NSAttributedString *_text;
     UIColor            *_textColor;
     UITextBorderStyle   _borderStyle;
     CGFloat             _minimumFontSize;
@@ -65,10 +65,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInput, NSCo
     NSRange             _selectionRange;
     int                 _scrollXOffset;
     int                 _scrollYOffset;
-    int                 _suffixWidth;
     float               _progress;
     NSString           *_style;
-    CFTimeInterval      _mouseDownTime;
     
     UIButton           *_clearButton;
     CGSize              _clearButtonOffset;
@@ -89,16 +87,12 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInput, NSCo
     CGFloat          _labelOffset;
     
     UITextInteractionAssistant *_interactionAssistant;
-    UITextSelectionView *_selectionView;
     
     UIView             *_inputView;
     UIView             *_inputAccessoryView;
 
     UITextFieldAtomBackgroundView *_atomBackgroundView;
     
-    UIPopoverController* _definitionPopoverController;
-    UIViewController* _definitionModalViewController;
-
     UIColor         *_shadowColor;
     CGSize           _shadowOffset;
     CGFloat          _shadowBlur;
@@ -123,6 +117,11 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInput, NSCo
         unsigned int explicitAlignment:1;
         unsigned int implementsCustomDrawing:1;
         unsigned int needsClearing:1;
+        unsigned int suppressContentChangedNotification:1;
+        unsigned int allowsEditingTextAttributes:1;
+        unsigned int usesAttributedText:1;
+        unsigned int backgroundViewState:2;
+        unsigned int clearsOnInsertion:1;
     } _textFieldFlags;
 }
 
@@ -131,11 +130,13 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInput, NSCo
 // Begin SDK properties
 
 @property(nonatomic,copy)   NSString               *text;                 // default is nil
+@property(nonatomic,copy)   NSAttributedString     *attributedText NS_AVAILABLE_IOS(6_0); // default is nil
 @property(nonatomic,retain) UIColor                *textColor;            // default is nil. use opaque black
 @property(nonatomic,retain) UIFont                 *font;                 // default is nil. use system font 12 pt
-@property(nonatomic)        UITextAlignment         textAlignment;        // default is UITextAlignmentLeft
+@property(nonatomic)        NSTextAlignment         textAlignment;        // default is NSLeftTextAlignment
 @property(nonatomic)        UITextBorderStyle       borderStyle;          // default is UITextBorderStyleNone. If set to UITextBorderStyleRoundedRect, custom background images are ignored.
 @property(nonatomic,copy)   NSString               *placeholder;          // default is nil. string is drawn 70% gray
+@property(nonatomic,copy)   NSAttributedString     *attributedPlaceholder NS_AVAILABLE_IOS(6_0); // default is nil
 @property(nonatomic)        BOOL                    clearsOnBeginEditing; // default is NO which moves cursor to location clicked. if YES, all text cleared
 @property(nonatomic)        BOOL                    adjustsFontSizeToFitWidth; // default is NO. if YES, text will shrink to minFontSize along baseline
 @property(nonatomic)        CGFloat                 minimumFontSize;      // default is 0.0. actual min may be pinned to something readable. used if adjustsFontSizeToFitWidth is YES
@@ -144,6 +145,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInput, NSCo
 @property(nonatomic,retain) UIImage                *disabledBackground;   // default is nil. ignored if background not set. image should be stretchable
 
 @property(nonatomic,readonly,getter=isEditing) BOOL editing;
+@property(nonatomic) BOOL allowsEditingTextAttributes NS_AVAILABLE_IOS(6_0); // default is NO. allows editing text attributes with style operations and pasting rich text
+@property(nonatomic,copy) NSDictionary *typingAttributes NS_AVAILABLE_IOS(6_0); // automatically resets when the selection changes
 
 // You can supply custom views which are displayed at the left or right
 // sides of the text field. Uses for such views could be to show an icon or
@@ -180,6 +183,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInput, NSCo
 // set while first responder, will not take effect until reloadInputViews is called.
 @property (readwrite, retain) UIView *inputView;             
 @property (readwrite, retain) UIView *inputAccessoryView;
+
+@property(nonatomic) BOOL clearsOnInsertion NS_AVAILABLE_IOS(6_0); // defaults to NO. if YES, the selection UI is hidden, and inserting text will replace the contents of the field. changing the selection will automatically set this to NO.
 
 @end
 

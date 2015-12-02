@@ -2,7 +2,7 @@
 //  UIActionSheet.h
 //  UIKit
 //
-//  Copyright 2010 Apple Inc. All rights reserved.
+//  Copyright 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,17 +14,18 @@
 @protocol UIActionSheetDelegate;
 @class UILabel, UIToolbar, UITabBar, UIWindow, UIBarButtonItem, UIPopoverController;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIActionSheetStyle) {
     UIActionSheetStyleAutomatic        = -1,       // take appearance from toolbar style otherwise uses 'default'
     UIActionSheetStyleDefault          = UIBarStyleDefault,
     UIActionSheetStyleBlackTranslucent = UIBarStyleBlackTranslucent,
     UIActionSheetStyleBlackOpaque      = UIBarStyleBlackOpaque,
-} UIActionSheetStyle;
+};
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIActionSheet : UIView {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIActionSheet : UIView {
 @private
     id <UIActionSheetDelegate> _delegate;
     UILabel   *_titleLabel;
+    NSAttributedString *_attributedTitleString;
     UILabel   *_subtitleLabel;
     UILabel   *_bodyTextLabel;
     UILabel   *_taglineTextLabel;
@@ -110,6 +111,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIActionSheet : UIView {
     UIActionSheetStyle _actionSheetStyle;
     UIImage *_selectedButtonGlyphImage;
     UIImage *_selectedButtonGlyphHighlightedImage;
+    UIImageView *_shadowImageView;
 }
 
 - (id)initWithTitle:(NSString *)title delegate:(id<UIActionSheetDelegate>)delegate cancelButtonTitle:(NSString *)cancelButtonTitle destructiveButtonTitle:(NSString *)destructiveButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION;
@@ -134,8 +136,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIActionSheet : UIView {
 // UIActionSheetStyleDefault if automatic style set
 - (void)showFromToolbar:(UIToolbar *)view;
 - (void)showFromTabBar:(UITabBar *)view;
-- (void)showFromBarButtonItem:(UIBarButtonItem *)item animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_3_2);
-- (void)showFromRect:(CGRect)rect inView:(UIView *)view animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_3_2);
+- (void)showFromBarButtonItem:(UIBarButtonItem *)item animated:(BOOL)animated NS_AVAILABLE_IOS(3_2);
+- (void)showFromRect:(CGRect)rect inView:(UIView *)view animated:(BOOL)animated NS_AVAILABLE_IOS(3_2);
 - (void)showInView:(UIView *)view;
 
 // hides alert sheet or popup. use this method when you need to explicitly dismiss the alert.

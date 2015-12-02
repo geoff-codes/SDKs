@@ -2,7 +2,7 @@
 //  UIPickerView.h
 //  UIKit
 //
-//  Copyright (c) 2006-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,7 +13,7 @@
 
 @protocol UIPickerViewDataSource, UIPickerViewDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIPickerView : UIView <NSCoding, UITableViewDataSource>
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIPickerView : UIView <NSCoding, UITableViewDataSource>
 { 
   @private
     NSMutableArray            *_tables;
@@ -32,6 +32,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIPickerView : UIView <NSCoding, UITableVi
         unsigned int delegateRespondsToDidSelectRow:1;
         unsigned int delegateRespondsToViewForRow:1;
         unsigned int delegateRespondsToTitleForRow:1;
+        unsigned int delegateRespondsToAttributedTitleForRow:1;
         unsigned int delegateRespondsToWidthForComponent:1;
         unsigned int delegateRespondsToRowHeightForComponent:1;
         unsigned int delegateRespondsToCheckableForRow:1;
@@ -40,6 +41,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIPickerView : UIView <NSCoding, UITableVi
         unsigned int allowSelectingCells:1;
         unsigned int soundsDisabled:1;
         unsigned int usesCheckedSelection:1;
+        unsigned int skipsBackground:1;
     } _pickerViewFlags;
 }
 
@@ -87,10 +89,11 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIPickerView : UIView <NSCoding, UITableVi
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component;
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component;
 
-// these methods return either a plain UIString, or a view (e.g UILabel) to display the row for the component.
+// these methods return either a plain NSString, a NSAttributedString, or a view (e.g UILabel) to display the row for the component.
 // for the view versions, we cache any hidden and thus unused views and pass them back for reuse. 
 // If you return back a different object, the old one will be released. the view will be centered in the row rect  
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component;
+- (NSAttributedString *)pickerView:(UIPickerView *)pickerView attributedTitleForRow:(NSInteger)row forComponent:(NSInteger)component NS_AVAILABLE_IOS(6_0); // attributed title is favored if both methods are implemented
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view;
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component;

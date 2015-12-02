@@ -24,6 +24,8 @@
 #ifndef _OBJC_AUTO_H_
 #define _OBJC_AUTO_H_
 
+#pragma GCC system_header
+
 #include <objc/objc.h>
 #include <malloc/malloc.h>
 #include <stdint.h>

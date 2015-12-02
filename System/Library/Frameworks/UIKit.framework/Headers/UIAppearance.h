@@ -2,7 +2,7 @@
 //  UIAppearance.h
 //  UIKit
 //
-//  Copyright 2011 Apple Inc. All rights reserved.
+//  Copyright 2011-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

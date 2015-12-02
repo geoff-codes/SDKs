@@ -164,6 +164,7 @@ typedef __darwin_pid_t	pid_t;
 
 
 
+
 /* Data Protection Flags */
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
 #define O_DP_GETRAWENCRYPTED	0x0001
@@ -218,8 +219,9 @@ typedef __darwin_pid_t	pid_t;
 #define F_SETSIZE       43		/* Truncate a file without zeroing space */	
 #define F_RDADVISE      44              /* Issue an advisory read async with no copy to user */
 #define F_RDAHEAD       45              /* turn read ahead off/on for this fd */
-#define F_READBOOTSTRAP 46              /* Read bootstrap from disk */
-#define F_WRITEBOOTSTRAP 47             /* Write bootstrap on disk */
+/*
+ * 46,47 used to be F_READBOOTSTRAP and F_WRITEBOOTSTRAP 
+ */
 #define F_NOCACHE       48              /* turn data caching off/on for this fd */
 #define F_LOG2PHYS	49		/* file offset to device offset */
 #define F_GETPATH       50              /* return the full path of the fd */
@@ -262,7 +264,8 @@ typedef __darwin_pid_t	pid_t;
 #define F_SINGLE_WRITER		76	/* file being written to a by single writer... if throttling enabled, writes */
                                         /* may be broken into smaller chunks with throttling in between */
 
-#define F_GETPROTECTIONLEVEL	77	/* Get the protection version number for the filesystem */
+#define F_GETPROTECTIONLEVEL	77	/* Get the protection version number for this filesystem */
+
 
 // FS-specific fcntl()'s numbers begin at 0x00010000 and go up
 #define FCNTL_FS_SPECIFIC_BASE  0x00010000

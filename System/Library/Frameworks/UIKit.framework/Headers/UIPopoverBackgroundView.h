@@ -2,9 +2,10 @@
 //  UIPopoverBackgroundView.h
 //  UIKit
 //
-//  Copyright (c) 2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2012, Apple Inc. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIGeometry.h>
 #import <UIKit/UIPopoverController.h>
@@ -12,7 +13,7 @@
 /* The methods defined below are all to be treated as abstract; in order to subclass `UIPopoverBackgroundView`, you must supply implementations of each of the methods below. For `readwrite` properties, you must supply implementations of both of the accessors.
  */
 
-UIKIT_CLASS_AVAILABLE(5_0)
+NS_CLASS_AVAILABLE_IOS(5_0)
 @interface UIPopoverBackgroundView : UIView {}
 
 /* The arrow offset represents how far from the center of the view the center of the arrow should appear. For `UIPopoverArrowDirectionUp` and `UIPopoverArrowDirectionDown`, this is a left-to-right offset; negative is to the left. For `UIPopoverArrowDirectionLeft` and `UIPopoverArrowDirectionRight`, this is a top-to-bottom offset; negative to toward the top.
@@ -30,5 +31,9 @@ UIKIT_CLASS_AVAILABLE(5_0)
 + (CGFloat)arrowHeight;
 + (CGFloat)arrowBase;
 + (UIEdgeInsets)contentViewInsets;        
+
+/* This method may be overridden to prevent the drawing of the content inset and drop shadow inside the popover. The default implementation of this method returns YES.
+ */
++ (BOOL)wantsDefaultContentAppearance NS_AVAILABLE_IOS(6_0);
 
 @end

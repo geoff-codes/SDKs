@@ -29,6 +29,7 @@ extern NSString *const ALAssetPropertyDate __OSX_AVAILABLE_STARTING(__MAC_NA,__I
 // Properties related to multiple photo representations
 extern NSString *const ALAssetPropertyRepresentations __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);  // Array with all the representations available for a given asset (e.g. RAW, JPEG). It is expressed as UTIs.
 extern NSString *const ALAssetPropertyURLs __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);             // Dictionary that maps asset representation UTIs to URLs that uniquely identify the asset.
+extern NSString *const ALAssetPropertyAssetURL __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);         // An NSURL that uniquely identifies the asset 
 
 // Asset types
 extern NSString *const ALAssetTypePhoto __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);                // The asset is a photo

@@ -65,14 +65,14 @@ typedef long            GLsizeiptr;
 /*************************************************************/
 
 /* OpenGL ES core versions */
-#define GL_VERSION_ES_CM_1_0		1
-#define GL_VERSION_ES_CL_1_0		1
-#define GL_VERSION_ES_CM_1_1		1
-#define GL_VERSION_ES_CL_1_1		1
+#define GL_VERSION_ES_CM_1_0              1
+#define GL_VERSION_ES_CL_1_0              1
+#define GL_VERSION_ES_CM_1_1              1
+#define GL_VERSION_ES_CL_1_1              1
 
 /* Legacy core versions */
-#define GL_OES_VERSION_1_0			1
-#define GL_OES_VERSION_1_1			1
+#define GL_OES_VERSION_1_0                1
+#define GL_OES_VERSION_1_1                1
 
 /* Extensions */
 #define GL_OES_byte_coordinates           1
@@ -683,6 +683,7 @@ GL_API void GL_APIENTRY glPointParameterfv (GLenum pname, const GLfloat *params)
 GL_API void GL_APIENTRY glPointSize (GLfloat size);
 GL_API void GL_APIENTRY glPolygonOffset (GLfloat factor, GLfloat units);
 GL_API void GL_APIENTRY glRotatef (GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
+GL_API void GL_APIENTRY glSampleCoverage (GLclampf value, GLboolean invert);
 GL_API void GL_APIENTRY glScalef (GLfloat x, GLfloat y, GLfloat z);
 GL_API void GL_APIENTRY glTexEnvf (GLenum target, GLenum pname, GLfloat param);
 GL_API void GL_APIENTRY glTexEnvfv (GLenum target, GLenum pname, const GLfloat *params);
@@ -729,11 +730,11 @@ GL_API void GL_APIENTRY glFogx (GLenum pname, GLfixed param);
 GL_API void GL_APIENTRY glFogxv (GLenum pname, const GLfixed *params);
 GL_API void GL_APIENTRY glFrontFace (GLenum mode);
 GL_API void GL_APIENTRY glFrustumx (GLfixed left, GLfixed right, GLfixed bottom, GLfixed top, GLfixed zNear, GLfixed zFar);
+GL_API void GL_APIENTRY glGenBuffers (GLsizei n, GLuint *buffers);
+GL_API void GL_APIENTRY glGenTextures (GLsizei n, GLuint *textures);
 GL_API void GL_APIENTRY glGetBooleanv (GLenum pname, GLboolean *params);
 GL_API void GL_APIENTRY glGetBufferParameteriv (GLenum target, GLenum pname, GLint *params);
 GL_API void GL_APIENTRY glGetClipPlanex (GLenum pname, GLfixed eqn[4]);
-GL_API void GL_APIENTRY glGenBuffers (GLsizei n, GLuint *buffers);
-GL_API void GL_APIENTRY glGenTextures (GLsizei n, GLuint *textures);
 GL_API GLenum GL_APIENTRY glGetError (void);
 GL_API void GL_APIENTRY glGetFixedv (GLenum pname, GLfixed *params);
 GL_API void GL_APIENTRY glGetIntegerv (GLenum pname, GLint *params);
@@ -774,7 +775,6 @@ GL_API void GL_APIENTRY glPopMatrix (void);
 GL_API void GL_APIENTRY glPushMatrix (void);
 GL_API void GL_APIENTRY glReadPixels (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels);
 GL_API void GL_APIENTRY glRotatex (GLfixed angle, GLfixed x, GLfixed y, GLfixed z);
-GL_API void GL_APIENTRY glSampleCoverage (GLclampf value, GLboolean invert);
 GL_API void GL_APIENTRY glSampleCoveragex (GLclampx value, GLboolean invert);
 GL_API void GL_APIENTRY glScalex (GLfixed x, GLfixed y, GLfixed z);
 GL_API void GL_APIENTRY glScissor (GLint x, GLint y, GLsizei width, GLsizei height);

@@ -6,7 +6,6 @@
 #import <CoreImage/CIImage.h>
 #import <CoreImage/CoreImageDefines.h>
 #import <CoreVideo/CoreVideo.h>
-#import <pthread.h>
 
 #if TARGET_OS_IPHONE
  #import <OpenGLES/EAGL.h>
@@ -80,9 +79,10 @@ __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_4,__MAC_10_6,__IPHONE_NA,__IPHONE_NA);
     __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 #endif
 
-/* Render the subregion 'src' of 'im' to point 'p' in the context's
+/* DEPRECATED - use -drawImage:inRect:fromRect:
+ * Render the subregion 'src' of 'im' to point 'p' in the context's
  * destination. */
-- (void)drawImage:(CIImage *)im atPoint:(CGPoint)p fromRect:(CGRect)src;
+- (void)drawImage:(CIImage *)im atPoint:(CGPoint)p fromRect:(CGRect)src __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_4, __MAC_10_8, __IPHONE_5_0, __IPHONE_6_0);
 
 /* Render the rectangle 'src' of 'im' to the rectangle 'dest' in the
  * context's destination. */
@@ -149,10 +149,10 @@ toCVPixelBuffer:(CVPixelBufferRef)buffer
 
 /* Returns the maximum dimension for input images that can be processed 
  * on the currect context. */
-- (CGSize) inputImageMaximumSize __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+- (CGSize)inputImageMaximumSize __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 /* Returns the maximum dimension for image that can be rendered 
  * on the currect context. */
-- (CGSize) outputImageMaximumSize __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+- (CGSize)outputImageMaximumSize __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 @end

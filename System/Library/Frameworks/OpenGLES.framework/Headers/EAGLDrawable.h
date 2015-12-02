@@ -29,8 +29,8 @@ EAGL_EXTERN NSString * const kEAGLDrawablePropertyColorFormat;
 /************************************************************************/
 /* Values for kEAGLDrawablePropertyColorFormat key                      */
 /************************************************************************/
-EAGL_EXTERN NSString * const kEAGLColorFormatRGB565;
 EAGL_EXTERN NSString * const kEAGLColorFormatRGBA8;
+EAGL_EXTERN NSString * const kEAGLColorFormatRGB565;
 
 /************************************************************************/
 /* EAGLDrawable Interface                                               */

@@ -19,7 +19,7 @@
  
  This a not a Game Center feature. To support Game Center and online play, see GKMatch.
 */
-NS_CLASS_AVAILABLE(NA, 4_1)
+NS_CLASS_AVAILABLE(10_8, 4_1)
 GK_EXTERN_CLASS @interface GKSession : NSObject {
 @private
 	id _session;

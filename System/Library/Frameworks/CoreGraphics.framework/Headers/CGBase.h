@@ -21,24 +21,15 @@
 # endif
 #endif
 
-/* Definition of `__CG_HAS_COMPILER_FEATURE'. */
-
-#if !defined(__CG_HAS_COMPILER_FEATURE)
-# if defined(__has_feature)
-#  define __CG_HAS_COMPILER_FEATURE(feature) __has_feature(feature)
-# else
-#  define __CG_HAS_COMPILER_FEATURE(feature) (0)
-# endif
-#endif
-
 /* Definition of `__CG_HAS_COMPILER_EXTENSION'. */
 
 #if !defined(__CG_HAS_COMPILER_EXTENSION)
 # if defined(__has_extension)
 #  define __CG_HAS_COMPILER_EXTENSION(extension) __has_extension(extension)
+# elif defined(__has_feature)
+#  define __CG_HAS_COMPILER_EXTENSION(extension) __has_feature(extension)
 # else
-#  define __CG_HAS_COMPILER_EXTENSION(extension)			      \
-     __CG_HAS_COMPILER_FEATURE(extension)
+#  define __CG_HAS_COMPILER_EXTENSION(extension) (0)
 # endif
 #endif
 
@@ -94,8 +85,7 @@
 
 #if !defined(__CG_DEPRECATED_ENUMERATOR)
 # if __CG_HAS_COMPILER_ATTRIBUTE(deprecated)				      \
-   && __CG_HAS_COMPILER_EXTENSION(enumerator_attributes)		      \
-   && !defined(CG_BUILDING_CG)
+   && __CG_HAS_COMPILER_EXTENSION(enumerator_attributes)
 #  define __CG_DEPRECATED_ENUMERATOR __attribute__((deprecated))
 # else
 #  define __CG_DEPRECATED_ENUMERATOR
@@ -179,15 +169,15 @@
 typedef CGFLOAT_TYPE CGFloat;
 #define CGFLOAT_DEFINED 1
 
-/* Definition of `CG_OBSOLETE'. */
+/* Definition of `CG_OBSOLETE'. Deprecated; to be removed. */
 
 #if !defined(CG_OBSOLETE)
 # define CG_OBSOLETE __CG_DEPRECATED
 #endif
 
-/* Definition of `CG_PRIVATE_EXTERN'. */
+/* Definition of `CG_PRIVATE_EXTERN'. Deprecated; to be removed. */
 
-#if !defined(CG_PRIVATE_EXTERN)
+#if !defined(CG_PRIVATE_EXTERN) && !defined(CG_BUILDING_CG)
 # define CG_PRIVATE_EXTERN CG_LOCAL
 #endif
 

@@ -1,12 +1,12 @@
 //
 //  NSMergePolicy.h
 //  Core Data
-//  Copyright (c) 2004-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2004-2012 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/NSArray.h>
+#import <Foundation/NSError.h>
 #import <CoreData/CoreDataDefines.h>
-#import <Availability.h>
 
 @class NSMergePolicy;
 @class NSManagedObject;

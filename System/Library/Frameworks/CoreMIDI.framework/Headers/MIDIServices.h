@@ -110,6 +110,8 @@ extern "C" {
 						The requested object does not exist.
 	@constant		kMIDIIDNotUnique
 						Attempt to set a non-unique kMIDIPropertyUniqueID on an object.
+    @constant       kMIDINotPermitted
+	                    The process does not have privileges for the requested operation.						
 */
 enum {
 	kMIDIInvalidClient		= -10830,
@@ -125,7 +127,8 @@ enum {
 	kMIDISetupFormatErr		= -10840,
 	kMIDIWrongThread		= -10841,
 	kMIDIObjectNotFound		= -10842,
-	kMIDIIDNotUnique		= -10843
+	kMIDIIDNotUnique		= -10843,
+	kMIDINotPermitted       = -10844
 };
 
 //=============================================================================

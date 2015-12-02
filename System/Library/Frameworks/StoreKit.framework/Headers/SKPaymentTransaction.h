@@ -31,6 +31,9 @@ SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPaymentTransaction : NSObject {
 
 @property(nonatomic, readonly) SKPayment *payment __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
+// Available downloads (SKDownload) for this transaction
+@property(nonatomic, readonly) NSArray *downloads __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+
 // The date when the transaction was added to the server queue.  Only valid if state is SKPaymentTransactionStatePurchased or SKPaymentTransactionStateRestored.
 @property(nonatomic, readonly) NSDate *transactionDate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 

@@ -6,4 +6,6 @@
 //
 
 #import <Twitter/TWRequest.h>
+#if TARGET_OS_IPHONE
 #import <Twitter/TWTweetComposeViewController.h>
+#endif

@@ -108,7 +108,7 @@ CG_EXTERN CGPathRef CGPathCreateCopyByDashingPath(CGPathRef path,
 CG_EXTERN CGPathRef CGPathCreateCopyByStrokingPath(CGPathRef path,
   const CGAffineTransform *transform, CGFloat lineWidth, CGLineCap lineCap,
   CGLineJoin lineJoin, CGFloat miterLimit)
-  CG_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0);;
+  CG_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0);
 
 /* Equivalent to `CFRetain(path)', except it doesn't crash (as CFRetain
    does) if `path' is NULL. */

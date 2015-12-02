@@ -28,12 +28,23 @@ CORE_IMAGE_EXPORT NSString* const CIFeatureTypeFace;
 CORE_IMAGE_CLASS_EXPORT
 @interface CIFaceFeature : CIFeature {}
 
+/** coordinates of various cardinal points within a face.
+ 
+ Note that the left eye is the eye on the left side of the face
+ from the observer's perspective. It is not the left eye from
+ the subject's perspective. */
+
 @property (readonly, assign) BOOL hasLeftEyePosition;
 @property (readonly, assign) CGPoint leftEyePosition;
 @property (readonly, assign) BOOL hasRightEyePosition;
 @property (readonly, assign) CGPoint rightEyePosition;
 @property (readonly, assign) BOOL hasMouthPosition;
 @property (readonly, assign) CGPoint mouthPosition;
+
+@property (readonly, assign) BOOL hasTrackingID;
+@property (readonly, assign) int trackingID;
+@property (readonly, assign) BOOL hasTrackingFrameCount;
+@property (readonly, assign) int trackingFrameCount;
 
 @end
 

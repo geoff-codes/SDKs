@@ -2,7 +2,7 @@
 //  UIGestureRecognizer.h
 //  UIKit
 //
-//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 @protocol UIGestureRecognizerDelegate;
 @class UIView, UIEvent, UITouch;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIGestureRecognizerState) {
     UIGestureRecognizerStatePossible,   // the recognizer has not yet recognized its gesture, but may be evaluating touch events. this is the default state
     
     UIGestureRecognizerStateBegan,      // the recognizer has received touches recognized as the gesture. the action method will be called at the next turn of the run loop
@@ -24,9 +24,9 @@ typedef enum {
     
     // Discrete Gestures – gesture recognizers that recognize a discrete event but do not report changes (for example, a tap) do not transition through the Began and Changed states and can not fail or be cancelled
     UIGestureRecognizerStateRecognized = UIGestureRecognizerStateEnded // the recognizer has received touches recognized as the gesture. the action method will be called at the next turn of the run loop and the recognizer will be reset to UIGestureRecognizerStatePossible
-} UIGestureRecognizerState;
+};
 
-UIKIT_CLASS_AVAILABLE(3_2) @interface UIGestureRecognizer : NSObject {
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UIGestureRecognizer : NSObject {
   @package
     NSMutableArray                   *_targets;
     NSMutableArray                   *_delayedTouches;
@@ -55,13 +55,14 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIGestureRecognizer : NSObject {
         unsigned int delegateShouldBeRequiredToFail:1;
         unsigned int delegateFailed:1;
         unsigned int privateDelegateShouldBegin:1;
+        unsigned int privateDelegateCanPrevent:1;
+        unsigned int privateDelegateCanBePrevented:1;
         unsigned int privateDelegateShouldRecognizeSimultaneously:1;
         unsigned int privateDelegateShouldReceiveTouch:1;
         unsigned int subclassShouldRequireFailure:1;
         unsigned int cancelsTouchesInView:1;
         unsigned int delaysTouchesBegan:1;
         unsigned int delaysTouchesEnded:1;
-        unsigned int notExclusive:1;
         unsigned int disabled:1;
         unsigned int dirty:1;
         unsigned int queriedFailureRequirements:1;

@@ -1,13 +1,14 @@
 /*
  NSIncrementalStoreNode.h
  Core Data
- Copyright (c) 2004-2010 Apple Inc.
+ Copyright (c) 2004-2012 Apple Inc.
  All rights reserved.
  */
 
 #import <CoreData/NSManagedObjectID.h>
 
 @class NSDictionary;
+@class NSPropertyDescription;
 
 // Provides the basic unit of external data that the Core Data stack interacts with.
 NS_CLASS_AVAILABLE(10_7,5_0)

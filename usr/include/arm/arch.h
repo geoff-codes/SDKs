@@ -5,7 +5,7 @@
 #define _ARM_ARCH_H
 
 /* Collect the __ARM_ARCH_*__ compiler flags into something easier to use. */
-#if defined (__ARM_ARCH_7A__)
+#if defined (__ARM_ARCH_7A__) || defined (__ARM_ARCH_7S__) || defined (__ARM_ARCH_7F__) || defined (__ARM_ARCH_7K__)
 #define _ARM_ARCH_7
 #endif
 

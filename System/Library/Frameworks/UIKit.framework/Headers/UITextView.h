@@ -2,7 +2,7 @@
 //  UITextView.h
 //  UIKit
 //
-//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -44,7 +44,7 @@
 @end
 
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UITextView : UIScrollView <UITextInput> 
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UITextView : UIScrollView <UITextInput> 
 {
   @package
     WebFrame           *m_frame;
@@ -62,27 +62,33 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextView : UIScrollView <UITextInput>
     
     // Gesture recognition.
     UITextInteractionAssistant *m_interactionAssistant;
-    UITextSelectionView *m_selectionView;
     
     // property ivars
     UIWebDocumentView  *m_webView;
     UIFont             *m_font;
     UIColor            *m_textColor;
-    UITextAlignment     m_textAlignment;
+    NSTextAlignment     m_textAlignment;
     UIView             *m_inputView;
     UIView             *m_inputAccessoryView;
-    float               m_lineHeight;
+    CGFloat             m_lineHeight;
     BOOL                m_skipScrollContainingView;
+    BOOL                m_allowsEditingTextAttributes;
+    BOOL                m_usesAttributedText;
+    BOOL                m_clearsOnInsertion;
 }
 
 @property(nonatomic,assign) id<UITextViewDelegate> delegate;
 @property(nonatomic,copy) NSString *text;
 @property(nonatomic,retain) UIFont *font;
 @property(nonatomic,retain) UIColor *textColor;
-@property(nonatomic) UITextAlignment textAlignment;    // default is UITextAlignmentLeft
-@property(nonatomic) NSRange selectedRange;            // only ranges of length 0 are supported
+@property(nonatomic) NSTextAlignment textAlignment;    // default is NSLeftTextAlignment
+@property(nonatomic) NSRange selectedRange;
 @property(nonatomic,getter=isEditable) BOOL editable;
-@property(nonatomic) UIDataDetectorTypes dataDetectorTypes __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_3_0);
+@property(nonatomic) UIDataDetectorTypes dataDetectorTypes NS_AVAILABLE_IOS(3_0);
+
+@property(nonatomic) BOOL allowsEditingTextAttributes NS_AVAILABLE_IOS(6_0); // defaults to NO
+@property(nonatomic,copy) NSAttributedString *attributedText NS_AVAILABLE_IOS(6_0); // default is nil
+@property(nonatomic,copy) NSDictionary *typingAttributes NS_AVAILABLE_IOS(6_0); // automatically resets when the selection changes
 
 - (BOOL)hasText;
 - (void)scrollRangeToVisible:(NSRange)range;
@@ -92,6 +98,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextView : UIScrollView <UITextInput>
 // set while first responder, will not take effect until reloadInputViews is called.
 @property (readwrite, retain) UIView *inputView;             
 @property (readwrite, retain) UIView *inputAccessoryView;
+
+@property(nonatomic) BOOL clearsOnInsertion NS_AVAILABLE_IOS(6_0); // defaults to NO. if YES, the selection UI is hidden, and inserting text will replace the contents of the field. changing the selection will automatically set this to NO.
 
 @end
 

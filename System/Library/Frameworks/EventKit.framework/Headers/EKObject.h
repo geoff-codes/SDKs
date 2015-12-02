@@ -1,8 +1,7 @@
 //
 //  EKObject.h
-//  Calendar
+//  EventKit
 //
-//  Created by Ed Voas on 3/14/11.
 //  Copyright 2011 Apple Inc. All rights reserved.
 //
 
@@ -12,7 +11,7 @@
 @interface EKObject : NSObject {
 }
 
-// Returns YES if this object or any sub-object (alarm, etc.) is has uncommitted changes.
+// Returns YES if this object or any sub-object (alarm, etc.) has uncommitted changes.
 - (BOOL)hasChanges;
 
 // Returns YES if this object has never been saved.

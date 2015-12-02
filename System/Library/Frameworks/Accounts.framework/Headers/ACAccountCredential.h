@@ -2,7 +2,7 @@
 //  ACAccountCredential.h
 //  Accounts
 //
-//  Copyright 2011 Apple, Inc. All rights reserved.
+//  Copyright (c) 2011-2012 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -18,9 +18,16 @@
 //
 // The account will be validated and saved as a system account.
 
-ACCOUNTS_CLASS_AVAILABLE(5_0)
+ACCOUNTS_CLASS_AVAILABLE(NA, 5_0)
 @interface ACAccountCredential : NSObject
 
 - (id)initWithOAuthToken:(NSString *)token tokenSecret:(NSString *)secret;
+
+- (id)initWithOAuth2Token:(NSString *)token 
+             refreshToken:(NSString *)refreshToken
+               expiryDate:(NSDate *)expiryDate;
+
+// This property is only valid for OAuth2 credentials
+@property (copy, NS_NONATOMIC_IOSONLY) NSString *oauthToken;
 
 @end

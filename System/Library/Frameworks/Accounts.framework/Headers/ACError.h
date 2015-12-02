@@ -2,12 +2,12 @@
 //  ACError.h
 //  Accounts
 //
-//  Copyright 2011 Apple, Inc. All rights reserved.
+//  Copyright (c) 2011-2012 Apple Inc. All rights reserved.
 //
 
 #import <Accounts/AccountsDefines.h>
 
-ACCOUNTS_EXTERN NSString * const ACErrorDomain __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+ACCOUNTS_EXTERN NSString * const ACErrorDomain NS_AVAILABLE(NA, 5_0);
 
 typedef enum ACErrorCode {
     ACErrorUnknown = 1,
@@ -16,5 +16,6 @@ typedef enum ACErrorCode {
     ACErrorAccountTypeInvalid,              // Account wasn't saved because the account type is invalid.
     ACErrorAccountAlreadyExists,            // Account wasn't added because it already exists.
     ACErrorAccountNotFound,                 // Account wasn't deleted because it could not be found.
-    ACErrorPermissionDenied                 // The operation didn't complete because the user denied permission.
+    ACErrorPermissionDenied,                // The operation didn't complete because the user denied permission.
+    ACErrorAccessInfoInvalid                // The client's access info dictionary has incorrect or missing values.
 } ACErrorCode;

@@ -169,6 +169,28 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
  */
 #define VM_STATISTICS_TRUNCATE_TO_32_BIT(value) ((uint32_t)(((value) > UINT32_MAX ) ? UINT32_MAX : (value)))
 
+/* 
+ * vm_extmod_statistics
+ *
+ * Structure to record modifications to a task by an
+ * external agent.
+ *
+ * History:
+ *	rev0 - 	original structure.
+ */
+
+struct vm_extmod_statistics {
+	int64_t	task_for_pid_count;			/* # of times task port was looked up */
+	int64_t task_for_pid_caller_count;	/* # of times this task called task_for_pid */
+	int64_t	thread_creation_count;		/* # of threads created in task */
+	int64_t	thread_creation_caller_count;	/* # of threads created by task */
+	int64_t	thread_set_state_count;		/* # of register state sets in task */
+	int64_t	thread_set_state_caller_count;	/* # of register state sets by task */
+} __attribute__((aligned(8)));
+
+typedef struct vm_extmod_statistics *vm_extmod_statistics_t;
+typedef struct vm_extmod_statistics vm_extmod_statistics_data_t;
+
 
 /* included for the vm_map_page_query call */
 
@@ -230,10 +252,8 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 #define SUPERPAGE_SIZE_ANY		1
 #define VM_FLAGS_SUPERPAGE_NONE     (SUPERPAGE_NONE     << VM_FLAGS_SUPERPAGE_SHIFT)
 #define VM_FLAGS_SUPERPAGE_SIZE_ANY (SUPERPAGE_SIZE_ANY << VM_FLAGS_SUPERPAGE_SHIFT)
-#if defined(__x86_64__) || !defined(KERNEL)
 #define SUPERPAGE_SIZE_2MB		2
 #define VM_FLAGS_SUPERPAGE_SIZE_2MB (SUPERPAGE_SIZE_2MB<<VM_FLAGS_SUPERPAGE_SHIFT)
-#endif
 
 #define VM_FLAGS_ALIAS_MASK	0xFF000000
 #define VM_GET_FLAGS_ALIAS(flags, alias)			\
@@ -285,7 +305,8 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 #define VM_MEMORY_APPKIT 40
 #define VM_MEMORY_FOUNDATION 41
 #define VM_MEMORY_COREGRAPHICS 42
-#define VM_MEMORY_CARBON 43
+#define VM_MEMORY_CORESERVICES 43
+#define VM_MEMORY_CARBON VM_MEMORY_CORESERVICES
 #define VM_MEMORY_JAVA 44
 #define VM_MEMORY_ATS 50
 #define VM_MEMORY_LAYERKIT 51
@@ -341,6 +362,12 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 
 /* assetsd / MobileSlideShow memory */
 #define VM_MEMORY_ASSETSD	72
+
+/* libsystem_kernel os_once_alloc */
+#define VM_MEMORY_OS_ALLOC_ONCE 73
+
+/* libdispatch internal allocator */
+#define VM_MEMORY_LIBDISPATCH 74
 
 /* Reserve 240-255 for application */
 #define VM_MEMORY_APPLICATION_SPECIFIC_1 240

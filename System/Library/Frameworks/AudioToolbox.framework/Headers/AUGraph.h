@@ -425,7 +425,7 @@ AUGraphGetInteractionInfo(	AUGraph					inGraph,
 							AUNodeInteraction *		outInteraction)		__OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
 
 /*! 
-	@function	AUGraphGetInteractionInfo
+	@function	AUGraphCountNodeInteractions
 	@abstract	Retrieve the number of interactions of a graph's node
 	@discussion	The number of node interactions currently being managed by the graph for the specified node
 	@param		inGraph

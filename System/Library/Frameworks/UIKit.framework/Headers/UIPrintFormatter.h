@@ -2,7 +2,7 @@
 //  UIPrintFormatter.h
 //  UIKit
 //
-//  Copyright 2010 Apple Inc. All rights reserved.
+//  Copyright 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,7 +15,7 @@
 @class UIPrintPageRenderer;
 @class UIView, UIFont, UIColor;
 
-UIKIT_CLASS_AVAILABLE(4_2) @interface UIPrintFormatter : NSObject <NSCopying> {
+NS_CLASS_AVAILABLE_IOS(4_2) @interface UIPrintFormatter : NSObject <NSCopying> {
   @private
     UIPrintPageRenderer *_printPageRenderer;
     CGFloat              _maximumContentHeight;
@@ -43,20 +43,20 @@ UIKIT_CLASS_AVAILABLE(4_2) @interface UIPrintFormatter : NSObject <NSCopying> {
 
 //______________________________
 
-UIKIT_CLASS_AVAILABLE(4_2) @interface UISimpleTextPrintFormatter : UIPrintFormatter {
+NS_CLASS_AVAILABLE_IOS(4_2) @interface UISimpleTextPrintFormatter : UIPrintFormatter {
 }
 
 - (id)initWithText:(NSString *)text;
 @property(nonatomic,copy)     NSString       *text;                   // cannot change once drawing started
 @property(nonatomic,retain)   UIFont         *font;
 @property(nonatomic,retain)   UIColor        *color;
-@property(nonatomic)          UITextAlignment textAlignment;
+@property(nonatomic)          NSTextAlignment textAlignment;
 
 @end
 
 //______________________________
 
-UIKIT_CLASS_AVAILABLE(4_2) @interface UIMarkupTextPrintFormatter : UIPrintFormatter {
+NS_CLASS_AVAILABLE_IOS(4_2) @interface UIMarkupTextPrintFormatter : UIPrintFormatter {
 }
 
 - (id)initWithMarkupText:(NSString *)markupText;
@@ -66,7 +66,7 @@ UIKIT_CLASS_AVAILABLE(4_2) @interface UIMarkupTextPrintFormatter : UIPrintFormat
 
 //______________________________
 
-UIKIT_CLASS_AVAILABLE(4_2) @interface UIViewPrintFormatter : UIPrintFormatter {
+NS_CLASS_AVAILABLE_IOS(4_2) @interface UIViewPrintFormatter : UIPrintFormatter {
   @private
     UIView *_view;
 }

@@ -16,11 +16,8 @@
 #define __ABMultiValue__
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <AddressBook/AddressBookDefines.h>
 #include <AddressBook/ABRecord.h>
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
 typedef CFTypeRef ABMultiValueRef;
 
@@ -28,36 +25,32 @@ typedef int32_t ABMultiValueIdentifier;
 #define kABMultiValueInvalidIdentifier -1
 
 // Type of the contained values
-extern ABPropertyType ABMultiValueGetPropertyType(ABMultiValueRef multiValue);
+AB_EXTERN ABPropertyType ABMultiValueGetPropertyType(ABMultiValueRef multiValue);
 
-extern CFIndex ABMultiValueGetCount(ABMultiValueRef multiValue);
+AB_EXTERN CFIndex ABMultiValueGetCount(ABMultiValueRef multiValue);
 
-extern CFTypeRef ABMultiValueCopyValueAtIndex(ABMultiValueRef multiValue, CFIndex index);
-extern CFArrayRef ABMultiValueCopyArrayOfAllValues(ABMultiValueRef multiValue);
+AB_EXTERN CFTypeRef ABMultiValueCopyValueAtIndex(ABMultiValueRef multiValue, CFIndex index);
+AB_EXTERN CFArrayRef ABMultiValueCopyArrayOfAllValues(ABMultiValueRef multiValue);
 
-extern CFStringRef ABMultiValueCopyLabelAtIndex(ABMultiValueRef multiValue, CFIndex index);
+AB_EXTERN CFStringRef ABMultiValueCopyLabelAtIndex(ABMultiValueRef multiValue, CFIndex index);
     
-extern CFIndex ABMultiValueGetIndexForIdentifier(ABMultiValueRef multiValue, ABMultiValueIdentifier identifier);
-extern ABMultiValueIdentifier ABMultiValueGetIdentifierAtIndex(ABMultiValueRef multiValue, CFIndex index);
+AB_EXTERN CFIndex ABMultiValueGetIndexForIdentifier(ABMultiValueRef multiValue, ABMultiValueIdentifier identifier);
+AB_EXTERN ABMultiValueIdentifier ABMultiValueGetIdentifierAtIndex(ABMultiValueRef multiValue, CFIndex index);
     
-extern CFIndex ABMultiValueGetFirstIndexOfValue(ABMultiValueRef multiValue, CFTypeRef value);
+AB_EXTERN CFIndex ABMultiValueGetFirstIndexOfValue(ABMultiValueRef multiValue, CFTypeRef value);
 
 // Mutable multivalues
 
 typedef CFTypeRef ABMutableMultiValueRef;
 
-extern ABMutableMultiValueRef ABMultiValueCreateMutable(ABPropertyType type);
-extern ABMutableMultiValueRef ABMultiValueCreateMutableCopy(ABMultiValueRef multiValue);
+AB_EXTERN ABMutableMultiValueRef ABMultiValueCreateMutable(ABPropertyType type);
+AB_EXTERN ABMutableMultiValueRef ABMultiValueCreateMutableCopy(ABMultiValueRef multiValue);
  
-extern bool ABMultiValueAddValueAndLabel(ABMutableMultiValueRef multiValue, CFTypeRef value, CFStringRef label, ABMultiValueIdentifier *outIdentifier);
-extern bool ABMultiValueInsertValueAndLabelAtIndex(ABMutableMultiValueRef multiValue, CFTypeRef value, CFStringRef label, CFIndex index, ABMultiValueIdentifier *outIdentifier);
-extern bool ABMultiValueRemoveValueAndLabelAtIndex(ABMutableMultiValueRef multiValue, CFIndex index);
-extern bool ABMultiValueReplaceValueAtIndex(ABMutableMultiValueRef multiValue, CFTypeRef value, CFIndex index);
-extern bool ABMultiValueReplaceLabelAtIndex(ABMutableMultiValueRef multiValue, CFStringRef label, CFIndex index);
+AB_EXTERN bool ABMultiValueAddValueAndLabel(ABMutableMultiValueRef multiValue, CFTypeRef value, CFStringRef label, ABMultiValueIdentifier *outIdentifier);
+AB_EXTERN bool ABMultiValueInsertValueAndLabelAtIndex(ABMutableMultiValueRef multiValue, CFTypeRef value, CFStringRef label, CFIndex index, ABMultiValueIdentifier *outIdentifier);
+AB_EXTERN bool ABMultiValueRemoveValueAndLabelAtIndex(ABMutableMultiValueRef multiValue, CFIndex index);
+AB_EXTERN bool ABMultiValueReplaceValueAtIndex(ABMutableMultiValueRef multiValue, CFTypeRef value, CFIndex index);
+AB_EXTERN bool ABMultiValueReplaceLabelAtIndex(ABMutableMultiValueRef multiValue, CFStringRef label, CFIndex index);
     
-#if defined(__cplusplus)
-}
-#endif
-
 #endif
 

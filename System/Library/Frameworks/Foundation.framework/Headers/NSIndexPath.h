@@ -1,5 +1,5 @@
 /*  NSIndexPath.h
-    Copyright (c) 2003-2011, Apple Inc. All rights reserved.
+    Copyright (c) 2003-2012, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -13,10 +13,10 @@
 }
 
 + (id)indexPathWithIndex:(NSUInteger)index;
-+ (id)indexPathWithIndexes:(NSUInteger *)indexes length:(NSUInteger)length;   
++ (id)indexPathWithIndexes:(const NSUInteger [])indexes length:(NSUInteger)length;
 
 - (id)initWithIndex:(NSUInteger)index;
-- (id)initWithIndexes:(NSUInteger *)indexes length:(NSUInteger)length;    // designated initializer
+- (id)initWithIndexes:(const NSUInteger [])indexes length:(NSUInteger)length;    // designated initializer
 
 - (NSIndexPath *)indexPathByAddingIndex:(NSUInteger)index;
 - (NSIndexPath *)indexPathByRemovingLastIndex;

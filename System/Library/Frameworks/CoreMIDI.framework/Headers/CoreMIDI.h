@@ -20,7 +20,7 @@
 #include <CoreMIDI/MIDIThruConnection.h>
 #include <CoreMIDI/MIDIDriver.h>
 
-#ifdef __OBJC__
+#if TARGET_OS_IPHONE && __OBJC__
 #import <CoreMIDI/MIDINetworkSession.h>
 #endif
 

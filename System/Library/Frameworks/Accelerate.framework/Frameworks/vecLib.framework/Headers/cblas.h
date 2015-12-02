@@ -1,3 +1,28 @@
+/* cblas.h
+ *
+ * This header defines C bindings for the Basic Linear Algebra Subprograms,
+ * providing optimized basic operations on vectors and matrices.  Single-
+ * and double-precision, real and complex data formats are supported by this
+ * library.
+ *
+ * A note on complex data layouts:
+ *
+ * In order to allow straightforward interoperation with other libraries and
+ * complex types in C and C++, complex data in BLAS is passed through an opaque
+ * pointer (void *).  The layout requirements on this complex data are that
+ * the real and imaginary parts are stored consecutively in memory, and have
+ * the alignment of the corresponding real type (float or double).  The BLAS
+ * complex interfaces are compatible with the following types:
+ *
+ *     - The C complex types, defined in <complex.h>.
+ *     - The C++ std::complex types, defined in <complex>.
+ *     - The LAPACK complex types, defined in <Accelerate/vecLib/clapack.h>.
+ *     - The vDSP types DSPComplex and DSPDoubleComplex, defined in <Accelerate/vecLib/vDSP.h>.
+ *     - An array of size two of the corresponding real type.
+ *     - A structure containing two elements, each of the corresponding real type.
+ * 
+ */
+ 
 #ifndef CBLAS_H
 
 #ifdef __cplusplus
@@ -635,26 +660,13 @@ extern void ATLU_DestroyThreadMemory() __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPH
 typedef void (*BLASParamErrorProc)(const char *funcName, const char *paramName,
                                    const int *paramPos,  const int *paramValue);
 void SetBLASParamErrorProc(BLASParamErrorProc ErrorProc) __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_4_0);
-
     
+#if defined __SSE__
     
-#if defined(__ppc__) || defined(__ppc64__)
-#if defined( __VEC__ )
-    typedef __vector float	VectorFloat;
-    typedef __vector float	ConstVectorFloat; 
-#endif
-#endif
-    
-#if defined(__i386__) || defined( __x86_64__ )
-#if defined( __SSE__ )
     typedef float __M128  __attribute__((vector_size (16)));
+    typedef __M128  VectorFloat;
+    typedef VectorFloat ConstVectorFloat;
     
-    typedef __M128			VectorFloat;
-    typedef VectorFloat		ConstVectorFloat;
-#endif
-#endif
-    
-#if defined(__VEC__) || defined(__SSE__)
     /*
      -------------------------------------------------------------------------------------------------
      These routines provide optimized, SIMD-only support for common small matrix multiplications.
@@ -663,7 +675,6 @@ void SetBLASParamErrorProc(BLASParamErrorProc ErrorProc) __OSX_AVAILABLE_STARTIN
      these are all square, column major matrices can be multiplied by simply reversing the parameters.
      -------------------------------------------------------------------------------------------------
      */
-    
     
     void vMultVecMat_4x4(ConstVectorFloat X[1], ConstVectorFloat A[4][1], VectorFloat Y[1]);
     void vMultMatVec_4x4(ConstVectorFloat A[4][1], ConstVectorFloat X[1], VectorFloat Y[1]);
@@ -714,7 +725,7 @@ void SetBLASParamErrorProc(BLASParamErrorProc ErrorProc) __OSX_AVAILABLE_STARTIN
     void dMultMatVec_32x32(const double A[32][32], const double X[32], double Y[32]);
     void dMultMatMat_32x32(const double A[32][32], const double B[32][32], double C[32][32]);
     
-#endif /* defined(__VEC__) || defined(__SSE__) */
+#endif /* defined __SSE__ */
 #endif /* CBLAS_ENUM_ONLY */
 
 #ifdef __cplusplus

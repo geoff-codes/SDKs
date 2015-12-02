@@ -2,7 +2,7 @@
 //  UIAlertView.h
 //  UIKit
 //
-//  Copyright 2010 Apple Inc. All rights reserved.
+//  Copyright 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,17 +10,17 @@
 #import <UIKit/UITextField.h>
 #import <UIKit/UIView.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIAlertViewStyle) {
     UIAlertViewStyleDefault = 0,
     UIAlertViewStyleSecureTextInput,
     UIAlertViewStylePlainTextInput,
     UIAlertViewStyleLoginAndPasswordInput
-} UIAlertViewStyle;
+};
 
 @protocol UIAlertViewDelegate;
 @class UILabel, UIToolbar, UITabBar, UIWindow, UIBarButtonItem, UIPopoverController;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIAlertView : UIView {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIAlertView : UIView {
 @private
     id <UIAlertViewDelegate> _delegate;
     UILabel   *_titleLabel;
@@ -86,7 +86,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIAlertView : UIView {
         unsigned int delegateDidDismiss:1;
         unsigned int delegateDidDismiss2:1;
         unsigned int delegateShouldEnableFirstOtherButton:1;
-        unsigned int forceHorizontalButtonsLayout:1; // for <rdar://problem/7309708> Apex8A118+kb root: Alert bleeds offscreen. Should be removed 
+        unsigned int forceHorizontalButtonsLayout:1;
         unsigned int suppressKeyboardOnPopup:1; // the folder creation alert has text fields but we need to pop up without the keyboard 
         unsigned int keyboardShowing:1;
         unsigned int dontCallDismissDelegate:1;
@@ -127,11 +127,11 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIAlertView : UIView {
 - (void)dismissWithClickedButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated;
 
 // Alert view style - defaults to UIAlertViewStyleDefault
-@property(nonatomic,assign) UIAlertViewStyle alertViewStyle __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+@property(nonatomic,assign) UIAlertViewStyle alertViewStyle NS_AVAILABLE_IOS(5_0);
 
 /* Retrieve a text field at an index - raises NSRangeException when textFieldIndex is out-of-bounds. 
    The field at index 0 will be the first text field (the single field or the login field), the field at index 1 will be the password field. */
-- (UITextField *)textFieldAtIndex:(NSInteger)textFieldIndex __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (UITextField *)textFieldAtIndex:(NSInteger)textFieldIndex NS_AVAILABLE_IOS(5_0);
 
 @end
 

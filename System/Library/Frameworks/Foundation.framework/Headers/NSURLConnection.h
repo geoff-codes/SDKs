@@ -1,6 +1,6 @@
 /*    
     NSURLConnection.h
-    Copyright (c) 2003-2011, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2012, Apple Inc. All rights reserved.    
     
     Public header file.
 */
@@ -94,7 +94,7 @@
         delay in a user interface and its use is strongly
         discourage.<p>
 
-        The NSURLConnecitonQueuedLoading category implements
+        The NSURLConnectionQueuedLoading category implements
         +sendAsynchronousRequest:queue:completionHandler, providing
         similar simplicity but provides a mechanism where the current
         runloop is not blocked.<p>

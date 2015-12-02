@@ -69,6 +69,7 @@
 #include <mach/machine/vm_types.h>
 #include <mach/time_value.h>
 #include <mach/policy.h>
+#include <mach/vm_statistics.h> /* for vm_extmod_statistics_data_t */
 #include <Availability.h>
 
 #include <sys/cdefs.h>
@@ -79,6 +80,7 @@
 typedef	natural_t	task_flavor_t;
 typedef	integer_t	*task_info_t;		/* varying array of int */
 
+/* Deprecated, use per structure _data_t's instead */
 #define	TASK_INFO_MAX	(1024)		/* maximum array size */
 typedef	integer_t	task_info_data_t[TASK_INFO_MAX];
 
@@ -88,6 +90,7 @@ typedef	integer_t	task_info_data_t[TASK_INFO_MAX];
 
 #pragma pack(4)
 
+/* Don't use this, use MACH_TASK_BASIC_INFO instead */
 #define TASK_BASIC_INFO_32      4       /* basic information */
 #define TASK_BASIC2_INFO_32      6
 
@@ -106,7 +109,7 @@ typedef struct task_basic_info_32       *task_basic_info_32_t;
 #define TASK_BASIC_INFO_32_COUNT   \
                 (sizeof(task_basic_info_32_data_t) / sizeof(natural_t))
 
-
+/* Don't use this, use MACH_TASK_BASIC_INFO instead */
 struct task_basic_info_64 {
         integer_t       suspend_count;  /* suspend count for task */
 #ifdef __arm__
@@ -145,7 +148,7 @@ typedef struct task_basic_info_64       *task_basic_info_64_t;
 
 
 /* localized structure - cannot be safely passed between tasks of differing sizes */
-
+/* Don't use this, use MACH_TASK_BASIC_INFO instead */
 struct task_basic_info {
         integer_t       suspend_count;  /* suspend count for task */
         vm_size_t       virtual_size;   /* virtual memory size (bytes) */
@@ -251,7 +254,7 @@ typedef struct task_affinity_tag_info	*task_affinity_tag_info_t;
 #define TASK_AFFINITY_TAG_INFO_COUNT	\
 		(sizeof(task_affinity_tag_info_data_t) / sizeof(natural_t))
 
-#define TASK_DYLD_INFO			17	/* This is experimental. */
+#define TASK_DYLD_INFO			17
 
 struct task_dyld_info {
 	mach_vm_address_t	all_image_info_addr;
@@ -265,10 +268,9 @@ typedef struct task_dyld_info	*task_dyld_info_t;
 #define TASK_DYLD_ALL_IMAGE_INFO_32	0	/* format value */
 #define TASK_DYLD_ALL_IMAGE_INFO_64	1	/* format value */
 
-#pragma pack()
-
 #ifdef __arm__
 
+/* Don't use this, use MACH_TASK_BASIC_INFO instead */
 /* Compatibility for old 32-bit mach_vm_*_t */
 #define TASK_BASIC_INFO_64_2     18       /* 64-bit capable basic info */
 
@@ -288,6 +290,35 @@ typedef struct task_basic_info_64_2       *task_basic_info_64_2_t;
                 (sizeof(task_basic_info_64_2_data_t) / sizeof(natural_t))
 #endif
 
+#define TASK_EXTMOD_INFO			19
+
+struct task_extmod_info {
+	unsigned char	task_uuid[16];
+	vm_extmod_statistics_data_t		extmod_statistics;
+};
+typedef struct task_extmod_info	task_extmod_info_data_t;
+typedef struct task_extmod_info	*task_extmod_info_t;
+#define TASK_EXTMOD_INFO_COUNT	\
+    		(sizeof(task_extmod_info_data_t) / sizeof(natural_t))
+
+/* Always 64-bit in user and kernel */
+#define MACH_TASK_BASIC_INFO     20         /* always 64-bit basic info */
+
+struct mach_task_basic_info {
+        mach_vm_size_t  virtual_size;       /* virtual memory size (bytes) */
+        mach_vm_size_t  resident_size;      /* resident memory size (bytes) */
+        mach_vm_size_t  resident_size_max;  /* maximum resident memory size (bytes) */
+        time_value_t    user_time;          /* total user run time for
+                                               terminated threads */
+        time_value_t    system_time;        /* total system run time for
+                                               terminated threads */
+        policy_t        policy;             /* default policy for new threads */
+        integer_t       suspend_count;      /* suspend count for task */
+};
+typedef struct mach_task_basic_info       mach_task_basic_info_data_t;
+typedef struct mach_task_basic_info       *mach_task_basic_info_t;
+#define MACH_TASK_BASIC_INFO_COUNT   \
+                (sizeof(mach_task_basic_info_data_t) / sizeof(natural_t))
 
 /*
  * Obsolete interfaces.
@@ -298,5 +329,7 @@ typedef struct task_basic_info_64_2       *task_basic_info_64_2_t;
 #define TASK_SCHED_FIFO_INFO		12
 
 #define TASK_SCHED_INFO			14
+
+#pragma pack()
 
 #endif	/* _MACH_TASK_INFO_H_ */

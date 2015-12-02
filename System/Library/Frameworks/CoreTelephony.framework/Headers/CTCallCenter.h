@@ -15,7 +15,7 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
 @interface CTCallCenter : NSObject
 {
 @private
-    void *_internal;
+    void *_server;
 
     NSSet *_currentCalls;
     void (^_callEventHandler)(CTCall *);

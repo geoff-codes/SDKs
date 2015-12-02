@@ -74,8 +74,19 @@ typedef int			integer_t;
  * A vm_offset_t is a type-neutral pointer,
  * e.g. an offset into a virtual memory space.
  */
-typedef	natural_t		vm_offset_t;
+#ifdef __LP64__
+typedef uintptr_t		vm_offset_t;
+typedef uintptr_t		vm_size_t;
 
+typedef uint64_t		mach_vm_address_t;
+typedef uint64_t		mach_vm_offset_t;
+typedef uint64_t		mach_vm_size_t;
+
+typedef uint64_t		vm_map_offset_t;
+typedef uint64_t		vm_map_address_t;
+typedef uint64_t		vm_map_size_t;
+#else
+typedef	natural_t		vm_offset_t;
 /*
  * A vm_size_t is the proper type for e.g.
  * expressing the difference between two
@@ -103,12 +114,15 @@ typedef uint64_t		mach_vm_size_t;
 typedef uint32_t		vm_map_offset_t;
 typedef uint32_t		vm_map_address_t;
 typedef uint32_t		vm_map_size_t;
+#endif /* __LP64__ */
+
 
 typedef uint32_t		vm32_offset_t;
 typedef uint32_t		vm32_address_t;
 typedef uint32_t		vm32_size_t;
 
-typedef vm_offset_t 		mach_port_context_t;
+typedef vm_offset_t		mach_port_context_t;
+
 
 #define VM_MAP_MIN_ADDRESS	VM_MIN_ADDRESS
 #define VM_MAP_MAX_ADDRESS	VM_MAX_ADDRESS

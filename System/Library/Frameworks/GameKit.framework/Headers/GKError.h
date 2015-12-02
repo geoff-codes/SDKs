@@ -30,6 +30,12 @@ enum {
     GKErrorNotSupported                         = 16,
     GKErrorInvalidParameter                     = 17,
     GKErrorUnexpectedConnection                 = 18,
+    GKErrorChallengeInvalid                     = 19,
+    GKErrorTurnBasedMatchDataTooLarge           = 20,
+    GKErrorTurnBasedTooManySessions             = 21,
+    GKErrorTurnBasedInvalidParticipant          = 22,
+    GKErrorTurnBasedInvalidTurn                 = 23,
+    GKErrorTurnBasedInvalidState                = 24,
 };
 typedef NSInteger GKErrorCode;
 

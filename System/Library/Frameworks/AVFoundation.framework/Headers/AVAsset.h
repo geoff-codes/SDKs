@@ -85,19 +85,9 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 */
 @property (nonatomic, readonly) CGAffineTransform preferredTransform;
 
-#if TARGET_OS_IPHONE
-
 /*	The following property is deprecated. Instead, use the naturalSize and preferredTransform, as appropriate, of the receiver's video tracks. See -tracksWithMediaType: below.
 */
-@property (nonatomic, readonly) CGSize naturalSize NS_DEPRECATED_IOS(4_0, 5_0);
-
-#else // not TARGET_OS_IPHONE
-
-/*	indicates the encoded or authored size of the visual portion of the asset
-*/
-@property (nonatomic, readonly) CGSize naturalSize;
-
-#endif // not TARGET_OS_IPHONE
+@property (nonatomic, readonly) CGSize naturalSize NS_DEPRECATED(10_7, 10_8, 4_0, 5_0);
 
 @end
 
@@ -203,13 +193,13 @@ typedef NSUInteger AVAssetReferenceRestrictions;
 
 /* Indicates the creation date of the asset as an AVMetadataItem. May be nil. If a creation date has been stored by the asset in a form that can be converted to an NSDate, the dateValue property of the AVMetadataItem will provide an instance of NSDate. Otherwise the creation date is available only as a string value, via -[AVMetadataItem stringValue].
 */
-@property (nonatomic, readonly) AVMetadataItem *creationDate NS_AVAILABLE(TBD, 5_0);
+@property (nonatomic, readonly) AVMetadataItem *creationDate NS_AVAILABLE(10_8, 5_0);
 
 /* Provides access to the lyrics of the asset suitable for the current locale.
 */
 @property (nonatomic, readonly) NSString *lyrics;
 
-/* Provides access to an array of AVMetadataItems for each common metadata key for which a value is available; can be filtered according to locale via +[AVMetadataItem metadataItemsFromArray:withLocale:] or according to key via +[AVMetadataItem metadataItemsFromArray:withKey:keySpace:].
+/* Provides access to an array of AVMetadataItems for each common metadata key for which a value is available; can be filtered according to language via +[AVMetadataItem metadataItemsFromArray:filteredAndSortedAccordingToPreferredLanguages:], according to locale via +[AVMetadataItem metadataItemsFromArray:withLocale:], or according to key via +[AVMetadataItem metadataItemsFromArray:withKey:keySpace:].
 */
 @property (nonatomic, readonly) NSArray *commonMetadata;
 
@@ -219,7 +209,7 @@ typedef NSUInteger AVAssetReferenceRestrictions;
 
 /*!
   @method		metadataForFormat:
-  @abstract		Provides an NSArray of AVMetadataItems, one for each metadata item in the container of the specified format; can subsequently be filtered according to locale via +[AVMetadataItem metadataItemsFromArray:withLocale:] or according to key via +[AVMetadataItem metadataItemsFromArray:withKey:keySpace:].
+  @abstract		Provides an NSArray of AVMetadataItems, one for each metadata item in the container of the specified format; can subsequently be filtered according to language via +[AVMetadataItem metadataItemsFromArray:filteredAndSortedAccordingToPreferredLanguages:], according to locale via +[AVMetadataItem metadataItemsFromArray:withLocale:], or according to key via +[AVMetadataItem metadataItemsFromArray:withKey:keySpace:].
   @param		format
 				The metadata format for which items are requested.
   @result		An NSArray containing AVMetadataItems; may be empty if there is no metadata of the specified format.
@@ -243,16 +233,35 @@ typedef NSUInteger AVAssetReferenceRestrictions;
 				Locale of the metadata items carrying chapter titles to be returned (supports the IETF BCP 47 specification).
   @param		commonKeys
 				Array of common keys of AVMetadataItem to be included; can be nil. 
-				AVMetadataCommonKeyArtwork is the only support key for now.
+				AVMetadataCommonKeyArtwork is the only supported key for now.
   @result		An NSArray of AVTimedMetadataGroup.
   @discussion	
-	This method returns an array of AVTimedMetadataGroup objects. Each object in the array always contain an AVMetadataItem representing the chapter title and the timeRange property of the AVTimedMetadataGroup object is equal to the time range of the chapter title item.
+	This method returns an array of AVTimedMetadataGroup objects. Each object in the array always contains an AVMetadataItem representing the chapter title; the timeRange property of the AVTimedMetadataGroup object is equal to the time range of the chapter title item.
 
 	An AVMetadataItem with the specified common key will be added to an existing AVTimedMetadataGroup object if the time range (timestamp and duration) of the metadata item and the metadata group overlaps. The locale of items not carrying chapter titles need not match the specified locale parameter.
-
-	Further filtering of the returned items based on locale can be accomplished using +[AVMetadataItem metadataItemsFromArray:withLocale:].
+ 
+	Further filtering of the metadata items in AVTimedMetadataGroups according to language can be accomplished using +[AVMetadataItem metadataItemsFromArray:filteredAndSortedAccordingToPreferredLanguages:]; filtering of the metadata items according to locale can be accomplished using +[AVMetadataItem metadataItemsFromArray:withLocale:].
 */
 - (NSArray *)chapterMetadataGroupsWithTitleLocale:(NSLocale *)locale containingItemsWithCommonKeys:(NSArray *)commonKeys NS_AVAILABLE(10_7, 4_3);
+
+/*!
+ @method		chapterMetadataGroupsBestMatchingPreferredLanguages:
+ @abstract		Tests, in order of preference, for a match between language identifiers in the specified array of preferred languages and the available chapter locales, and returns the array of chapters corresponding to the first match that's found.
+ @param			preferredLanguages
+ An array of language identifiers in order of preference, each of which is an IETF BCP 47 (RFC 4646) language identifier. Use +[NSLocale preferredLanguages] to obtain the user's list of preferred languages.
+ @result		An NSArray of AVTimedMetadataGroup.
+ @discussion	
+ Safe to call without blocking when the AVAsset key availableChapterLocales has status AVKeyValueStatusLoaded.
+ 
+ Returns an array of AVTimedMetadataGroup objects. Each object in the array always contains an AVMetadataItem representing the chapter title; the timeRange property of the AVTimedMetadataGroup object is equal to the time range of the chapter title item.
+ 
+ All of the available chapter metadata is included in the metadata groups, including items with the common key AVMetadataCommonKeyArtwork, if such items are present. Items not carrying chapter titles will be added to an existing AVTimedMetadataGroup object if the time range (timestamp and duration) of the metadata item and that of the metadata group overlaps. The locale of such items need not match the locale of the chapter titles.
+ 
+ Further filtering of the metadata items in AVTimedMetadataGroups according to language can be accomplished using +[AVMetadataItem metadataItemsFromArray:filteredAndSortedAccordingToPreferredLanguages:]; filtering of the metadata items according to locale can be accomplished using +[AVMetadataItem metadataItemsFromArray:withLocale:].
+.
+*/
+- (NSArray *)chapterMetadataGroupsBestMatchingPreferredLanguages:(NSArray *)preferredLanguages NS_AVAILABLE(10_8, 6_0);
+
 
 @end
 
@@ -263,7 +272,7 @@ typedef NSUInteger AVAssetReferenceRestrictions;
 
 /* Provides an NSArray of NSStrings, each NSString indicating a media characteristic for which a media selection option is available.
 */
-@property (nonatomic, readonly) NSArray *availableMediaCharacteristicsWithMediaSelectionOptions NS_AVAILABLE(TBD, 5_0);
+@property (nonatomic, readonly) NSArray *availableMediaCharacteristicsWithMediaSelectionOptions NS_AVAILABLE(10_8, 5_0);
 
 /*!
   @method		mediaSelectionGroupForMediaCharacteristic:
@@ -282,7 +291,7 @@ typedef NSUInteger AVAssetReferenceRestrictions;
 	
 	Filtering of the options in the returned AVMediaSelectionGroup according to playability, locale, and additional media characteristics can be accomplished using the category AVMediaSelectionOptionFiltering defined on AVMediaSelectionGroup.
 */
-- (AVMediaSelectionGroup *)mediaSelectionGroupForMediaCharacteristic:(NSString *)mediaCharacteristic NS_AVAILABLE(TBD, 5_0);
+- (AVMediaSelectionGroup *)mediaSelectionGroupForMediaCharacteristic:(NSString *)mediaCharacteristic NS_AVAILABLE(10_8, 5_0);
 
 @end
 
@@ -422,6 +431,22 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 /* indicates the URL with which the instance of AVURLAsset was initialized
 */
 @property (nonatomic, readonly, copy) NSURL *URL;
+
+@end
+
+
+@class AVAssetResourceLoader;
+
+@interface AVURLAsset (AVURLAssetURLHandling)
+
+/*!
+ @property resourceLoader
+ @abstract
+    Provides access to an instance of AVAssetResourceLoader, which offers limited control over the handling of URLs that may be loaded in the course of performing operations on the asset, such as playback.
+    The loading of file URLs cannot be mediated via use of AVAssetResourceLoader.
+    Note that copies of an AVAsset will vend the same instance of AVAssetResourceLoader.
+*/
+@property(nonatomic, readonly) AVAssetResourceLoader *resourceLoader NS_AVAILABLE(TBD, 6_0);
 
 @end
 

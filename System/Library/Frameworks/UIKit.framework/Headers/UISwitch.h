@@ -2,7 +2,7 @@
 //  UISwitch.h
 //  UIKit
 //
-//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,12 +10,18 @@
 #import <UIKit/UIControl.h>
 #import <UIKit/UIKitDefines.h>
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UISwitch : UIControl <NSCoding> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UISwitch : UIControl <NSCoding> {
   @private
     id _control;
 }
 
-@property(nonatomic, retain) UIColor* onTintColor __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic, retain) UIColor *onTintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic, retain) UIColor *tintColor NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic, retain) UIColor *thumbTintColor NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
+
+@property(nonatomic, retain) UIImage *onImage NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic, retain) UIImage *offImage NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
+
 @property(nonatomic,getter=isOn) BOOL on;
 
 - (id)initWithFrame:(CGRect)frame;              // This class enforces a size appropriate for the control. The frame size is ignored.

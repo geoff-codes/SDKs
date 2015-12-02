@@ -2,7 +2,7 @@
 //  UIRotationGestureRecognizer.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -12,7 +12,7 @@
 // Changes: when a finger moves while two fingers are down
 // Ends:    when both fingers have lifted
 
-UIKIT_CLASS_AVAILABLE(3_2) @interface UIRotationGestureRecognizer : UIGestureRecognizer {
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UIRotationGestureRecognizer : UIGestureRecognizer {
   @package
     double            _initialTouchDistance;
     double            _initialTouchAngle;

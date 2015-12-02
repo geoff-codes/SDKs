@@ -2,7 +2,7 @@
 //  UIPrintPageRenderer.h
 //  UIKit
 //
-//  Copyright 2010 Apple Inc. All rights reserved.
+//  Copyright 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,9 +11,8 @@
 
 @class UIPrintFormatter;
 
-UIKIT_CLASS_AVAILABLE(4_2) @interface UIPrintPageRenderer : NSObject {
- @private
-    NSInteger       _pageCount;
+NS_CLASS_AVAILABLE_IOS(4_2) @interface UIPrintPageRenderer : NSObject {
+  @private
     CGFloat         _headerHeight;
     CGFloat         _footerHeight;
     CGRect          _paperRect;

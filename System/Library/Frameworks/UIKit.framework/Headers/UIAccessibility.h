@@ -2,7 +2,7 @@
 //  UIAccessibility.h
 //  UIKit
 //
-//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -95,7 +95,7 @@
  Returns the activation point for an accessible element in screen coordinates.
  default == Mid-point of the accessibilityFrame.
  */
-@property(nonatomic) CGPoint accessibilityActivationPoint __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property(nonatomic) CGPoint accessibilityActivationPoint NS_AVAILABLE_IOS(5_0);
 
 /*
  Returns the language code that the element's label, value and hint should be spoken in. 
@@ -110,14 +110,23 @@
  Marks all the accessible elements contained within as hidden.
  default == NO
  */
-@property(nonatomic) BOOL accessibilityElementsHidden __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property(nonatomic) BOOL accessibilityElementsHidden NS_AVAILABLE_IOS(5_0);
 
 /*
  Informs whether the receiving view should be considered modal by accessibility. If YES, then 
  elements outside this view will be ignored. Only elements inside this view will be exposed.
  default == NO
  */
-@property(nonatomic) BOOL accessibilityViewIsModal __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property(nonatomic) BOOL accessibilityViewIsModal NS_AVAILABLE_IOS(5_0);
+
+/*
+ Forces children elements to be grouped together regardless of their position on screen.
+ For example, your app may show items that are meant to be grouped together in vertical columns. 
+ By default, VoiceOver will navigate those items in horizontal rows. If shouldGroupAccessibilityChildren is set on
+ a parent view of the items in the vertical column, VoiceOver will navigate the order correctly.
+ default == NO
+ */
+@property(nonatomic) BOOL shouldGroupAccessibilityChildren NS_AVAILABLE_IOS(6_0);
 
 @end
 
@@ -168,11 +177,11 @@
 @interface NSObject (UIAccessibilityFocus)
 
 // Override the following methods to know when an assistive technology has set or unset its virtual focus on the element. 
-- (void)accessibilityElementDidBecomeFocused __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
-- (void)accessibilityElementDidLoseFocus __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+- (void)accessibilityElementDidBecomeFocused NS_AVAILABLE_IOS(4_0);
+- (void)accessibilityElementDidLoseFocus NS_AVAILABLE_IOS(4_0);
 
 // Returns whether an assistive technology is focused on the element.
-- (BOOL)accessibilityElementIsFocused __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+- (BOOL)accessibilityElementIsFocused NS_AVAILABLE_IOS(4_0);
 
 @end
 
@@ -189,8 +198,8 @@
  while decrementing decreases its content. For example, accessibilityIncrement will increase the value
  of a UISlider, and accessibilityDecrement will decrease the value.
  */   
-- (void)accessibilityIncrement __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
-- (void)accessibilityDecrement __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+- (void)accessibilityIncrement NS_AVAILABLE_IOS(4_0);
+- (void)accessibilityDecrement NS_AVAILABLE_IOS(4_0);
 
 /*
  If the user interface requires a scrolling action (e.g. turning the page of a book), a view in the view 
@@ -200,7 +209,7 @@
  the scrolling completes.
  default == NO
  */
-typedef enum {
+typedef NS_ENUM(NSInteger, UIAccessibilityScrollDirection) {
     UIAccessibilityScrollDirectionRight = 1,
     UIAccessibilityScrollDirectionLeft,
     UIAccessibilityScrollDirectionUp,
@@ -208,10 +217,10 @@ typedef enum {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_5_0
     UIAccessibilityScrollDirectionNext,
     UIAccessibilityScrollDirectionPrevious
-#endif    
-} UIAccessibilityScrollDirection;
+#endif
+};
 
-- (BOOL)accessibilityScroll:(UIAccessibilityScrollDirection)direction __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_2);
+- (BOOL)accessibilityScroll:(UIAccessibilityScrollDirection)direction NS_AVAILABLE_IOS(4_2);
 
 /* 
  Implement accessibilityPerformEscape on an element or containing view to exit a modal or hierarchical interface view.
@@ -220,7 +229,15 @@ typedef enum {
  If your implementation successfully dismisses the current UI, return YES, otherwise return NO.
  default == NO
  */
-- (BOOL)accessibilityPerformEscape __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+- (BOOL)accessibilityPerformEscape NS_AVAILABLE_IOS(5_0);
+
+/* 
+ Implement accessibilityPerformMagicTap on an element, or the application, in order to provide a context-sensitive action.
+ For example, a music player can implement this to start and stop playback, or a recording app could start and stop recording.
+ Return YES to indicate that the action was handled.
+ default == NO
+ */
+- (BOOL)accessibilityPerformMagicTap NS_AVAILABLE_IOS(6_0);
 
 @end
 
@@ -234,16 +251,16 @@ typedef enum {
 @required
 
 // Returns the line number given a point in the view's coordinate space.
-- (NSInteger)accessibilityLineNumberForPoint:(CGPoint)point __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+- (NSInteger)accessibilityLineNumberForPoint:(CGPoint)point NS_AVAILABLE_IOS(5_0);
 
 // Returns the content associated with a line number as a string.
-- (NSString *)accessibilityContentForLineNumber:(NSInteger)lineNumber __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+- (NSString *)accessibilityContentForLineNumber:(NSInteger)lineNumber NS_AVAILABLE_IOS(5_0);
 
 // Returns the on-screen rectangle for a line number.
-- (CGRect)accessibilityFrameForLineNumber:(NSInteger)lineNumber __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+- (CGRect)accessibilityFrameForLineNumber:(NSInteger)lineNumber NS_AVAILABLE_IOS(5_0);
 
 // Returns a string representing the text displayed on the current page.
-- (NSString *)accessibilityPageContent __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+- (NSString *)accessibilityPageContent NS_AVAILABLE_IOS(5_0);
 
 @end
 
@@ -264,14 +281,23 @@ UIKIT_EXTERN void UIAccessibilityPostNotification(UIAccessibilityNotifications n
  Use UIAccessibilityIsVoiceOverRunning() to determine if VoiceOver is running.
  Listen for UIAccessibilityVoiceOverStatusChanged to know when VoiceOver starts or stops.
  */
-UIKIT_EXTERN BOOL UIAccessibilityIsVoiceOverRunning() __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-UIKIT_EXTERN NSString *const UIAccessibilityVoiceOverStatusChanged __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); 
+UIKIT_EXTERN BOOL UIAccessibilityIsVoiceOverRunning() NS_AVAILABLE_IOS(4_0);
+UIKIT_EXTERN NSString *const UIAccessibilityVoiceOverStatusChanged NS_AVAILABLE_IOS(4_0); 
 
 // Returns whether system audio is mixed down from stereo to mono.
-UIKIT_EXTERN BOOL UIAccessibilityIsMonoAudioEnabled() __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-UIKIT_EXTERN NSString *const UIAccessibilityMonoAudioStatusDidChangeNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+UIKIT_EXTERN BOOL UIAccessibilityIsMonoAudioEnabled() NS_AVAILABLE_IOS(5_0);
+UIKIT_EXTERN NSString *const UIAccessibilityMonoAudioStatusDidChangeNotification NS_AVAILABLE_IOS(5_0);
 
 // Returns whether the system preference for closed captioning is enabled.
-UIKIT_EXTERN BOOL UIAccessibilityIsClosedCaptioningEnabled() __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-UIKIT_EXTERN NSString *const UIAccessibilityClosedCaptioningStatusDidChangeNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+UIKIT_EXTERN BOOL UIAccessibilityIsClosedCaptioningEnabled() NS_AVAILABLE_IOS(5_0);
+UIKIT_EXTERN NSString *const UIAccessibilityClosedCaptioningStatusDidChangeNotification NS_AVAILABLE_IOS(5_0);
+
+// Returns whether the system preference for invert colors is enabled.
+UIKIT_EXTERN BOOL UIAccessibilityIsInvertColorsEnabled() NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIAccessibilityInvertColorsStatusDidChangeNotification NS_AVAILABLE_IOS(6_0);
+
+// Returns whether the app is running under Guided Access mode.
+UIKIT_EXTERN BOOL UIAccessibilityIsGuidedAccessEnabled() NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIAccessibilityGuidedAccessStatusDidChangeNotification NS_AVAILABLE_IOS(6_0);
+
 

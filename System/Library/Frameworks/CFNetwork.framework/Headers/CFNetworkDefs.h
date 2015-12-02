@@ -35,6 +35,13 @@
 	#define CFN_EXPORT extern
 #endif
 
+#if __cplusplus
+#define CFN_CPP_BEGIN	extern "C" {
+#define CFN_CPP_END		};
+#else
+#define CFN_CPP_BEGIN	/* BEGIN EXTERN C */
+#define CFN_CPP_END		/* END   EXTERN C */
+#endif
 
 #endif //__CFNETWORK_DEFS_H_
 

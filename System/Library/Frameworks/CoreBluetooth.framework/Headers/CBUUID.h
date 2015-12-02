@@ -12,6 +12,43 @@
 
 #import <Foundation/Foundation.h>
 
+/*!
+ *  @const CBUUIDCharacteristicExtendedPropertiesString
+ *  @discussion The string representation of the UUID for the extended properties descriptor.
+ *				The corresponding value for this descriptor is an <code>NSNumber</code> object.
+ */
+CB_EXTERN NSString * const CBUUIDCharacteristicExtendedPropertiesString;
+/*!
+ *  @const CBUUIDCharacteristicUserDescriptionString
+ *  @discussion The string representation of the UUID for the user description descriptor.
+ *				The corresponding value for this descriptor is an <code>NSString</code> object.
+ */
+CB_EXTERN NSString * const CBUUIDCharacteristicUserDescriptionString;
+/*!
+ *  @const CBUUIDClientCharacteristicConfigurationString
+ *  @discussion The string representation of the UUID for the client configuration descriptor.
+ *				The corresponding value for this descriptor is an <code>NSNumber</code> object.
+ */
+CB_EXTERN NSString * const CBUUIDClientCharacteristicConfigurationString;
+/*!
+ *  @const CBUUIDServerCharacteristicConfigurationString
+ *  @discussion The string representation of the UUID for the server configuration descriptor.
+ *				The corresponding value for this descriptor is an <code>NSNumber</code> object.
+ */
+CB_EXTERN NSString * const CBUUIDServerCharacteristicConfigurationString;
+/*!
+ *  @const CBUUIDCharacteristicFormatString
+ *  @discussion The string representation of the UUID for the presentation format descriptor.
+ *				The corresponding value for this descriptor is an <code>NSData</code> object.
+ */
+CB_EXTERN NSString * const CBUUIDCharacteristicFormatString;
+/*!
+ *  @const CBUUIDCharacteristicAggregateFormatString
+ *  @discussion The string representation of the UUID for the aggregate descriptor.
+ */
+CB_EXTERN NSString * const CBUUIDCharacteristicAggregateFormatString;
+
+
 
 /*!
  *  @const CBUUIDGenericAccessProfileString
@@ -23,37 +60,6 @@ CB_EXTERN NSString * const CBUUIDGenericAccessProfileString;
  *  @discussion The string representation of the GATT UUID.
  */
 CB_EXTERN NSString * const CBUUIDGenericAttributeProfileString;
-
-/*!
- *  @const CBUUIDCharacteristicExtendedPropertiesString
- *  @discussion The string representation of the UUID for the extended properties descriptor.
- */
-CB_EXTERN NSString * const CBUUIDCharacteristicExtendedPropertiesString;
-/*!
- *  @const CBUUIDCharacteristicUserDescriptionString
- *  @discussion The string representation of the UUID for the user description descriptor.
- */
-CB_EXTERN NSString * const CBUUIDCharacteristicUserDescriptionString;
-/*!
- *  @const CBUUIDClientCharacteristicConfigurationString
- *  @discussion The string representation of the UUID for the client configuration descriptor.
- */
-CB_EXTERN NSString * const CBUUIDClientCharacteristicConfigurationString;
-/*!
- *  @const CBUUIDServerCharacteristicConfigurationString
- *  @discussion The string representation of the UUID for the server configuration descriptor.
- */
-CB_EXTERN NSString * const CBUUIDServerCharacteristicConfigurationString;
-/*!
- *  @const CBUUIDCharacteristicFormatString
- *  @discussion The string representation of the UUID for the format descriptor.
- */
-CB_EXTERN NSString * const CBUUIDCharacteristicFormatString;
-/*!
- *  @const CBUUIDCharacteristicAggregateFormatString
- *  @discussion The string representation of the UUID for the aggregate descriptor.
- */
-CB_EXTERN NSString * const CBUUIDCharacteristicAggregateFormatString;
 
 /*!
  *  @const CBUUIDDeviceNameString
@@ -92,8 +98,8 @@ CB_EXTERN NSString * const CBUUIDServiceChangedString;
  * @class CBUUID
  *
  * @discussion
- *      A 16-bits, 32-bit, or 128 bits Bluetooth UUID.
- *      16-bits and 32-bits UUIDs are implicitely pre-filled with the Bluetooth Base UUID.
+ *      A 16-bit or 128-bit Bluetooth UUID.
+ *      16-bit UUIDs are implicitly pre-filled with the Bluetooth Base UUID.
  *
  */
 NS_CLASS_AVAILABLE(10_7, 5_0)
@@ -117,7 +123,8 @@ CB_EXTERN_CLASS @interface CBUUID : NSObject <NSCopying>
  * @method UUIDWithString:
  *
  *  @discussion
- *      Creates a CBUUID with either a 16-bits, 32-bits, or 128-bits UUID string representation.
+ *      Creates a CBUUID with a 16-bit or 128-bit UUID string representation.
+ *      The expected format for 128-bit UUIDs is a string punctuated by hyphens, for example 68753A44-4D6F-1226-9C60-0050E4C00067.
  *
  */
 + (CBUUID *)UUIDWithString:(NSString *)theString;
@@ -126,7 +133,7 @@ CB_EXTERN_CLASS @interface CBUUID : NSObject <NSCopying>
  * @method UUIDWithData:
  *
  *  @discussion
- *      Creates a CBUUID with either a 16-bits, 32-bits, or 128-bits UUID data container.
+ *      Creates a CBUUID with a 16-bit or 128-bit UUID data container.
  *
  */
 + (CBUUID *)UUIDWithData:(NSData *)theData;

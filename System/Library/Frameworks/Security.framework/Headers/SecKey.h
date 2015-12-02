@@ -63,6 +63,26 @@ enum
        hash; standard ASN.1 padding will be done, as well as PKCS1 padding
        of the underlying RSA operation. */
     kSecPaddingPKCS1SHA1 = 0x8002,
+
+    /* For SecKeyRawSign/SecKeyRawVerify only, data to be signed is a SHA1
+     hash; standard ASN.1 padding will be done, as well as PKCS1 padding
+     of the underlying RSA operation. */
+    kSecPaddingPKCS1SHA224 = 0x8003,
+
+    /* For SecKeyRawSign/SecKeyRawVerify only, data to be signed is a SHA1
+     hash; standard ASN.1 padding will be done, as well as PKCS1 padding
+     of the underlying RSA operation. */
+    kSecPaddingPKCS1SHA256 = 0x8004,
+
+    /* For SecKeyRawSign/SecKeyRawVerify only, data to be signed is a SHA1
+     hash; standard ASN.1 padding will be done, as well as PKCS1 padding
+     of the underlying RSA operation. */
+    kSecPaddingPKCS1SHA384 = 0x8005,
+
+    /* For SecKeyRawSign/SecKeyRawVerify only, data to be signed is a SHA1
+     hash; standard ASN.1 padding will be done, as well as PKCS1 padding
+     of the underlying RSA operation. */
+    kSecPaddingPKCS1SHA512 = 0x8006,
 };
 
 
@@ -84,9 +104,9 @@ CFTypeID SecKeyGetTypeID(void)
 	containing attributes specific for the public key to be generated.
 */
 extern CFTypeRef kSecPrivateKeyAttrs
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_2_0);
 extern CFTypeRef kSecPublicKeyAttrs
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_2_0);
 
 /*!
     @function SecKeyGeneratePair
@@ -128,7 +148,7 @@ extern CFTypeRef kSecPublicKeyAttrs
 
 */
 OSStatus SecKeyGeneratePair(CFDictionaryRef parameters, SecKeyRef *publicKey,
-    SecKeyRef *privateKey) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    SecKeyRef *privateKey) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 
 /*!
@@ -166,7 +186,7 @@ OSStatus SecKeyRawSign(
 	size_t              dataToSignLen,
 	uint8_t             *sig,
 	size_t              *sigLen)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 
 /*!
@@ -196,7 +216,7 @@ OSStatus SecKeyRawVerify(
 	size_t              signedDataLen,
 	const uint8_t       *sig,
 	size_t              sigLen)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 
 /*!
@@ -228,7 +248,7 @@ OSStatus SecKeyEncrypt(
 	size_t              plainTextLen,
 	uint8_t             *cipherText,
 	size_t              *cipherTextLen)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 
 /*!
@@ -259,7 +279,7 @@ OSStatus SecKeyDecrypt(
 	size_t              cipherTextLen,		/* length of cipherText */
 	uint8_t             *plainText,	
 	size_t              *plainTextLen)		/* IN/OUT */
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 /*!
     @function SecKeyGetBlockSize
@@ -270,7 +290,7 @@ OSStatus SecKeyDecrypt(
     this function is the size of the modulus.
  */
 size_t SecKeyGetBlockSize(SecKeyRef key)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
     
 
 #if defined(__cplusplus)

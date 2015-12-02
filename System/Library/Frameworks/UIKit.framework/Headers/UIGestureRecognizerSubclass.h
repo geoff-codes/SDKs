@@ -2,7 +2,7 @@
 //  UIGestureRecognizerSubclass.h
 //  UIKit
 //
-//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIGestureRecognizer.h>

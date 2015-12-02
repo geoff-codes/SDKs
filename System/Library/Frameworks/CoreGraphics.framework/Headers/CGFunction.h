@@ -1,6 +1,6 @@
 /* CoreGraphics - CGFunction.h
- * Copyright (c) 1999-2008 Apple Inc.
- * All rights reserved. */
+   Copyright (c) 1999-2011 Apple Inc.
+   All rights reserved. */
 
 #ifndef CGFUNCTION_H_
 #define CGFUNCTION_H_
@@ -19,7 +19,7 @@ typedef struct CGFunction *CGFunctionRef;
    creation functions. */
 
 typedef void (*CGFunctionEvaluateCallback)(void *info, const CGFloat *in,
-    CGFloat *out);
+  CGFloat *out);
 
 /* When a function is deallocated, this callback releases `info', the info
    parameter passed to the CGFunction creation functions. */
@@ -31,21 +31,20 @@ typedef void (*CGFunctionReleaseInfoCallback)(void *info);
        version 0.
      `evaluate' is the callback used to evaluate the function.
      `releaseInfo', if non-NULL, is the callback used to release the info
-       parameter passed to the CGFunction creation functions when the function
-       is deallocated.
- */
+       parameter passed to the CGFunction creation functions when the
+       function is deallocated. */
 
 struct CGFunctionCallbacks {
-    unsigned int version;
-    CGFunctionEvaluateCallback evaluate;
-    CGFunctionReleaseInfoCallback releaseInfo;
+  unsigned int version;
+  CGFunctionEvaluateCallback evaluate;
+  CGFunctionReleaseInfoCallback releaseInfo;
 };
 typedef struct CGFunctionCallbacks CGFunctionCallbacks;
 
 /* Return the CFTypeID for CGFunctionRefs. */
 
 CG_EXTERN CFTypeID CGFunctionGetTypeID(void)
-    CG_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_2_0);
+  CG_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_2_0);
 
 /* Create a CGFunction using `callbacks' to evaluate the function. `info' is
    passed to each of the callback functions. `domainDimension' is the number
@@ -74,20 +73,20 @@ CG_EXTERN CFTypeID CGFunctionGetTypeID(void)
    pointer to a structure on the stack can be passed to this function. */
 
 CG_EXTERN CGFunctionRef CGFunctionCreate(void *info, size_t domainDimension,
-    const CGFloat *domain, size_t rangeDimension, const CGFloat *range,
-    const CGFunctionCallbacks *callbacks)
-    CG_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_2_0);
+  const CGFloat *domain, size_t rangeDimension, const CGFloat *range,
+  const CGFunctionCallbacks *callbacks)
+  CG_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_2_0);
 
 /* Equivalent to `CFRetain(function)', except it doesn't crash (as CFRetain
    does) if `function' is NULL. */
 
 CG_EXTERN CGFunctionRef CGFunctionRetain(CGFunctionRef function)
-    CG_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_2_0);
+  CG_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_2_0);
 
 /* Equivalent to `CFRelease(function)', except it doesn't crash (as
    CFRelease does) if `function' is NULL. */
 
 CG_EXTERN void CGFunctionRelease(CGFunctionRef function)
-    CG_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_2_0);
+  CG_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_2_0);
 
-#endif	/* CGFUNCTION_H_ */
+#endif /* CGFUNCTION_H_ */

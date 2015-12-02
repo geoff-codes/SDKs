@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1985-2008 by Apple Inc.. All rights reserved.
+ * Copyright (c) 1985-2011 by Apple Inc.. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -45,7 +45,7 @@
 
 #include <sys/types.h>
 
-#include <AvailabilityMacros.h>
+#include <Availability.h>
 
 #if PRAGMA_ONCE
 #pragma once
@@ -353,16 +353,21 @@ typedef SInt32                          SRefCon;
         kInvalidID              KernelID: NULL is for pointers as kInvalidID is for ID's
         kVariableLengthArray    array bounds: variable length array
 
-    Note: kVariableLengthArray is used in array bounds to specify a variable length array.
-          It is ususally used in variable length structs when the last field is an array
-          of any size.  Before ANSI C, we used zero as the bounds of variable length 
-          array, but zero length array are illegal in ANSI C.  Example usage:
-    
-        struct FooList 
-        {
-            short   listLength;
-            Foo     elements[kVariableLengthArray];
-        };
+    Note: kVariableLengthArray was used in array bounds to specify a variable length array,
+          usually the last field in a struct.  Now that the C language supports 
+		  the concept of flexible array members, you can instead use: 
+		
+		struct BarList
+		{
+			short	listLength;
+			Bar		elements[];
+		};
+
+		However, this changes the semantics somewhat, as sizeof( BarList ) contains
+		no space for any of the elements, so to allocate a list with space for
+		the count elements
+
+		struct BarList* l = (struct BarList*) malloc( sizeof(BarList) + count * sizeof(Bar) );
         
 *********************************************************************************/
 enum {
@@ -375,7 +380,13 @@ enum {
 
 #define kInvalidID   0
 enum {
-  kVariableLengthArray          = 1
+  kVariableLengthArray  
+#ifdef __has_extension
+   #if __has_extension(enumerator_attributes)
+		__attribute__((deprecated))  
+	#endif
+#endif
+  = 1
 };
 
 enum {
@@ -685,7 +696,7 @@ typedef SInt8                           VHSelect;
  *    Non-Carbon CFM:   in InterfaceLib 7.1 and later
  */
 extern void 
-Debugger(void)                                                AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER;
+Debugger(void)                                                __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_8, __IPHONE_NA, __IPHONE_NA);
 
 
 /*
@@ -697,7 +708,7 @@ Debugger(void)                                                AVAILABLE_MAC_OS_X
  *    Non-Carbon CFM:   in InterfaceLib 7.1 and later
  */
 extern void 
-DebugStr(ConstStr255Param debuggerMsg)                        AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER;
+DebugStr(ConstStr255Param debuggerMsg)                        __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_8, __IPHONE_NA, __IPHONE_NA);
 
 
 /*
@@ -744,7 +755,7 @@ DebugStr(ConstStr255Param debuggerMsg)                        AVAILABLE_MAC_OS_X
  *    Non-Carbon CFM:   in InterfaceLib 7.1 and later
  */
 extern void 
-SysBreak(void)                                                AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER;
+SysBreak(void)                                                __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_8, __IPHONE_NA, __IPHONE_NA);
 
 
 /*
@@ -756,7 +767,7 @@ SysBreak(void)                                                AVAILABLE_MAC_OS_X
  *    Non-Carbon CFM:   in InterfaceLib 7.1 and later
  */
 extern void 
-SysBreakStr(ConstStr255Param debuggerMsg)                     AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER;
+SysBreakStr(ConstStr255Param debuggerMsg)                     __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_8, __IPHONE_NA, __IPHONE_NA);
 
 
 /*
@@ -768,7 +779,7 @@ SysBreakStr(ConstStr255Param debuggerMsg)                     AVAILABLE_MAC_OS_X
  *    Non-Carbon CFM:   in InterfaceLib 7.1 and later
  */
 extern void 
-SysBreakFunc(ConstStr255Param debuggerMsg)                    AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER;
+SysBreakFunc(ConstStr255Param debuggerMsg)                    __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0, __MAC_10_8, __IPHONE_NA, __IPHONE_NA);
 
 
 /* old names for Debugger and DebugStr */

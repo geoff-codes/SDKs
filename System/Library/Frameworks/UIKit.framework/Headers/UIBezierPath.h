@@ -2,23 +2,22 @@
 //  UIBezierPath.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIKitDefines.h>
 
-enum {
+typedef NS_OPTIONS(NSUInteger, UIRectCorner) {
     UIRectCornerTopLeft     = 1 << 0,
     UIRectCornerTopRight    = 1 << 1,
     UIRectCornerBottomLeft  = 1 << 2,
     UIRectCornerBottomRight = 1 << 3,
-    UIRectCornerAllCorners  = ~0
+    UIRectCornerAllCorners  = ~0UL
 };
-typedef NSUInteger UIRectCorner;
 
-UIKIT_CLASS_AVAILABLE(3_2) @interface UIBezierPath : NSObject<NSCopying, NSCoding> {
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UIBezierPath : NSObject<NSCopying, NSCoding> {
 @private
     CGPathRef _path;
     CGFloat *_lineDashPattern;
@@ -49,7 +48,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIBezierPath : NSObject<NSCopying, NSCodin
 - (void)addLineToPoint:(CGPoint)point;
 - (void)addCurveToPoint:(CGPoint)endPoint controlPoint1:(CGPoint)controlPoint1 controlPoint2:(CGPoint)controlPoint2;
 - (void)addQuadCurveToPoint:(CGPoint)endPoint controlPoint:(CGPoint)controlPoint;
-- (void)addArcWithCenter:(CGPoint)center radius:(CGFloat)radius startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle clockwise:(BOOL)clockwise __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)addArcWithCenter:(CGPoint)center radius:(CGFloat)radius startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle clockwise:(BOOL)clockwise NS_AVAILABLE_IOS(4_0);
 - (void)closePath;
 
 - (void)removeAllPoints;
@@ -57,6 +56,10 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIBezierPath : NSObject<NSCopying, NSCodin
 // Appending paths
 
 - (void)appendPath:(UIBezierPath *)bezierPath;
+
+// Modified paths
+
+- (UIBezierPath *)bezierPathByReversingPath NS_AVAILABLE_IOS(6_0);
 
 // Transforming paths
 

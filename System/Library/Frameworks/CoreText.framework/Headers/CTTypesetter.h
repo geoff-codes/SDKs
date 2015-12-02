@@ -2,7 +2,7 @@
  *	CTTypesetter.h
  *	CoreText
  *
- *	Copyright (c) 2003-2011 Apple Inc. All rights reserved.
+ *	Copyright (c) 2003-2012 Apple Inc. All rights reserved.
  *
  */
 
@@ -53,7 +53,7 @@ CFTypeID CTTypesetterGetTypeID( void ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHO
 				performed and any directional control characters are ignored.
 */
 
-extern const CFStringRef kCTTypesetterOptionDisableBidiProcessing CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTTypesetterOptionDisableBidiProcessing CT_AVAILABLE_BUT_DEPRECATED( __MAC_10_5, __MAC_10_8, __IPHONE_3_2, __IPHONE_6_0);
 
 /*!
 	@const		kCTTypesetterOptionForcedEmbeddingLevel

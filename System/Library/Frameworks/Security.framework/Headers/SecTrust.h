@@ -113,13 +113,13 @@ CFTypeID SecTrustGetTypeID(void)
     be a CFArrayRef of SecCertificateRef objects or a single SecCertificateRef
     @param policies An array of one or more policies. You may pass a
     SecPolicyRef to represent a single policy.
-	@param trustRef On return, a pointer to the trust management reference.
+	@param trust On return, a pointer to the trust management reference.
 	@result A result code.  See "Security Error Codes" (SecBase.h).
     @discussion If multiple policies are passed in, all policies must verify
     for the chain to be considered valid.
 */
 OSStatus SecTrustCreateWithCertificates(CFTypeRef certificates,
-    CFTypeRef policies, SecTrustRef *trustRef)
+    CFTypeRef policies, SecTrustRef *trust)
     __OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_2_0);
 
 /*!
@@ -193,7 +193,7 @@ OSStatus SecTrustEvaluate(SecTrustRef trust, SecTrustResultType *result)
         for calling CFRelease on the returned key when it is no longer needed.
 */
 SecKeyRef SecTrustCopyPublicKey(SecTrustRef trust)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 /*!
 	@function SecTrustGetCertificateCount
@@ -205,7 +205,7 @@ SecKeyRef SecTrustCopyPublicKey(SecTrustRef trust)
     certificates in the chain including the anchor if it has.
 */
 CFIndex SecTrustGetCertificateCount(SecTrustRef trust)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 /*!
 	@function SecTrustGetCertificateAtIndex
@@ -218,7 +218,7 @@ CFIndex SecTrustGetCertificateCount(SecTrustRef trust)
 	@result A SecCertificateRef for the requested certificate.
 */
 SecCertificateRef SecTrustGetCertificateAtIndex(SecTrustRef trust, CFIndex ix)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 /*!
 	@function SecTrustCopyExceptions
@@ -237,7 +237,7 @@ SecCertificateRef SecTrustGetCertificateAtIndex(SecTrustRef trust, CFIndex ix)
     current application/server/protocol/etc.
 */
 CFDataRef SecTrustCopyExceptions(SecTrustRef trust)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 
 /*!
 	@function SecTrustSetExceptions
@@ -261,7 +261,7 @@ CFDataRef SecTrustCopyExceptions(SecTrustRef trust)
     changed causing the evaluation to fail after all.
 */
 bool SecTrustSetExceptions(SecTrustRef trust, CFDataRef exceptions)
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_4_0);
 
 #if defined(__cplusplus)
 }

@@ -2,7 +2,7 @@
 //  UIPrintInteractionController.h
 //  UIKit
 //
-//  Copyright 2010 Apple Inc. All rights reserved.
+//  Copyright 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -17,7 +17,7 @@ typedef void (^UIPrintInteractionCompletionHandler)(UIPrintInteractionController
 
 @protocol UIPrintInteractionControllerDelegate;
 
-UIKIT_CLASS_AVAILABLE(4_2) @interface UIPrintInteractionController : NSObject {
+NS_CLASS_AVAILABLE_IOS(4_2) @interface UIPrintInteractionController : NSObject {
   @private
     UIPrintInfo                             *_printInfo;
     id<UIPrintInteractionControllerDelegate> _delegate;

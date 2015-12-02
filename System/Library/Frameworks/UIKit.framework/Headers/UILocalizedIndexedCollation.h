@@ -2,13 +2,13 @@
 //  UILocalizedIndexedCollation.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
 
-UIKIT_CLASS_AVAILABLE(3_0) @interface UILocalizedIndexedCollation : NSObject
+NS_CLASS_AVAILABLE_IOS(3_0) @interface UILocalizedIndexedCollation : NSObject
 {
   @package
     NSLocale *_locale;
@@ -17,6 +17,9 @@ UIKIT_CLASS_AVAILABLE(3_0) @interface UILocalizedIndexedCollation : NSObject
     NSArray *_sectionIndexTitles;
     NSArray *_sectionIndexMapping;
     NSString *_transform;
+    NSString *_firstSectionStartString;
+    NSString *_lastSectionStartString;
+    CFStringTokenizerRef _tokenizer;
 }
 
 + (id)currentCollation;

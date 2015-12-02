@@ -90,7 +90,7 @@ typedef struct OpaqueExtAudioFile *	ExtAudioFileRef;
 						to choose between a hardware or software encoder, by specifying 
 						kAppleHardwareAudioCodecManufacturer or kAppleSoftwareAudioCodecManufacturer.
 						
-						Available starting on iOS version 4.0.
+						Available starting on Mac OS X version 10.7 and iOS version 4.0.
 	@constant		kExtAudioFileProperty_AudioConverter
 						AudioConverterRef. The underlying AudioConverterRef, if any. Read-only.
 						

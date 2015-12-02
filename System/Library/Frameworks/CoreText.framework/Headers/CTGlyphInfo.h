@@ -2,7 +2,7 @@
  *	CTGlyphInfo.h
  *	CoreText
  *
- *	Copyright (c) 2006-2011 Apple Inc. All rights reserved.
+ *	Copyright (c) 2006-2012 Apple Inc. All rights reserved.
  *
  */
 
@@ -46,36 +46,41 @@ CFTypeID CTGlyphInfoGetTypeID( void ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHON
 	@enum		CTCharacterCollection
 	@abstract	These constants specify character collections.
 
-	@constant	kCTIdentityMappingCharacterCollection
+	@constant	kCTCharacterCollectionIdentityMapping
 				Indicates that the character identifier is equal to the CGGlyph
 				glyph index.
 
-	@constant	kCTAdobeCNS1CharacterCollection
+	@constant	kCTCharacterCollectionAdobeCNS1
 				Indicates the Adobe-CNS1 mapping.
 
-	@constant	kCTAdobeGB1CharacterCollection
+	@constant	kCTCharacterCollectionAdobeGB1
 				Indicates the Adobe-GB1 mapping.
 
-	@constant	kCTAdobeJapan1CharacterCollection
+	@constant	kCTCharacterCollectionAdobeJapan1
 				Indicates the Adobe-Japan1 mapping.
 
-	@constant	kCTAdobeJapan2CharacterCollection
+	@constant	kCTCharacterCollectionAdobeJapan2
 				Indicates the Adobe-Japan2 mapping.
 
-	@constant	kCTAdobeKorea1CharacterCollection
+	@constant	kCTCharacterCollectionAdobeKorea1
 				Indicates the Adobe-Korea1 mapping.
 */
 
-enum
-{
-	kCTIdentityMappingCharacterCollection = 0,
-	kCTAdobeCNS1CharacterCollection = 1,
-	kCTAdobeGB1CharacterCollection = 2,
-	kCTAdobeJapan1CharacterCollection = 3,
-	kCTAdobeJapan2CharacterCollection = 4,
-	kCTAdobeKorea1CharacterCollection = 5
+typedef CF_ENUM(uint16_t, CTCharacterCollection) {
+	kCTCharacterCollectionIdentityMapping   = 0,
+	kCTCharacterCollectionAdobeCNS1         = 1,
+	kCTCharacterCollectionAdobeGB1          = 2,
+	kCTCharacterCollectionAdobeJapan1       = 3,
+	kCTCharacterCollectionAdobeJapan2       = 4,
+	kCTCharacterCollectionAdobeKorea1       = 5,
+
+	kCTIdentityMappingCharacterCollection = kCTCharacterCollectionIdentityMapping,
+	kCTAdobeCNS1CharacterCollection = kCTCharacterCollectionAdobeCNS1,
+	kCTAdobeGB1CharacterCollection = kCTCharacterCollectionAdobeGB1,
+	kCTAdobeJapan1CharacterCollection = kCTCharacterCollectionAdobeJapan1,
+	kCTAdobeJapan2CharacterCollection = kCTCharacterCollectionAdobeJapan2,
+	kCTAdobeKorea1CharacterCollection = kCTCharacterCollectionAdobeKorea1
 };
-typedef uint16_t CTCharacterCollection;
 
 
 /* --------------------------------------------------------------------------- */

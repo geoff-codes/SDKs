@@ -114,10 +114,6 @@ MP_EXTERN_CLASS_AVAILABLE(2_0) @interface MPMoviePlayerController : NSObject <MP
 // Indicates if a movie should automatically start playback when it is likely to finish uninterrupted based on e.g. network conditions. Defaults to YES.
 @property(nonatomic) BOOL shouldAutoplay;
 
-// Indicates if the movie player should inherit the application's audio session instead of creating a new session (which would interrupt the application's session).
-// Defaults to YES. Setting this property during playback will not take effect until playback is stopped and started again.
-@property(nonatomic) BOOL useApplicationAudioSession;
-
 // Determines if the movie is presented in the entire screen (obscuring all other application content). Default is NO.
 // Setting this property to YES before the movie player's view is visible will have no effect.
 @property(nonatomic, getter=isFullscreen) BOOL fullscreen;
@@ -125,6 +121,10 @@ MP_EXTERN_CLASS_AVAILABLE(2_0) @interface MPMoviePlayerController : NSObject <MP
 
 // Determines how the content scales to fit the view. Defaults to MPMovieScalingModeAspectFit.
 @property(nonatomic) MPMovieScalingMode scalingMode;
+
+// Returns YES if the first video frame has been made ready for display for the current item.
+// Will remain NO for items that do not have video tracks associated.
+@property(nonatomic, readonly) BOOL readyForDisplay NS_AVAILABLE_IOS(6_0);
 
 @end
 
@@ -156,10 +156,10 @@ MP_EXTERN_CLASS_AVAILABLE(2_0) @interface MPMoviePlayerController : NSObject <MP
 @property(nonatomic) NSTimeInterval endPlaybackTime;
 
 // Indicates whether the movie player allows AirPlay video playback. Defaults to YES on iOS 5.0 and later.
-@property(nonatomic) BOOL allowsAirPlay NS_AVAILABLE_IPHONE(4_3);
+@property(nonatomic) BOOL allowsAirPlay NS_AVAILABLE_IOS(4_3);
 
 // Indicates whether the movie player is currently playing video via AirPlay.
-@property(nonatomic, readonly, getter=isAirPlayVideoActive) BOOL airPlayVideoActive NS_AVAILABLE_IPHONE(5_0);
+@property(nonatomic, readonly, getter=isAirPlayVideoActive) BOOL airPlayVideoActive NS_AVAILABLE_IOS(5_0);
 
 @end
 
@@ -172,37 +172,40 @@ MP_EXTERN NSString *const MPMoviePlayerScalingModeDidChangeNotification;
 // Posted when movie playback ends or a user exits playback.
 MP_EXTERN NSString *const MPMoviePlayerPlaybackDidFinishNotification;
 
-MP_EXTERN NSString *const MPMoviePlayerPlaybackDidFinishReasonUserInfoKey NS_AVAILABLE_IPHONE(3_2); // NSNumber (MPMovieFinishReason)
+MP_EXTERN NSString *const MPMoviePlayerPlaybackDidFinishReasonUserInfoKey NS_AVAILABLE_IOS(3_2); // NSNumber (MPMovieFinishReason)
 
 // Posted when the playback state changes, either programatically or by the user.
-MP_EXTERN NSString *const MPMoviePlayerPlaybackStateDidChangeNotification NS_AVAILABLE_IPHONE(3_2);
+MP_EXTERN NSString *const MPMoviePlayerPlaybackStateDidChangeNotification NS_AVAILABLE_IOS(3_2);
 
 // Posted when the network load state changes.
-MP_EXTERN NSString *const MPMoviePlayerLoadStateDidChangeNotification NS_AVAILABLE_IPHONE(3_2);
+MP_EXTERN NSString *const MPMoviePlayerLoadStateDidChangeNotification NS_AVAILABLE_IOS(3_2);
 
 // Posted when the currently playing movie changes.
-MP_EXTERN NSString *const MPMoviePlayerNowPlayingMovieDidChangeNotification NS_AVAILABLE_IPHONE(3_2);
+MP_EXTERN NSString *const MPMoviePlayerNowPlayingMovieDidChangeNotification NS_AVAILABLE_IOS(3_2);
 
 // Posted when the movie player enters or exits fullscreen mode.
-MP_EXTERN NSString *const MPMoviePlayerWillEnterFullscreenNotification NS_AVAILABLE_IPHONE(3_2);
-MP_EXTERN NSString *const MPMoviePlayerDidEnterFullscreenNotification NS_AVAILABLE_IPHONE(3_2);
-MP_EXTERN NSString *const MPMoviePlayerWillExitFullscreenNotification NS_AVAILABLE_IPHONE(3_2);
-MP_EXTERN NSString *const MPMoviePlayerDidExitFullscreenNotification NS_AVAILABLE_IPHONE(3_2);
-MP_EXTERN NSString *const MPMoviePlayerFullscreenAnimationDurationUserInfoKey NS_AVAILABLE_IPHONE(3_2); // NSNumber of double (NSTimeInterval)
-MP_EXTERN NSString *const MPMoviePlayerFullscreenAnimationCurveUserInfoKey NS_AVAILABLE_IPHONE(3_2);     // NSNumber of NSUInteger (UIViewAnimationCurve)
+MP_EXTERN NSString *const MPMoviePlayerWillEnterFullscreenNotification NS_AVAILABLE_IOS(3_2);
+MP_EXTERN NSString *const MPMoviePlayerDidEnterFullscreenNotification NS_AVAILABLE_IOS(3_2);
+MP_EXTERN NSString *const MPMoviePlayerWillExitFullscreenNotification NS_AVAILABLE_IOS(3_2);
+MP_EXTERN NSString *const MPMoviePlayerDidExitFullscreenNotification NS_AVAILABLE_IOS(3_2);
+MP_EXTERN NSString *const MPMoviePlayerFullscreenAnimationDurationUserInfoKey NS_AVAILABLE_IOS(3_2); // NSNumber of double (NSTimeInterval)
+MP_EXTERN NSString *const MPMoviePlayerFullscreenAnimationCurveUserInfoKey NS_AVAILABLE_IOS(3_2);     // NSNumber of NSUInteger (UIViewAnimationCurve)
 
 // Posted when the movie player begins or ends playing video via AirPlay.
-MP_EXTERN NSString *const MPMoviePlayerIsAirPlayVideoActiveDidChangeNotification NS_AVAILABLE_IPHONE(5_0);
+MP_EXTERN NSString *const MPMoviePlayerIsAirPlayVideoActiveDidChangeNotification NS_AVAILABLE_IOS(5_0);
+
+// Posted when the ready for display state changes.
+MP_EXTERN NSString *const MPMoviePlayerReadyForDisplayDidChangeNotification NS_AVAILABLE_IOS(6_0);
 
 // -----------------------------------------------------------------------------
 // Movie Property Notifications
 
 // Calling -prepareToPlay on the movie player will begin determining movie properties asynchronously.
 // These notifications are posted when the associated movie property becomes available.
-MP_EXTERN NSString *const MPMovieMediaTypesAvailableNotification NS_AVAILABLE_IPHONE(3_2);
-MP_EXTERN NSString *const MPMovieSourceTypeAvailableNotification NS_AVAILABLE_IPHONE(3_2); // Posted if the movieSourceType is MPMovieSourceTypeUnknown when preparing for playback.
-MP_EXTERN NSString *const MPMovieDurationAvailableNotification NS_AVAILABLE_IPHONE(3_2);
-MP_EXTERN NSString *const MPMovieNaturalSizeAvailableNotification NS_AVAILABLE_IPHONE(3_2);
+MP_EXTERN NSString *const MPMovieMediaTypesAvailableNotification NS_AVAILABLE_IOS(3_2);
+MP_EXTERN NSString *const MPMovieSourceTypeAvailableNotification NS_AVAILABLE_IOS(3_2); // Posted if the movieSourceType is MPMovieSourceTypeUnknown when preparing for playback.
+MP_EXTERN NSString *const MPMovieDurationAvailableNotification NS_AVAILABLE_IOS(3_2);
+MP_EXTERN NSString *const MPMovieNaturalSizeAvailableNotification NS_AVAILABLE_IOS(3_2);
 
 // -----------------------------------------------------------------------------
 // Thumbnails
@@ -229,10 +232,10 @@ typedef NSInteger MPMovieTimeOption;
 @end
 
 // Posted when each thumbnail image request is completed.
-MP_EXTERN NSString *const MPMoviePlayerThumbnailImageRequestDidFinishNotification NS_AVAILABLE_IPHONE(3_2);
-MP_EXTERN NSString *const MPMoviePlayerThumbnailImageKey NS_AVAILABLE_IPHONE(3_2); // UIImage, may be nil if an error occurred.
-MP_EXTERN NSString *const MPMoviePlayerThumbnailTimeKey NS_AVAILABLE_IPHONE(3_2);  // NSNumber (double)
-MP_EXTERN NSString *const MPMoviePlayerThumbnailErrorKey NS_AVAILABLE_IPHONE(3_2); // NSError
+MP_EXTERN NSString *const MPMoviePlayerThumbnailImageRequestDidFinishNotification NS_AVAILABLE_IOS(3_2);
+MP_EXTERN NSString *const MPMoviePlayerThumbnailImageKey NS_AVAILABLE_IOS(3_2); // UIImage, may be nil if an error occurred.
+MP_EXTERN NSString *const MPMoviePlayerThumbnailTimeKey NS_AVAILABLE_IOS(3_2);  // NSNumber (double)
+MP_EXTERN NSString *const MPMoviePlayerThumbnailErrorKey NS_AVAILABLE_IOS(3_2); // NSError
 
 // -----------------------------------------------------------------------------
 // Timed Metadata
@@ -240,7 +243,7 @@ MP_EXTERN NSString *const MPMoviePlayerThumbnailErrorKey NS_AVAILABLE_IPHONE(3_2
 @interface MPMoviePlayerController (MPMoviePlayerTimedMetadataAdditions)
 
 // Returns an array of the most recent MPTimedMetadata objects provided by the media stream.
-- (NSArray *)timedMetadata NS_AVAILABLE_IPHONE(4_0);
+- (NSArray *)timedMetadata NS_AVAILABLE_IOS(4_0);
 
 @end
 
@@ -267,25 +270,25 @@ MP_EXTERN_CLASS_AVAILABLE(4_0) @interface MPTimedMetadata : NSObject {
 @end
 
 // Posted when new timed metadata arrives.
-MP_EXTERN NSString *const MPMoviePlayerTimedMetadataUpdatedNotification NS_AVAILABLE_IPHONE(4_0);
-MP_EXTERN NSString *const MPMoviePlayerTimedMetadataUserInfoKey NS_AVAILABLE_IPHONE(4_0);       // NSArray of the most recent MPTimedMetadata objects.
+MP_EXTERN NSString *const MPMoviePlayerTimedMetadataUpdatedNotification NS_AVAILABLE_IOS(4_0);
+MP_EXTERN NSString *const MPMoviePlayerTimedMetadataUserInfoKey NS_AVAILABLE_IOS(4_0);       // NSArray of the most recent MPTimedMetadata objects.
 
 // Additional dictionary keys for use with the 'allMetadata' property. All keys are optional.
-MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyName NS_AVAILABLE_IPHONE(4_0);           // NSString
-MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyInfo NS_AVAILABLE_IPHONE(4_0);           // NSString
-MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyMIMEType NS_AVAILABLE_IPHONE(4_0);       // NSString
-MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyDataType NS_AVAILABLE_IPHONE(4_0);       // NSString
-MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyLanguageCode NS_AVAILABLE_IPHONE(4_0);   // NSString (ISO 639-2)
+MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyName NS_AVAILABLE_IOS(4_0);           // NSString
+MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyInfo NS_AVAILABLE_IOS(4_0);           // NSString
+MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyMIMEType NS_AVAILABLE_IOS(4_0);       // NSString
+MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyDataType NS_AVAILABLE_IOS(4_0);       // NSString
+MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyLanguageCode NS_AVAILABLE_IOS(4_0);   // NSString (ISO 639-2)
 
 // -----------------------------------------------------------------------------
 
 @interface MPMoviePlayerController (MPMovieLogging)
 
 // Returns an object that represents a snapshot of the network access log. Can be nil.
-@property (nonatomic, readonly) MPMovieAccessLog *accessLog NS_AVAILABLE_IPHONE(4_3);
+@property (nonatomic, readonly) MPMovieAccessLog *accessLog NS_AVAILABLE_IOS(4_3);
 
 // Returns an object that represents a snapshot of the error log. Can be nil.
-@property (nonatomic, readonly) MPMovieErrorLog *errorLog NS_AVAILABLE_IPHONE(4_3);
+@property (nonatomic, readonly) MPMovieErrorLog *errorLog NS_AVAILABLE_IOS(4_3);
 
 @end
 
@@ -403,7 +406,7 @@ MP_EXTERN_CLASS_AVAILABLE(4_3) @interface MPMovieErrorLogEvent : NSObject <NSCop
 
 // -----------------------------------------------------------------------------
 // Deprecated methods and properties
-// These will be removed in a future release of iPhone OS
+// These will be removed in a future release of iOS
 
 typedef enum {
     MPMovieControlModeDefault,
@@ -413,15 +416,19 @@ typedef enum {
 
 @interface MPMoviePlayerController (MPMoviePlayerDeprecated)
 
+// Indicates if the movie player should inherit the application's audio session instead of creating a new session (which would interrupt the application's session).
+// Defaults to YES. Setting this property during playback will not take effect until playback is stopped and started again.
+@property(nonatomic) BOOL useApplicationAudioSession NS_DEPRECATED_IOS(3_2, 6_0);
+
 // Use the backgroundView property instead.
-- (void)setBackgroundColor:(UIColor *)backgroundColor NS_DEPRECATED_IPHONE(2_0, 3_2);
-- (UIColor *)backgroundColor NS_DEPRECATED_IPHONE(2_0, 3_2);
+- (void)setBackgroundColor:(UIColor *)backgroundColor NS_DEPRECATED_IOS(2_0, 3_2);
+- (UIColor *)backgroundColor NS_DEPRECATED_IOS(2_0, 3_2);
 
 // Use the movieControlStyle property instead.
-- (void)setMovieControlMode:(MPMovieControlMode)movieControlMode NS_DEPRECATED_IPHONE(2_0, 3_2);
-- (MPMovieControlMode)movieControlMode NS_DEPRECATED_IPHONE(2_0, 3_2);
+- (void)setMovieControlMode:(MPMovieControlMode)movieControlMode NS_DEPRECATED_IOS(2_0, 3_2);
+- (MPMovieControlMode)movieControlMode NS_DEPRECATED_IOS(2_0, 3_2);
 
 @end
 
 // This notification is superseded by MPMediaPlaybackIsPreparedToPlayDidChangeNotification.
-MP_EXTERN NSString *const MPMoviePlayerContentPreloadDidFinishNotification NS_DEPRECATED_IPHONE(2_0, 3_2);
+MP_EXTERN NSString *const MPMoviePlayerContentPreloadDidFinishNotification NS_DEPRECATED_IOS(2_0, 3_2);

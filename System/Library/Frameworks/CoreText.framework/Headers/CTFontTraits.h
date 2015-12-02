@@ -2,7 +2,7 @@
  *  CTFontTraits.h
  *  CoreText
  *
- *  Copyright (c) 2006-2011 Apple Inc. All rights reserved.
+ *  Copyright (c) 2006-2012 Apple Inc. All rights reserved.
  *
  */
 
@@ -55,43 +55,63 @@ enum {
     @enum       CTFontSymbolicTraits
     @abstract   Symbolic representation of stylistic font attributes.
     @discussion CTFontSymbolicTraits symbolically describes stylistic aspects of a font. The upper 16 bits is used to describe appearance of the font whereas the lower 16 bits for typeface. The font appearance information represented by the upper 16 bits can be used for stylistic font matching.
-
-    @constant   kCTFontClassMaskShift
-                Shift value to reserve the upper most 4 bits for the font class.
 */
-enum {
-    kCTFontItalicTrait              = (1 << 0),     // Additional detail available via kCTFontSlantTrait
-    kCTFontBoldTrait                = (1 << 1),     // Additional detail available via kCTFontWeightTrait
-    kCTFontExpandedTrait            = (1 << 5),     // Expanded and condensed traits are mutually exclusive
-    kCTFontCondensedTrait           = (1 << 6),     // Additional detail available via kCTFontWidthTrait
-    kCTFontMonoSpaceTrait           = (1 << 10),    // Use fixed-pitch glyphs if available. May have multiple glyph advances (most CJK glyphs may contain two spaces)
-    kCTFontVerticalTrait            = (1 << 11),    // Use vertical glyph variants and metrics
-    kCTFontUIOptimizedTrait         = (1 << 12),    // Synthesize appropriate attributes for UI rendering such as control titles if necessary
-    kCTFontColorGlyphsTrait         = (1 << 13),    // Color bitmap glyphs are available. 
+typedef CF_OPTIONS(uint32_t, CTFontSymbolicTraits) {
+    kCTFontTraitItalic              = (1 << 0),     // Additional detail available via kCTFontSlantTrait
+    kCTFontTraitBold                = (1 << 1),     // Additional detail available via kCTFontWeightTrait
+    kCTFontTraitExpanded            = (1 << 5),     // Expanded and condensed traits are mutually exclusive
+    kCTFontTraitCondensed           = (1 << 6),     // Additional detail available via kCTFontWidthTrait
+    kCTFontTraitMonoSpace           = (1 << 10),    // Use fixed-pitch glyphs if available. May have multiple glyph advances (most CJK glyphs may contain two spaces)
+    kCTFontTraitVertical            = (1 << 11),    // Use vertical glyph variants and metrics
+    kCTFontTraitUIOptimized         = (1 << 12),    // Synthesize appropriate attributes for UI rendering such as control titles if necessary
+    kCTFontTraitColorGlyphs         = (1 << 13),    // Color bitmap glyphs are available. 
+    kCTFontTraitComposite           = (1 << 14),    // The font is a CFR (Composite font reference), a cascade list is expected per font. 
 
-    kCTFontClassMaskTrait           = (15 << kCTFontClassMaskShift) // Mask for the font class
+    kCTFontTraitClassMask           = (15U << kCTFontClassMaskShift),
+                                                    // Mask for the font class
+
+    kCTFontItalicTrait = kCTFontTraitItalic,
+    kCTFontBoldTrait = kCTFontTraitBold,
+    kCTFontExpandedTrait = kCTFontTraitExpanded,
+    kCTFontCondensedTrait = kCTFontTraitCondensed,
+    kCTFontMonoSpaceTrait = kCTFontTraitMonoSpace,
+    kCTFontVerticalTrait = kCTFontTraitVertical,
+    kCTFontUIOptimizedTrait = kCTFontTraitUIOptimized,
+    kCTFontColorGlyphsTrait = kCTFontTraitColorGlyphs,
+    kCTFontCompositeTrait = kCTFontTraitComposite,
+    kCTFontClassMaskTrait = kCTFontTraitClassMask
 };
-typedef uint32_t CTFontSymbolicTraits;
 
 /*!
     @enum       CTFontStylisticClass
     @abstract   Stylistic class values.
     @discussion CTFontStylisticClass classifies certain stylistic qualities of the font. These values correspond closely to the font class values in the OpenType 'OS/2' table. The class values are bundled in the upper four bits of the CTFontSymbolicTraits and can be obtained via the kCTFontClassMaskTrait.
 */
-enum {
-    kCTFontUnknownClass             = (0 << kCTFontClassMaskShift),
-    kCTFontOldStyleSerifsClass      = (1 << kCTFontClassMaskShift),
-    kCTFontTransitionalSerifsClass  = (2 << kCTFontClassMaskShift),
-    kCTFontModernSerifsClass        = (3 << kCTFontClassMaskShift),
-    kCTFontClarendonSerifsClass     = (4 << kCTFontClassMaskShift),
-    kCTFontSlabSerifsClass          = (5 << kCTFontClassMaskShift),
-    kCTFontFreeformSerifsClass      = (7 << kCTFontClassMaskShift),
-    kCTFontSansSerifClass           = (8 << kCTFontClassMaskShift),
-    kCTFontOrnamentalsClass         = (9 << kCTFontClassMaskShift),
-    kCTFontScriptsClass             = (10 << kCTFontClassMaskShift),
-    kCTFontSymbolicClass            = (12 << kCTFontClassMaskShift)
+typedef CF_OPTIONS(uint32_t, CTFontStylisticClass) {
+    kCTFontClassUnknown             = (0 << kCTFontClassMaskShift),
+    kCTFontClassOldStyleSerifs      = (1 << kCTFontClassMaskShift),
+    kCTFontClassTransitionalSerifs  = (2 << kCTFontClassMaskShift),
+    kCTFontClassModernSerifs        = (3 << kCTFontClassMaskShift),
+    kCTFontClassClarendonSerifs     = (4 << kCTFontClassMaskShift),
+    kCTFontClassSlabSerifs          = (5 << kCTFontClassMaskShift),
+    kCTFontClassFreeformSerifs      = (7 << kCTFontClassMaskShift),
+    kCTFontClassSansSerif           = (8U << kCTFontClassMaskShift),
+    kCTFontClassOrnamentals         = (9U << kCTFontClassMaskShift),
+    kCTFontClassScripts             = (10U << kCTFontClassMaskShift),
+    kCTFontClassSymbolic            = (12U << kCTFontClassMaskShift),
+
+    kCTFontUnknownClass = kCTFontClassUnknown,
+    kCTFontOldStyleSerifsClass = kCTFontClassOldStyleSerifs,
+    kCTFontTransitionalSerifsClass = kCTFontClassTransitionalSerifs,
+    kCTFontModernSerifsClass = kCTFontClassModernSerifs,
+    kCTFontClarendonSerifsClass = kCTFontClassClarendonSerifs,
+    kCTFontSlabSerifsClass = kCTFontClassSlabSerifs,
+    kCTFontFreeformSerifsClass = kCTFontClassFreeformSerifs,
+    kCTFontSansSerifClass = kCTFontClassSansSerif,
+    kCTFontOrnamentalsClass = kCTFontClassOrnamentals,
+    kCTFontScriptsClass = kCTFontClassScripts,
+    kCTFontSymbolicClass = kCTFontClassSymbolic
 };
-typedef uint32_t CTFontStylisticClass;
 
 #if defined(__cplusplus)
 }

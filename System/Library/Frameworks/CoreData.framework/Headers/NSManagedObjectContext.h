@@ -1,38 +1,25 @@
 /*
     NSManagedObjectContext.h
     Core Data
-    Copyright (c) 2004-2010 Apple Inc.
+    Copyright (c) 2004-2012 Apple Inc.
     All rights reserved.
 */
 
-#import <Foundation/NSObject.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSSet.h>
 #import <Foundation/NSDate.h>
 #import <Foundation/NSLock.h>
-#import <CoreFoundation/CFArray.h>
-#import <CoreFoundation/CFDictionary.h>
 #import <CoreData/CoreDataDefines.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-#ifndef NSPersistentStore
-#define NSPersistentStore NSObject
-#endif
-#endif
-
-@class NSArray;
-@class NSDictionary;
 @class NSError;
 @class NSFetchRequest;
 @class NSManagedObject;
 @class NSManagedObjectID;
-@class NSMutableArray;
-@class NSMutableDictionary;
-@class NSMutableSet;
 @class NSPersistentStore;
 @class NSPersistentStoreCoordinator;
-@class NSRecursiveLock;
-@class NSSet;
-@class NSString;
 @class NSUndoManager;
+@class NSNotification;
 
 // Notifications immediately before and immediately after the context saves.  The user info dictionary contains information about the objects that changed and what changed
 COREDATA_EXTERN NSString * const NSManagedObjectContextWillSaveNotification NS_AVAILABLE(10_5, 3_0);
@@ -102,7 +89,8 @@ NS_CLASS_AVAILABLE(10_4,3_0)
       unsigned int _disableDiscardEditing:1;
       unsigned int _isParentStoreContext:1;
       unsigned int _postSaveNotifications:1;
-      unsigned int _reservedFlags:12;
+      unsigned int _isMerging:1;
+      unsigned int _reservedFlags:11;
   } _flags;
   NSMutableSet *_unprocessedChanges;
   NSMutableSet *_unprocessedDeletes;

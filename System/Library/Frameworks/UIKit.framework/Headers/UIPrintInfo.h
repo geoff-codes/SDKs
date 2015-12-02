@@ -2,31 +2,31 @@
 //  UIPrintInfo.h
 //  UIKit
 //
-//  Copyright 2010 Apple Inc. All rights reserved.
+//  Copyright 2010-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIKitDefines.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIPrintInfoOutputType) {
     UIPrintInfoOutputGeneral,     // B&W or color, normal quality output for mixed text, graphics, and images
     UIPrintInfoOutputPhoto,       // B&W or color, best quality output for images
     UIPrintInfoOutputGrayscale,   // B&W content only
-} UIPrintInfoOutputType;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIPrintInfoOrientation) {
     UIPrintInfoOrientationPortrait,
     UIPrintInfoOrientationLandscape,
-} UIPrintInfoOrientation;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIPrintInfoDuplex) {
     UIPrintInfoDuplexNone,
     UIPrintInfoDuplexLongEdge,       // flip back page along long edge (same orientation in portrait, flipped for landscape)
     UIPrintInfoDuplexShortEdge,      // flip back page along short edge (flipped orientation for portrait, same in landscape)
-} UIPrintInfoDuplex;
+};
 
-UIKIT_CLASS_AVAILABLE(4_2) @interface UIPrintInfo : NSObject <NSCopying, NSCoding> { 
+NS_CLASS_AVAILABLE_IOS(4_2) @interface UIPrintInfo : NSObject <NSCopying, NSCoding> { 
   @private
     NSString                *_printerID;
     NSString                *_jobName;

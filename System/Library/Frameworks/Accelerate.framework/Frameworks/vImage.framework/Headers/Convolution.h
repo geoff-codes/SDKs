@@ -25,6 +25,13 @@ extern "C" {
 
 #include <vImage/vImage_Types.h>
 
+    
+/*
+ *  All four channel convolution functions (i.e. those that support ARGB8888 or ARGBFFFF images) work equally well on four channel images 
+ *  with other channel orderings such as RGBA8888 or BGRAFFFF.  Exception: If the kvImageLeaveAlphaUnchanged flag is used, then the first
+ *  channel in memory order is left unchanged.
+ */
+    
 /*  8 bit planar data  */
 vImage_Error vImageConvolve_Planar8( const vImage_Buffer *src, const vImage_Buffer *dest, void *tempBuffer, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y,  const int16_t *kernel, uint32_t kernel_height, uint32_t kernel_width, int32_t divisor, Pixel_8 backgroundColor, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 
@@ -42,6 +49,10 @@ vImage_Error vImageConvolve_ARGBFFFF( const vImage_Buffer *src, const vImage_Buf
  * Convolve with bias. 
  * These functions are the same as those immediately above, except that a provided bias is added to the convolution
  * result. It is added before the divisor is applied or any clipping is done.
+ *
+ *  All four channel convolution functions (i.e. those that support ARGB8888 or ARGBFFFF images) work equally well on four channel images 
+ *  with other channel orderings such as RGBA8888 or BGRAFFFF.  Exception: If the kvImageLeaveAlphaUnchanged flag is used, then the first
+ *  channel in memory order is left unchanged.
  */
 vImage_Error vImageConvolveWithBias_Planar8( const vImage_Buffer *src, const vImage_Buffer *dest, void *tempBuffer, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y,  const int16_t *kernel, uint32_t kernel_height, uint32_t kernel_width, int32_t divisor, int32_t bias, Pixel_8 backgroundColor, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 vImage_Error vImageConvolveWithBias_PlanarF( const vImage_Buffer *src, const vImage_Buffer *dest, void *tempBuffer, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y,  const float *kernel, uint32_t kernel_height, uint32_t kernel_width, float bias, Pixel_F backgroundColor, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
@@ -69,6 +80,10 @@ vImage_Error vImageConvolveWithBias_ARGBFFFF( const vImage_Buffer *src, const vI
  *  to execute it, but with the kvImageGetTempBufferSize flag set in flags. The return value will be the size needed in bytes.
  *  DO NOT use vImageGetMinimumTempBufferSizeForConvolution for this purpose - it has been deprecated.
  *  Alternatively, set tempBuffer to NULL to have vImage allocate the memory.
+ *
+ *  All four channel convolution functions (i.e. those that support ARGB8888 or ARGBFFFF images) work equally well on four channel images 
+ *  with other channel orderings such as RGBA8888 or BGRAFFFF.  Exception: If the kvImageLeaveAlphaUnchanged flag is used, then the first
+ *  channel in memory order is left unchanged.
  */
 vImage_Error vImageConvolveMultiKernel_ARGB8888(    const vImage_Buffer *src, 
                                                     const vImage_Buffer *dest, 
@@ -104,6 +119,10 @@ vImage_Error vImageConvolveMultiKernel_ARGB8888(    const vImage_Buffer *src,
  *  to execute it, but with the kvImageGetTempBufferSize flag set in flags. The return value will be the size needed in bytes.
  *  DO NOT use vImageGetMinimumTempBufferSizeForConvolution for this purpose - it has been deprecated.
  *  Alternatively, set tempBuffer to NULL to have vImage allocate the memory.
+ *
+ *  All four channel convolution functions (i.e. those that support ARGB8888 or ARGBFFFF images) work equally well on four channel images 
+ *  with other channel orderings such as RGBA8888 or BGRAFFFF.  Exception: If the kvImageLeaveAlphaUnchanged flag is used, then the first
+ *  channel in memory order is left unchanged.
  */
 vImage_Error vImageConvolveMultiKernel_ARGBFFFF(    const vImage_Buffer *src, 
                                                     const vImage_Buffer *dest, 
@@ -129,6 +148,13 @@ size_t	vImageGetMinimumTempBufferSizeForConvolution( const vImage_Buffer *src, c
 /*
  *  Richardson-Lucy algorithm for deconvolution.
  *
+ *  Richardson-Lucy deconvolution (a.k.a. Lucy-Richardson) is an iterative procedure for estimating what an original image probably was
+ *  before a convolution, given the convolution end result and the kernel used to create it.  It is typically used to fix blurring caused
+ *  by lens distortion, most famously for the Hubble telescope, but also to improve images in confocal microscopy and other uses. When used
+ *  to correct loss of signal due to physical limitations of the imaging system, the point spread function (kernel) is estimated from known
+ *  parameters associated with the lensing system. It can also be used to sharpen images that have been digitally blurred, as long as the 
+ *  original convolution kernel is known or can be estimated.
+ *
  *  This routine iteratively uses the following formula:
  *
  *		e[i+1] = e[i] x (psf0 * ( e[0] / (psf1 * e[i]) ) )
@@ -139,10 +165,23 @@ size_t	vImageGetMinimumTempBufferSizeForConvolution( const vImage_Buffer *src, c
  *				x    = multiply operator
  *              *    = convolution operator
  *
+ *  As with any sharpening operation, Richardson-Lucy amplifies noise, and at some number of iterations the noise becomes noticeable as artifacts.
+ *
+ *  The work in these functions is currently done internally with floating point precision. If you plan to call this function multiple times 
+ *  (rather than with iterationCount > 1) on 8-bit per channel images, you can save some computation by converting the 8-bit image data to 
+ *  single precision floating-point yourself using something like vImageConvert_Planar8toPlanarF and iterating on the appropriate 
+ *  floating-point Richardson Lucy variant. Convert back, when you are done.
+ *
  *  In order to determine the amount of memory needed for tempBuffer, call vImageRichardsonLucyDeConvolve_xxxx exactly as you would 
  *  to execute it, but with the kvImageGetTempBufferSize flag set in flags. The return value will be the size needed in bytes.
  *  DO NOT use vImageGetMinimumTempBufferSizeForConvolution for this purpose - it has been deprecated.
  *  Alternatively, set tempBuffer to NULL to have vImage allocate the memory.
+ *
+ *  All four channel convolution functions (i.e. those that support ARGB8888 or ARGBFFFF images) work equally well on four channel images 
+ *  with other channel orderings such as RGBA8888 or BGRAFFFF.  Exception: If the kvImageLeaveAlphaUnchanged flag is used, then the first
+ *  channel in memory order is left unchanged.
+ *
+ *  These functions do not work in place.
  */
 vImage_Error vImageRichardsonLucyDeConvolve_Planar8( const vImage_Buffer *src, const vImage_Buffer *dest, void *tempBuffer, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y, const int16_t *kernel, const int16_t *kernel2, uint32_t kernel_height, uint32_t kernel_width, uint32_t kernel_height2, uint32_t kernel_width2, int32_t divisor, int32_t divisor2, Pixel_8 backgroundColor, uint32_t iterationCount, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 vImage_Error vImageRichardsonLucyDeConvolve_PlanarF( const vImage_Buffer *src, const vImage_Buffer *dest, void *tempBuffer, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y, const float *kernel, const float *kernel2, uint32_t kernel_height, uint32_t kernel_width, uint32_t kernel_height2, uint32_t kernel_width2, Pixel_F backgroundColor,  uint32_t iterationCount, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
@@ -159,6 +198,10 @@ vImage_Error vImageRichardsonLucyDeConvolve_ARGBFFFF( const vImage_Buffer *src, 
  *
  *  Do *NOT* use vImageGetMinimumTempBufferSizeForConvolution to set up the temp buffer for this function. It will return incorrect
  *  results. Please use the kvImageGetTempBufferSize flag.
+ *
+ *  All four channel convolution functions (i.e. those that support ARGB8888 or ARGBFFFF images) work equally well on four channel images 
+ *  with other channel orderings such as RGBA8888 or BGRAFFFF.  Exception: If the kvImageLeaveAlphaUnchanged flag is used, then the first
+ *  channel in memory order is left unchanged.
  */
 vImage_Error vImageBoxConvolve_Planar8( const vImage_Buffer *src, const vImage_Buffer *dest, void *tempBuffer, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y, uint32_t kernel_height, uint32_t kernel_width, Pixel_8 backgroundColor, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 vImage_Error vImageBoxConvolve_ARGB8888( const vImage_Buffer *src, const vImage_Buffer *dest, void *tempBuffer, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y, uint32_t kernel_height, uint32_t kernel_width, Pixel_8888 backgroundColor, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
@@ -172,6 +215,10 @@ vImage_Error vImageBoxConvolve_ARGB8888( const vImage_Buffer *src, const vImage_
  *
  *  Do *NOT* use vImageGetMinimumTempBufferSizeForConvolution to set up the temp buffer for this function. It will return incorrect
  *  results. Please use the kvImageGetTempBufferSize flag.
+ *
+ *  All four channel convolution functions (i.e. those that support ARGB8888 or ARGBFFFF images) work equally well on four channel images 
+ *  with other channel orderings such as RGBA8888 or BGRAFFFF.  Exception: If the kvImageLeaveAlphaUnchanged flag is used, then the first
+ *  channel in memory order is left unchanged.
  */
 vImage_Error vImageTentConvolve_Planar8( const vImage_Buffer *src, const vImage_Buffer *dest, void *tempBuffer, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y, uint32_t kernel_height, uint32_t kernel_width, Pixel_8 backgroundColor, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );
 vImage_Error vImageTentConvolve_ARGB8888( const vImage_Buffer *src, const vImage_Buffer *dest, void *tempBuffer, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y, uint32_t kernel_height, uint32_t kernel_width, Pixel_8888 backgroundColor, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_4, __IPHONE_5_0 );

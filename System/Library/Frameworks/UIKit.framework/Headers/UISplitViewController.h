@@ -2,18 +2,21 @@
 //  UISplitViewController.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
 @protocol UISplitViewControllerDelegate;
 
-UIKIT_CLASS_AVAILABLE(3_2) @interface UISplitViewController : UIViewController
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UISplitViewController : UIViewController
 
 @property (nonatomic, copy) NSArray *viewControllers;  
 @property (nonatomic, assign) id <UISplitViewControllerDelegate> delegate;
-@property (nonatomic) BOOL presentsWithGesture __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_1); // If 'YES', hidden view can be presented and dismissed via a swipe gesture. Defaults to 'YES'.
+
+// If 'YES', hidden view can be presented and dismissed via a swipe gesture. Defaults to 'YES'.
+// Set prior to setting delegate. The swipe gesture is only possible if the delegate implements -splitViewController:willHideViewController:withBarButtonItem:forPopoverController:.
+@property (nonatomic) BOOL presentsWithGesture NS_AVAILABLE_IOS(5_1);
 
 @end
 
@@ -22,6 +25,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UISplitViewController : UIViewController
 @optional
 
 // Called when a button should be added to a toolbar for a hidden view controller.
+// Implementing this method allows the hidden view controller to be presented via a swipe gesture if 'presentsWithGesture' is 'YES' (the default).
 - (void)splitViewController:(UISplitViewController *)svc willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem *)barButtonItem forPopoverController:(UIPopoverController *)pc;
 
 // Called when the view is shown again in the split view, invalidating the button and popover controller.
@@ -32,7 +36,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UISplitViewController : UIViewController
 
 // Returns YES if a view controller should be hidden by the split view controller in a given orientation.
 // (This method is only called on the leftmost view controller and only discriminates portrait from landscape.)
-- (BOOL)splitViewController:(UISplitViewController *)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (BOOL)splitViewController:(UISplitViewController *)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation NS_AVAILABLE_IOS(5_0);
 
 @end
 

@@ -2,7 +2,7 @@
 //  UIScrollView.h
 //  UIKit
 //
-//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,19 +11,19 @@
 #import <UIKit/UIGeometry.h>
 #import <UIKit/UIKitDefines.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIScrollViewIndicatorStyle) {
     UIScrollViewIndicatorStyleDefault,     // black with white border. good against any background
     UIScrollViewIndicatorStyleBlack,       // black only. smaller. good against a white background
     UIScrollViewIndicatorStyleWhite        // white only. smaller. good against a black background
-} UIScrollViewIndicatorStyle;
+};
 
-UIKIT_EXTERN const float UIScrollViewDecelerationRateNormal __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-UIKIT_EXTERN const float UIScrollViewDecelerationRateFast __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+UIKIT_EXTERN const float UIScrollViewDecelerationRateNormal NS_AVAILABLE_IOS(3_0);
+UIKIT_EXTERN const float UIScrollViewDecelerationRateFast NS_AVAILABLE_IOS(3_0);
 
 @class UIEvent, UIImageView, UIPanGestureRecognizer, UIPinchGestureRecognizer;
 @protocol UIScrollViewDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIScrollView : UIView <NSCoding> {
   @package
     CGSize       _contentSize;
     UIEdgeInsets _contentInset;
@@ -42,6 +42,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
         unsigned int zoomBouncing:1;
         unsigned int alwaysBounceHorizontal:1;
         unsigned int alwaysBounceVertical:1;
+        unsigned int preventScrollingContainer:1;
         unsigned int canCancelContentTouches:1;
         unsigned int delaysContentTouches:1;
         unsigned int programmaticScrollDisabled:1;
@@ -81,6 +82,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
         unsigned int dontScrollToTop:1;
         unsigned int scrollingToTop:1;
         unsigned int useGestureRecognizers:1;
+        unsigned int singleFingerPan:1;
         unsigned int autoscrolling:1;
         unsigned int automaticContentOffsetAdjustmentDisabled:1;
         unsigned int skipStartOffsetAdjustment:1;
@@ -101,6 +103,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
         unsigned int disableContentOffsetRounding:1;
         unsigned int adjustedDecelerationTargetX:1;
         unsigned int adjustedDecelerationTargetY:1;
+        unsigned int hasScrolled:1;
+        unsigned int wantsConstrainedContentSize:1;
     } _scrollViewFlags;
     CGFloat           _farthestDistance;
     CGPoint           _initialTouchPosition;
@@ -121,7 +125,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
     double            _verticalVelocity;
     double            _previousHorizontalVelocity;
     double            _previousVerticalVelocity;
-    CFTypeRef         _scrollHeartbeat;
+    id                _scrollHeartbeat;
     CGPoint           _pageDecelerationTarget;
     CGSize            _decelerationFactor;
     CGPoint           _adjustedDecelerationTarget;
@@ -133,6 +137,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
     id                _scrollNotificationViews;
     CFTimeInterval    _contentOffsetAnimationDuration;
     id                _animation;
+    id                _zoomAnimation;
     id                _pinch;
     id                _pan;
     id                _swipe;
@@ -163,7 +168,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
 @property(nonatomic)         BOOL                         showsVerticalScrollIndicator;   // default YES. show indicator while we are tracking. fades out after tracking
 @property(nonatomic)         UIEdgeInsets                 scrollIndicatorInsets;          // default is UIEdgeInsetsZero. adjust indicators inside of insets
 @property(nonatomic)         UIScrollViewIndicatorStyle   indicatorStyle;                 // default is UIScrollViewIndicatorStyleDefault
-@property(nonatomic)         float                        decelerationRate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property(nonatomic)         float                        decelerationRate NS_AVAILABLE_IOS(3_0);
 
 - (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;  // animate at constant velocity to new offset
 - (void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated;         // scroll so rect is just visible (nearest edges). nothing if rect completely visible
@@ -203,9 +208,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
 @property(nonatomic) float minimumZoomScale;     // default is 1.0
 @property(nonatomic) float maximumZoomScale;     // default is 1.0. must be > minimum zoom scale to enable zooming
 
-@property(nonatomic) float zoomScale __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);            // default is 1.0
-- (void)setZoomScale:(float)scale animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)zoomToRect:(CGRect)rect animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property(nonatomic) float zoomScale NS_AVAILABLE_IOS(3_0);            // default is 1.0
+- (void)setZoomScale:(float)scale animated:(BOOL)animated NS_AVAILABLE_IOS(3_0);
+- (void)zoomToRect:(CGRect)rect animated:(BOOL)animated NS_AVAILABLE_IOS(3_0);
 
 @property(nonatomic) BOOL  bouncesZoom;          // default is YES. if set, user can go past min/max zoom while gesturing and the zoom will animate to the min/max value at gesture end
 
@@ -218,9 +223,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
 
 // Use these accessors to configure the scroll view's built-in gesture recognizers.
 // Do not change the gestures' delegates or override the getters for these properties.
-@property(nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property(nonatomic, readonly) UIPanGestureRecognizer *panGestureRecognizer NS_AVAILABLE_IOS(5_0);
 // `pinchGestureRecognizer` will return nil when zooming is disabled.
-@property(nonatomic, readonly) UIPinchGestureRecognizer *pinchGestureRecognizer __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property(nonatomic, readonly) UIPinchGestureRecognizer *pinchGestureRecognizer NS_AVAILABLE_IOS(5_0);
 
 @end
 
@@ -229,12 +234,12 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
 @optional
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;                                               // any offset changes
-- (void)scrollViewDidZoom:(UIScrollView *)scrollView __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // any zoom scale changes
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView NS_AVAILABLE_IOS(3_2); // any zoom scale changes
 
 // called on start of dragging (may require some time and or distance to move)
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
 // called on finger up if the user dragged. velocity is in points/second. targetContentOffset may be changed to adjust where the scroll view comes to rest. not called when pagingEnabled is YES
-- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset NS_AVAILABLE_IOS(5_0);
 // called on finger up if the user dragged. decelerate is true if it will continue moving afterwards
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;
 
@@ -244,7 +249,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIScrollView : UIView <NSCoding> {
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView; // called when setContentOffset/scrollRectVisible:animated: finishes. not called if not animating
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView;     // return a view that will be scaled. if delegate returns nil, nothing happens
-- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2); // called before the scroll view begins zooming its content
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view NS_AVAILABLE_IOS(3_2); // called before the scroll view begins zooming its content
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale; // scale between minimum and maximum. called after any 'bounce' animations
 
 - (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView;   // return a yes if you want to scroll to the top. if not defined, assumes YES

@@ -1,24 +1,16 @@
 /*
     NSFetchRequest.h
     Core Data
-    Copyright (c) 2004-2010 Apple Inc.
+    Copyright (c) 2004-2012 Apple Inc.
     All rights reserved.
 */
 
 #import <Foundation/NSArray.h>
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
 #import <CoreData/NSPersistentStoreRequest.h>
-#else 
-#ifndef NSPersistentStoreRequest
-#define NSPersistentStoreRequest NSObject
-#endif
-#endif
 
 @class NSEntityDescription;
 @class NSManagedObjectModel;
 @class NSPredicate;
-@class NSString;
 
 /* Definition of the possible result types a fetch request can return. */
 
@@ -103,7 +95,6 @@ NS_CLASS_AVAILABLE(10_4, 3_0)
 */
 - (BOOL)returnsObjectsAsFaults NS_AVAILABLE(10_5,3_0);
 - (void)setReturnsObjectsAsFaults:(BOOL)yesNo NS_AVAILABLE(10_5,3_0);
-
 
 /* Returns/sets an array of relationship keypaths to prefetch along with the entity for the request.  The array contains keypath strings in NSKeyValueCoding notation, as you would normally use with valueForKeyPath.  (Prefetching allows Core Data to obtain developer-specified related objects in a single fetch (per entity), rather than incurring subsequent access to the store for each individual record as their faults are tripped.)  Defaults to an empty array (no prefetching.) 
 */

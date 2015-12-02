@@ -3,7 +3,7 @@
 
 	Contains:	AudioUnit Interfaces
 
-	Copyright:	© 2002-2008 by Apple, Inc., all rights reserved.
+	Copyright:	 2002-2008 by Apple, Inc., all rights reserved.
 
 	Bugs?:		For bug reports, consult the following page on
 				the World Wide Web:
@@ -120,12 +120,12 @@ typedef AudioComponentInstance AudioUnit;
 /*!
     @enum           Audio Unit Types
     @abstract		different types of audio units
-	@discussion		Audio unit's are classified into different types, where those types perform 
+	@discussion		Audio units are classified into different types, where those types perform 
 					different roles and functions.
 					There are some general categories of functionality that apply across different 
 					types of audio units:
 					(1) Real-time usage
-						The audio unit will complete its operations in less time that is 
+						The audio unit will complete its operations in less time than is 
 						represented by the render buffer. All audio units with the exception of 
 						the OfflineEffect should meet this criteria
 					(2) Real-time I/O
@@ -334,7 +334,6 @@ enum {
 					to process audio files.
 					
 	@constant		kAudioUnitSubType_DeferredRenderer
-						- desktop only
 					An audio unit that is used to get its input from a separate thread than the 
 					thread that its render method is called. It thus allows an application to 
 					introduce multiple threads into a rendering graph. There is a buffer sized 
@@ -359,18 +358,18 @@ enum {
 					An audio unit that provides simple (and limited) control over playback rate 
 					and time.
 */
-enum{
+enum {
 	kAudioUnitSubType_AUConverter			= 'conv',
-	
-#if !TARGET_OS_IPHONE
-	kAudioUnitSubType_NewTimePitch			= 'nutp',
-	kAudioUnitSubType_TimePitch				= 'tmpt',
+	kAudioUnitSubType_Varispeed				= 'vari',
 	kAudioUnitSubType_DeferredRenderer		= 'defr',
 	kAudioUnitSubType_Splitter				= 'splt',
 	kAudioUnitSubType_Merger				= 'merg',
+	kAudioUnitSubType_NewTimePitch			= 'nutp',
+	
+#if !TARGET_OS_IPHONE
+	kAudioUnitSubType_TimePitch				= 'tmpt',
 	kAudioUnitSubType_RoundTripAAC			= 'raac'
 #else
-	kAudioUnitSubType_Varispeed				= 'vari',
 	kAudioUnitSubType_AUiPodTime			= 'iptm',
 	kAudioUnitSubType_AUiPodTimeOther		= 'ipto'
 #endif
@@ -433,6 +432,9 @@ enum{
 						- desktop only
 					A filter unit that combines 5 different filters (low, 3 mids, high)
 					
+	@constant		kAudioUnitSubType_DCFilter				
+					A filter unit that leaks away the DC component of a signal.
+					
 	@constant		kAudioUnitSubType_NetSend				
 						- desktop only
 					An audio unit that is used in conjunction with _NetReceive to send audio 
@@ -466,17 +468,18 @@ enum {
 	kAudioUnitSubType_BandPassFilter		= 'bpas',
 	kAudioUnitSubType_HighShelfFilter		= 'hshf',
 	kAudioUnitSubType_LowShelfFilter		= 'lshf',
+	kAudioUnitSubType_DCFilter				= 'dcfl',
 	kAudioUnitSubType_ParametricEQ			= 'pmeq',
 	kAudioUnitSubType_Distortion			= 'dist',
-#if !TARGET_OS_IPHONE
 	kAudioUnitSubType_Delay					= 'dely',
+#if !TARGET_OS_IPHONE
 	kAudioUnitSubType_GraphicEQ				= 'greq',
 	kAudioUnitSubType_MultiBandCompressor	= 'mcmp',
 	kAudioUnitSubType_MatrixReverb			= 'mrev',
-	kAudioUnitSubType_SampleDelay			= 'sdly',
 	kAudioUnitSubType_Pitch					= 'tmpt',
 	kAudioUnitSubType_AUFilter				= 'filt',
 	kAudioUnitSubType_NetSend				= 'nsnd',
+	kAudioUnitSubType_SampleDelay			= 'sdly',
 	kAudioUnitSubType_RogerBeep				= 'rogr',
 #else
 	kAudioUnitSubType_Reverb2				= 'rvb2',
@@ -521,10 +524,10 @@ enum {
 */
 enum {
 	kAudioUnitSubType_MultiChannelMixer		= 'mcmx',
+	kAudioUnitSubType_MatrixMixer			= 'mxmx',
 #if !TARGET_OS_IPHONE
 	kAudioUnitSubType_StereoMixer			= 'smxr',
-	kAudioUnitSubType_3DMixer				= '3dmx',
-	kAudioUnitSubType_MatrixMixer			= 'mxmx'
+	kAudioUnitSubType_3DMixer				= '3dmx'
 #else
 	kAudioUnitSubType_AU3DMixerEmbedded		= '3dem'
 #endif
@@ -1370,6 +1373,25 @@ AudioUnitRender(					AudioUnit						inUnit,
 									AudioBufferList *				ioData)			
 												__OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
 
+extern OSStatus
+AudioUnitProcess (					AudioUnit						inUnit, 
+									AudioUnitRenderActionFlags *	ioActionFlags, 
+									const AudioTimeStamp *			inTimeStamp, 
+									UInt32							inNumberFrames, 
+									AudioBufferList *				ioData)
+												__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_6_0);
+
+extern OSStatus
+AudioUnitProcessMultiple(			AudioUnit						inUnit, 
+									AudioUnitRenderActionFlags *	ioActionFlags, 
+									const AudioTimeStamp *			inTimeStamp, 
+									UInt32							inNumberFrames,
+									UInt32							inNumberInputBufferLists,
+									const AudioBufferList **		inInputBufferLists,
+									UInt32							inNumberOutputBufferLists,
+									AudioBufferList **				ioOutputBufferLists)
+												__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_6_0);
+	
 /*!
 	@function		AudioUnitReset
 	@abstract		reset an audio unit's render state

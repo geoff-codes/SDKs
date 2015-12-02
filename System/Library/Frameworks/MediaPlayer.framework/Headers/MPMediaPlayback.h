@@ -41,4 +41,4 @@
 @end
 
 // Posted when the prepared state changes of an object conforming to the MPMediaPlayback protocol changes.
-MP_EXTERN NSString *const MPMediaPlaybackIsPreparedToPlayDidChangeNotification NS_AVAILABLE_IPHONE(3_2);
+MP_EXTERN NSString *const MPMediaPlaybackIsPreparedToPlayDidChangeNotification NS_AVAILABLE_IOS(3_2);

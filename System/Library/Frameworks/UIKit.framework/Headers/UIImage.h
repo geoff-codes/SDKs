@@ -2,7 +2,7 @@
 //  UIImage.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 #import <UIKit/UIColor.h>
 #import <UIKit/UIGeometry.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIImageOrientation) {
     UIImageOrientationUp,            // default orientation
     UIImageOrientationDown,          // 180 deg rotation
     UIImageOrientationLeft,          // 90 deg CCW
@@ -21,9 +21,19 @@ typedef enum {
     UIImageOrientationDownMirrored,  // horizontal flip
     UIImageOrientationLeftMirrored,  // vertical flip
     UIImageOrientationRightMirrored, // vertical flip
-} UIImageOrientation;
+};
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIImage : NSObject <NSCoding> {
+/* UIImage will implement the resizing mode the fastest way possible while
+ retaining the desired visual appearance.
+ Note that if an image's resizable area is one point then UIImageResizingModeTile
+ is visually indistinguishable from UIImageResizingModeStretch.
+ */
+typedef NS_ENUM(NSInteger, UIImageResizingMode) {
+    UIImageResizingModeTile,
+    UIImageResizingModeStretch,
+};
+
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIImage : NSObject <NSCoding> {
   @package
     CFTypeRef _imageRef;
     CGFloat   _scale;
@@ -31,9 +41,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIImage : NSObject <NSCoding> {
 	unsigned int named:1;
 	unsigned int imageOrientation:3;
 	unsigned int cached:1;
-	unsigned int hasBeenCached:1;
 	unsigned int hasPattern:1;
 	unsigned int isCIImage:1;
+        unsigned int imageSetIdentifer:16;
     } _imageFlags;
 }
 
@@ -41,30 +51,35 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIImage : NSObject <NSCoding> {
 
 + (UIImage *)imageWithContentsOfFile:(NSString *)path;
 + (UIImage *)imageWithData:(NSData *)data;
++ (UIImage *)imageWithData:(NSData *)data scale:(CGFloat)scale NS_AVAILABLE_IOS(6_0);
 + (UIImage *)imageWithCGImage:(CGImageRef)cgImage;
-+ (UIImage *)imageWithCGImage:(CGImageRef)cgImage scale:(CGFloat)scale orientation:(UIImageOrientation)orientation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-+ (UIImage *)imageWithCIImage:(CIImage *)ciImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
++ (UIImage *)imageWithCGImage:(CGImageRef)cgImage scale:(CGFloat)scale orientation:(UIImageOrientation)orientation NS_AVAILABLE_IOS(4_0);
++ (UIImage *)imageWithCIImage:(CIImage *)ciImage NS_AVAILABLE_IOS(5_0);
++ (UIImage *)imageWithCIImage:(CIImage *)ciImage scale:(CGFloat)scale orientation:(UIImageOrientation)orientation NS_AVAILABLE_IOS(6_0);
 
 - (id)initWithContentsOfFile:(NSString *)path;
 - (id)initWithData:(NSData *)data;
+- (id)initWithData:(NSData *)data scale:(CGFloat)scale NS_AVAILABLE_IOS(6_0);
 - (id)initWithCGImage:(CGImageRef)cgImage;
-- (id)initWithCGImage:(CGImageRef)cgImage scale:(CGFloat)scale orientation:(UIImageOrientation)orientation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (id)initWithCIImage:(CIImage *)ciImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (id)initWithCGImage:(CGImageRef)cgImage scale:(CGFloat)scale orientation:(UIImageOrientation)orientation NS_AVAILABLE_IOS(4_0);
+- (id)initWithCIImage:(CIImage *)ciImage NS_AVAILABLE_IOS(5_0);
+- (id)initWithCIImage:(CIImage *)ciImage scale:(CGFloat)scale orientation:(UIImageOrientation)orientation NS_AVAILABLE_IOS(6_0);
 
-@property(nonatomic,readonly) CGSize             size;             // reflects orientation setting. size is in pixels
+@property(nonatomic,readonly) CGSize             size;             // reflects orientation setting. In iOS 4.0 and later, this is measured in points. In 3.x and earlier, measured in pixels
 @property(nonatomic,readonly) CGImageRef         CGImage;          // returns underlying CGImageRef or nil if CIImage based
-@property(nonatomic,readonly) CIImage           *CIImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // returns underlying CIImage or nil if CGImageRef based
+@property(nonatomic,readonly) CIImage           *CIImage NS_AVAILABLE_IOS(5_0); // returns underlying CIImage or nil if CGImageRef based
 @property(nonatomic,readonly) UIImageOrientation imageOrientation; // this will affect how the image is composited
-@property(nonatomic,readonly) CGFloat            scale __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic,readonly) CGFloat            scale NS_AVAILABLE_IOS(4_0);
 
 // animated images. When set as UIImageView.image, animation will play in an infinite loop until removed. Drawing will render the first image
 
-+ (UIImage *)animatedImageNamed:(NSString *)name duration:(NSTimeInterval)duration __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);  // read sequnce of files with suffix starting at 0 or 1
-+ (UIImage *)animatedResizableImageNamed:(NSString *)name capInsets:(UIEdgeInsets)capInsets duration:(NSTimeInterval)duration __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // squence of files
-+ (UIImage *)animatedImageWithImages:(NSArray *)images duration:(NSTimeInterval)duration __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
++ (UIImage *)animatedImageNamed:(NSString *)name duration:(NSTimeInterval)duration NS_AVAILABLE_IOS(5_0);  // read sequence of files with suffix starting at 0 or 1
++ (UIImage *)animatedResizableImageNamed:(NSString *)name capInsets:(UIEdgeInsets)capInsets duration:(NSTimeInterval)duration NS_AVAILABLE_IOS(5_0); // sequence of files
++ (UIImage *)animatedResizableImageNamed:(NSString *)name capInsets:(UIEdgeInsets)capInsets resizingMode:(UIImageResizingMode)resizingMode duration:(NSTimeInterval)duration NS_AVAILABLE_IOS(6_0);
++ (UIImage *)animatedImageWithImages:(NSArray *)images duration:(NSTimeInterval)duration NS_AVAILABLE_IOS(5_0);
 
-@property(nonatomic,readonly) NSArray       *images   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // default is nil for non-animated images
-@property(nonatomic,readonly) NSTimeInterval duration __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // total duration for all frames. default is 0 for non-animated images
+@property(nonatomic,readonly) NSArray       *images   NS_AVAILABLE_IOS(5_0); // default is nil for non-animated images
+@property(nonatomic,readonly) NSTimeInterval duration NS_AVAILABLE_IOS(5_0); // total duration for all frames. default is 0 for non-animated images
 
 // the these draw the image 'right side up' in the usual coordinate system with 'point' being the top-left.
 
@@ -75,9 +90,19 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIImage : NSObject <NSCoding> {
 
 - (void)drawAsPatternInRect:(CGRect)rect; // draws the image as a CGPattern
 
-// create a resizable version of this image. the interior is tiled when drawn.
-- (UIImage *)resizableImageWithCapInsets:(UIEdgeInsets)capInsets __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-@property(nonatomic,readonly) UIEdgeInsets capInsets               __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);   // default is UIEdgeInsetsZero for non resizable images
+- (UIImage *)resizableImageWithCapInsets:(UIEdgeInsets)capInsets NS_AVAILABLE_IOS(5_0); // create a resizable version of this image. the interior is tiled when drawn.
+- (UIImage *)resizableImageWithCapInsets:(UIEdgeInsets)capInsets resizingMode:(UIImageResizingMode)resizingMode NS_AVAILABLE_IOS(6_0); // the interior is resized according to the resizingMode
+
+@property(nonatomic,readonly) UIEdgeInsets capInsets               NS_AVAILABLE_IOS(5_0);   // default is UIEdgeInsetsZero for non resizable images
+@property(nonatomic,readonly) UIImageResizingMode resizingMode NS_AVAILABLE_IOS(6_0); // default is UIImageResizingModeTile
+
+// Support for constraint-based layout (auto layout)
+// The alignmentRectInsets of a UIImage are used by UIImageView and other UIView and UIControl
+//  subclasses that take custom images to determine the view's alignment rect insets for
+//  constraint-based layout.
+// The default alignmentRectInsets are UIEdgeInsetsZero.
+- (UIImage *)imageWithAlignmentRectInsets:(UIEdgeInsets)alignmentInsets NS_AVAILABLE_IOS(6_0);
+@property(nonatomic,readonly) UIEdgeInsets alignmentRectInsets NS_AVAILABLE_IOS(6_0);
 
 @end
 
@@ -94,8 +119,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIImage : NSObject <NSCoding> {
 
 @interface CIImage(UIKitAdditions)
 
-- (id)initWithImage:(UIImage *)image __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-- (id)initWithImage:(UIImage *)image options:(NSDictionary *)options __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (id)initWithImage:(UIImage *)image NS_AVAILABLE_IOS(5_0);
+- (id)initWithImage:(UIImage *)image options:(NSDictionary *)options NS_AVAILABLE_IOS(5_0);
 
 @end
 

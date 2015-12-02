@@ -2,12 +2,14 @@
  *  SFNTLayoutTypes.h
  *  CoreText
  *
- *  Copyright (c) 2008-2011 Apple Inc. All rights reserved.
+ *  Copyright 1994-2012 Apple Inc. All rights reserved.
  *
  */
 
 #ifndef __SFNTLAYOUTTYPES__
 #define __SFNTLAYOUTTYPES__
+
+#include <TargetConditionals.h>
 
 #include <MacTypes.h>
 
@@ -22,8 +24,8 @@ extern "C" {
 /*
     The following values can be used to set run feature values. Note that unless the
     feature is defaulted differently in different fonts, the zero value for the
-    selectors represents the default value.  Check the following URL site for further info:
-    "http://fonts.apple.com/Registry"
+    selectors represents the default value. Consult the following URL for further info:
+    <http://developer.apple.com/fonts/registry/>
 */
 
 
@@ -35,7 +37,7 @@ enum {
   kAllTypographicFeaturesType   = 0,
   kLigaturesType                = 1,
   kCursiveConnectionType        = 2,
-  kLetterCaseType               = 3,
+  kLetterCaseType               = 3,    /* deprecated - use kLowerCaseType or kUpperCaseType instead */
   kVerticalSubstitutionType     = 4,
   kLinguisticRearrangementType  = 5,
   kNumberSpacingType            = 6,
@@ -63,6 +65,12 @@ enum {
   kIdeographicAlternativesType  = 30,
   kCJKVerticalRomanPlacementType = 31,
   kItalicCJKRomanType           = 32,
+  kCaseSensitiveLayoutType      = 33,
+  kAlternateKanaType            = 34,
+  kStylisticAlternativesType    = 35,
+  kContextualAlternatesType     = 36,
+  kLowerCaseType                = 37,
+  kUpperCaseType                = 38,
   kCJKRomanSpacingType          = 103,
   kLastFeatureType              = -1
 };
@@ -101,7 +109,11 @@ enum {
   kAbbrevSquaredLigaturesOnSelector = 14,
   kAbbrevSquaredLigaturesOffSelector = 15,
   kSymbolLigaturesOnSelector    = 16,
-  kSymbolLigaturesOffSelector   = 17
+  kSymbolLigaturesOffSelector   = 17,
+  kContextualLigaturesOnSelector = 18,
+  kContextualLigaturesOffSelector = 19,
+  kHistoricalLigaturesOnSelector = 20,
+  kHistoricalLigaturesOffSelector = 21
 };
 
 
@@ -121,12 +133,12 @@ enum {
  *    Selectors for feature type kLetterCaseType
  */
 enum {
-  kUpperAndLowerCaseSelector    = 0,
-  kAllCapsSelector              = 1,
-  kAllLowerCaseSelector         = 2,
-  kSmallCapsSelector            = 3,
-  kInitialCapsSelector          = 4,
-  kInitialCapsAndSmallCapsSelector = 5
+  kUpperAndLowerCaseSelector    = 0,    /* deprecated */
+  kAllCapsSelector              = 1,    /* deprecated */
+  kAllLowerCaseSelector         = 2,    /* deprecated */
+  kSmallCapsSelector            = 3,    /* deprecated */
+  kInitialCapsSelector          = 4,    /* deprecated */
+  kInitialCapsAndSmallCapsSelector = 5  /* deprecated */
 };
 
 
@@ -199,7 +211,8 @@ enum {
   kNormalPositionSelector       = 0,
   kSuperiorsSelector            = 1,
   kInferiorsSelector            = 2,
-  kOrdinalsSelector             = 3
+  kOrdinalsSelector             = 3,
+  kScientificInferiorsSelector  = 4
 };
 
 
@@ -258,7 +271,9 @@ enum {
   kInequalityLigaturesOnSelector = 6,
   kInequalityLigaturesOffSelector = 7,
   kExponentsOnSelector          = 8,
-  kExponentsOffSelector         = 9
+  kExponentsOffSelector         = 9,
+  kMathematicalGreekOnSelector  = 10,
+  kMathematicalGreekOffSelector = 11
 };
 
 
@@ -328,7 +343,11 @@ enum {
   kTraditionalAltThreeSelector  = 7,
   kTraditionalAltFourSelector   = 8,
   kTraditionalAltFiveSelector   = 9,
-  kExpertCharactersSelector     = 10
+  kExpertCharactersSelector     = 10,
+  kJIS2004CharactersSelector    = 11,
+  kHojoCharactersSelector       = 12,
+  kNLCCharactersSelector        = 13,
+  kTraditionalNamesCharactersSelector = 14
 };
 
 
@@ -349,7 +368,11 @@ enum {
 enum {
   kProportionalTextSelector     = 0,
   kMonospacedTextSelector       = 1,
-  kHalfWidthTextSelector        = 2
+  kHalfWidthTextSelector        = 2,
+  kThirdWidthTextSelector       = 3,
+  kQuarterWidthTextSelector     = 4,
+  kAltProportionalTextSelector  = 5,
+  kAltHalfWidthTextSelector     = 6
 };
 
 
@@ -484,6 +507,115 @@ enum {
   kCJKItalicRomanSelector       = 1,    /* deprecated - use kCJKItalicRomanOnSelector instead */
   kCJKItalicRomanOnSelector     = 2,
   kCJKItalicRomanOffSelector    = 3
+};
+
+
+/*
+ *  Summary:
+ *    Selectors for feature type kCaseSensitiveLayoutType
+ */
+enum {
+  kCaseSensitiveLayoutOnSelector = 0,
+  kCaseSensitiveLayoutOffSelector = 1,
+  kCaseSensitiveSpacingOnSelector = 2,
+  kCaseSensitiveSpacingOffSelector = 3
+};
+
+
+/*
+ *  Summary:
+ *    Selectors for feature type kAlternateKanaType
+ */
+enum {
+  kAlternateHorizKanaOnSelector = 0,
+  kAlternateHorizKanaOffSelector = 1,
+  kAlternateVertKanaOnSelector  = 2,
+  kAlternateVertKanaOffSelector = 3
+};
+
+
+/*
+ *  Summary:
+ *    Selectors for feature type kStylisticAlternativesType
+ */
+enum {
+  kNoStylisticAlternatesSelector = 0,
+  kStylisticAltOneOnSelector    = 2,
+  kStylisticAltOneOffSelector   = 3,
+  kStylisticAltTwoOnSelector    = 4,
+  kStylisticAltTwoOffSelector   = 5,
+  kStylisticAltThreeOnSelector  = 6,
+  kStylisticAltThreeOffSelector = 7,
+  kStylisticAltFourOnSelector   = 8,
+  kStylisticAltFourOffSelector  = 9,
+  kStylisticAltFiveOnSelector   = 10,
+  kStylisticAltFiveOffSelector  = 11,
+  kStylisticAltSixOnSelector    = 12,
+  kStylisticAltSixOffSelector   = 13,
+  kStylisticAltSevenOnSelector  = 14,
+  kStylisticAltSevenOffSelector = 15,
+  kStylisticAltEightOnSelector  = 16,
+  kStylisticAltEightOffSelector = 17,
+  kStylisticAltNineOnSelector   = 18,
+  kStylisticAltNineOffSelector  = 19,
+  kStylisticAltTenOnSelector    = 20,
+  kStylisticAltTenOffSelector   = 21,
+  kStylisticAltElevenOnSelector = 22,
+  kStylisticAltElevenOffSelector = 23,
+  kStylisticAltTwelveOnSelector = 24,
+  kStylisticAltTwelveOffSelector = 25,
+  kStylisticAltThirteenOnSelector = 26,
+  kStylisticAltThirteenOffSelector = 27,
+  kStylisticAltFourteenOnSelector = 28,
+  kStylisticAltFourteenOffSelector = 29,
+  kStylisticAltFifteenOnSelector = 30,
+  kStylisticAltFifteenOffSelector = 31,
+  kStylisticAltSixteenOnSelector = 32,
+  kStylisticAltSixteenOffSelector = 33,
+  kStylisticAltSeventeenOnSelector = 34,
+  kStylisticAltSeventeenOffSelector = 35,
+  kStylisticAltEighteenOnSelector = 36,
+  kStylisticAltEighteenOffSelector = 37,
+  kStylisticAltNineteenOnSelector = 38,
+  kStylisticAltNineteenOffSelector = 39,
+  kStylisticAltTwentyOnSelector = 40,
+  kStylisticAltTwentyOffSelector = 41
+};
+
+
+/*
+ *  Summary:
+ *    Selectors for feature type kContextualAlternatesType
+ */
+enum {
+  kContextualAlternatesOnSelector = 0,
+  kContextualAlternatesOffSelector = 1,
+  kSwashAlternatesOnSelector    = 2,
+  kSwashAlternatesOffSelector   = 3,
+  kContextualSwashAlternatesOnSelector = 4,
+  kContextualSwashAlternatesOffSelector = 5
+};
+
+
+/*
+ *  Summary:
+ *    Selectors for feature type kLowerCaseType
+ */
+enum {
+  kDefaultLowerCaseSelector     = 0,
+  kLowerCaseSmallCapsSelector   = 1,
+  kLowerCasePetiteCapsSelector  = 2
+};
+
+
+/*
+ *  Summary:
+ *    Selectors for feature type kUpperCaseType
+ */
+enum {
+  kDefaultUpperCaseSelector     = 0,
+  kUpperCaseSmallCapsSelector   = 1,
+  kUpperCasePetiteCapsSelector  = 2
 };
 
 
@@ -747,7 +879,7 @@ typedef UInt16                          JustPCUnconditionalAddAction;
     the line will be redone.
 */
 struct JustPCConditionalAddAction {
-  Fixed               substThreshhold;        /* threshhold of growth factor at which subst occurs */
+  Fixed               substThreshold;        /* threshold of growth factor at which subst occurs */
   UInt16              addGlyph;
   UInt16              substGlyph;
 };
@@ -823,6 +955,37 @@ struct JustTable {
   UInt16              vertHeaderOffset;
 };
 typedef struct JustTable                JustTable;
+/* --------------------------------------------------------------------------- */
+/* FORMATS FOR TABLE: 'opbd' */
+/* CONSTANTS */
+enum {
+  kOPBDTag                      = 0x6F706264, /* 'opbd' */
+  kOPBDCurrentVersion           = 0x00010000,
+  kOPBDDistanceFormat           = 0,
+  kOPBDControlPointFormat       = 1
+};
+
+/* TYPES */
+
+typedef UInt16                          OpbdTableFormat;
+/*
+    The OpbdSideValues struct is the lookup result from the FindSingle call for the
+    optical tables. It contains the 4 FUnit values that are relevant to the specified
+    glyph, or the 4 control gxPoint values.
+*/
+struct OpbdSideValues {
+  SInt16              leftSideShift;
+  SInt16              topSideShift;
+  SInt16              rightSideShift;
+  SInt16              bottomSideShift;
+};
+typedef struct OpbdSideValues           OpbdSideValues;
+struct OpbdTable {
+  Fixed               version;
+  OpbdTableFormat     format;
+  SFNTLookupTable     lookupTable;
+};
+typedef struct OpbdTable                OpbdTable;
 /* --------------------------------------------------------------------------- */
 /* FORMATS FOR TABLE: 'mort' */
 /* CONSTANTS */
@@ -1250,39 +1413,43 @@ typedef KernSubtableHeader *            KernSubtableHeaderPtr;
 /* FORMATS FOR TABLE: 'kerx' */
 /* CONSTANTS */
 enum {
-	kKERXTag                      = 0x6B657278, /* 'kerx' */
-	kKERXCurrentVersion           = 0x00020000,
-	kKERXVertical                 = (int)0x80000000, /* set if this table has vertical kerning information */
-	kKERXResetCrossStream         = 0x8000, /* this value in a cross-stream table means reset to zero */
-	kKERXCrossStream              = 0x40000000, /* set if this table contains cross-stream kerning values */
-	kKERXVariation                = 0x20000000, /* set if this table contains variation kerning values */
-	kKERXUnusedBits               = 0x1FFFFF00, /* UNUSED, MUST BE ZERO */
-	kKERXFormatMask               = 0x000000FF /* format of this subtable */
+  kKERXTag                      = 0x6B657278, /* 'kerx' */
+  kKERXCurrentVersion           = 0x00020000,
+  kKERXVertical                 = (int)0x80000000, /* set if this table has vertical kerning information */
+  kKERXResetCrossStream         = 0x8000, /* this value in a cross-stream table means reset to zero */
+  kKERXCrossStream              = 0x40000000, /* set if this table contains cross-stream kerning values */
+  kKERXVariation                = 0x20000000, /* set if this table contains variation kerning values */
+  kKERXUnusedBits               = 0x1FFFFF00, /* UNUSED, MUST BE ZERO */
+  kKERXFormatMask               = 0x000000FF /* format of this subtable */
 };
 
 enum {
-	kKERXOrderedList              = 0,    /* ordered list of kerning pairs */
-	kKERXStateTable               = 1,    /* state table for n-way contextual kerning */
-	kKERXSimpleArray              = 2,    /* simple n X m array of kerning values */
-	kKERXIndexArray               = 3,    /* modifed version of SimpleArray */
-	kKERXControlPoint             = 4     /* state table for control point positioning */
+  kKERXOrderedList              = 0,    /* ordered list of kerning pairs */
+  kKERXStateTable               = 1,    /* state table for n-way contextual kerning */
+  kKERXSimpleArray              = 2,    /* simple n X m array of kerning values */
+  kKERXIndexArray               = 3,    /* modifed version of SimpleArray */
+  kKERXControlPoint             = 4     /* state table for control point positioning */
 };
 
 /* Message Type Flags */
 enum {
-	kKERXLineStart                = 0x00000001, /* Array of glyphs starts a line */
-	kKERXLineEndKerning           = 0x00000002, /* Array of glyphs ends a line */
-	kKERXNoCrossKerning           = 0x00000004, /* Prohibit cross kerning */
-	kKERXNotesRequested           = 0x00000008, /* Caller wants kerning notes */
-	kKERXNoStakeNote              = 1,    /* Indicates a glyph was involved in a kerning pair/group */
-	kKERXCrossStreamResetNote     = 2,    /* Indicates a return-to-baseline in cross-stream kerning */
-	kKERXNotApplied               = 0x00000001 /* All kerning values were zero, kerning call had no effect */
+  kKERXLineStart                = 0x00000001, /* Array of glyphs starts a line */
+  kKERXLineEndKerning           = 0x00000002, /* Array of glyphs ends a line */
+  kKERXNoCrossKerning           = 0x00000004, /* Prohibit cross kerning */
+  kKERXNotesRequested           = 0x00000008, /* Caller wants kerning notes */
+  kKERXNoStakeNote              = 1,    /* Indicates a glyph was involved in a kerning pair/group */
+  kKERXCrossStreamResetNote     = 2,    /* Indicates a return-to-baseline in cross-stream kerning */
+  kKERXNotApplied               = 0x00000001 /* All kerning values were zero, kerning call had no effect */
 };
 
 /* Flags in KerxControlPointHeader */
 enum {
-	kKERXUsesCoordinates          = (int)0x80000000, /* Actions have control point coordinates */
-	kKERXActionOffsetMask         = 0x7FFFFFFF /* Mask to extract offset to action table */
+  kKERXActionTypeMask           = (3U << 30), /* Mask to extract action type */
+  kKERXActionTypeControlPoints  = (0U << 30), /* Actions have control point numbers */
+  kKERXActionTypeAnchorPoints   = (1U << 30), /* Actions have anchor point numbers */
+  kKERXActionTypeCoordinates    = (2U << 30), /* Actions have control point coordinates */
+  kKERXUnusedFlags              = 0x3F000000, /* Unused, must be zero */
+  kKERXActionOffsetMask         = 0x00FFFFFF, /* Mask to extract offset to action table */
 };
 
 /* TYPES */
@@ -1290,9 +1457,9 @@ typedef UInt32                          KerxSubtableCoverage;
 typedef UInt32                          KerxArrayOffset;
 /* Header for an extended kerning table */
 struct KerxTableHeader {
-	Fixed               version;                /* font version number (currently 1.0) */
-	UInt32              nTables;                /* number of subtables present */
-	UInt32              firstSubtable[1];       /* first subtable starts here */
+  Fixed               version;                /* font version number (currently 1.0) */
+  UInt32              nTables;                /* number of subtables present */
+  UInt32              firstSubtable[1];       /* first subtable starts here */
 };
 typedef struct KerxTableHeader          KerxTableHeader;
 typedef KerxTableHeader *               KerxTableHeaderPtr;
@@ -1308,62 +1475,67 @@ typedef KerxTableHeaderPtr *            KerxTableHeaderHandle;
  */
 /* defines a single kerning pair of Glyphcodes  */
 struct KerxKerningPair {
-	UInt16              left;
-	UInt16              right;
+  UInt16              left;
+  UInt16              right;
 };
 typedef struct KerxKerningPair          KerxKerningPair;
 /* a single list entry */
 struct KerxOrderedListEntry {
-	KerxKerningPair     pair;                   /* the kerning pair */
-	KernKerningValue    value;                  /* the kerning value for the above pair */
+  KerxKerningPair     pair;                   /* the kerning pair */
+  KernKerningValue    value;                  /* the kerning value for the above pair */
 };
 typedef struct KerxOrderedListEntry     KerxOrderedListEntry;
 typedef KerxOrderedListEntry *          KerxOrderedListEntryPtr;
 /* the header information for binary searching the list */
 struct KerxOrderedListHeader {
-	UInt32              nPairs;                 /* number of kerning pairs in table */
-	UInt32              searchRange;            /* (largest power of two <= nPairs) * entry size */
-	UInt32              entrySelector;          /* log2 (largest power of two <= nPairs) */
-	UInt32              rangeShift;             /* (nPairs - largest power of two <= nPairs) * entry size */
-	UInt32              table[1];               /* entries are first glyph, second glyph, and value */
+  UInt32              nPairs;                 /* number of kerning pairs in table */
+  UInt32              searchRange;            /* (largest power of two <= nPairs) * entry size */
+  UInt32              entrySelector;          /* log2 (largest power of two <= nPairs) */
+  UInt32              rangeShift;             /* (nPairs - largest power of two <= nPairs) * entry size */
+  UInt32              table[1];               /* entries are first glyph, second glyph, and value */
 };
 typedef struct KerxOrderedListHeader    KerxOrderedListHeader;
 /* KernStateTable: like the the generic state tables */
 struct KerxStateHeader {
-	STXHeader           header;                 /* state table header */
-	UInt32              valueTable;             /* offset to kerning value table */
-	UInt8               firstTable[1];          /* first table starts here */
+  STXHeader           header;                 /* state table header */
+  UInt32              valueTable;             /* offset to kerning value table */
+  UInt8               firstTable[1];          /* first table starts here */
 };
 typedef struct KerxStateHeader          KerxStateHeader;
 struct KerxStateEntry {
-	UInt16              newState;
-	UInt16              flags;                  /* flags per above enum */
-	UInt16              valueIndex;
+  UInt16              newState;
+  UInt16              flags;                  /* flags per above enum */
+  UInt16              valueIndex;
 };
 typedef struct KerxStateEntry           KerxStateEntry;
 /* KerxControlPointTable: like the the generic state tables */
 struct KerxControlPointHeader {
-	STXHeader           header;                 /* state table header */
-	UInt32              flags;                  /* flags */
-	UInt8               firstTable[1];          /* first table starts here */
+  STXHeader           header;                 /* state table header */
+  UInt32              flags;                  /* flags */
+  UInt8               firstTable[1];          /* first table starts here */
 };
 typedef struct KerxControlPointHeader   KerxControlPointHeader;
 struct KerxControlPointEntry {
-	UInt16              newState;
-	UInt16              flags;                  /* flags per above enum */
-	UInt16              actionIndex;
+  UInt16              newState;
+  UInt16              flags;                  /* flags per above enum */
+  UInt16              actionIndex;
 };
 typedef struct KerxControlPointEntry    KerxControlPointEntry;
 struct KerxControlPointAction {
-	UInt16              markControlPoint;
-	UInt16              currControlPoint;
+  UInt16              markControlPoint;
+  UInt16              currControlPoint;
 };
 typedef struct KerxControlPointAction   KerxControlPointAction;
+struct KerxAnchorPointAction {
+  UInt16              markAnchorPoint;
+  UInt16              currAnchorPoint;
+};
+typedef struct KerxAnchorPointAction   KerxAnchorPointAction;
 struct KerxCoordinateAction {
-	UInt16              markX;
-	UInt16              markY;
-	UInt16              currX;
-	UInt16              currY;
+  UInt16              markX;
+  UInt16              markY;
+  UInt16              currX;
+  UInt16              currY;
 };
 typedef struct KerxCoordinateAction     KerxCoordinateAction;
 /*
@@ -1373,9 +1545,9 @@ typedef struct KerxCoordinateAction     KerxCoordinateAction;
  and the offset of the beginning of the kerning array for left-hand glyphs.
  */
 struct KerxOffsetTable {
-	UInt16              firstGlyph;             /* first glyph in class range */
-	UInt16              nGlyphs;                /* number of glyphs in class range */
-	KerxArrayOffset     offsetTable[1];         /* offset table starts here */
+  UInt16              firstGlyph;             /* first glyph in class range */
+  UInt16              nGlyphs;                /* number of glyphs in class range */
+  KerxArrayOffset     offsetTable[1];         /* offset table starts here */
 };
 typedef struct KerxOffsetTable          KerxOffsetTable;
 typedef KerxOffsetTable *               KerxOffsetTablePtr;
@@ -1399,45 +1571,131 @@ typedef KerxOffsetTable *               KerxOffsetTablePtr;
 /* and the offset of the beginning of the kerning array for left- */
 /* hand glyphs. */
 struct KerxSimpleArrayHeader {
-	UInt32              rowWidth;               /* width, in bytes, of a row in the table */
-	UInt32              leftOffsetTable;        /* offset to left-hand offset table */
-	UInt32              rightOffsetTable;       /* offset to right-hand offset table */
-	KerxArrayOffset     theArray;               /* offset to start of kerning array */
-	UInt32              firstTable[1];          /* first offset table starts here... */
+  UInt32              rowWidth;               /* width, in bytes, of a row in the table */
+  UInt32              leftOffsetTable;        /* offset to left-hand offset table */
+  UInt32              rightOffsetTable;       /* offset to right-hand offset table */
+  KerxArrayOffset     theArray;               /* offset to start of kerning array */
+  UInt32              firstTable[1];          /* first offset table starts here... */
 };
 typedef struct KerxSimpleArrayHeader    KerxSimpleArrayHeader;
 /* Index Array */
 struct KerxIndexArrayHeader {
-	UInt16              glyphCount;
-	UInt16              kernValueCount;
-	UInt16              leftClassCount;
-	UInt16              rightClassCount;
-	UInt16              flags;                  /* set to 0 for now */
-	SInt16              kernValue[1];           /* actual kerning values reference by index in kernIndex */
-	UInt16              leftClass[1];           /* maps left glyph to offset into kern index */
-	UInt16              rightClass[1];          /* maps right glyph to offset into kern index */
-	UInt16              kernIndex[1];           /* contains indicies into kernValue */
+  UInt16              glyphCount;
+  UInt16              kernValueCount;
+  UInt16              leftClassCount;
+  UInt16              rightClassCount;
+  UInt16              flags;                  /* set to 0 for now */
+  SInt16              kernValue[1];           /* actual kerning values reference by index in kernIndex */
+  UInt16              leftClass[1];           /* maps left glyph to offset into kern index */
+  UInt16              rightClass[1];          /* maps right glyph to offset into kern index */
+  UInt16              kernIndex[1];           /* contains indicies into kernValue */
 };
 typedef struct KerxIndexArrayHeader     KerxIndexArrayHeader;
 /* format specific part of subtable header */
 union KerxFormatSpecificHeader {
-	KerxOrderedListHeader  orderedList;
-	KerxStateHeader     stateTable;
-	KerxSimpleArrayHeader  simpleArray;
-	KerxIndexArrayHeader  indexArray;
-	KerxControlPointHeader  controlPoint;
-	
+  KerxOrderedListHeader  orderedList;
+  KerxStateHeader     stateTable;
+  KerxSimpleArrayHeader  simpleArray;
+  KerxIndexArrayHeader  indexArray;
+  KerxControlPointHeader  controlPoint;
+
 };
 typedef union KerxFormatSpecificHeader  KerxFormatSpecificHeader;
 /* Overall Subtable header format */
 struct KerxSubtableHeader {
-	UInt32              length;                 /* length in bytes (including this header) */
-	KerxSubtableCoverage  stInfo;               /* subtable converage */
-	UInt32              tupleIndex;             /* tuple index for variation subtables */
-	KerxFormatSpecificHeader  fsHeader;         /* format specific sub-header */
+  UInt32              length;                 /* length in bytes (including this header) */
+  KerxSubtableCoverage  stInfo;               /* subtable converage */
+  UInt32              tupleIndex;             /* tuple index for variation subtables */
+  KerxFormatSpecificHeader  fsHeader;         /* format specific sub-header */
 };
 typedef struct KerxSubtableHeader       KerxSubtableHeader;
 typedef KerxSubtableHeader *            KerxSubtableHeaderPtr;
+/* --------------------------------------------------------------------------- */
+/* FORMATS FOR TABLE: 'bsln' */
+/* CONSTANTS */
+enum {
+  kBSLNTag                      = 0x62736C6E, /* 'bsln' */
+  kBSLNCurrentVersion           = 0x00010000, /* current version number for 'bsln' table */
+  kBSLNDistanceFormatNoMap      = 0,
+  kBSLNDistanceFormatWithMap    = 1,
+  kBSLNControlPointFormatNoMap  = 2,
+  kBSLNControlPointFormatWithMap = 3
+};
+
+/* Baseline classes and constants */
+enum {
+  kBSLNRomanBaseline            = 0,
+  kBSLNIdeographicCenterBaseline = 1,
+  kBSLNIdeographicLowBaseline   = 2,
+  kBSLNHangingBaseline          = 3,
+  kBSLNMathBaseline             = 4,
+  kBSLNIdeographicHighBaseline  = 5,
+  kBSLNLastBaseline             = 31,
+  kBSLNNumBaselineClasses       = kBSLNLastBaseline + 1,
+  kBSLNNoBaseline               = 255,
+  kBSLNNoBaselineOverride       = 255
+};
+
+/* TYPES */
+typedef UInt32                          BslnBaselineClass;
+/* The BslnBaselineRecord array defines the baseline deltas for the line. */
+typedef Fixed                           BslnBaselineRecord[32];
+/*
+    BslnFormat0Part is the format-specific data for a distance table with no mapping (i.e.
+    all the glyphs belong to the defaultBaseline).
+*/
+struct BslnFormat0Part {
+  SInt16              deltas[32];
+};
+typedef struct BslnFormat0Part          BslnFormat0Part;
+/* BslnFormat1Part is the format-specific data for a distance table with a gxMapping. */
+struct BslnFormat1Part {
+  SInt16              deltas[32];
+  SFNTLookupTable     mappingData;
+};
+typedef struct BslnFormat1Part          BslnFormat1Part;
+/*
+    BslnFormat2Part is the format-specific data for a control-point table with no
+    mapping (i.e. all the glyphs belong to the defaultBaseline). It specifies a single
+    glyph to use and the set of control points in that glyph that designate each of
+    the baselines.
+*/
+struct BslnFormat2Part {
+  UInt16              stdGlyph;
+  SInt16              ctlPoints[32];
+};
+typedef struct BslnFormat2Part          BslnFormat2Part;
+/*
+    BslnFormat3Part is the format-specific data for a distance table with a mapping. Like
+    format 2, it contains a single glyph and its set of control-point values for each
+    of the baselines.
+*/
+struct BslnFormat3Part {
+  UInt16              stdGlyph;
+  SInt16              ctlPoints[32];
+  SFNTLookupTable     mappingData;
+};
+typedef struct BslnFormat3Part          BslnFormat3Part;
+/* The BslnFormatUnion is a union containing the format-specific parts of the baseline table. */
+union BslnFormatUnion {
+  BslnFormat0Part     fmt0Part;
+  BslnFormat1Part     fmt1Part;
+  BslnFormat2Part     fmt2Part;
+  BslnFormat3Part     fmt3Part;
+};
+typedef union BslnFormatUnion           BslnFormatUnion;
+/* The table format used in BaselineTable */
+
+typedef UInt16                          BslnTableFormat;
+/* BaselineTable defines the top-level format of the baseline table in the font. */
+struct BslnTable {
+  Fixed               version;
+  BslnTableFormat     format;
+  UInt16              defaultBaseline;
+  BslnFormatUnion     parts;
+};
+typedef struct BslnTable                BslnTable;
+typedef BslnTable *                     BslnTablePtr;
 /* --------------------------------------------------------------------------- */
 /* FORMATS FOR TABLE: 'ALMX' */
 /* TYPES */
@@ -1478,6 +1736,33 @@ struct ROTAGlyphEntry {                       /* lookup data for ROTA table */
   SInt16              VBaselineOffset;        /* x offset to the rotated vertical baseline */
 };
 typedef struct ROTAGlyphEntry           ROTAGlyphEntry;
+/* --------------------------------------------------------------------------- */
+/* FORMATS FOR TABLE 'ankr' */
+/* CONSTANTS */
+enum {
+  kANKRCurrentVersion = 0
+};
+
+/* TYPES */
+struct AnchorPoint {
+  SInt16               x;                     /* x coordinate of anchor point */
+  SInt16               y;                     /* y coordinate of anchor point */
+};
+typedef struct AnchorPoint              AnchorPoint;
+
+struct AnchorPointTable {
+  UInt32              nPoints;                /* number of anchor points defined for this glyph */
+  AnchorPoint         points[1];              /* first anchor point starts here */
+};
+typedef struct AnchorPointTable         AnchorPointTable;
+
+struct AnkrTable {
+  UInt16              version;                /* 1 */
+  UInt16              flags;                  /* never leave home without them (see 'Zapf') */
+  UInt32              lookupTableOffset;      /* Byte offset to lookup table mapping glyphs to offset into anchor point table */
+  UInt32              anchorPointTableOffset; /* Byte offset to start of anchor point table */
+};
+typedef struct AnkrTable                AnkrTable;
 /* --------------------------------------------------------------------------- */
 
 #pragma pack(pop)

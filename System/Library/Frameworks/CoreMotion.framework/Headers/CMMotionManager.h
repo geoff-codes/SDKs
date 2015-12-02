@@ -269,7 +269,7 @@ NS_CLASS_AVAILABLE(NA,4_0)
 - (void)startMagnetometerUpdates NS_AVAILABLE(NA,5_0);
 
 /*
- *  startMagnetometerUpdatesWithHandler:
+ *  startMagnetometerUpdatesToQueue:withHandler:
  *  
  *  Discussion:
  *      Starts magnetometer updates, providing data to the given handler through the given queue. 

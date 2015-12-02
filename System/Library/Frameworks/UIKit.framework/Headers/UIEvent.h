@@ -2,7 +2,7 @@
 //  UIEvent.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,13 +11,13 @@
 
 @class UIWindow, UIView, UIGestureRecognizer;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIEventType) {
     UIEventTypeTouches,
     UIEventTypeMotion,
     UIEventTypeRemoteControl,
-} UIEventType;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIEventSubtype) {
     // available in iPhone OS 3.0
     UIEventSubtypeNone                              = 0,
     
@@ -35,22 +35,22 @@ typedef enum {
     UIEventSubtypeRemoteControlEndSeekingBackward   = 107,
     UIEventSubtypeRemoteControlBeginSeekingForward  = 108,
     UIEventSubtypeRemoteControlEndSeekingForward    = 109,
-} UIEventSubtype;
+};
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIEvent : NSObject
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIEvent : NSObject
 {
   @private
     NSTimeInterval _timestamp;
 }
 
-@property(nonatomic,readonly) UIEventType     type __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-@property(nonatomic,readonly) UIEventSubtype  subtype __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property(nonatomic,readonly) UIEventType     type NS_AVAILABLE_IOS(3_0);
+@property(nonatomic,readonly) UIEventSubtype  subtype NS_AVAILABLE_IOS(3_0);
 
 @property(nonatomic,readonly) NSTimeInterval  timestamp;
 
 - (NSSet *)allTouches;
 - (NSSet *)touchesForWindow:(UIWindow *)window;
 - (NSSet *)touchesForView:(UIView *)view;
-- (NSSet *)touchesForGestureRecognizer:(UIGestureRecognizer *)gesture __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+- (NSSet *)touchesForGestureRecognizer:(UIGestureRecognizer *)gesture NS_AVAILABLE_IOS(3_2);
 
 @end

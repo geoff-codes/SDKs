@@ -24,6 +24,24 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     AVVideoCompositionInternal    *_videoComposition;
 }
 
+/*  
+ @method		videoCompositionWithPropertiesOfAsset:
+ @abstract
+   Returns a new instance of AVVideoComposition with values and instructions suitable for presenting the video tracks of the specified asset according to its temporal and geometric properties and those of its tracks.
+ @param			asset		An instance of AVAsset. Ensure that the duration and tracks properties of the asset are already loaded before invoking this method.
+ @result		An instance of AVVideoComposition.
+ @discussion
+   The returned AVVideoComposition will have instructions that respect the spatial properties and timeRanges of the specified asset's video tracks.
+   It will also have the following values for its properties:
+   
+   	- A value for frameDuration short enough to accommodate the greatest nominalFrameRate among the asset's video tracks. If the nominalFrameRate of all of the asset's video tracks is 0, a default framerate of 30fps is used.
+   	- If the specified asset is an instance of AVComposition, the renderSize will be set to the naturalSize of the AVComposition; otherwise the renderSize will be set to a value that encompasses all of the asset's video tracks.
+   	- A renderScale of 1.0.
+   	- A nil animationTool.
+
+*/
++ (AVVideoComposition *)videoCompositionWithPropertiesOfAsset:(AVAsset *)asset NS_AVAILABLE(TBD, 6_0);
+
 /* indicates the interval which the video composition, when enabled, should render composed video frames */
 @property (nonatomic, readonly) CMTime frameDuration;
 
@@ -342,6 +360,10 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 								to obtain a trackID that's guaranteed not to coincide with the trackID of any track of the asset.
 								AVVideoCompositionInstructions should reference trackID where the rendered animation should be included.
 								For best performance, no transform should be set in the AVVideoCompositionLayerInstruction for this trackID.
+								Be aware that on iOS, CALayers backing a UIView usually have their content flipped (as defined by the
+								-contentsAreFlipped method). It may be required to insert a CALayer with its geometryFlipped property set
+								to YES in the layer hierarchy to get the same result when attaching a CALayer to a AVVideoCompositionCoreAnimationTool
+								as when using it to back a UIView.
 */
 + (AVVideoCompositionCoreAnimationTool *)videoCompositionCoreAnimationToolWithAdditionalLayer:(CALayer *)layer asTrackID:(CMPersistentTrackID)trackID;
 
@@ -351,6 +373,10 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 	@discussion					Place composited video frames in videoLayer and render animationLayer 
 								to produce the final frame. Normally videoLayer should be in animationLayer's sublayer tree.
 								The animationLayer should not come from, or be added to, another layer tree.
+								Be aware that on iOS, CALayers backing a UIView usually have their content flipped (as defined by the
+								-contentsAreFlipped method). It may be required to insert a CALayer with its geometryFlipped property set
+								to YES in the layer hierarchy to get the same result when attaching a CALayer to a AVVideoCompositionCoreAnimationTool
+								as when using it to back a UIView.
 */
 + (AVVideoCompositionCoreAnimationTool *)videoCompositionCoreAnimationToolWithPostProcessingAsVideoLayer:(CALayer *)videoLayer inLayer:(CALayer *)animationLayer;
 
@@ -382,7 +408,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
    In the course of validation, the receiver will invoke its validationDelegate with reference to any trouble spots in the video composition.
    An exception will be raised if the delegate modifies the receiver's array of instructions or the array of layerInstructions of any AVVideoCompositionInstruction contained therein during validation.
 */
-- (BOOL)isValidForAsset:(AVAsset *)asset timeRange:(CMTimeRange)timeRange validationDelegate:(id<AVVideoCompositionValidationHandling>)validationDelegate NS_AVAILABLE(TBD, 5_0);
+- (BOOL)isValidForAsset:(AVAsset *)asset timeRange:(CMTimeRange)timeRange validationDelegate:(id<AVVideoCompositionValidationHandling>)validationDelegate NS_AVAILABLE(10_8, 5_0);
 
 @end
 
@@ -397,7 +423,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @result
    An indication of whether the AVVideoComposition should continue validation in order to report additional problems that may exist.
 */
-- (BOOL)videoComposition:(AVVideoComposition *)videoComposition shouldContinueValidatingAfterFindingInvalidValueForKey:(NSString *)key NS_AVAILABLE(TBD, 5_0);
+- (BOOL)videoComposition:(AVVideoComposition *)videoComposition shouldContinueValidatingAfterFindingInvalidValueForKey:(NSString *)key NS_AVAILABLE(10_8, 5_0);
 
 /*!
  @method		videoComposition:shouldContinueValidatingAfterFindingEmptyTimeRange:
@@ -406,7 +432,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @result
    An indication of whether the AVVideoComposition should continue validation in order to report additional problems that may exist.
 */
-- (BOOL)videoComposition:(AVVideoComposition *)videoComposition shouldContinueValidatingAfterFindingEmptyTimeRange:(CMTimeRange)timeRange NS_AVAILABLE(TBD, 5_0);
+- (BOOL)videoComposition:(AVVideoComposition *)videoComposition shouldContinueValidatingAfterFindingEmptyTimeRange:(CMTimeRange)timeRange NS_AVAILABLE(10_8, 5_0);
 
 /*!
  @method		videoComposition:shouldContinueValidatingAfterFindingInvalidTimeRangeInInstruction:
@@ -417,7 +443,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @result
    An indication of whether the AVVideoComposition should continue validation in order to report additional problems that may exist.
 */
-- (BOOL)videoComposition:(AVVideoComposition *)videoComposition shouldContinueValidatingAfterFindingInvalidTimeRangeInInstruction:(AVVideoCompositionInstruction *)videoCompositionInstruction NS_AVAILABLE(TBD, 5_0);
+- (BOOL)videoComposition:(AVVideoComposition *)videoComposition shouldContinueValidatingAfterFindingInvalidTimeRangeInInstruction:(AVVideoCompositionInstruction *)videoCompositionInstruction NS_AVAILABLE(10_8, 5_0);
 
 /*!
  @method		videoComposition:shouldContinueValidatingAfterFindingInvalidTrackIDInInstruction:layerInstruction:asset:
@@ -426,6 +452,6 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @result
    An indication of whether the AVVideoComposition should continue validation in order to report additional problems that may exist.
 */
-- (BOOL)videoComposition:(AVVideoComposition *)videoComposition shouldContinueValidatingAfterFindingInvalidTrackIDInInstruction:(AVVideoCompositionInstruction *)videoCompositionInstruction layerInstruction:(AVVideoCompositionLayerInstruction *)layerInstruction asset:(AVAsset *)asset NS_AVAILABLE(TBD, 5_0);
+- (BOOL)videoComposition:(AVVideoComposition *)videoComposition shouldContinueValidatingAfterFindingInvalidTrackIDInInstruction:(AVVideoCompositionInstruction *)videoCompositionInstruction layerInstruction:(AVVideoCompositionLayerInstruction *)layerInstruction asset:(AVAsset *)asset NS_AVAILABLE(10_8, 5_0);
 
 @end

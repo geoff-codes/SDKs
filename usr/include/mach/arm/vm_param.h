@@ -40,11 +40,12 @@
 #define VM_MIN_ADDRESS		((vm_address_t) 0x00000000)
 #define VM_MAX_ADDRESS		((vm_address_t) 0x80000000)
 
-#define HIGH_EXC_VECTORS	((vm_address_t) 0xFFFF0000) /* exception vectors virt */
+#define HIGH_EXC_VECTORS	((vm_address_t) 0xFFFF0000)
 
 #define VM_MIN_KERNEL_ADDRESS	((vm_address_t) 0x80000000)
 #define VM_MIN_KERNEL_AND_KEXT_ADDRESS VM_MIN_KERNEL_ADDRESS
-#define VM_MAX_KERNEL_ADDRESS	((vm_address_t) 0xFFFEFFFF) /* end short of exc vecs */
+#define VM_HIGH_KERNEL_WINDOW	((vm_address_t) 0xFFFE0000)
+#define VM_MAX_KERNEL_ADDRESS	((vm_address_t) 0xFFFEFFFF)
 
 #define VM_KERNEL_ADDRESS(va)	((((vm_address_t)(va))>=VM_MIN_KERNEL_ADDRESS) && \
               (((vm_address_t)(va))<=VM_MAX_KERNEL_ADDRESS))

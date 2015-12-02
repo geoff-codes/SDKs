@@ -2,14 +2,14 @@
 //  UIControl.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIKitDefines.h>
 
-enum {
+typedef NS_OPTIONS(NSUInteger, UIControlEvents) {
     UIControlEventTouchDown           = 1 <<  0,      // on all touch downs
     UIControlEventTouchDownRepeat     = 1 <<  1,      // on multiple touchdowns (tap count > 1)
     UIControlEventTouchDragInside     = 1 <<  2,
@@ -33,38 +33,36 @@ enum {
     UIControlEventSystemReserved      = 0xF0000000,  // range reserved for internal framework use
     UIControlEventAllEvents           = 0xFFFFFFFF
 };
-typedef NSUInteger UIControlEvents;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIControlContentVerticalAlignment) {
     UIControlContentVerticalAlignmentCenter  = 0,
     UIControlContentVerticalAlignmentTop     = 1,
     UIControlContentVerticalAlignmentBottom  = 2,
     UIControlContentVerticalAlignmentFill    = 3,
-} UIControlContentVerticalAlignment;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIControlContentHorizontalAlignment) {
     UIControlContentHorizontalAlignmentCenter = 0,
     UIControlContentHorizontalAlignmentLeft   = 1,
     UIControlContentHorizontalAlignmentRight  = 2,
     UIControlContentHorizontalAlignmentFill   = 3,
-} UIControlContentHorizontalAlignment;
+};
 
-enum {
-    UIControlStateNormal       = 0,                       
+typedef NS_OPTIONS(NSUInteger, UIControlState) {
+    UIControlStateNormal       = 0,
     UIControlStateHighlighted  = 1 << 0,                  // used when UIControl isHighlighted is set
     UIControlStateDisabled     = 1 << 1,
     UIControlStateSelected     = 1 << 2,                  // flag usable by app (see below)
     UIControlStateApplication  = 0x00FF0000,              // additional flags available for application use
     UIControlStateReserved     = 0xFF000000               // flags reserved for internal framework use
 };
-typedef NSUInteger UIControlState;
 
 @class UITouch;
 @class UIEvent;
 
 //______________________________________________________
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIControl : UIView {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIControl : UIView {
   @package
     NSMutableArray* _targetActions;
     CGPoint         _previousPoint;

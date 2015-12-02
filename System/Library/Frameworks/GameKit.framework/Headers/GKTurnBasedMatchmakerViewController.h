@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <GameKit/GameKit.h>
 
-@class GKMatchMakerViewController, GKTurnBasedMatch;
+@class GKMatchmakerViewController, GKTurnBasedMatch;
 
 @protocol GKTurnBasedMatchmakerViewControllerDelegate;
 

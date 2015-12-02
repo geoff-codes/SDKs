@@ -31,6 +31,16 @@ SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPaymentQueue : NSObject {
 // Asynchronous.  Remove a finished (i.e. failed or completed) transaction from the queue.  Attempting to finish a purchasing transaction will throw an exception.
 - (void)finishTransaction:(SKPaymentTransaction *)transaction __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
+// Asynchronous.  Start the given downloads (SKDownload).
+- (void)startDownloads:(NSArray *)downloads __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+
+// Asynchronous.  Pause/resume downloads (SKDownload).
+- (void)pauseDownloads:(NSArray *)downloads __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+- (void)resumeDownloads:(NSArray *)downloads __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+
+// Asynchronous.  Cancel downloads (SKDownload)
+- (void)cancelDownloads:(NSArray *)downloads __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+
 // Observers are not retained.  The transactions array will only be synchronized with the server while the queue has observers.  This may require that the user authenticate.
 - (void)addTransactionObserver:(id <SKPaymentTransactionObserver>)observer __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 - (void)removeTransactionObserver:(id <SKPaymentTransactionObserver>)observer __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
@@ -55,5 +65,8 @@ SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPaymentQueue : NSObject {
 
 // Sent when all transactions from the user's purchase history have successfully been added back to the queue.
 - (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+
+// Sent when the download state has changed.
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedDownloads:(NSArray *)downloads __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 
 @end

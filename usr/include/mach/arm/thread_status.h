@@ -21,24 +21,25 @@
 /*
  * Flavors
  */
-#define ARM_THREAD_STATE	1
-#define ARM_VFP_STATE		2
-#define ARM_EXCEPTION_STATE	3
-#define ARM_DEBUG_STATE         4
-#define THREAD_STATE_NONE 	5
+
+#define ARM_THREAD_STATE		1
+#define ARM_VFP_STATE			2
+#define ARM_EXCEPTION_STATE		3
+#define ARM_DEBUG_STATE			4
+#define THREAD_STATE_NONE		5
 
 
-#define VALID_THREAD_STATE_FLAVOR(x) \
-((x == ARM_THREAD_STATE) || \
- (x == ARM_VFP_STATE) || \
- (x == ARM_EXCEPTION_STATE) || \
- (x == ARM_DEBUG_STATE) || \
- (x == THREAD_STATE_NONE ))
+#define VALID_THREAD_STATE_FLAVOR(x)\
+((x == ARM_THREAD_STATE) 		||	\
+ (x == ARM_VFP_STATE) 			||	\
+ (x == ARM_EXCEPTION_STATE) 	||	\
+ (x == ARM_DEBUG_STATE) 		||	\
+ (x == THREAD_STATE_NONE))
 
 typedef _STRUCT_ARM_THREAD_STATE		arm_thread_state_t;
 typedef _STRUCT_ARM_VFP_STATE			arm_vfp_state_t;
 typedef _STRUCT_ARM_EXCEPTION_STATE		arm_exception_state_t;
-typedef _STRUCT_ARM_DEBUG_STATE                 arm_debug_state_t;
+typedef _STRUCT_ARM_DEBUG_STATE			arm_debug_state_t;
 
 #define ARM_THREAD_STATE_COUNT ((mach_msg_type_number_t) \
    (sizeof (arm_thread_state_t)/sizeof(uint32_t)))

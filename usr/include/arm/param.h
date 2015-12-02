@@ -48,13 +48,15 @@
 #ifndef _ARM_PARAM_H_
 #define _ARM_PARAM_H_
 
+#include <arm/_param.h>
+
 /*
  * Round p (pointer or byte index) up to a correctly-aligned value for all
  * data types (int, long, ...).   The result is unsigned int and must be
  * cast to any desired pointer type.
  */
-#define	ALIGNBYTES	3
-#define	ALIGN(p)	(((unsigned int)(p) + ALIGNBYTES) &~ ALIGNBYTES)
+#define	ALIGNBYTES	__DARWIN_ALIGNBYTES
+#define	ALIGN(p)	__DARWIN_ALIGN(p)
 
 #define	NBPG		4096		/* bytes/page */
 #define	PGOFSET		(NBPG-1)	/* byte offset into page */

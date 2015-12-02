@@ -1,8 +1,8 @@
 /*
  *  CoreText.h
- *	CoreText
+ *  CoreText
  *
- *  Copyright (c) 2006-2011 Apple Inc. All rights reserved.
+ *  Copyright 2006-2012 Apple Inc. All rights reserved.
  *
  */
 
@@ -22,9 +22,7 @@
 #include <CoreText/CTFont.h>
 #include <CoreText/CTFontCollection.h>
 #include <CoreText/CTFontDescriptor.h>
-#if !TARGET_OS_IPHONE || __IPHONE_OS_VERSION_MIN_REQUIRED >= 40100
 #include <CoreText/CTFontManager.h>
-#endif // !TARGET_OS_IPHONE || __IPHONE_OS_VERSION_MIN_REQUIRED >= 40100
 #include <CoreText/CTFontTraits.h>
 #include <CoreText/CTFrame.h>
 #include <CoreText/CTFramesetter.h>
@@ -38,32 +36,30 @@
 #include <CoreText/CTStringAttributes.h>
 #include <CoreText/CTTextTab.h>
 #include <CoreText/CTTypesetter.h>
-#if TARGET_OS_IPHONE
 #include <CoreText/SFNTLayoutTypes.h>
 #include <CoreText/SFNTTypes.h>
-#endif // TARGET_OS_IPHONE
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 /*!
-	@function	CTGetCoreTextVersion
-	@abstract	Returns the version of the CoreText framework.
+    @function   CTGetCoreTextVersion
+    @abstract   Returns the version of the CoreText framework.
 
-	@discussion	This function returns a number indicating the version of the
-				CoreText framework. Note that framework version is not always
-				an accurate indicator of feature availability. The recommended
-				way to use this function is first to check that the function
-				pointer is non-NULL, followed by calling it and comparing its
-				result to a defined constant (or constants). For example, to
-				determine whether the CoreText API is available:
-					if (&CTGetCoreTextVersion != NULL && CTGetCoreTextVersion() >= kCTVersionNumber10_5) {
-						// CoreText API is available
-					}
+    @discussion This function returns a number indicating the version of the
+                CoreText framework. Note that framework version is not always
+                an accurate indicator of feature availability. The recommended
+                way to use this function is first to check that the function
+                pointer is non-NULL, followed by calling it and comparing its
+                result to a defined constant (or constants). For example, to
+                determine whether the CoreText API is available:
+                    if (&CTGetCoreTextVersion != NULL && CTGetCoreTextVersion() >= kCTVersionNumber10_5) {
+                        // CoreText API is available
+                    }
 
-	@result		The version number. This value is for comparison with the
-				constants beginning with kCTVersionNumber.
+    @result     The version number. This value is for comparison with the
+                constants beginning with kCTVersionNumber.
 */
 
 uint32_t CTGetCoreTextVersion( void ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
@@ -74,6 +70,7 @@ uint32_t CTGetCoreTextVersion( void ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHON
 #define kCTVersionNumber10_5_5 0x00020003
 #define kCTVersionNumber10_6 0x00030000
 #define kCTVersionNumber10_7 0x00040000
+#define kCTVersionNumber10_8 0x00050000
 
 #if defined(__cplusplus)
 }

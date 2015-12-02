@@ -80,7 +80,7 @@ AVF_EXPORT NSString *const AVMetadataQuickTimeUserDataKeyLocationISO6709        
 AVF_EXPORT NSString *const AVMetadataQuickTimeUserDataKeyTrackName                       NS_AVAILABLE(10_7, 4_0);
 AVF_EXPORT NSString *const AVMetadataQuickTimeUserDataKeyCredits                         NS_AVAILABLE(10_7, 4_0);
 AVF_EXPORT NSString *const AVMetadataQuickTimeUserDataKeyPhonogramRights                 NS_AVAILABLE(10_7, 4_0);
-AVF_EXPORT NSString *const AVMetadataQuickTimeUserDataKeyTaggedCharacteristic            NS_AVAILABLE(TBD, 5_0);
+AVF_EXPORT NSString *const AVMetadataQuickTimeUserDataKeyTaggedCharacteristic            NS_AVAILABLE(10_8, 5_0);
 
 AVF_EXPORT NSString *const AVMetadataISOUserDataKeyCopyright                             NS_AVAILABLE(10_7, 4_0);
 AVF_EXPORT NSString *const AVMetadata3GPUserDataKeyCopyright                             NS_AVAILABLE(10_7, 4_0);

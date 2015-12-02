@@ -48,6 +48,9 @@ extern "C" {
     Developers should be aware that it is incorrect to call any Morphology function on image data that is 
     premultiplied by the alpha channel. Doing so may result in images containing color channel data that 
     is larger than the alpha channel for some pixels. 
+ 
+    The ARGB8888 and ARGBFFFF forms of these functions work equally well for other channel orders such as 
+    RGBA8888 and BGRAFFFF.
 */
 vImage_Error vImageDilate_Planar8( const vImage_Buffer *src, const vImage_Buffer *dest, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y,  const unsigned char *kernel, vImagePixelCount kernel_height, vImagePixelCount kernel_width, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );
 vImage_Error vImageDilate_PlanarF( const vImage_Buffer *src, const vImage_Buffer *dest, vImagePixelCount srcOffsetToROI_X, vImagePixelCount srcOffsetToROI_Y,  const float *kernel, vImagePixelCount kernel_height, vImagePixelCount kernel_width, vImage_Flags flags )    __OSX_AVAILABLE_STARTING( __MAC_10_3, __IPHONE_5_0 );

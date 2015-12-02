@@ -1,6 +1,8 @@
 #ifndef __gl_es20ext_h_
 #define __gl_es20ext_h_
 
+#include <inttypes.h>
+
 #include <OpenGLES/ES2/gl.h>
 #include <Availability.h>
 
@@ -46,8 +48,10 @@ extern "C" {
 #   define GL_APIENTRYP GL_APIENTRY*
 #endif
 
+#define GL_APPLE_copy_texture_levels                            1
 #define GL_APPLE_framebuffer_multisample                        1
 #define GL_APPLE_rgb_422                                        1
+#define GL_APPLE_sync                                           1
 #define GL_APPLE_texture_format_BGRA8888                        1
 #define GL_APPLE_texture_max_level                              1
 #define GL_EXT_blend_minmax                                     1
@@ -55,13 +59,16 @@ extern "C" {
 #define GL_EXT_debug_label                                      1
 #define GL_EXT_debug_marker                                     1
 #define GL_EXT_discard_framebuffer                              1
+#define GL_EXT_map_buffer_range                                 1
 #define GL_EXT_occlusion_query_boolean                          1
 #define GL_EXT_read_format_bgra                                 1
 #define GL_EXT_separate_shader_objects                          1
-#define GL_EXT_shadow_samplers                                  1
+#define GL_EXT_shader_framebuffer_fetch                         1
 #define GL_EXT_shader_texture_lod                               1
+#define GL_EXT_shadow_samplers                                  1
 #define GL_EXT_texture_filter_anisotropic                       1
 #define GL_EXT_texture_rg                                       1
+#define GL_EXT_texture_storage                                  1
 #define GL_IMG_read_format                                      1
 #define GL_IMG_texture_compression_pvrtc                        1
 #define GL_OES_depth_texture                                    1
@@ -84,6 +91,12 @@ typedef unsigned short GLhalf;
 #endif
 #endif
 
+#if GL_APPLE_sync
+typedef int64_t GLint64;
+typedef uint64_t GLuint64;
+typedef struct __GLsync *GLsync;
+#endif
+
 /**************************************************************************/
 
 /*------------------------------------------------------------------------*
@@ -103,6 +116,25 @@ typedef unsigned short GLhalf;
 #define GL_RGB_422_APPLE                                        0x8A1F
 #define GL_UNSIGNED_SHORT_8_8_APPLE                             0x85BA
 #define GL_UNSIGNED_SHORT_8_8_REV_APPLE                         0x85BB
+#endif
+
+#if GL_APPLE_sync
+#define GL_MAX_SERVER_WAIT_TIMEOUT_APPLE                        0x9111
+#define GL_OBJECT_TYPE_APPLE                                    0x9112
+#define GL_SYNC_CONDITION_APPLE                                 0x9113
+#define GL_SYNC_STATUS_APPLE                                    0x9114
+#define GL_SYNC_FLAGS_APPLE                                     0x9115
+#define GL_SYNC_FENCE_APPLE                                     0x9116
+#define GL_SYNC_GPU_COMMANDS_COMPLETE_APPLE                     0x9117
+#define GL_UNSIGNALED_APPLE                                     0x9118
+#define GL_SIGNALED_APPLE                                       0x9119
+#define GL_ALREADY_SIGNALED_APPLE                               0x911A
+#define GL_TIMEOUT_EXPIRED_APPLE                                0x911B
+#define GL_CONDITION_SATISFIED_APPLE                            0x911C
+#define GL_WAIT_FAILED_APPLE                                    0x911D
+#define GL_SYNC_FLUSH_COMMANDS_BIT_APPLE                        0x00000001
+#define GL_TIMEOUT_IGNORED_APPLE                                0xFFFFFFFFFFFFFFFFull
+#define GL_SYNC_OBJECT_APPLE                                    0x8A53
 #endif
 
 #if GL_APPLE_texture_format_BGRA8888
@@ -141,12 +173,22 @@ typedef unsigned short GLhalf;
 #define GL_QUERY_OBJECT_EXT                                     0x9153
 #define GL_VERTEX_ARRAY_OBJECT_EXT                              0x9154
 #define GL_PROGRAM_PIPELINE_OBJECT_EXT                          0x8A4F
+/*      GL_SYNC_OBJECT_APPLE */
 #endif
 
 #if GL_EXT_discard_framebuffer
 #define GL_COLOR_EXT                                            0x1800
 #define GL_DEPTH_EXT                                            0x1801
 #define GL_STENCIL_EXT                                          0x1802
+#endif
+
+#if GL_EXT_map_buffer_range
+#define GL_MAP_READ_BIT_EXT                                     0x0001
+#define GL_MAP_WRITE_BIT_EXT                                    0x0002
+#define GL_MAP_INVALIDATE_RANGE_BIT_EXT                         0x0004
+#define GL_MAP_INVALIDATE_BUFFER_BIT_EXT                        0x0008
+#define GL_MAP_FLUSH_EXPLICIT_BIT_EXT                           0x0010
+#define GL_MAP_UNSYNCHRONIZED_BIT_EXT                           0x0020
 #endif
 
 #if GL_EXT_occlusion_query_boolean
@@ -176,10 +218,15 @@ typedef unsigned short GLhalf;
 #define GL_PROGRAM_PIPELINE_BINDING_EXT                         0x825A
 #endif
 
+#if GL_EXT_shader_framebuffer_fetch
+#define GL_FRAGMENT_SHADER_DISCARDS_SAMPLES_EXT                 0x8A52
+#endif
+
 #if GL_EXT_shadow_samplers
 #define GL_TEXTURE_COMPARE_MODE_EXT                             0x884C
 #define GL_TEXTURE_COMPARE_FUNC_EXT                             0x884D
 #define GL_COMPARE_REF_TO_TEXTURE_EXT                           0x884E
+#define GL_SAMPLER_2D_SHADOW_EXT                                0x8B62
 #endif
 
 #if GL_EXT_texture_filter_anisotropic
@@ -192,6 +239,26 @@ typedef unsigned short GLhalf;
 #define GL_RG_EXT                                               0x8227
 #define GL_R8_EXT                                               0x8229
 #define GL_RG8_EXT                                              0x822B
+#endif
+
+#if GL_EXT_texture_storage
+#define GL_TEXTURE_IMMUTABLE_FORMAT_EXT                         0x912F
+#define GL_ALPHA8_EXT                                           0x803C
+#define GL_LUMINANCE8_EXT                                       0x8040
+#define GL_LUMINANCE8_ALPHA8_EXT                                0x8045
+#define GL_BGRA8_EXT                                            0x93A1
+#define GL_RGBA32F_EXT                                          0x8814
+#define GL_RGB32F_EXT                                           0x8815
+#define GL_RG32F_EXT                                            0x8230
+#define GL_R32F_EXT                                             0x822E
+#define GL_ALPHA32F_EXT                                         0x8816
+#define GL_LUMINANCE32F_EXT                                     0x8818
+#define GL_LUMINANCE_ALPHA32F_EXT                               0x8819
+#define GL_ALPHA16F_EXT                                         0x881C
+#define GL_LUMINANCE16F_EXT                                     0x881E
+#define GL_LUMINANCE_ALPHA16F_EXT                               0x881F
+#define GL_DEPTH_COMPONENT32_OES                                0x81A7
+#define GL_RGB_RAW_422_APPLE                                    0x8A51
 #endif
 
 /*------------------------------------------------------------------------*
@@ -251,9 +318,23 @@ typedef unsigned short GLhalf;
 /*------------------------------------------------------------------------*
  * APPLE extension functions
  *------------------------------------------------------------------------*/
+#if GL_APPLE_copy_texture_levels
+GL_API GLvoid glCopyTextureLevelsAPPLE(GLuint destinationTexture, GLuint sourceTexture, GLint sourceBaseLevel, GLsizei sourceLevelCount) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+#endif
+
 #if GL_APPLE_framebuffer_multisample
 GL_API GLvoid glRenderbufferStorageMultisampleAPPLE(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 GL_API GLvoid glResolveMultisampleFramebufferAPPLE(void)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+#endif
+
+#if GL_APPLE_sync
+GL_API GLsync glFenceSyncAPPLE(GLenum condition, GLbitfield flags) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+GL_API GLboolean glIsSyncAPPLE(GLsync sync) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+GL_API void glDeleteSyncAPPLE(GLsync sync) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+GL_API GLenum glClientWaitSyncAPPLE(GLsync sync, GLbitfield flags, GLuint64 timeout) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+GL_API void glWaitSyncAPPLE(GLsync sync, GLbitfield flags, GLuint64 timeout) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+GL_API void glGetInteger64vAPPLE(GLenum pname, GLint64 *params) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+GL_API void glGetSyncivAPPLE(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 #endif
 
 /*------------------------------------------------------------------------*
@@ -274,6 +355,11 @@ GL_API GLvoid glPopGroupMarkerEXT(void)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPH
 GL_API GLvoid GL_APIENTRY glDiscardFramebufferEXT(GLenum target, GLsizei numAttachments, const GLenum *attachments)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 #endif
 
+#if GL_EXT_map_buffer_range
+GL_API GLvoid *glMapBufferRangeEXT(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+GL_API GLvoid glFlushMappedBufferRangeEXT(GLenum target, GLintptr offset, GLsizeiptr length) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+#endif
+
 #if GL_EXT_occlusion_query_boolean
 GL_API GLvoid glGenQueriesEXT(GLsizei n, GLuint *ids)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glDeleteQueriesEXT(GLsizei n, const GLuint *ids)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
@@ -281,7 +367,6 @@ GL_API GLboolean glIsQueryEXT(GLuint id)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IP
 GL_API GLvoid glBeginQueryEXT(GLenum target, GLuint id)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glEndQueryEXT(GLenum target)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glGetQueryivEXT(GLenum target, GLenum pname, GLint *params)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-GL_API GLvoid glGetQueryObjectivEXT(GLuint id, GLenum pname, GLint *params)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glGetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 #endif
 
@@ -321,6 +406,10 @@ GL_API GLvoid glProgramUniform4fvEXT(GLuint program, GLint location, GLsizei cou
 GL_API GLvoid glProgramUniformMatrix2fvEXT(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glProgramUniformMatrix3fvEXT(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glProgramUniformMatrix4fvEXT(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+#endif
+
+#if GL_EXT_texture_storage
+GL_API GLvoid glTexStorage2DEXT(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 #endif
 
 /*------------------------------------------------------------------------*

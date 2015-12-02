@@ -5,6 +5,8 @@
  *  Copyright (c) 2010 Apple Inc. All rights reserved.
  */
 
+#if TARGET_OS_IPHONE
+
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CLLocation.h>
 #import <CoreLocation/CLAvailability.h>
@@ -40,3 +42,4 @@ NS_CLASS_AVAILABLE(TBD,5_0)
 - (void)cancelGeocode;
 
 @end
+#endif //TARGET_OS_IPHONE

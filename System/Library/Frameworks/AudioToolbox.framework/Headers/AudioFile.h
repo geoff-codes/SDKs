@@ -66,6 +66,7 @@ extern "C"
 					Advanced Audio Coding (AAC) Audio Data Transport Stream (ADTS)
     @constant   kAudioFileMPEG4Type
     @constant   kAudioFileM4AType
+    @constant   kAudioFileM4BType
     @constant   kAudioFileCAFType
 					CoreAudio File Format.
 */
@@ -82,6 +83,7 @@ enum {
         kAudioFileAAC_ADTSType			= 'adts',
         kAudioFileMPEG4Type             = 'mp4f',
         kAudioFileM4AType               = 'm4af',
+        kAudioFileM4BType               = 'm4bf',
 		kAudioFileCAFType				= 'caff',
 		kAudioFile3GPType				= '3gpp',
 		kAudioFile3GP2Type				= '3gp2',		
@@ -481,7 +483,6 @@ typedef struct AudioFilePacketTableInfo AudioFilePacketTableInfo;
 #define kAFInfoDictionary_SourceBitDepth				"source bit depth"
 #define kAFInfoDictionary_ISRC							"ISRC"					// International Standard Recording Code
 #define kAFInfoDictionary_SubTitle						"subtitle"
-
 
 //=============================================================================
 //	Routines
@@ -959,7 +960,7 @@ AudioFileRemoveUserData ( AudioFileID			inAudioFile,
     @constant   kAudioFilePropertyPacketTableInfo 
 					Gets or sets an AudioFilePacketTableInfo struct for the file types that support it.
 					When setting, the sum of mNumberValidFrames, mPrimingFrames and mRemainderFrames must be the same as the total
-					number of frames in all packets. If not you will get a paramErr. The best way to ensure this is to get the value of
+					number of frames in all packets. If not you will get a kAudio_ParamError. The best way to ensure this is to get the value of
 					the property and make sure the sum of the three values you set has the same sum as the three values you got.
 	@constant	kAudioFilePropertyPacketSizeUpperBound
 					a UInt32 for the theoretical maximum packet size in the file (without actually scanning

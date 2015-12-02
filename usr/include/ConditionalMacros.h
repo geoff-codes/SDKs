@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2008 by Apple Inc.. All rights reserved.
+ * Copyright (c) 1993-2011 by Apple Inc.. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -37,9 +37,7 @@
 #ifndef __CONDITIONALMACROS__
 #define __CONDITIONALMACROS__
 
-#ifndef __AVAILABILITYMACROS__
-#include <AvailabilityMacros.h>
-#endif
+#include <Availability.h>
 /****************************************************************************************************
     UNIVERSAL_INTERFACES_VERSION
     
@@ -135,7 +133,11 @@
   #define TYPE_EXTENDED               0
 
   #ifdef __ppc__
-    #define TYPE_LONGDOUBLE_IS_DOUBLE 1
+  #ifdef __LONG_DOUBLE_128__
+     #define TYPE_LONGDOUBLE_IS_DOUBLE 0
+    #else
+      #define TYPE_LONGDOUBLE_IS_DOUBLE 1
+    #endif
   #else
     #define TYPE_LONGDOUBLE_IS_DOUBLE 0
   #endif

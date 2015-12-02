@@ -2,13 +2,13 @@
 //  UILocalNotification.h
 //  UIKit
 //
-//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
 
-UIKIT_CLASS_AVAILABLE(4_0) @interface UILocalNotification : NSObject<NSCopying, NSCoding>       // added in iOS 4.0
+NS_CLASS_AVAILABLE_IOS(4_0) @interface UILocalNotification : NSObject<NSCopying, NSCoding>       // added in iOS 4.0
 
 // scheduling
 @property(nonatomic,copy) NSDate *fireDate;
@@ -37,4 +37,4 @@ UIKIT_CLASS_AVAILABLE(4_0) @interface UILocalNotification : NSObject<NSCopying, 
 @end
 
 
-UIKIT_EXTERN NSString *const UILocalNotificationDefaultSoundName __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+UIKIT_EXTERN NSString *const UILocalNotificationDefaultSoundName NS_AVAILABLE_IOS(4_0);

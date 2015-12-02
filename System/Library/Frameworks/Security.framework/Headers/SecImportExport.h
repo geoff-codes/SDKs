@@ -46,7 +46,7 @@ extern "C" {
         a CFStringRef to be used to encrypt/decrypt.
 */
 extern CFStringRef kSecImportExportPassphrase
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
     @enum Import/Export item description
@@ -65,15 +65,15 @@ extern CFStringRef kSecImportExportPassphrase
         certificates for this item's identity
 */
 extern CFStringRef kSecImportItemLabel
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFStringRef kSecImportItemKeyID
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFStringRef kSecImportItemTrust
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFStringRef kSecImportItemCertChain
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 extern CFStringRef kSecImportItemIdentity
-    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
 	@function SecPKCS12Import
@@ -89,7 +89,7 @@ extern CFStringRef kSecImportItemIdentity
         incorrect password was passed, or data in the container got damaged.
 */
 OSStatus SecPKCS12Import(CFDataRef pkcs12_data, CFDictionaryRef options,
-    CFArrayRef *items) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    CFArrayRef *items) __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 #if defined(__cplusplus)
 }

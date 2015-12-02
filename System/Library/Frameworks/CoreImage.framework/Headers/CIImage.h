@@ -24,7 +24,7 @@ CORE_IMAGE_CLASS_EXPORT
 
 typedef int CIFormat;
 
-CORE_IMAGE_EXPORT CIFormat kCIFormatARGB8 __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA);
+CORE_IMAGE_EXPORT CIFormat kCIFormatARGB8 __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_6_0);
 CORE_IMAGE_EXPORT CIFormat kCIFormatBGRA8 __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 CORE_IMAGE_EXPORT CIFormat kCIFormatRGBA8 __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
@@ -32,7 +32,7 @@ CORE_IMAGE_EXPORT CIFormat kCIFormatRGBA16 __OSX_AVAILABLE_STARTING(__MAC_10_4, 
 CORE_IMAGE_EXPORT CIFormat kCIFormatRGBAf __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA);
 
 /* RGBA values that are IEEE 754-2008 half float compliant. */
-CORE_IMAGE_EXPORT CIFormat kCIFormatRGBAh __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA);
+CORE_IMAGE_EXPORT CIFormat kCIFormatRGBAh __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_6_0);
 
 /* Image dictionary keys. */
 
@@ -46,7 +46,7 @@ CORE_IMAGE_EXPORT NSString *kCIImageColorSpace;
  *   If this option is not specified, the properties will be set to CGImageSourceCopyPropertiesAtIndex.
  *   If this option is [NSNull null], the properties will be set to nil.
  */
-CORE_IMAGE_EXPORT NSString *kCIImageProperties __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+CORE_IMAGE_EXPORT NSString *kCIImageProperties __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_5_0);
 
 /* Creates a new image from the contents of 'image'. */
 + (CIImage *)imageWithCGImage:(CGImageRef)image;
@@ -61,7 +61,7 @@ CORE_IMAGE_EXPORT NSString *kCIImageProperties __OSX_AVAILABLE_STARTING(__MAC_NA
  * the format and size of each pixel. 'cs' defines the color space
  * that the image is defined in, if nil, the image is not color matched. */
 + (CIImage *)imageWithBitmapData:(NSData *)d bytesPerRow:(size_t)bpr
-             size:(CGSize)size format:(CIFormat)f colorSpace:(CGColorSpaceRef)cs;
+ size:(CGSize)size format:(CIFormat)f colorSpace:(CGColorSpaceRef)cs;
 
 /* Creates a new image referencing the contents of the GL texture object
  * with identifier 'name'. The texture should have dimensions as defined
@@ -69,7 +69,7 @@ CORE_IMAGE_EXPORT NSString *kCIImageProperties __OSX_AVAILABLE_STARTING(__MAC_NA
  * flipped vertically when referenced. 'cs' defines the color space
  * that the image is defined in, if nil, the texture is not color matched.*/
 + (CIImage *)imageWithTexture:(unsigned int)name size:(CGSize)size
- flipped:(BOOL)flag colorSpace:(CGColorSpaceRef)cs __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA);
+ flipped:(BOOL)flag colorSpace:(CGColorSpaceRef)cs __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_6_0);
 
 + (CIImage *)imageWithContentsOfURL:(NSURL *)url;
 + (CIImage *)imageWithContentsOfURL:(NSURL *)url options:(NSDictionary *)d;
@@ -113,8 +113,7 @@ CORE_IMAGE_EXPORT NSString *kCIImageProperties __OSX_AVAILABLE_STARTING(__MAC_NA
 - (id)initWithBitmapData:(NSData *)d bytesPerRow:(size_t)bpr size:(CGSize)size 
 format:(CIFormat)f colorSpace:(CGColorSpaceRef)c;
 
-- (id)initWithTexture:(unsigned int)name size:(CGSize)size flipped:(BOOL)flag
-colorSpace:(CGColorSpaceRef)cs  __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA);
+- (id)initWithTexture:(unsigned int)name size:(CGSize)size flipped:(BOOL)flag colorSpace:(CGColorSpaceRef)cs __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_6_0);
 
 - (id)initWithContentsOfURL:(NSURL *)url;
 - (id)initWithContentsOfURL:(NSURL *)url options:(NSDictionary *)d;
@@ -145,7 +144,7 @@ colorSpace:(CGColorSpaceRef)cs  __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA
 /* Returns the metadata properties of an image. If the image is the
  * output of one or more CIFilters, then the metadata of the root inputImage
  * will be returned. See also kCIImageProperties. */
-- (NSDictionary*)properties __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+- (NSDictionary*)properties __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_5_0);
 
 /* Return the Domain of Definition of the image. */
 - (CIFilterShape *)definition __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA);
@@ -171,18 +170,18 @@ colorSpace:(CGColorSpaceRef)cs  __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA
 /* If CFBoolean value is false then dont attempt to apply enhancement filters.
  * If not specified, the option is assumed to be present and true.
  */
-CORE_IMAGE_EXPORT NSString *kCIImageAutoAdjustEnhance __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+CORE_IMAGE_EXPORT NSString *kCIImageAutoAdjustEnhance __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_5_0);
 
 /* If CFBoolean value is false then dont attempt to apply red eye filter.
  * If not specified, the option is assumed to be present and true.
  */
-CORE_IMAGE_EXPORT NSString *kCIImageAutoAdjustRedEye __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+CORE_IMAGE_EXPORT NSString *kCIImageAutoAdjustRedEye __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_5_0);
 
 /* If value is an array of detected CIFeatures, then use these features
  * to determine the AutoAdjustEnhance and or AutoAdjustRedEye filters.
  * If not specified, reciever will call CIDetector.
  */
-CORE_IMAGE_EXPORT NSString *kCIImageAutoAdjustFeatures __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+CORE_IMAGE_EXPORT NSString *kCIImageAutoAdjustFeatures __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_5_0);
 
 
 /* Return an array of filters to apply to an image to improve its 
@@ -194,7 +193,7 @@ CORE_IMAGE_EXPORT NSString *kCIImageAutoAdjustFeatures __OSX_AVAILABLE_STARTING(
  * based on that orientation but any coordinates in the returned filters will
  * still be based on those of the sender image.
  */
-- (NSArray *)autoAdjustmentFilters __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
-- (NSArray *)autoAdjustmentFiltersWithOptions:(NSDictionary *)dict __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+- (NSArray *)autoAdjustmentFilters __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_5_0);
+- (NSArray *)autoAdjustmentFiltersWithOptions:(NSDictionary *)dict __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_5_0);
 
 @end

@@ -58,7 +58,7 @@ typedef struct vImage_AffineTransform
 /*
  *  vImage_CGAffineTransform is a convenience type to match CGAffineTransform 
  */
-#if defined( MAC_OS_X_VERSION_10_6 ) && VIMAGE_AFFINETRANSFORM_DOUBLE_IS_AVAILABLE       /* Interfaces that use this are only available on MacOS X.6 and later */
+#if VIMAGE_AFFINETRANSFORM_DOUBLE_IS_AVAILABLE       /* Interfaces that use this are only available on MacOS X.6 and later */
     #define VIMAGE_CGAFFINETRANSFORM_IS_AVAILABLE			1
     #if defined( __LP64__ )
         typedef    vImage_AffineTransform_Double    vImage_CGAffineTransform;
@@ -76,6 +76,7 @@ typedef uint8_t     Pixel_8;            /* 8 bit planar pixel value             
 typedef float       Pixel_F;            /* floating point planar pixel value                                                            */
 typedef uint8_t     Pixel_8888[4];      /* ARGB interleaved (8 bit/channel) pixel value. uint8_t[4] = { alpha, red, green, blue }       */
 typedef float       Pixel_FFFF[4];      /* ARGB interleaved (floating point) pixel value. float[4] = { alpha, red, green, blue }        */
+typedef uint16_t    Pixel_16U;           /* 16 bit pixel value for UV data                                                               */
 
 typedef void*       ResamplingFilter;
 typedef void*       GammaFunction;

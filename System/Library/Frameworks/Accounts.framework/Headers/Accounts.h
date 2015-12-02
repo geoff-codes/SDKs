@@ -2,7 +2,7 @@
 //  Accounts.h
 //  Accounts
 //
-//  Copyright 2011 Apple, Inc. All rights reserved.
+//  Copyright (c) 2011-2012 Apple Inc. All rights reserved.
 //
 
 #import <Accounts/AccountsDefines.h>

@@ -2,7 +2,7 @@
 //  UIView.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,15 +10,16 @@
 #import <UIKit/UIInterface.h>
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UIAppearance.h>
+#import <UIKit/NSLayoutConstraint.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIViewAnimationCurve) {
     UIViewAnimationCurveEaseInOut,         // slow at beginning and end
     UIViewAnimationCurveEaseIn,            // slow at beginning
     UIViewAnimationCurveEaseOut,           // slow at end
     UIViewAnimationCurveLinear
-} UIViewAnimationCurve;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIViewContentMode) {
     UIViewContentModeScaleToFill,
     UIViewContentModeScaleAspectFit,      // contents scaled to fit with fixed aspect. remainder is transparent
     UIViewContentModeScaleAspectFill,     // contents scaled to fill with fixed aspect. some portion of content may be clipped.
@@ -32,17 +33,17 @@ typedef enum {
     UIViewContentModeTopRight,
     UIViewContentModeBottomLeft,
     UIViewContentModeBottomRight,
-} UIViewContentMode;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UIViewAnimationTransition) {
     UIViewAnimationTransitionNone,
     UIViewAnimationTransitionFlipFromLeft,
     UIViewAnimationTransitionFlipFromRight,
     UIViewAnimationTransitionCurlUp,
     UIViewAnimationTransitionCurlDown,
-} UIViewAnimationTransition;
+};
 
-enum {
+typedef NS_OPTIONS(NSUInteger, UIViewAutoresizing) {
     UIViewAutoresizingNone                 = 0,
     UIViewAutoresizingFlexibleLeftMargin   = 1 << 0,
     UIViewAutoresizingFlexibleWidth        = 1 << 1,
@@ -51,10 +52,8 @@ enum {
     UIViewAutoresizingFlexibleHeight       = 1 << 4,
     UIViewAutoresizingFlexibleBottomMargin = 1 << 5
 };
-typedef NSUInteger UIViewAutoresizing;
 
-#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-enum {
+typedef NS_OPTIONS(NSUInteger, UIViewAnimationOptions) {
     UIViewAnimationOptionLayoutSubviews            = 1 <<  0,
     UIViewAnimationOptionAllowUserInteraction      = 1 <<  1, // turn on user interaction while animating
     UIViewAnimationOptionBeginFromCurrentState     = 1 <<  2, // start all views from current value, not initial value
@@ -78,13 +77,11 @@ enum {
     UIViewAnimationOptionTransitionCrossDissolve   = 5 << 20,
     UIViewAnimationOptionTransitionFlipFromTop     = 6 << 20,
     UIViewAnimationOptionTransitionFlipFromBottom  = 7 << 20,
-};
-typedef NSUInteger UIViewAnimationOptions;
-#endif
+} NS_ENUM_AVAILABLE_IOS(4_0);
 
 @class UIEvent, UIWindow, UIViewController, UIColor, UIGestureRecognizer, CALayer;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding, UIAppearance, UIAppearanceContainer> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIView : UIResponder<NSCoding, UIAppearance, UIAppearanceContainer> {
   @package
     CALayer        *_layer;
     id              _tapInfo;
@@ -128,10 +125,28 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding, UIAppearanc
         unsigned int needsDisplayOnBoundsChange:1;
         unsigned int hasTiledLayer:1;
         unsigned int hasLargeContent:1;
-        unsigned int isInAnimatedVCTransition:1;
+        unsigned int unused:1;
         unsigned int traversalMark:1;
         unsigned int appearanceIsInvalid:1;
         unsigned int monitorsSubtree:1;
+        unsigned int layoutEngineIsOverridden:1;
+        unsigned int constraintsAreClean:1;
+        unsigned int subviewLayoutConstraintsAreClean:1;
+        unsigned int potentiallyHasDanglyConstraints:1;
+        unsigned int doesNotTranslateAutoresizingMaskIntoConstraints:1;
+        unsigned int autolayoutIsClean:1;
+        unsigned int subviewsAutolayoutIsClean:1;
+        unsigned int layoutFlushingDisabled:1;
+        unsigned int layingOutFromConstraints:1;
+        unsigned int wantsAutolayout:1;
+        unsigned int subviewWantsAutolayout:1;
+        unsigned int isApplyingValuesFromEngine:1;
+        unsigned int isInAutolayout:1;
+        unsigned int isUpdatingAutoresizingConstraints:1;
+        unsigned int isUpdatingConstraints:1;
+        unsigned int stayHiddenAwaitingReuse:1;
+        unsigned int stayHiddenAfterReuse:1;
+        unsigned int skippedLayoutWhileHiddenForReuse:1;
     } _viewFlags;
 }
 
@@ -154,7 +169,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding, UIAppearanc
 @property(nonatomic) CGRect            bounds;      // default bounds is zero origin, frame size. animatable
 @property(nonatomic) CGPoint           center;      // center is center of frame. animatable
 @property(nonatomic) CGAffineTransform transform;   // default is CGAffineTransformIdentity. animatable
-@property(nonatomic) CGFloat           contentScaleFactor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic) CGFloat           contentScaleFactor NS_AVAILABLE_IOS(4_0);
 
 @property(nonatomic,getter=isMultipleTouchEnabled) BOOL multipleTouchEnabled;   // default is NO
 @property(nonatomic,getter=isExclusiveTouch) BOOL       exclusiveTouch;         // default is NO
@@ -207,7 +222,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding, UIAppearanc
 - (void)setNeedsLayout;
 - (void)layoutIfNeeded;
 
-- (void)layoutSubviews;    // override point. called by layoutIfNeeded automatically. base implementation does nothing
+- (void)layoutSubviews;    // override point. called by layoutIfNeeded automatically. As of iOS 6.0, when constraints-based layout is used the base implementation applies the constraints-based layout, otherwise it does nothing.
 
 @end
 
@@ -225,7 +240,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding, UIAppearanc
 @property(nonatomic)                 BOOL              clearsContextBeforeDrawing; // default is YES. ignored for opaque views. for non-opaque views causes the active CGContext in drawRect: to be pre-filled with transparent pixels
 @property(nonatomic,getter=isHidden) BOOL              hidden;                     // default is NO. doesn't check superviews
 @property(nonatomic)                 UIViewContentMode contentMode;                // default is UIViewContentModeScaleToFill
-@property(nonatomic)                 CGRect            contentStretch __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // animatable. default is unit rectangle {{0,0} {1,1}}
+@property(nonatomic)                 CGRect            contentStretch NS_DEPRECATED_IOS(3_0,6_0); // animatable. default is unit rectangle {{0,0} {1,1}}. Now deprecated: please use -[UIImage resizableImageWithCapInsets:] to achieve the same effect.
 
 @end
 
@@ -255,23 +270,176 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding, UIAppearanc
 
 @interface UIView(UIViewAnimationWithBlocks)
 
-+ (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
++ (void)animateWithDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion NS_AVAILABLE_IOS(4_0);
 
-+ (void)animateWithDuration:(NSTimeInterval)duration animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // delay = 0.0, options = 0
++ (void)animateWithDuration:(NSTimeInterval)duration animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion NS_AVAILABLE_IOS(4_0); // delay = 0.0, options = 0
 
-+ (void)animateWithDuration:(NSTimeInterval)duration animations:(void (^)(void))animations __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // delay = 0.0, options = 0, completion = NULL
++ (void)animateWithDuration:(NSTimeInterval)duration animations:(void (^)(void))animations NS_AVAILABLE_IOS(4_0); // delay = 0.0, options = 0, completion = NULL
 
-+ (void)transitionWithView:(UIView *)view duration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
++ (void)transitionWithView:(UIView *)view duration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options animations:(void (^)(void))animations completion:(void (^)(BOOL finished))completion NS_AVAILABLE_IOS(4_0);
 
-+ (void)transitionFromView:(UIView *)fromView toView:(UIView *)toView duration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options completion:(void (^)(BOOL finished))completion __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // toView added to fromView.superview, fromView removed from its superview
++ (void)transitionFromView:(UIView *)fromView toView:(UIView *)toView duration:(NSTimeInterval)duration options:(UIViewAnimationOptions)options completion:(void (^)(BOOL finished))completion NS_AVAILABLE_IOS(4_0); // toView added to fromView.superview, fromView removed from its superview
 
 @end
 
 @interface UIView (UIViewGestureRecognizers)
 
-@property(nonatomic,copy) NSArray *gestureRecognizers __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+@property(nonatomic,copy) NSArray *gestureRecognizers NS_AVAILABLE_IOS(3_2);
 
-- (void)addGestureRecognizer:(UIGestureRecognizer*)gestureRecognizer __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
-- (void)removeGestureRecognizer:(UIGestureRecognizer*)gestureRecognizer __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+- (void)addGestureRecognizer:(UIGestureRecognizer*)gestureRecognizer NS_AVAILABLE_IOS(3_2);
+- (void)removeGestureRecognizer:(UIGestureRecognizer*)gestureRecognizer NS_AVAILABLE_IOS(3_2);
+
+// called when the recognizer attempts to transition out of UIGestureRecognizerStatePossible if a touch hit-tested to this view will be cancelled as a result of gesture recognition
+// returns YES by default. return NO to cause the gesture recognizer to transition to UIGestureRecognizerStateFailed
+// subclasses may override to prevent recognition of particular gestures. for example, UISlider prevents swipes parallel to the slider that start in the thumb
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer NS_AVAILABLE_IOS(6_0);
 
 @end
+
+
+//
+// UIView Constraint-based Layout Support
+//
+
+typedef NS_ENUM(NSInteger, UILayoutConstraintAxis) {
+    UILayoutConstraintAxisHorizontal = 0,
+    UILayoutConstraintAxisVertical = 1
+};
+
+// Installing Constraints
+
+/* A constraint is typically installed on the closest common ancestor of the views involved in the constraint. 
+ It is required that a constraint be installed on _a_ common ancestor of every view involved.  The numbers in a constraint are interpreted in the coordinate system of the view it is installed on.  A view is considered to be an ancestor of itself.
+ */
+@interface UIView (UIConstraintBasedLayoutInstallingConstraints)
+
+- (NSArray *)constraints NS_AVAILABLE_IOS(6_0);
+
+- (void)addConstraint:(NSLayoutConstraint *)constraint NS_AVAILABLE_IOS(6_0);
+- (void)addConstraints:(NSArray *)constraints NS_AVAILABLE_IOS(6_0);
+- (void)removeConstraint:(NSLayoutConstraint *)constraint NS_AVAILABLE_IOS(6_0);
+- (void)removeConstraints:(NSArray *)constraints NS_AVAILABLE_IOS(6_0);
+@end
+
+// Core Layout Methods
+
+/* To render a window, the following passes will occur, if necessary.  
+ 
+ update constraints
+ layout
+ display
+ 
+ Please see the conceptual documentation for a discussion of these methods.
+ */
+
+@interface UIView (UIConstraintBasedLayoutCoreMethods) 
+- (void)updateConstraintsIfNeeded NS_AVAILABLE_IOS(6_0); // Updates the constraints from the bottom up for the view hierarchy rooted at the receiver. UIWindow's implementation creates a layout engine if necessary first.
+- (void)updateConstraints NS_AVAILABLE_IOS(6_0); // Override this to adjust your special constraints during a constraints update pass
+- (BOOL)needsUpdateConstraints NS_AVAILABLE_IOS(6_0);
+- (void)setNeedsUpdateConstraints NS_AVAILABLE_IOS(6_0);
+@end
+
+// Compatibility and Adoption
+
+@interface UIView (UIConstraintBasedCompatibility) 
+
+/* by default, the autoresizing mask on a view gives rise to constraints that fully determine the view's position.  Any constraints you set on the view are likely to conflict with autoresizing constraints, so you must turn off this property first. IB will turn it off for you.
+ */
+- (BOOL)translatesAutoresizingMaskIntoConstraints NS_AVAILABLE_IOS(6_0); // Default YES
+- (void)setTranslatesAutoresizingMaskIntoConstraints:(BOOL)flag NS_AVAILABLE_IOS(6_0);
+
+/* constraint-based layout engages lazily when someone tries to use it (e.g., adds a constraint to a view).  If you do all of your constraint set up in -updateConstraints, you might never even receive updateConstraints if no one makes a constraint.  To fix this chicken and egg problem, override this method to return YES if your view needs the window to use constraint-based layout.  
+ */
++ (BOOL)requiresConstraintBasedLayout NS_AVAILABLE_IOS(6_0);
+
+@end
+
+// Separation of Concerns
+
+@interface UIView (UIConstraintBasedLayoutLayering)
+
+/* Constraints do not actually relate the frames of the views, rather they relate the "alignment rects" of views.  This is the same as the frame unless overridden by a subclass of UIView.  Alignment rects are the same as the "layout rects" shown in Interface Builder 3.  Typically the alignment rect of a view is what the end user would think of as the bounding rect around a control, omitting ornamentation like shadows and engraving lines.  The edges of the alignment rect are what is interesting to align, not the shadows and such.  
+ */
+
+/* These two methods should be inverses of each other.  UIKit will call both as part of layout computation.
+ They may be overridden to provide arbitrary transforms between frame and alignment rect, though the two methods must be inverses of each other.
+ However, the default implementation uses -alignmentRectInsets, so just override that if it's applicable.  It's easier to get right. 
+ A view that displayed an image with some ornament would typically override these, because the ornamental part of an image would scale up with the size of the frame.  
+ Set the NSUserDefault UIViewShowAlignmentRects to YES to see alignment rects drawn.
+ */
+- (CGRect)alignmentRectForFrame:(CGRect)frame NS_AVAILABLE_IOS(6_0);
+- (CGRect)frameForAlignmentRect:(CGRect)alignmentRect NS_AVAILABLE_IOS(6_0);
+
+/* override this if the alignment rect is obtained from the frame by insetting each edge by a fixed amount.  This is only called by alignmentRectForFrame: and frameForAlignmentRect:.
+ */
+- (UIEdgeInsets)alignmentRectInsets NS_AVAILABLE_IOS(6_0);
+
+/* When you make a constraint on the NSLayoutAttributeBaseline of a view, the system aligns with the bottom of the view returned from this method. A nil return is interpreted as the receiver, and a non-nil return must be in the receiver's subtree.  UIView's implementation returns self.
+ */
+- (UIView *)viewForBaselineLayout NS_AVAILABLE_IOS(6_0);
+
+
+/* Override this method to tell the layout system that there is something it doesn't natively understand in this view, and this is how large it intrinsically is.  A typical example would be a single line text field.  The layout system does not understand text - it must just be told that there's something in the view, and that that something will take a certain amount of space if not clipped.  
+ 
+ In response, UIKit will set up constraints that specify (1) that the opaque content should not be compressed or clipped, (2) that the view prefers to hug tightly to its content. 
+ 
+ A user of a view may need to specify the priority of these constraints.  For example, by default, a push button 
+ -strongly wants to hug its content in the vertical direction (buttons really ought to be their natural height)
+ -weakly hugs its content horizontally (extra side padding between the title and the edge of the bezel is acceptable)
+ -strongly resists compressing or clipping content in both directions. 
+ 
+ However, you might have a case where you'd prefer to show all the available buttons with truncated text rather than losing some of the buttons. The truncation might only happen in portrait orientation but not in landscape, for example. In that case you'd want to setContentCompressionResistancePriority:forAxis: to (say) UILayoutPriorityDefaultLow for the horizontal axis.
+ 
+ The default 'strong' and 'weak' priorities referred to above are UILayoutPriorityDefaultHigh and UILayoutPriorityDefaultLow.  
+ 
+ Note that not all views have an intrinsicContentSize.  UIView's default implementation is to return (UIViewNoIntrinsicMetric, UIViewNoIntrinsicMetric).  The _intrinsic_ content size is concerned only with data that is in the view itself, not in other views. Remember that you can also set constant width or height constraints on any view, and you don't need to override instrinsicContentSize if these dimensions won't be changing with changing view content.
+ */
+UIKIT_EXTERN const CGFloat UIViewNoIntrinsicMetric NS_AVAILABLE_IOS(6_0); // -1
+- (CGSize)intrinsicContentSize NS_AVAILABLE_IOS(6_0);
+- (void)invalidateIntrinsicContentSize NS_AVAILABLE_IOS(6_0); // call this when something changes that affects the intrinsicContentSize.  Otherwise UIKit won't notice that it changed.  
+
+- (UILayoutPriority)contentHuggingPriorityForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);
+- (void)setContentHuggingPriority:(UILayoutPriority)priority forAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);
+
+- (UILayoutPriority)contentCompressionResistancePriorityForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);
+- (void)setContentCompressionResistancePriority:(UILayoutPriority)priority forAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);
+@end
+
+// Size To Fit
+
+UIKIT_EXTERN const CGSize UILayoutFittingCompressedSize NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN const CGSize UILayoutFittingExpandedSize NS_AVAILABLE_IOS(6_0);
+
+@interface UIView (UIConstraintBasedLayoutFittingSize)
+/* The size fitting most closely to targetSize in which the receiver's subtree can be laid out while optimally satisfying the constraints. If you want the smallest possible size, pass UILayoutFittingCompressedSize; for the largest possible size, pass UILayoutFittingExpandedSize.
+ Also see the comment for UILayoutPriorityFittingSizeLevel.
+ */
+- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize NS_AVAILABLE_IOS(6_0);
+@end
+
+// Debugging
+
+/* Everything in this section should be used in debugging only, never in shipping code.  These methods may not exist in the future - no promises.  
+ */
+@interface UIView (UIConstraintBasedLayoutDebugging)
+
+/* This returns a list of all the constraints that are affecting the current location of the receiver.  The constraints do not necessarily involve the receiver, they may affect the frame indirectly.
+ Pass UILayoutConstraintAxisHorizontal for the constraints affecting [self center].x and CGRectGetWidth([self bounds]), and UILayoutConstraintAxisVertical for the constraints affecting[self center].y and CGRectGetHeight([self bounds]).
+ */
+- (NSArray *)constraintsAffectingLayoutForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);
+
+/* If there aren't enough constraints in the system to uniquely determine layout, we say the layout is ambiguous.  For example, if the only constraint in the system was x = y + 100, then there are lots of different possible values for x and y.  This situation is not automatically detected by UIKit, due to performance considerations and details of the algorithm used for layout.  
+ The symptom of ambiguity is that views sometimes jump from place to place, or possibly are just in the wrong place.
+ -hasAmbiguousLayout runs a check for whether there is another center and bounds the receiver could have that could also satisfy the constraints.
+ -exerciseAmbiguousLayout does more.  It randomly changes the view layout to a different valid layout.  Making the UI jump back and forth can be helpful for figuring out where you're missing a constraint.  
+ */
+- (BOOL)hasAmbiguousLayout NS_AVAILABLE_IOS(6_0);
+- (void)exerciseAmbiguityInLayout NS_AVAILABLE_IOS(6_0); 
+@end
+
+@interface UIView (UIStateRestoration)
+@property (nonatomic, copy) NSString *restorationIdentifier NS_AVAILABLE_IOS(6_0);
+- (void) encodeRestorableStateWithCoder:(NSCoder *)coder NS_AVAILABLE_IOS(6_0);
+- (void) decodeRestorableStateWithCoder:(NSCoder *)coder NS_AVAILABLE_IOS(6_0);
+@end
+

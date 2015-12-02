@@ -2,7 +2,7 @@
 //  UITableViewCell.h
 //  UIKit
 //
-//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,48 +14,47 @@
 
 @class UIImage, UIColor, UILabel, UIImageView, UIButton, UITextField, UITableView, UILongPressGestureRecognizer;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITableViewCellStyle) {
     UITableViewCellStyleDefault,	// Simple cell with text label and optional image view (behavior of UITableViewCell in iPhoneOS 2.x)
     UITableViewCellStyleValue1,		// Left aligned label on left and right aligned label on right with blue text (Used in Settings)
     UITableViewCellStyleValue2,		// Right aligned label on left with blue text and left aligned label on right (Used in Phone/Contacts)
     UITableViewCellStyleSubtitle	// Left aligned label on top and left aligned label on bottom with gray text (Used in iPod).
-} UITableViewCellStyle;             // available in iPhone OS 3.0
+};             // available in iPhone OS 3.0
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITableViewCellSeparatorStyle) {
     UITableViewCellSeparatorStyleNone,
     UITableViewCellSeparatorStyleSingleLine,
     UITableViewCellSeparatorStyleSingleLineEtched   // This separator style is only supported for grouped style table views currently
-} UITableViewCellSeparatorStyle;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITableViewCellSelectionStyle) {
     UITableViewCellSelectionStyleNone,
     UITableViewCellSelectionStyleBlue,
     UITableViewCellSelectionStyleGray
-} UITableViewCellSelectionStyle;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITableViewCellEditingStyle) {
     UITableViewCellEditingStyleNone,
     UITableViewCellEditingStyleDelete,
     UITableViewCellEditingStyleInsert
-} UITableViewCellEditingStyle;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, UITableViewCellAccessoryType) {
     UITableViewCellAccessoryNone,                   // don't show any accessory view
     UITableViewCellAccessoryDisclosureIndicator,    // regular chevron. doesn't track
     UITableViewCellAccessoryDetailDisclosureButton, // blue button w/ chevron. tracks
     UITableViewCellAccessoryCheckmark               // checkmark. doesn't track
-} UITableViewCellAccessoryType;
+};
 
-enum {
+typedef NS_OPTIONS(NSUInteger, UITableViewCellStateMask) {
     UITableViewCellStateDefaultMask                     = 0,
     UITableViewCellStateShowingEditControlMask          = 1 << 0,
     UITableViewCellStateShowingDeleteConfirmationMask   = 1 << 1
 };
-typedef NSUInteger UITableViewCellStateMask;        // available in iPhone OS 3.0
 
 #define UITableViewCellStateEditingMask UITableViewCellStateShowingEditControlMask
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding, UIGestureRecognizerDelegate> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableViewCell : UIView <NSCoding, UIGestureRecognizerDelegate> {
   @private
     UITableView *_tableView;
     id           _layoutManager;
@@ -85,8 +84,10 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding, UIGest
     UIView      *_floatingSeparatorView;
     UIView      *_topShadowAnimationView;
     UIView      *_bottomShadowAnimationView;
+    id          _badge;
     CFMutableDictionaryRef _unhighlightedStates;
     id           _selectionSegueTemplate;
+    id           _accessoryActionSegueTemplate;
     struct {
         unsigned int showingDeleteConfirmation:1;
         unsigned int separatorStyle:3;
@@ -141,16 +142,18 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding, UIGest
     UIColor *_accessoryTintColor;
     UIImage *_reorderControlImage;
     UILongPressGestureRecognizer* _menuGesture;
+    id _highlightingSupport;
+    NSIndexPath* _representedIndexPath;
 }
 
 // Designated initializer.  If the cell can be reused, you must pass in a reuse identifier.  You should use the same reuse identifier for all cells of the same form.  
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier NS_AVAILABLE_IOS(3_0);
 
 // Content.  These properties provide direct access to the internal label and image views used by the table view cell.  These should be used instead of the content properties below.
-@property(nonatomic,readonly,retain) UIImageView  *imageView __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);   // default is nil.  image view will be created if necessary.
+@property(nonatomic,readonly,retain) UIImageView  *imageView NS_AVAILABLE_IOS(3_0);   // default is nil.  image view will be created if necessary.
 
-@property(nonatomic,readonly,retain) UILabel      *textLabel __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);   // default is nil.  label will be created if necessary.
-@property(nonatomic,readonly,retain) UILabel      *detailTextLabel __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);   // default is nil.  label will be created if necessary (and the current style supports a detail label).
+@property(nonatomic,readonly,retain) UILabel      *textLabel NS_AVAILABLE_IOS(3_0);   // default is nil.  label will be created if necessary.
+@property(nonatomic,readonly,retain) UILabel      *detailTextLabel NS_AVAILABLE_IOS(3_0); // default is nil.  label will be created if necessary (and the current style supports a detail label).
 
 // If you want to customize cells by simply adding additional views, you should add them to the content view so they will be positioned appropriately as the cell transitions into and out of editing mode.
 @property(nonatomic,readonly,retain) UIView       *contentView;
@@ -162,7 +165,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding, UIGest
 @property(nonatomic,retain) UIView                *selectedBackgroundView;
 
 // If not nil, takes the place of the selectedBackgroundView when using multiple selection.
-@property(nonatomic,retain) UIView                *multipleSelectionBackgroundView __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+@property(nonatomic,retain) UIView                *multipleSelectionBackgroundView NS_AVAILABLE_IOS(5_0);
 
 @property(nonatomic,readonly,copy) NSString       *reuseIdentifier;
 - (void)prepareForReuse;                                                        // if the cell is reusable (has a reuse identifier), this is called just before the cell is returned from the table view method dequeueReusableCellWithIdentifier:.  If you override, you MUST call super.
@@ -193,34 +196,34 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding, UIGest
 // These methods can be used by subclasses to animate additional changes to the cell when the cell is changing state
 // Note that when the cell is swiped, the cell will be transitioned into the UITableViewCellStateShowingDeleteConfirmationMask state,
 // but the UITableViewCellStateShowingEditControlMask will not be set.
-- (void)willTransitionToState:(UITableViewCellStateMask)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-- (void)didTransitionToState:(UITableViewCellStateMask)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)willTransitionToState:(UITableViewCellStateMask)state NS_AVAILABLE_IOS(3_0);
+- (void)didTransitionToState:(UITableViewCellStateMask)state NS_AVAILABLE_IOS(3_0);
 
 @end
 
 @interface UITableViewCell (UIDeprecated)
 
 // Frame is ignored.  The size will be specified by the table view width and row height.
-- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);
+- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier NS_DEPRECATED_IOS(2_0, 3_0);
 
 // Content properties.  These properties were deprecated in iPhone OS 3.0.  The textLabel and imageView properties above should be used instead.
 // For selected attributes, set the highlighted attributes on the textLabel and imageView.
-@property(nonatomic,copy)   NSString *text __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);                        // default is nil
-@property(nonatomic,retain) UIFont   *font __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);                        // default is nil (Use default font)
-@property(nonatomic) UITextAlignment  textAlignment __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);               // default is UITextAlignmentLeft
-@property(nonatomic) UILineBreakMode  lineBreakMode __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);               // default is UILineBreakModeTailTruncation
-@property(nonatomic,retain) UIColor  *textColor __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);                   // default is nil (text draws black)
-@property(nonatomic,retain) UIColor  *selectedTextColor __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);           // default is nil (text draws white)
+@property(nonatomic,copy)   NSString *text NS_DEPRECATED_IOS(2_0, 3_0);                        // default is nil
+@property(nonatomic,retain) UIFont   *font NS_DEPRECATED_IOS(2_0, 3_0);                        // default is nil (Use default font)
+@property(nonatomic) NSTextAlignment  textAlignment NS_DEPRECATED_IOS(2_0, 3_0);               // default is UITextAlignmentLeft
+@property(nonatomic) NSLineBreakMode  lineBreakMode NS_DEPRECATED_IOS(2_0, 3_0);               // default is UILineBreakModeTailTruncation
+@property(nonatomic,retain) UIColor  *textColor NS_DEPRECATED_IOS(2_0, 3_0);                   // default is nil (text draws black)
+@property(nonatomic,retain) UIColor  *selectedTextColor NS_DEPRECATED_IOS(2_0, 3_0);           // default is nil (text draws white)
 
-@property(nonatomic,retain) UIImage  *image __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);                       // default is nil. appears on left next to title.
-@property(nonatomic,retain) UIImage  *selectedImage __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);               // default is nil
+@property(nonatomic,retain) UIImage  *image NS_DEPRECATED_IOS(2_0, 3_0);                       // default is nil. appears on left next to title.
+@property(nonatomic,retain) UIImage  *selectedImage NS_DEPRECATED_IOS(2_0, 3_0);               // default is nil
 
 // Use the new editingAccessoryType and editingAccessoryView instead
-@property(nonatomic) BOOL             hidesAccessoryWhenEditing __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);   // default is YES
+@property(nonatomic) BOOL             hidesAccessoryWhenEditing NS_DEPRECATED_IOS(2_0, 3_0);   // default is YES
 
 // Use the table view data source method -tableView:commitEditingStyle:forRowAtIndexPath: or the table view delegate method -tableView:accessoryButtonTappedForRowWithIndexPath: instead
-@property(nonatomic,assign) id        target __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);                      // target for insert/delete/accessory clicks. default is nil (i.e. go up responder chain). weak reference
-@property(nonatomic) SEL              editAction __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);                  // action to call on insert/delete call. set by UITableView
-@property(nonatomic) SEL              accessoryAction __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_0);             // action to call on accessory view clicked. set by UITableView
+@property(nonatomic,assign) id        target NS_DEPRECATED_IOS(2_0, 3_0);                      // target for insert/delete/accessory clicks. default is nil (i.e. go up responder chain). weak reference
+@property(nonatomic) SEL              editAction NS_DEPRECATED_IOS(2_0, 3_0);                  // action to call on insert/delete call. set by UITableView
+@property(nonatomic) SEL              accessoryAction NS_DEPRECATED_IOS(2_0, 3_0);             // action to call on accessory view clicked. set by UITableView
 
 @end

@@ -2,7 +2,7 @@
 //  UITextChecker.h
 //  UIKit
 //
-//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKitDefines.h>
@@ -11,7 +11,7 @@
 /* A UITextChecker object is used by a client (e.g. a document in an application) to check a given NSString. Generally one UITextChecker instance should be created per document.  Multiple related pieces of text may share a single UITextChecker instance, if they are intended to share ignored words and other similar state.
 */
 
-UIKIT_CLASS_AVAILABLE(3_2) @interface UITextChecker : NSObject {
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UITextChecker : NSObject {
 @private
     id _checker;
     id _reserved;

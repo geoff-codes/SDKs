@@ -2,13 +2,13 @@
 //  UINib.h
 //  UIKit
 //
-//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
 
-UIKIT_CLASS_AVAILABLE(4_0) @interface UINib : NSObject {
+NS_CLASS_AVAILABLE_IOS(4_0) @interface UINib : NSObject {
   @private
     id storage;
 }
