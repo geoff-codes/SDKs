@@ -35,6 +35,10 @@
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <CoreVideo/CVOpenGLTextureCache.h>
 #endif // COREVIDEO_SUPPORTS_OPENGL
+#if COREVIDEO_SUPPORTS_OPENGLES
+#include <CoreVideo/CVOpenGLESTexture.h>
+#include <CoreVideo/CVOpenGLESTextureCache.h>
+#endif // COREVIDEO_SUPPORTS_OPENGLES
 #include <CoreVideo/CVPixelFormatDescription.h>
 
 #if COREVIDEO_SUPPORTS_DIRECT3D

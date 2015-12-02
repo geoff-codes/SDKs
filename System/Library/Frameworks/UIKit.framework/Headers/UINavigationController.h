@@ -2,7 +2,7 @@
 //  UINavigationController.h
 //  UIKit
 //
-//  Copyright 2007-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -35,7 +35,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationController : UIViewController 
     UIView           *_containerView;
     UINavigationBar  *_navigationBar;
     Class             _navigationBarClass;
-    UIToolbar 		 *_toolbar;
+    UIToolbar 	     *_toolbar;
     UIView           *_navigationTransitionView;
 
     UIEdgeInsets      _currentScrollContentInsetDelta;
@@ -43,11 +43,12 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationController : UIViewController 
     CGFloat           _previousScrollContentOffsetDelta;
     CGFloat			  _bottomInsetDelta;
     
-    NSMutableArray   *_viewControllers;
     UIViewController *_disappearingViewController;
     
     id <UINavigationControllerDelegate> _delegate;
-    UILayoutContainerView *_containerViewInSheet;
+
+    UIBarStyle _savedNavBarStyleBeforeSheet;
+    UIBarStyle _savedToolBarStyleBeforeSheet;
 
     struct {
         unsigned int isAppearingAnimated:1;
@@ -64,7 +65,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UINavigationController : UIViewController 
         unsigned int isChangingOrientationForPop:1;
         unsigned int pretendNavBarHidden:1;
         unsigned int avoidMovingNavBarOffscreenBeforeUnhiding:1;
-        unsigned int searchBarHidNavBar:1;        
+        unsigned int searchBarHidNavBar:1; 
+        unsigned int useSystemPopoverBarAppearance:1;
     } _navigationControllerFlags;
 }
 

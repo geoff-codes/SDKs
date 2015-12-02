@@ -1,5 +1,5 @@
 /*	NSThread.h
-	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -26,41 +26,37 @@
 
 + (void)exit;
 
-+ (double)threadPriority NS_AVAILABLE(10_2, 2_0);
-+ (BOOL)setThreadPriority:(double)p NS_AVAILABLE(10_2, 2_0);
-
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
++ (double)threadPriority;
++ (BOOL)setThreadPriority:(double)p;
 
 - (double)threadPriority NS_AVAILABLE(10_6, 4_0);
 - (void)setThreadPriority:(double)p NS_AVAILABLE(10_6, 4_0);
 
-+ (NSArray *)callStackReturnAddresses;
++ (NSArray *)callStackReturnAddresses NS_AVAILABLE(10_5, 2_0);
 + (NSArray *)callStackSymbols NS_AVAILABLE(10_6, 4_0);
 
-- (void)setName:(NSString *)n;
-- (NSString *)name;
+- (void)setName:(NSString *)n NS_AVAILABLE(10_5, 2_0);
+- (NSString *)name NS_AVAILABLE(10_5, 2_0);
 
-- (NSUInteger)stackSize;
-- (void)setStackSize:(NSUInteger)s;
+- (NSUInteger)stackSize NS_AVAILABLE(10_5, 2_0);
+- (void)setStackSize:(NSUInteger)s NS_AVAILABLE(10_5, 2_0);
 
-- (BOOL)isMainThread;
-+ (BOOL)isMainThread; // reports whether current thread is main
-+ (NSThread *)mainThread;
+- (BOOL)isMainThread NS_AVAILABLE(10_5, 2_0);
++ (BOOL)isMainThread NS_AVAILABLE(10_5, 2_0); // reports whether current thread is main
++ (NSThread *)mainThread NS_AVAILABLE(10_5, 2_0);
 
-- (id)init;	// designated initializer
-- (id)initWithTarget:(id)target selector:(SEL)selector object:(id)argument;
+- (id)init NS_AVAILABLE(10_5, 2_0);	// designated initializer
+- (id)initWithTarget:(id)target selector:(SEL)selector object:(id)argument NS_AVAILABLE(10_5, 2_0);
 
-- (BOOL)isExecuting;
-- (BOOL)isFinished;
+- (BOOL)isExecuting NS_AVAILABLE(10_5, 2_0);
+- (BOOL)isFinished NS_AVAILABLE(10_5, 2_0);
 
-- (BOOL)isCancelled;
-- (void)cancel;
+- (BOOL)isCancelled NS_AVAILABLE(10_5, 2_0);
+- (void)cancel NS_AVAILABLE(10_5, 2_0);
 
-- (void)start;
+- (void)start NS_AVAILABLE(10_5, 2_0);
 
-- (void)main;	// thread body method
-
-#endif
+- (void)main NS_AVAILABLE(10_5, 2_0);	// thread body method
 
 @end
 
@@ -70,18 +66,14 @@ FOUNDATION_EXPORT NSString * const NSThreadWillExitNotification;
 
 @interface NSObject (NSThreadPerformAdditions)
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (void)performSelectorOnMainThread:(SEL)aSelector withObject:(id)arg waitUntilDone:(BOOL)wait modes:(NSArray *)array;
 - (void)performSelectorOnMainThread:(SEL)aSelector withObject:(id)arg waitUntilDone:(BOOL)wait;
 	// equivalent to the first method with kCFRunLoopCommonModes
-#endif
 
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(id)arg waitUntilDone:(BOOL)wait modes:(NSArray *)array;
-- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(id)arg waitUntilDone:(BOOL)wait;
+- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(id)arg waitUntilDone:(BOOL)wait modes:(NSArray *)array NS_AVAILABLE(10_5, 2_0);
+- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(id)arg waitUntilDone:(BOOL)wait NS_AVAILABLE(10_5, 2_0);
 	// equivalent to the first method with kCFRunLoopCommonModes
-- (void)performSelectorInBackground:(SEL)aSelector withObject:(id)arg;
-#endif
+- (void)performSelectorInBackground:(SEL)aSelector withObject:(id)arg NS_AVAILABLE(10_5, 2_0);
 
 @end
 

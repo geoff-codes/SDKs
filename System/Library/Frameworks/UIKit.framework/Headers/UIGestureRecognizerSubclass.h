@@ -2,7 +2,7 @@
 //  UIGestureRecognizerSubclass.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIGestureRecognizer.h>
@@ -10,7 +10,7 @@
 // the extensions in this header are to be used only by subclasses of UIGestureRecognizer
 // code that uses UIGestureRecognizers must never call these
 
-@interface UIGestureRecognizer ()
+@interface UIGestureRecognizer (ForSubclassEyesOnly)
 
 // readonly for users of a gesture recognizer. may only be changed by direct subclasses of UIGestureRecognizer
 @property(nonatomic,readwrite) UIGestureRecognizerState state;  // the current state of the gesture recognizer. can only be set by subclasses of UIGestureRecognizer, but can be read by consumers

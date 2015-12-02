@@ -2,7 +2,7 @@
 //  UIDocumentInteractionController.h
 //  UIKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -17,7 +17,6 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIDocumentInteractionController : NSObject
 @private
     id <UIDocumentInteractionControllerDelegate> _delegate;
     id _previewItemProxy;
-    NSString    *_UTI;
     NSArray     *_icons;
     id           _annotation;
     NSString    *_uniqueIdentifier;
@@ -65,8 +64,6 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIDocumentInteractionController : NSObject
         unsigned int delegateCanPerformAction:1;
         unsigned int delegatePerformAction:1;
         unsigned int delegateUnzipURL:1;
-        unsigned int delegateShouldRemoveUnzippedDocument:1;
-        unsigned int delegateDidUnzipDocumentAtURL:1;
     } _documentInteractionControllerFlags;
 }
 

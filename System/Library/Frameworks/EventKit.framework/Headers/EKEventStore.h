@@ -6,8 +6,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <EventKit/EventKitDefines.h>
 
-@class EKCalendar, EKEvent;
+@class EKCalendar, EKEvent, EKSource;
 
 /*!
     @enum           EKSpan
@@ -37,16 +38,8 @@ typedef void (^EKEventSearchCallback)(EKEvent *event, BOOL *stop);
                  likely as a singleton instance in your application.
 */
 
-NS_CLASS_AVAILABLE(NA, 4_0)
-@interface EKEventStore : NSObject {
-@private
-    id                      _database;
-    NSMutableDictionary    *_calendars;
-    NSMutableDictionary    *_sources;
-    NSMutableArray         *_observers;
-    UInt32                  _flags;
-    NSTimeZone             *_timeZone;
-}
+EVENTKIT_CLASS_AVAILABLE(4_0)
+@interface EKEventStore : NSObject
 
 /*!
     @property   uniqueIdentifier
@@ -54,18 +47,78 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 */
 @property(nonatomic, readonly) NSString *eventStoreIdentifier;
 
+//----------------------------------------------------
+// SOURCES
+//----------------------------------------------------
+
 /*!
-    @property   calendars
-    @abstract   Returns an unordered array of all calendars.
+    @method     sources
+    @abstract   Returns an unordered array of sources.
+*/
+- (NSArray *)sources __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+/*!
+    @method     sourceWithIdentifier:
+    @abstract   Returns a source with a specified identifier.
+*/
+- (EKSource *)sourceWithIdentifier:(NSString *)identifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+//----------------------------------------------------
+// CALENDARS
+//----------------------------------------------------
+
+/*!
+     @method     defaultCalendarForNewEvents
+     @abstract   While this returns an array, the calendars are unordered.
 */
 @property(nonatomic, readonly) NSArray *calendars;
 
+/*!
+     @method     defaultCalendarForNewEvents
+     @abstract   Returns the calendar that events should be added to by default, as set in the Settings application.
+*/
+
+@property(nonatomic, readonly) EKCalendar *defaultCalendarForNewEvents;
 
 /*!
-    @property   defaultCalendarForNewEvents
-    @abstract   Returns the calendar that events should be added to by default, as set in the Settings application.
+    @method     calendarWithIdentifier:
+    @abstract   Returns a calendar with a specified identifier.
 */
-@property(nonatomic, readonly) EKCalendar *defaultCalendarForNewEvents;
+- (EKCalendar *)calendarWithIdentifier:(NSString *)identifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+/*!
+    @method     saveCalendar:commit:error:
+    @abstract   Saves changes to a calendar, or adds a new calendar to the database.
+    @discussion This method attempts to save the given calendar to the calendar database. It
+                returns YES if successful and NO otherwise. Passing a calendar fetched from
+                another EKEventStore instance into this function will raise an exception.
+
+    @param      calendar    The calendar to save.
+    @param      commit      Pass YES to cause the database to save. You can pass NO to save multiple
+                            calendars and then call commit: to save them all at once.
+    @param      error       If an error occurs, this will contain a valid NSError object on exit.
+*/
+
+- (BOOL)saveCalendar:(EKCalendar *)calendar commit:(BOOL)commit error:(NSError **)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+/*!
+    @method     removeCalendar:commit:error:
+    @abstract   Removes a calendar from the database.
+    @discussion This method attempts to delete the given calendar from the calendar database. It
+                returns YES if successful and NO otherwise. Passing a calendar fetched from
+                another EKEventStore instance into this function will raise an exception.
+
+    @param      calendar    The calendar to delete.
+    @param      commit      Pass YES to cause the database to save. You can pass NO to batch multiple
+                            changes and then call commit: to save them all at once.
+    @param      error       If an error occurs, this will contain a valid NSError object on exit.
+*/
+
+- (BOOL)removeCalendar:(EKCalendar *)calendar commit:(BOOL)commit error:(NSError **)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+//----------------------------------------------------
+// EVENTS
+//----------------------------------------------------
 
 /*!
     @method     saveEvent:span:error:
@@ -74,7 +127,8 @@ NS_CLASS_AVAILABLE(NA, 4_0)
                 successful and NO otherwise. It's possible for this method to return NO, and error
                 will be set to nil. This occurs if the event wasn't dirty and didn't need saving. This
                 means the correct way to detect failure is a result of NO and a non-nil error parameter.
-                Passing an event fetched from another CalendarStore into this function will raise an exception.
+                Passing an event fetched from another EKEventStore instance into this function will
+                raise an exception.
                 
                 After an event is successfully saved, it is also put into sync with the database, meaning
                 that all fields you did not change will be updated to the latest values. If you save the
@@ -103,6 +157,11 @@ NS_CLASS_AVAILABLE(NA, 4_0)
     @param      error       If an error occurs, this will contain a valid NSError object on exit.
 */
 - (BOOL)removeEvent:(EKEvent *)event span:(EKSpan)span error:(NSError **)error;
+
+// These variants of the above allow you to batch changes by passing NO to commit. You can commit
+// all changes later with [EKEventStore commit:]
+- (BOOL)saveEvent:(EKEvent *)event span:(EKSpan)span commit:(BOOL)commit error:(NSError **)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (BOOL)removeEvent:(EKEvent *)event span:(EKSpan)span commit:(BOOL)commit error:(NSError **)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 /*!
     @method     eventWithIdentifier:
@@ -154,6 +213,41 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 */
 - (NSPredicate *)predicateForEventsWithStartDate:(NSDate *)startDate endDate:(NSDate *)endDate calendars:(NSArray *)calendars;
 
+//----------------------------------------------------
+// COMMIT, RESET, ROLLBACK
+//----------------------------------------------------
+
+/*!
+    @method     commit:
+    @abstract   Commits pending changes to the database.
+    @discussion If you use saveCalendar/saveEvent/removeCalendar/removeEvent, etc. and you pass NO to their
+                parameter, you are batching changes for a later commit. This method does that commit. This
+                allows you to save the database only once for many additions or changes.
+ 
+                This method will return YES as long as nothing went awry, even if nothing was actually
+                committed. If it returns NO, error should contain the reason it became unhappy.
+*/
+- (BOOL)commit:(NSError **)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+
+/*!
+    @method     reset
+    @abstract   Resets the event store.
+    @discussion You can use this method to forget ALL changes made to the event store (all additions, all
+                fetched objects, etc.). It essentially is as if you released the store and then created a
+                new one. It brings it back to its initial state. All objects ever created/fetched, etc.
+                using this store are no longer connected to it and are considered invalid.
+*/
+- (void)reset __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+/*!
+    @method     refreshSourcesIfNecessary
+    @abstract   Cause a sync to occur if one is deemed necessary.
+    @discussion You can call this method to try to pull new data from remote sources if we're out of date.
+*/
+
+- (void)refreshSourcesIfNecessary __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
 @end
 
 /*!
@@ -169,5 +263,5 @@ NS_CLASS_AVAILABLE(NA, 4_0)
                 otherwise, you should release it and abandon what you were doing with it. The view
                 controllers provided by EventKitUI automatically deal with this for you.
 */
-extern NSString *const EKEventStoreChangedNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+EVENTKIT_EXTERN NSString *const EKEventStoreChangedNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 

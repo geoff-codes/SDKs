@@ -11,6 +11,7 @@
 #import <CoreMotion/CMAccelerometer.h>
 #import <CoreMotion/CMGyro.h>
 #import <CoreMotion/CMDeviceMotion.h>
+#import <CoreMotion/CMMagnetometer.h>
 
 /* 
  * There are two methods to receive data from CMMotionManager: push and pull.
@@ -64,6 +65,14 @@ typedef void (^CMGyroHandler)(CMGyroData *gyroData, NSError *error);
 typedef void (^CMDeviceMotionHandler)(CMDeviceMotion *motion, NSError *error);
 
 /*
+ *  CMMagnetometerHandler
+ *  
+ *  Discussion:
+ *    Typedef of block to be invoked when magnetometer data is available.
+ */
+typedef void (^CMMagnetometerHandler)(CMMagnetometerData *magnetometerData, NSError *error) NS_AVAILABLE(NA,5_0);
+
+/*
  *  CMMotionManager
  *  
  *  Discussion:
@@ -80,7 +89,7 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *  accelerometerUpdateInterval
  *  
  *  Discussion:
- *      The interval at which to deliver accelerometer data to the specified 
+ *			The interval at which to deliver accelerometer data to the specified 
  *			handler once startAccelerometerUpdatesToQueue:withHandler: is called. 
  *			The units are in seconds. The value of this property is capped to 
  *			certain minimum and maximum values. The maximum value is determined by 
@@ -103,7 +112,7 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *  accelerometerActive
  *  
  *  Discussion:
- *      Determines whether the CMMotionManager is currently providing 
+ *			Determines whether the CMMotionManager is currently providing 
  *			accelerometer updates.
  */
 @property(readonly, nonatomic, getter=isAccelerometerActive) BOOL accelerometerActive;
@@ -112,7 +121,7 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *  accelerometerData
  *  
  *  Discussion:
- *      Returns the latest sample of accelerometer data, or nil if none is available.
+ *			Returns the latest sample of accelerometer data, or nil if none is available.
  */
 
 @property(readonly) CMAccelerometerData *accelerometerData;
@@ -203,7 +212,6 @@ NS_CLASS_AVAILABLE(NA,4_0)
  */
 - (void)startGyroUpdatesToQueue:(NSOperationQueue *)queue withHandler:(CMGyroHandler)handler;
 
-
 /*
  *  stopGyroUpdates
  *  
@@ -211,6 +219,70 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *			Stops gyro updates.
  */
 - (void)stopGyroUpdates;
+
+/*
+ *  magnetometerUpdateInterval
+ *  
+ *  Discussion:
+ *      The interval at which to deliver magnetometer data to the specified 
+ *			handler once startMagnetometerUpdatesToQueue:withHandler: is called. 
+ *			The units are in seconds. The value of this property is capped to 
+ *			certain minimum and maximum values. The maximum value is determined by 
+ *			the maximum frequency supported by the hardware. If sensitive to the 
+ *			interval of magnetometer data, an application should always check the 
+ *			timestamps on the delivered CMMagnetometerData instances to determine the 
+ *			true update interval. 
+ */
+@property(assign, nonatomic) NSTimeInterval magnetometerUpdateInterval NS_AVAILABLE(NA,5_0);
+
+/*
+ *  magnetometerAvailable
+ *  
+ *  Discussion:
+ *      Determines whether magetometer is available.
+ */
+@property(readonly, nonatomic, getter=isMagnetometerAvailable) BOOL magnetometerAvailable NS_AVAILABLE(NA,5_0);
+
+/*
+ *  magnetometerActive
+ *  
+ *  Discussion:
+ *      Determines whether the CMMotionManager is currently providing magnetometer updates.
+ */
+@property(readonly, nonatomic, getter=isMagnetometerActive) BOOL magnetometerActive NS_AVAILABLE(NA,5_0);
+
+/*
+ *  magnetometerData
+ *  
+ *  Discussion:
+ *      Returns the latest sample of magnetometer data, or nil if none is available.
+ */
+@property(readonly) CMMagnetometerData *magnetometerData NS_AVAILABLE(NA,5_0);
+
+/*
+ *  startMagnetometerUpdates
+ *  
+ *  Discussion:
+ *      Starts magnetometer updates with no handler. To receive the latest magnetometer data
+ *          when desired, examine the magnetometerData property.
+ */
+- (void)startMagnetometerUpdates NS_AVAILABLE(NA,5_0);
+
+/*
+ *  startMagnetometerUpdatesWithHandler:
+ *  
+ *  Discussion:
+ *      Starts magnetometer updates, providing data to the given handler through the given queue. 
+ */
+- (void)startMagnetometerUpdatesToQueue:(NSOperationQueue *)queue withHandler:(CMMagnetometerHandler)handler NS_AVAILABLE(NA,5_0);
+
+/*
+ *  stopMagnetometerUpdates
+ *  
+ *  Discussion:
+ *      Stops magnetometer updates.
+ */
+- (void)stopMagnetometerUpdates NS_AVAILABLE(NA,5_0);
 
 /*
  *  deviceMotionUpdateInterval
@@ -228,10 +300,30 @@ NS_CLASS_AVAILABLE(NA,4_0)
 @property(assign, nonatomic) NSTimeInterval deviceMotionUpdateInterval;
 
 /*
+ *  availableAttitudeReferenceFrames
+ *  
+ *  Discussion:
+ *     Returns a bitmask specifying the available attitude reference frames on the device.
+ */
++ (NSUInteger)availableAttitudeReferenceFrames NS_AVAILABLE(NA,5_0);
+
+/*
+ *  attitudeReferenceFrame
+ *  
+ *  Discussion:
+ *		If device motion is active, returns the reference frame currently in-use. 
+ *		If device motion is not active, returns the default attitude reference frame
+ *		for the device. If device motion is not available on the device, the value
+ *		is undefined.
+ *		
+ */
+@property(readonly, nonatomic) CMAttitudeReferenceFrame attitudeReferenceFrame NS_AVAILABLE(NA,5_0);
+
+/*
  *  deviceMotionAvailable
  *  
  *  Discussion:
- *      Determines whether device motion is available.
+ *      Determines whether device motion is available using any available attitude reference frame.
  */
 @property(readonly, nonatomic, getter=isDeviceMotionAvailable) BOOL deviceMotionAvailable;
 
@@ -248,7 +340,7 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *  deviceMotion
  *  
  *  Discussion:
- *		Returns the latest sample of device motion data, or nil if none is available.
+ *			Returns the latest sample of device motion data, or nil if none is available.
  */
 @property(readonly) CMDeviceMotion *deviceMotion;
 
@@ -257,7 +349,8 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *  
  *  Discussion:
  *			Starts device motion updates with no handler. To receive the latest device motion data
- *			when desired, examine the deviceMotion property.
+ *			when desired, examine the deviceMotion property. Uses the default reference frame for
+ *			the device. Examine CMMotionManager's attitudeReferenceFrame to determine this.
  */
 - (void)startDeviceMotionUpdates;
 
@@ -265,12 +358,33 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *  startDeviceMotionUpdatesToQueue:withHandler:
  *  
  *  Discussion:
- *			Starts device motion updates, providing data to the given handler through the given queue.
- *			Note that when the updates are stopped, all operations in the 
- *			given NSOperationQueue will be cancelled.
-
+ *			Starts device motion updates, providing data to the given handler through the given queue. 
+ *			Uses the default reference frame for the device. Examine CMMotionManager's 
+ *			attitudeReferenceFrame to determine this.
+ *			
  */
 - (void)startDeviceMotionUpdatesToQueue:(NSOperationQueue *)queue withHandler:(CMDeviceMotionHandler)handler;
+
+/*
+ *  startDeviceMotionUpdatesUsingReferenceFrame:
+ *  
+ *  Discussion:
+ *			Starts device motion updates with no handler. To receive the latest device motion data
+ *			when desired, examine the deviceMotion property. The specified frame will be used as 
+ *			reference for the attitude estimates.
+ *
+ */
+- (void)startDeviceMotionUpdatesUsingReferenceFrame:(CMAttitudeReferenceFrame)referenceFrame NS_AVAILABLE(NA,5_0);
+
+/*
+ *  startDeviceMotionUpdatesUsingReferenceFrame:toQueue:withHandler
+ *  
+ *  Discussion:
+ *			Starts device motion updates, providing data to the given handler through the given queue.
+ *			The specified frame will be used as reference for the attitude estimates.
+ *
+ */
+- (void)startDeviceMotionUpdatesUsingReferenceFrame:(CMAttitudeReferenceFrame)referenceFrame toQueue:(NSOperationQueue *)queue withHandler:(CMDeviceMotionHandler)handler NS_AVAILABLE(NA,5_0);
 
 /*
  *  stopDeviceMotionUpdates
@@ -279,5 +393,16 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *			Stops device motion updates.
  */
 - (void)stopDeviceMotionUpdates;
+
+/*
+ *  showsDeviceMovementDisplay
+ *  
+ *  Discussion:
+ *      When the device requires movement, showsDeviceMovementDisplay indicates if the system device
+ *          movement display should be shown. Note that when device requires movement,
+ *          CMErrorDeviceRequiresMovement is reported once via CMDeviceMotionHandler. By default,
+ *          showsDeviceMovementDisplay is NO.
+ */
+@property(assign, nonatomic) BOOL showsDeviceMovementDisplay NS_AVAILABLE(NA,5_0);
 
 @end

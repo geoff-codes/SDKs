@@ -1,11 +1,11 @@
 /*==================================================================================================
-	File:       CoreAudio/CoreAudioTypes.h
+    File:       CoreAudio/CoreAudioTypes.h
 
-	Contains:   Definitions types common to the Core Audio APIs
+    Contains:   Definitions types common to the Core Audio APIs
 
-	Copyright:  (c) 1985-2010 by Apple, Inc., all rights reserved.
+    Copyright:  (c) 1985-2010 by Apple, Inc., all rights reserved.
 
-	Bugs?:      For bug reports, consult the following page on
+    Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
 
                      http://developer.apple.com/bugreporter/
@@ -63,9 +63,11 @@ extern "C"
     @enum           General Audio error codes
     @abstract       These are the error codes returned from the APIs found through Core Audio related frameworks.
     @constant       kAudio_UnimplementedError 
-                        unimplemented core routine.
+                        Unimplemented core routine.
+    @constant       kAudio_FileNotFoundError 
+                        File not found.
     @constant       kAudio_ParamError 
-                        error in user parameter list.
+                        Error in user parameter list.
     @constant       kAudio_MemFullError 
                         Not enough room in heap zone.
 */
@@ -73,6 +75,7 @@ extern "C"
 enum 
 {
     kAudio_UnimplementedError   = -4,
+    kAudio_FileNotFoundError    = -43,
     kAudio_ParamError           = -50,
     kAudio_MemFullError         = -108
 };
@@ -289,8 +292,11 @@ enum
                         MPEG-4 High Efficiency AAC audio object, has no flags.
     @constant       kAudioFormatMPEG4AAC_LD
                         MPEG-4 AAC Low Delay audio object, has no flags.
-	@constant       kAudioFormatMPEG4AAC_ELD
-						MPEG-4 AAC Enhanced Low Delay audio object, has no flags.
+    @constant       kAudioFormatMPEG4AAC_ELD
+                        MPEG-4 AAC Enhanced Low Delay audio object, has no flags. This is the formatID of
+                        the base layer without the SBR extension. See also kAudioFormatMPEG4AAC_ELD_SBR
+    @constant       kAudioFormatMPEG4AAC_ELD_SBR
+                        MPEG-4 AAC Enhanced Low Delay audio object with SBR extension layer, has no flags.
     @constant       kAudioFormatMPEG4AAC_HE_V2
                         MPEG-4 High Efficiency AAC Version 2 audio object, has no flags. 
     @constant       kAudioFormatMPEG4AAC_Spatial
@@ -336,7 +342,9 @@ enum
     kAudioFormatAppleLossless           = 'alac',
     kAudioFormatMPEG4AAC_HE             = 'aach',
     kAudioFormatMPEG4AAC_LD             = 'aacl',
-	kAudioFormatMPEG4AAC_ELD            = 'aace',
+    kAudioFormatMPEG4AAC_ELD            = 'aace',
+    kAudioFormatMPEG4AAC_ELD_SBR        = 'aacf',
+    kAudioFormatMPEG4AAC_ELD_V2         = 'aacg',    
     kAudioFormatMPEG4AAC_HE_V2          = 'aacp',
     kAudioFormatMPEG4AAC_Spatial        = 'aacs',
     kAudioFormatAMR                     = 'samr',
@@ -374,7 +382,11 @@ enum
                         kAudioFormatFlagIsFloat is clear.
     @constant       kAudioFormatFlagIsPacked
                         Set if the sample bits occupy the entire available bits for the channel,
-                        clear if they are high or low aligned within the channel.
+                        clear if they are high or low aligned within the channel. Note that even if
+                        this flag is clear, it is implied that this flag is set if the
+                        AudioStreamBasicDescription is filled out such that the fields have the
+                        following relationship:
+                           ((mBitsPerSample / 8) * mChannelsPerFrame) == mBytesPerFrame
     @constant       kAudioFormatFlagIsAlignedHigh
                         Set if the sample bits are placed into the high bits of the channel, clear
                         for low bit placement. This is only valid if kAudioFormatFlagIsPacked is
@@ -503,7 +515,7 @@ enum
     @result     Whether or not the ASBD indicates native endian linear PCM data.
 */
 #if defined(__cplusplus)
-    inline bool IsAudioFormatNativeEndian(const AudioStreamBasicDescription& f) { return (f.mFormatID == kAudioFormatLinearPCM) && ((f.mFormatFlags & kAudioFormatFlagIsBigEndian) == kAudioFormatFlagsNativeEndian); }
+static inline bool IsAudioFormatNativeEndian(const AudioStreamBasicDescription& f) { return (f.mFormatID == kAudioFormatLinearPCM) && ((f.mFormatFlags & kAudioFormatFlagIsBigEndian) == kAudioFormatFlagsNativeEndian); }
 #endif
 
 /*!
@@ -524,7 +536,7 @@ enum
     @result     A UInt32 containing the format flags.
 */
 #if defined(__cplusplus)
-inline UInt32    CalculateLPCMFlags(UInt32 inValidBitsPerChannel, UInt32 inTotalBitsPerChannel, bool inIsFloat, bool inIsBigEndian, bool inIsNonInterleaved = false) { return (inIsFloat ? kAudioFormatFlagIsFloat : kAudioFormatFlagIsSignedInteger) | (inIsBigEndian ? ((UInt32)kAudioFormatFlagIsBigEndian) : 0) | ((!inIsFloat && (inValidBitsPerChannel == inTotalBitsPerChannel)) ? kAudioFormatFlagIsPacked : kAudioFormatFlagIsAlignedHigh) | (inIsNonInterleaved ? ((UInt32)kAudioFormatFlagIsNonInterleaved) : 0); }
+static inline UInt32    CalculateLPCMFlags(UInt32 inValidBitsPerChannel, UInt32 inTotalBitsPerChannel, bool inIsFloat, bool inIsBigEndian, bool inIsNonInterleaved = false) { return (inIsFloat ? kAudioFormatFlagIsFloat : kAudioFormatFlagIsSignedInteger) | (inIsBigEndian ? ((UInt32)kAudioFormatFlagIsBigEndian) : 0) | ((inValidBitsPerChannel == inTotalBitsPerChannel) ? kAudioFormatFlagIsPacked : kAudioFormatFlagIsAlignedHigh) | (inIsNonInterleaved ? ((UInt32)kAudioFormatFlagIsNonInterleaved) : 0); }
 #endif
 
 /*!
@@ -548,7 +560,7 @@ inline UInt32    CalculateLPCMFlags(UInt32 inValidBitsPerChannel, UInt32 inTotal
                     Whether the samples are big endian or little endian.
 */
 #if defined(__cplusplus)
-inline void    FillOutASBDForLPCM(AudioStreamBasicDescription& outASBD, Float64 inSampleRate, UInt32 inChannelsPerFrame, UInt32 inValidBitsPerChannel, UInt32 inTotalBitsPerChannel, bool inIsFloat, bool inIsBigEndian, bool inIsNonInterleaved = false)    { outASBD.mSampleRate = inSampleRate; outASBD.mFormatID = kAudioFormatLinearPCM; outASBD.mFormatFlags = CalculateLPCMFlags(inValidBitsPerChannel, inTotalBitsPerChannel, inIsFloat, inIsBigEndian, inIsNonInterleaved); outASBD.mBytesPerPacket = (inIsNonInterleaved ? 1 : inChannelsPerFrame) * (inTotalBitsPerChannel / 8); outASBD.mFramesPerPacket = 1; outASBD.mBytesPerFrame = (inIsNonInterleaved ? 1 : inChannelsPerFrame) * (inTotalBitsPerChannel / 8); outASBD.mChannelsPerFrame = inChannelsPerFrame; outASBD.mBitsPerChannel = inValidBitsPerChannel; }
+static inline void    FillOutASBDForLPCM(AudioStreamBasicDescription& outASBD, Float64 inSampleRate, UInt32 inChannelsPerFrame, UInt32 inValidBitsPerChannel, UInt32 inTotalBitsPerChannel, bool inIsFloat, bool inIsBigEndian, bool inIsNonInterleaved = false)    { outASBD.mSampleRate = inSampleRate; outASBD.mFormatID = kAudioFormatLinearPCM; outASBD.mFormatFlags = CalculateLPCMFlags(inValidBitsPerChannel, inTotalBitsPerChannel, inIsFloat, inIsBigEndian, inIsNonInterleaved); outASBD.mBytesPerPacket = (inIsNonInterleaved ? 1 : inChannelsPerFrame) * (inTotalBitsPerChannel / 8); outASBD.mFramesPerPacket = 1; outASBD.mBytesPerFrame = (inIsNonInterleaved ? 1 : inChannelsPerFrame) * (inTotalBitsPerChannel / 8); outASBD.mChannelsPerFrame = inChannelsPerFrame; outASBD.mBitsPerChannel = inValidBitsPerChannel; }
 #endif
 
 
@@ -748,7 +760,7 @@ enum
                     The sample time to put in the AudioTimeStamp.
 */
 #if defined(__cplusplus)
-inline void    FillOutAudioTimeStampWithSampleTime(AudioTimeStamp& outATS, Float64 inSampleTime)    { outATS.mSampleTime = inSampleTime; outATS.mHostTime = 0; outATS.mRateScalar = 0; outATS.mWordClockTime = 0; memset(&outATS.mSMPTETime, 0, sizeof(SMPTETime)); outATS.mFlags = kAudioTimeStampSampleTimeValid; }
+static inline void    FillOutAudioTimeStampWithSampleTime(AudioTimeStamp& outATS, Float64 inSampleTime)    { outATS.mSampleTime = inSampleTime; outATS.mHostTime = 0; outATS.mRateScalar = 0; outATS.mWordClockTime = 0; memset(&outATS.mSMPTETime, 0, sizeof(SMPTETime)); outATS.mFlags = kAudioTimeStampSampleTimeValid; }
 #endif
 
 /*!
@@ -760,7 +772,7 @@ inline void    FillOutAudioTimeStampWithSampleTime(AudioTimeStamp& outATS, Float
                     The host time to put in the AudioTimeStamp.
 */
 #if defined(__cplusplus)
-inline void    FillOutAudioTimeStampWithHostTime(AudioTimeStamp& outATS, UInt64 inHostTime) { outATS.mSampleTime = 0; outATS.mHostTime = inHostTime; outATS.mRateScalar = 0; outATS.mWordClockTime = 0; memset(&outATS.mSMPTETime, 0, sizeof(SMPTETime)); outATS.mFlags = kAudioTimeStampHostTimeValid; }
+static inline void    FillOutAudioTimeStampWithHostTime(AudioTimeStamp& outATS, UInt64 inHostTime) { outATS.mSampleTime = 0; outATS.mHostTime = inHostTime; outATS.mRateScalar = 0; outATS.mWordClockTime = 0; memset(&outATS.mSMPTETime, 0, sizeof(SMPTETime)); outATS.mFlags = kAudioTimeStampHostTimeValid; }
 #endif
 
 /*!
@@ -775,7 +787,7 @@ inline void    FillOutAudioTimeStampWithHostTime(AudioTimeStamp& outATS, UInt64 
                     The host time to put in the AudioTimeStamp.
 */
 #if defined(__cplusplus)
-inline void    FillOutAudioTimeStampWithSampleAndHostTime(AudioTimeStamp& outATS, Float64 inSampleTime, UInt64 inHostTime) { outATS.mSampleTime = inSampleTime; outATS.mHostTime = inHostTime; outATS.mRateScalar = 0; outATS.mWordClockTime = 0; memset(&outATS.mSMPTETime, 0, sizeof(SMPTETime)); outATS.mFlags = kAudioTimeStampSampleTimeValid | kAudioTimeStampHostTimeValid; }
+static inline void    FillOutAudioTimeStampWithSampleAndHostTime(AudioTimeStamp& outATS, Float64 inSampleTime, UInt64 inHostTime) { outATS.mSampleTime = inSampleTime; outATS.mHostTime = inHostTime; outATS.mRateScalar = 0; outATS.mWordClockTime = 0; memset(&outATS.mSMPTETime, 0, sizeof(SMPTETime)); outATS.mFlags = kAudioTimeStampSampleTimeValid | kAudioTimeStampHostTimeValid; }
 #endif
 
 /*!
@@ -1113,7 +1125,7 @@ enum
     kAudioChannelLayoutTag_MPEG_7_1_C               = (128<<16) | 8,                       //  L R C LFE Ls Rs Rls Rrs
     kAudioChannelLayoutTag_Emagic_Default_7_1       = (129<<16) | 8,                       //  L R Ls Rs C LFE Lc Rc
     kAudioChannelLayoutTag_SMPTE_DTV                = (130<<16) | 8,                       //  L R C LFE Ls Rs Lt Rt
-																						   //      (kAudioChannelLayoutTag_ITU_5_1 plus a matrix encoded stereo mix)
+                                                                                           //      (kAudioChannelLayoutTag_ITU_5_1 plus a matrix encoded stereo mix)
 
     //  ITU defined layouts
     kAudioChannelLayoutTag_ITU_1_0                  = kAudioChannelLayoutTag_Mono,         //  C
@@ -1219,11 +1231,11 @@ enum
     kAudioChannelLayoutTag_DTS_8_0_B                = (179<<16) | 8,                        // Lc C Rc L R Ls Cs Rs
     kAudioChannelLayoutTag_DTS_8_1_A                = (180<<16) | 9,                        // Lc Rc L R Ls Rs Rls Rrs LFE
     kAudioChannelLayoutTag_DTS_8_1_B                = (181<<16) | 9,                        // Lc C Rc L R Ls Cs Rs LFE
-    kAudioChannelLayoutTag_DTS_6_1_D                = (182<<16) | 7,                         // C L R Ls Rs LFE Cs
-	
+    kAudioChannelLayoutTag_DTS_6_1_D                = (182<<16) | 7,                        // C L R Ls Rs LFE Cs
+    
 
-    kAudioChannelLayoutTag_DiscreteInOrder          = (147<<16) | 0,                       // needs to be ORed with the actual number of channels  
-    kAudioChannelLayoutTag_Unknown                  = 0xFFFF0000                           // needs to be ORed with the actual number of channels  
+    kAudioChannelLayoutTag_DiscreteInOrder          = (147<<16) | 0,                        // needs to be ORed with the actual number of channels  
+    kAudioChannelLayoutTag_Unknown                  = 0xFFFF0000                            // needs to be ORed with the actual number of channels  
 };
 
 

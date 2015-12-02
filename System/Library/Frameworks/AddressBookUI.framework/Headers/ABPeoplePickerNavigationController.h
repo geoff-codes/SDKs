@@ -41,9 +41,14 @@ NS_CLASS_AVAILABLE(NA, 2_0)
             unsigned            allowsEditing:1;
             unsigned            allowsCancel:1;
             unsigned            allowsActions:1;
+            unsigned            allowsConferencing:1;
             unsigned            allowsSounds:1;
-            unsigned            hidesSearchableStores:1;
+            unsigned            allowsVibrations:1;
+            unsigned            hidesSearchableSources:1;
+            unsigned            hidesAggregateAllGroup:1;
         } _flags;
+    
+        BOOL                    _navigationBarIsAnimating;
 }
 
 @property(nonatomic,assign)    id<ABPeoplePickerNavigationControllerDelegate>    peoplePickerDelegate;

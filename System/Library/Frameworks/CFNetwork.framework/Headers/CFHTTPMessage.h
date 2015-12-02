@@ -132,6 +132,19 @@ CFN_EXPORT const CFStringRef kCFHTTPAuthenticationSchemeNegotiate		__OSX_AVAILAB
  */
 CFN_EXPORT const CFStringRef kCFHTTPAuthenticationSchemeNegotiate2		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_3_0);
 	
+/*
+ *  kCFHTTPAuthenticationSchemeXMobileMeAuthToken
+ *  
+ *  Discussion:
+ *	HTTP XMobileMeAuthToken authentication scheme.
+ *  
+ *  Availability:
+ *	Mac OS X:		 in version 10.6 and later in CoreServices.framework
+ *	CarbonLib:		not available
+ *	Non-Carbon CFM:   not available
+ */
+CFN_EXPORT const CFStringRef kCFHTTPAuthenticationSchemeXMobileMeAuthToken		__OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_3);	
+	
 
 /*
  *  kCFHTTPAuthenticationSchemeKerberos

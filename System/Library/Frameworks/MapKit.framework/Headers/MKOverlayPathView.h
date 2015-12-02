@@ -2,18 +2,19 @@
 //  MKOverlayPathView.h
 //  MapKit
 //
-//  Copyright 2010 Apple, Inc. All rights reserved.
+//  Copyright (c) 2010-2011, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import <MapKit/MKOverlayView.h>
 
-NS_CLASS_AVAILABLE(__MAC_NA, 4_0)
+#import <MapKit/MKOverlayView.h>
+#import <MapKit/MKFoundation.h>
+
+MK_CLASS_AVAILABLE(NA, 4_0)
 @interface MKOverlayPathView : MKOverlayView {
-@package    
+@package
     UIColor *_fillColor;
     UIColor *_strokeColor;
-    
     CGFloat _lineWidth;
     CGLineJoin _lineJoin;
     CGLineCap _lineCap;

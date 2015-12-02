@@ -2,18 +2,21 @@
 //  UIAccelerometer.h
 //  UIKit
 //
-//  Copyright 2007-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
 //
-
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
+
+/* UIAcceleration and UIAccelerometer are deprecated as of iOS 5.0. These classes have been replaced by the Core Motion framework. These classes will be marked with formal deprecation attributes in a future release of iOS.
+ */
 
 typedef double UIAccelerationValue;
 
 @protocol UIAccelerometerDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIAcceleration : NSObject {
+UIKIT_CLASS_AVAILABLE(2_0)
+@interface UIAcceleration : NSObject {
   @private
     NSTimeInterval timestamp;
     UIAccelerationValue x, y, z;
@@ -26,7 +29,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIAcceleration : NSObject {
 
 @end
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIAccelerometer : NSObject {
+UIKIT_CLASS_AVAILABLE(2_0)
+@interface UIAccelerometer : NSObject {
   @private
     NSTimeInterval               _updateInterval;
     id <UIAccelerometerDelegate> _delegate;
@@ -46,6 +50,6 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIAccelerometer : NSObject {
 @protocol UIAccelerometerDelegate<NSObject>
 @optional
 
-- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration;
+- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_5_0);
 
 @end

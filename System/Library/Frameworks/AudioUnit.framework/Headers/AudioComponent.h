@@ -94,6 +94,22 @@
 #endif
 
 //=====================================================================================================================
+#pragma mark Constants
+
+/*!
+	@constant	kAudioComponentFlag_Unsearchable
+
+	When this bit in AudioComponentDescription's componentFlags is set, AudioComponentFindNext
+	will only return this component when performing a specific, non-wildcard search for the
+	component, i.e. with non-zero values of componentType, componentSubType, and
+	componentManufacturer. This can be useful when privately registering a component.
+	Available starting in Mac OS X 10.7 and iOS 5.0
+*/
+enum {
+	kAudioComponentFlag_Unsearchable = 1
+};
+
+//=====================================================================================================================
 #pragma mark Data Types
 
 /*!
@@ -161,9 +177,30 @@ typedef struct OpaqueAudioComponent *   AudioComponent;
     typedef struct ComponentInstanceRecord *        AudioComponentInstance;
 #endif
 
+/*!
+    @typedef        AudioComponentMethod
+    @abstract       The broad prototype for an audio plugin method
+    @discussion     Every audio plugin will implement a collection of methods that match a particular
+					selector. For example, the AudioUnitInitialize API call is implemented by a
+					plugin implementing the kAudioUnitInitializeSelect selector. Any function implementing
+					an audio plugin selector conforms to the basic pattern where the first argument
+					is a pointer to the plugin instance structure, has 0 or more specific arguments,  
+					and returns an OSStatus.
+*/
 typedef OSStatus (*AudioComponentMethod) (void *self,...);
 
 /*!
+    @struct         AudioComponentPlugInInterface
+    @discussion     A structure used to represent an audio plugin's routines 
+    @field          Open
+                        the function used to open (or create) an audio plugin instance
+    @field          Close
+                        the function used to close (or dispose) an audio plugin instance
+    @field          Lookup
+                        this is used to return a function pointer for a given selector, 
+						or NULL if that selector is not implemented
+    @field          reserved
+                        must be NULL
 */
 typedef struct AudioComponentPlugInInterface {
 	OSStatus						(*Open)(void *self, AudioComponentInstance mInstance);
@@ -188,7 +225,7 @@ typedef struct AudioComponentPlugInInterface {
                     this basic type, but rather, AudioUnitPlugInInterface, AudioCodecPlugInInterface,
                     etc., it is declared void * for simplicity.
 */
-typedef AudioComponentPlugInInterface*	(*AudioComponentFactoryFunction)(const AudioComponentDescription *inDesc);
+typedef AudioComponentPlugInInterface *  (*AudioComponentFactoryFunction)(const AudioComponentDescription *inDesc);
 
 //=====================================================================================================================
 #pragma mark Functions
@@ -350,6 +387,31 @@ AudioComponentInstanceCanDo (   AudioComponentInstance              inInstance,
                                 SInt16                              inSelectorID)
                                                                             __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_3_0);
 
+/*!
+    @function       AudioComponentRegister
+    @abstract       Dynamically registers an AudioComponent within the current process
+    @discussion
+        AudioComponents are registered either when found in appropriate bundles in the filesystem,
+        or via this call. AudioComponents registered via this call are available only within
+        the current process.
+    
+    @param          inDesc
+                        the AudioComponentDescription
+    @param          inName
+                        the AudioComponent's name
+    @param          inVersion
+                        the AudioComponent's version
+    @param          inFactory
+                        an AudioComponentFactoryFunction which will create instances of your
+                        AudioComponent
+    @result         an AudioComponent object
+*/
+extern AudioComponent
+AudioComponentRegister(     const AudioComponentDescription *   inDesc,
+                            CFStringRef                         inName,
+                            UInt32                              inVersion,
+                            AudioComponentFactoryFunction       inFactory)
+																			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 #ifdef __cplusplus
 }

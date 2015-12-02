@@ -2,7 +2,7 @@
 //  UITextInput.h
 //  UIKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -60,6 +60,20 @@ typedef enum {
     UITextGranularityLine,
     UITextGranularityDocument
 } UITextGranularity;
+
+UIKIT_CLASS_AVAILABLE(5_1) @interface UIDictationPhrase : NSObject {
+    @private
+        NSString *_text;
+        NSArray *_alternativeInterpretations;
+}
+
+/* -text returns the most likely interpretation for a phrase. If there are other 
+ * interpretations, -alternativeInterpretations will return an array of them, with 
+ * the first being most likely and the last being least likely. */
+@property (nonatomic, readonly) NSString *text;
+@property (nonatomic, readonly) NSArray *alternativeInterpretations;
+
+@end
 
 @protocol UITextInput <UIKeyInput>
 @required
@@ -141,6 +155,16 @@ typedef enum {
  * wraps across line boundaries. */
 @property (nonatomic) UITextStorageDirection selectionAffinity;
 
+/* This is an optional method for clients that wish to support dictation phrase alternatives. If 
+ * they do not implement this method, dictation will just insert the most likely interpretation 
+ * of what was spoken via -insertText:.
+ * dictationResult is an array of UIDictationPhrases. */
+- (void)insertDictationResult:(NSArray *)dictationResult;
+
+/* These are optional methods for clients that wish know when there are pending dictation results. */
+- (void)dictationRecordingDidEnd;
+- (void)dictationRecognitionFailed;
+
 @end
 
 //---------------------------------------------------------------------------------------------------
@@ -168,7 +192,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UITextRange : NSObject
 @end
 
 /* The input delegate must be notified of changes to the selection and text. */
-@protocol UITextInputDelegate
+@protocol UITextInputDelegate <NSObject>
 
 - (void)selectionWillChange:(id <UITextInput>)textInput;
 - (void)selectionDidChange:(id <UITextInput>)textInput;
@@ -179,7 +203,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UITextRange : NSObject
 
 
 /* A tokenizer allows the text input system to evaluate text units of varying granularity. */
-@protocol UITextInputTokenizer
+@protocol UITextInputTokenizer <NSObject>
 
 @required
 
@@ -207,6 +231,7 @@ UIKIT_CLASS_AVAILABLE(4_2) @interface UITextInputMode : NSObject
 @property (nonatomic, readonly, retain) NSString *primaryLanguage; // The primary language, if any, of the input mode.  A BCP 47 language identifier such as en-US
 
 + (UITextInputMode *)currentInputMode; // The current input mode.  Nil if unset.
++ (NSArray *)activeInputModes; // The activate input modes.
 
 @end
 

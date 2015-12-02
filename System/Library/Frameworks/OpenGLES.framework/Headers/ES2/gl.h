@@ -68,8 +68,8 @@ typedef int             GLfixed;
 typedef int             GLclampx;
 
 /* GL types for handling large vertex buffer objects */
-typedef int             GLintptr;
-typedef int             GLsizeiptr;
+typedef long            GLintptr;
+typedef long            GLsizeiptr;
 
 /* OpenGL ES core versions */
 #define GL_ES_VERSION_2_0                 1

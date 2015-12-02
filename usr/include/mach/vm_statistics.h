@@ -113,15 +113,6 @@ struct vm_statistics {
 typedef struct vm_statistics	*vm_statistics_t;
 typedef struct vm_statistics	vm_statistics_data_t;
 
-#if defined(__ppc__) /* On ppc, vm statistics are still 32-bit */
-
-typedef struct vm_statistics	*vm_statistics64_t;
-typedef struct vm_statistics	vm_statistics64_data_t;
-
-#define VM_STATISTICS_TRUNCATE_TO_32_BIT(value) value
-
-#else /* !(defined(__ppc__))  */
-
 /* 
  * vm_statistics64
  *
@@ -133,6 +124,8 @@ typedef struct vm_statistics	vm_statistics64_data_t;
  *	rev3 - 	changed name to vm_statistics64.
  *		changed some fields in structure to 64-bit on 
  *		arm, i386 and x86_64 architectures.
+ *	rev4 -  require 64-bit alignment for efficient access
+ *		in the kernel. No change to reported data.
  *
  */
 
@@ -163,11 +156,7 @@ struct vm_statistics64 {
 	 */
 	natural_t	speculative_count;	/* # of pages speculative */
 
-}
-#ifdef __arm__
-__attribute__((aligned(8)))
-#endif
-;
+} __attribute__((aligned(8)));
 
 typedef struct vm_statistics64	*vm_statistics64_t;
 typedef struct vm_statistics64	vm_statistics64_data_t;
@@ -179,8 +168,6 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
  * vm_statistics64 to the 32-bit values of the older structure above (vm_statistics).
  */
 #define VM_STATISTICS_TRUNCATE_TO_32_BIT(value) ((uint32_t)(((value) > UINT32_MAX ) ? UINT32_MAX : (value)))
-
-#endif /* !(defined(__ppc__)) */
 
 
 /* included for the vm_map_page_query call */
@@ -229,6 +216,7 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 #define VM_FLAGS_ANYWHERE	0x0001
 #define VM_FLAGS_PURGABLE	0x0002
 #define VM_FLAGS_NO_CACHE	0x0010
+#define VM_FLAGS_OVERWRITE	0x4000	/* delete any existing mappings first */
 
 /*
  * VM_FLAGS_SUPERPAGE_MASK
@@ -239,10 +227,12 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 #define VM_FLAGS_SUPERPAGE_SHIFT 16
 
 #define SUPERPAGE_NONE			0	/* no superpages, if all bits are 0 */
-#define VM_FLAGS_SUPERPAGE_NONE		(SUPERPAGE_NONE<<VM_FLAGS_SUPERPAGE_SHIFT)
+#define SUPERPAGE_SIZE_ANY		1
+#define VM_FLAGS_SUPERPAGE_NONE     (SUPERPAGE_NONE     << VM_FLAGS_SUPERPAGE_SHIFT)
+#define VM_FLAGS_SUPERPAGE_SIZE_ANY (SUPERPAGE_SIZE_ANY << VM_FLAGS_SUPERPAGE_SHIFT)
 #if defined(__x86_64__) || !defined(KERNEL)
-#define SUPERPAGE_SIZE_2MB		1
-#define VM_FLAGS_SUPERPAGE_SIZE_2MB	(SUPERPAGE_SIZE_2MB<<VM_FLAGS_SUPERPAGE_SHIFT)
+#define SUPERPAGE_SIZE_2MB		2
+#define VM_FLAGS_SUPERPAGE_SIZE_2MB (SUPERPAGE_SIZE_2MB<<VM_FLAGS_SUPERPAGE_SHIFT)
 #endif
 
 #define VM_FLAGS_ALIAS_MASK	0xFF000000
@@ -257,9 +247,13 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 				 VM_FLAGS_ANYWHERE |		\
 				 VM_FLAGS_PURGABLE |		\
 				 VM_FLAGS_NO_CACHE |		\
+				 VM_FLAGS_OVERWRITE |		\
 				 VM_FLAGS_SUPERPAGE_MASK |	\
 				 VM_FLAGS_ALIAS_MASK)
 #define VM_FLAGS_USER_MAP	VM_FLAGS_USER_ALLOCATE
+#define VM_FLAGS_USER_REMAP	(VM_FLAGS_FIXED |    \
+				 VM_FLAGS_ANYWHERE | \
+				 VM_FLAGS_OVERWRITE)
 
 #define VM_MEMORY_MALLOC 1
 #define VM_MEMORY_MALLOC_SMALL 2
@@ -281,6 +275,10 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 /* memory containing a dylib */
 #define VM_MEMORY_DYLIB	33
 #define VM_MEMORY_OBJC_DISPATCHERS 34
+
+/* Was a nested pmap (VM_MEMORY_SHARED_PMAP) which has now been unnested */
+#define	VM_MEMORY_UNSHARED_PMAP	35
+
 
 // Placeholders for now -- as we analyze the libraries and find how they
 // use memory, we can make these labels more specific.
@@ -337,6 +335,12 @@ typedef struct vm_statistics64	vm_statistics64_data_t;
 
 /* ImageIO memory */
 #define VM_MEMORY_IMAGEIO	70
+
+/* CoreProfile memory */
+#define VM_MEMORY_COREPROFILE	71
+
+/* assetsd / MobileSlideShow memory */
+#define VM_MEMORY_ASSETSD	72
 
 /* Reserve 240-255 for application */
 #define VM_MEMORY_APPLICATION_SPECIFIC_1 240

@@ -1,14 +1,9 @@
 /*	
     NSURLCredential.h
-    Copyright (c) 2003-2010, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2011, Apple Inc. All rights reserved.    
     
     Public header file.
 */
-
-// Note: To use the APIs described in these headers, you must perform
-// a runtime check for Foundation-462.1 or later.
-#import <AvailabilityMacros.h>
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/NSObject.h>
 #import <Security/Security.h>
@@ -38,7 +33,7 @@ typedef NSUInteger NSURLCredentialPersistence;
     @discussion This class is an immutable object representing an authentication credential.  The actual type of the credential is determined by the constructor called in the categories declared below.
 */
 
-@interface NSURLCredential : NSObject <NSCopying>
+@interface NSURLCredential : NSObject <NSCoding, NSCopying>
 {
     @private
     __strong NSURLCredentialInternal *_internal;
@@ -169,5 +164,3 @@ typedef NSUInteger NSURLCredentialPersistence;
 
 @end
 
-
-#endif

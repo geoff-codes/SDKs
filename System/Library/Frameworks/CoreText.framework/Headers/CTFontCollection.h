@@ -2,7 +2,7 @@
  *  CTFontCollection.h
  *  CoreText
  *
- *  Copyright (c) 2006-2010 Apple Inc. All rights reserved.
+ *  Copyright (c) 2006-2011 Apple Inc. All rights reserved.
  *
  */
 
@@ -54,7 +54,10 @@ CFTypeID CTFontCollectionGetTypeID( void ) CT_AVAILABLE_STARTING( __MAC_10_5, __
     @abstract   Collection sorting callback.
     @discussion This callback can be specified to obtain the matching font descriptors of a collection in sorted order. Return the appropriate comparison result of first descriptor to second descriptor.
 */
-typedef CFComparisonResult (*CTFontCollectionSortDescriptorsCallback)(CTFontDescriptorRef first, CTFontDescriptorRef second, void *refCon);
+typedef CFComparisonResult (*CTFontCollectionSortDescriptorsCallback)(
+    CTFontDescriptorRef first,
+    CTFontDescriptorRef second,
+    void *refCon );
 
 /*! --------------------------------------------------------------------------
     @group Collection Matching Options
@@ -157,7 +160,7 @@ CTMutableFontCollectionRef CTFontCollectionCreateMutableCopy(
 
     @result     This function returns a retained reference to the array of descriptors to be used to query (match) the system font database. The return value is undefined if CTFontCollectionCreateFromAvailableFonts was used to create the collection.
 */
-CFArrayRef CTFontCollectionCopyQueryDescriptors(CTFontCollectionRef collection) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
+CFArrayRef CTFontCollectionCopyQueryDescriptors( CTFontCollectionRef collection ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
 
 /*!
     @function   CTFontCollectionSetQueryDescriptors
@@ -166,12 +169,12 @@ CFArrayRef CTFontCollectionCopyQueryDescriptors(CTFontCollectionRef collection) 
     @param      collection
                 The font collection reference.
 
-	@param      descriptors
-	            An array of CTFontDescriptorRef. May be NULL to represent an empty collection, in which case the matching descriptors will also be NULL.
+    @param      descriptors
+                An array of CTFontDescriptorRef. May be NULL to represent an empty collection, in which case the matching descriptors will also be NULL.
 */
 void CTFontCollectionSetQueryDescriptors(
-	CTMutableFontCollectionRef	collection,
-	CFArrayRef					descriptors) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
+    CTMutableFontCollectionRef  collection,
+    CFArrayRef                  descriptors ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
 
 /*!
     @function   CTFontCollectionCopyExclusionDescriptors
@@ -182,7 +185,7 @@ void CTFontCollectionSetQueryDescriptors(
 
     @result     This function returns a retained reference to the array of descriptors to be used to query (match) the system font database.
 */
-CFArrayRef CTFontCollectionCopyExclusionDescriptors(CTFontCollectionRef collection) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
+CFArrayRef CTFontCollectionCopyExclusionDescriptors( CTFontCollectionRef collection ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
 
 /*!
     @function   CTFontCollectionSetExclusionDescriptors
@@ -191,12 +194,12 @@ CFArrayRef CTFontCollectionCopyExclusionDescriptors(CTFontCollectionRef collecti
     @param      collection
                 The font collection reference.
 
-	@param      descriptors
-	            An array of CTFontDescriptorRef. May be NULL.
+    @param      descriptors
+                An array of CTFontDescriptorRef. May be NULL.
 */
 void CTFontCollectionSetExclusionDescriptors(
-	CTMutableFontCollectionRef	collection,
-	CFArrayRef					descriptors) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
+    CTMutableFontCollectionRef  collection,
+    CFArrayRef                  descriptors ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
 
 /*! --------------------------------------------------------------------------
     @group Retrieving Matching Descriptors
@@ -239,12 +242,14 @@ CFArrayRef CTFontCollectionCreateMatchingFontDescriptorsSortedWithCallback(
 
     @param      collection
                 The font collection reference.
+
     @param      options
                 The options dictionary. See constant option keys. May be NULL, in which case this call returns the same results as CTFontCollectionCreateMatchingFontDescriptors, using the options passed in when the collection was created.
 
     @result     This function returns a retained reference to an array of normalized font descriptors   matching the collection definition.
 */
-CFArrayRef CTFontCollectionCreateMatchingFontDescriptorsWithOptions( CTFontCollectionRef collection, CFDictionaryRef options ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
+CFArrayRef CTFontCollectionCreateMatchingFontDescriptorsWithOptions( CTFontCollectionRef collection,
+    CFDictionaryRef     options ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
 
 /*!
     @function   CTFontCollectionCreateMatchingFontDescriptorsForFamily
@@ -253,60 +258,76 @@ CFArrayRef CTFontCollectionCreateMatchingFontDescriptorsWithOptions( CTFontColle
     @param      collection
                 The font collection reference.
 
-	@param      familyName
-	            The font family name
+    @param      familyName
+                The font family name
 
     @result     This function returns a retained reference to an array of normalized font descriptors matching the collection definition.
 */
-CFArrayRef CTFontCollectionCreateMatchingFontDescriptorsForFamily( CTFontCollectionRef collection, CFStringRef familyName, CFDictionaryRef options ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
+CFArrayRef CTFontCollectionCreateMatchingFontDescriptorsForFamily(
+    CTFontCollectionRef collection,
+    CFStringRef         familyName,
+    CFDictionaryRef     options ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
 
 /*! --------------------------------------------------------------------------
     @group Bulk attribute access
 *///--------------------------------------------------------------------------
 /*!
-    @enum       CTFontCollectionCopyOptions
-    @abstract   Option bits for use with CTFontCollectionCopyFontAttribute(s).
+    @enum       CTFontCollectionCopyOptions
+    @abstract   Option bits for use with CTFontCollectionCopyFontAttribute(s).
 
-    @constant   kCTFontCollectionCopyStandardSort	Passing this option indicates that the return values should be sorted in standard UI order, suitable for display to the user. This is the same sorting behavior used by NSFontPanel and Font Book.
-    @constant   kCTFontCollectionCopyUnique	Passing this option indicates that duplicate values should be removed from the results.
- */
+    @constant   kCTFontCollectionCopyStandardSort
+                Passing this option indicates that the return values should be sorted in standard UI order, suitable for display to the user. This is the same sorting behavior used by NSFontPanel and Font Book.
+
+    @constant   kCTFontCollectionCopyUnique
+                Passing this option indicates that duplicate values should be removed from the results.
+ */
 enum
 {
-	kCTFontCollectionCopyDefaultOptions = 0,
-	kCTFontCollectionCopyUnique = (1L << 0),
-	kCTFontCollectionCopyStandardSort = (1L << 1)
+    kCTFontCollectionCopyDefaultOptions = 0,
+    kCTFontCollectionCopyUnique = (1L << 0),
+    kCTFontCollectionCopyStandardSort = (1L << 1)
 };
 typedef uint32_t CTFontCollectionCopyOptions;
 
 /*!
-    @function	CTFontCollectionCopyFontAttribute
-    @abstract   Returns an array of font descriptor attribute values.
+    @function   CTFontCollectionCopyFontAttribute
+    @abstract   Returns an array of font descriptor attribute values.
 
-    @param      collection
-                The font collection reference.
-    @param      attributeName
-             	The attribute to retrieve for each descriptor in the collection.
-    @param      options
+    @param      collection
+                The font collection reference.
+
+    @param      attributeName
+                The attribute to retrieve for each descriptor in the collection.
+
+    @param      options
                 Options to alter the return value.
 
-    @result     This function returns a retained reference to a CFArray, or NULL on error. The caller is reponsible for releasing the array. The array contains one value for each descriptor, in the same order as the results from CTFontCollectionCreateMatchingDescriptors. When the kCTFontCollectionCopyUnique is set, duplicate values will be removed. When kCTFontCollectionCopyStandardSort is set, the values will be sorted in standard UI order.
- */
-CFArrayRef CTFontCollectionCopyFontAttribute(CTFontCollectionRef collection, CFStringRef attributeName, CTFontCollectionCopyOptions options) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
+    @result     This function returns a retained reference to a CFArray, or NULL on error. The caller is reponsible for releasing the array. The array contains one value for each descriptor, in the same order as the results from CTFontCollectionCreateMatchingDescriptors. When the kCTFontCollectionCopyUnique is set, duplicate values will be removed. When kCTFontCollectionCopyStandardSort is set, the values will be sorted in standard UI order.
+ */
+CFArrayRef CTFontCollectionCopyFontAttribute(
+    CTFontCollectionRef         collection,
+    CFStringRef                 attributeName,
+    CTFontCollectionCopyOptions options ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
 
 /*!
-    @function	CTFontCollectionCopyFontAttributes
-    @abstract   Returns an array of dictionaries containing font descriptor attribute values.
- 
-    @param      collection
- 	            The font collection reference.
-    @param      attributeNames
-          	    The attributes to retrieve for each descriptor in the collection.
-    @param      options
-                Options to alter the return value.
+    @function   CTFontCollectionCopyFontAttributes
+    @abstract   Returns an array of dictionaries containing font descriptor attribute values.
+ 
+    @param      collection
+                The font collection reference.
 
-    @result     This function returns a retained reference to a CFArray, or NULL on error. The caller is reponsible for releasing the array. The array contains one value for each descriptor, in the same order as the results from CTFontCollectionCreateMatchingDescriptors. When the kCTFontCollectionCopyUnique is set, duplicate values will be removed. When kCTFontCollectionCopyStandardSort is set, the values will be sorted in standard UI order.
- */
-CFArrayRef CTFontCollectionCopyFontAttributes(CTFontCollectionRef collection, CFSetRef attributeNames, CTFontCollectionCopyOptions options) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
+    @param      attributeNames
+                The attributes to retrieve for each descriptor in the collection.
+
+    @param      options
+                Options to alter the return value.
+
+    @result     This function returns a retained reference to a CFArray, or NULL on error. The caller is reponsible for releasing the array. The array contains one value for each descriptor, in the same order as the results from CTFontCollectionCreateMatchingDescriptors. When the kCTFontCollectionCopyUnique is set, duplicate values will be removed. When kCTFontCollectionCopyStandardSort is set, the values will be sorted in standard UI order.
+ */
+CFArrayRef CTFontCollectionCopyFontAttributes(
+    CTFontCollectionRef         collection,
+    CFSetRef                    attributeNames,
+    CTFontCollectionCopyOptions options ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_NA);
 
 #if defined(__cplusplus)
 }

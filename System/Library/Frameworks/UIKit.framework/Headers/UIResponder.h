@@ -2,7 +2,7 @@
 //  UIResponder.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -52,6 +52,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIResponder : NSObject {
 - (void)select:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 - (void)selectAll:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 - (void)delete:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+- (void)makeTextWritingDirectionLeftToRight:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (void)makeTextWritingDirectionRightToLeft:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 @end
 

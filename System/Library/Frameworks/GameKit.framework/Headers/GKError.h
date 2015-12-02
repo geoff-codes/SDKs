@@ -9,26 +9,27 @@
 #import <Foundation/Foundation.h>
 #import <GameKit/GKDefines.h>
 
-GK_EXTERN NSString *GKErrorDomain;
+GK_EXTERN_WEAK NSString *GKErrorDomain;
 
 enum {
-    GKErrorUnknown = 1,
-    GKErrorCancelled,
-    GKErrorCommunicationsFailure,
-    GKErrorUserDenied,
-    GKErrorInvalidCredentials,
-    GKErrorNotAuthenticated,
-    GKErrorAuthenticationInProgress,
-    GKErrorInvalidPlayer,
-    GKErrorScoreNotSet,
-    GKErrorParentalControlsBlocked,
-    GKErrorPlayerStatusExceedsMaximumLength,
-    GKErrorPlayerStatusInvalid,
-    GKErrorMatchRequestInvalid,
-    GKErrorUnderage,
-    GKErrorGameUnrecognized,
-    GKErrorNotSupported,
-    GKErrorInvalidParameter,
+    GKErrorUnknown                              = 1,
+    GKErrorCancelled                            = 2,
+    GKErrorCommunicationsFailure                = 3,
+    GKErrorUserDenied                           = 4,
+    GKErrorInvalidCredentials                   = 5,
+    GKErrorNotAuthenticated                     = 6,
+    GKErrorAuthenticationInProgress             = 7,
+    GKErrorInvalidPlayer                        = 8,
+    GKErrorScoreNotSet                          = 9,
+    GKErrorParentalControlsBlocked              = 10,
+    GKErrorPlayerStatusExceedsMaximumLength     = 11,
+    GKErrorPlayerStatusInvalid                  = 12,
+    GKErrorMatchRequestInvalid                  = 13,
+    GKErrorUnderage                             = 14,
+    GKErrorGameUnrecognized                     = 15,
+    GKErrorNotSupported                         = 16,
+    GKErrorInvalidParameter                     = 17,
+    GKErrorUnexpectedConnection                 = 18,
 };
 typedef NSInteger GKErrorCode;
 

@@ -17,7 +17,7 @@
  *  Discussion:
  *    The CTTelephonyNetworkInfo object is your entry point to the telephony service.
  */
-CORETELEPHONY_EXTERN_CLASS
+CORETELEPHONY_CLASS_AVAILABLE(4_0)
 @interface CTTelephonyNetworkInfo : NSObject
 {
 @private

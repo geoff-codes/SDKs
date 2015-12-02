@@ -1,5 +1,5 @@
 /*	CFStream.h
-	Copyright (c) 2000-2010, Apple Inc. All rights reserved.
+	Copyright (c) 2000-2011, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFSTREAM__)
@@ -82,17 +82,13 @@ CFWriteStreamRef CFWriteStreamCreateWithFile(CFAllocatorRef alloc, CFURLRef file
 CF_EXPORT
 void CFStreamCreateBoundPair(CFAllocatorRef alloc, CFReadStreamRef *readStream, CFWriteStreamRef *writeStream, CFIndex transferBufferSize);
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 /* Property for file write streams; value should be a CFBoolean.  Set to TRUE to append to a file, rather than to replace its contents */
 CF_EXPORT
 const CFStringRef kCFStreamPropertyAppendToFile;
-#endif
 
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
+CF_EXPORT
+const CFStringRef kCFStreamPropertyFileCurrentOffset;   // Value is a CFNumber
 
-CF_EXPORT const CFStringRef kCFStreamPropertyFileCurrentOffset CF_AVAILABLE(10_3, 2_0);   // Value is a CFNumber
-
-#endif
 
 /* Socket stream properties */
 
@@ -113,10 +109,8 @@ CF_EXPORT
 void CFStreamCreatePairWithSocket(CFAllocatorRef alloc, CFSocketNativeHandle sock, CFReadStreamRef *readStream, CFWriteStreamRef *writeStream);
 CF_EXPORT
 void CFStreamCreatePairWithSocketToHost(CFAllocatorRef alloc, CFStringRef host, UInt32 port, CFReadStreamRef *readStream, CFWriteStreamRef *writeStream);
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 CF_EXPORT
 void CFStreamCreatePairWithPeerSocketSignature(CFAllocatorRef alloc, const CFSocketSignature *signature, CFReadStreamRef *readStream, CFWriteStreamRef *writeStream);
-#endif
 
 
 /* Returns the current state of the stream */
@@ -202,14 +196,12 @@ CFTypeRef CFReadStreamCopyProperty(CFReadStreamRef stream, CFStringRef propertyN
 CF_EXPORT
 CFTypeRef CFWriteStreamCopyProperty(CFWriteStreamRef stream, CFStringRef propertyName);
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 /* Returns TRUE if the stream recognizes and accepts the given property-value pair; 
    FALSE otherwise. */
 CF_EXPORT
 Boolean CFReadStreamSetProperty(CFReadStreamRef stream, CFStringRef propertyName, CFTypeRef propertyValue);
 CF_EXPORT
 Boolean CFWriteStreamSetProperty(CFWriteStreamRef stream, CFStringRef propertyName, CFTypeRef propertyValue);
-#endif
 
 /* Asynchronous processing - If you wish to neither poll nor block, you may register 
    a client to hear about interesting events that occur on a stream.  Only one client

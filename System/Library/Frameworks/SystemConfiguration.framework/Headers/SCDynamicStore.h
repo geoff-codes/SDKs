@@ -93,6 +93,17 @@ typedef struct {
 		changes to the dynamic store is delivered.
 	@param store The dynamic store session.
 	@param changedKeys The list of changed keys.
+
+		The list includes any specific SCDynamicStore keys that
+		changed (add, update, remove, notify) since the last call
+		to SCDynamicStoreSetNotificationKeys or since the last
+		notification callback. The list also includes any specific
+		keys matching one of the pattern string(s) that changed.
+
+		An empty list indicates that the SCDynamicStore server
+		restarted and that any assumptions based on prior content
+		of the SCDynamicStore should be disgarded.
+
 	@param info A C pointer to a user-specified block of data.
  */
 typedef void (*SCDynamicStoreCallBack)	(

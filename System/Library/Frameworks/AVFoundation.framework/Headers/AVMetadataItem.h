@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 
 */
 
@@ -39,11 +39,8 @@
 
 @class AVMetadataItemInternal;
 
-@interface AVMetadataItem : NSObject <
-#if !TARGET_OS_IPHONE || 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-										AVAsynchronousKeyValueLoading,
-#endif // 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-										NSCopying, NSMutableCopying>
+NS_CLASS_AVAILABLE(10_7, 4_0)
+@interface AVMetadataItem : NSObject <AVAsynchronousKeyValueLoading, NSCopying, NSMutableCopying>
 {
 	AVMetadataItemInternal	*_priv;
 }
@@ -64,12 +61,8 @@
 /* indicates the timestamp of the metadata item. */
 @property (readonly) CMTime time;
 
-#if 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-
 /* indicates the duration of the metadata item */
-@property (readonly) CMTime duration;
-
-#endif // 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+@property (readonly) CMTime duration NS_AVAILABLE(10_7, 4_2);
 
 /* provides the value of the metadata item */
 @property (readonly, copy) id<NSObject, NSCopying> value;
@@ -93,6 +86,17 @@
 
 /* provides the raw bytes of the value of the metadata item */
 @property (readonly) NSData *dataValue;
+
+@end
+
+
+@interface AVMetadataItem (AVAsynchronousKeyValueLoading)
+
+/* The following two methods of the AVAsynchronousKeyValueLoading protocol are re-declared here so that they can be annotated with availability information. See AVAsynchronousKeyValueLoading.h for documentation. */
+
+- (AVKeyValueStatus)statusOfValueForKey:(NSString *)key error:(NSError **)outError NS_AVAILABLE(10_7, 4_2);
+
+- (void)loadValuesAsynchronouslyForKeys:(NSArray *)keys completionHandler:(void (^)(void))handler NS_AVAILABLE(10_7, 4_2);
 
 @end
 
@@ -143,6 +147,7 @@
 
 @class AVMutableMetadataItemInternal;
 
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVMutableMetadataItem : AVMetadataItem
 {
 	AVMutableMetadataItemInternal	*_mutablePriv;
@@ -160,12 +165,8 @@
 /* indicates the timestamp of the metadata item. */
 @property (readwrite) CMTime time;
 
-#if 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-
-/* indicates the duration of the metadata item. */
-@property (readwrite) CMTime duration;
-
-#endif // 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+/* indicates the duration of the metadata item */
+@property (readwrite) CMTime duration NS_AVAILABLE(10_7, 4_2);
 
 /* provides the value of the metadata item */
 @property (readwrite, copy) id<NSObject, NSCopying> value;

@@ -2,16 +2,17 @@
 //  MKUserLocation.h
 //  MapKit
 //
-//  Copyright 2009 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <MapKit/MKAnnotation.h>
+#import <MapKit/MKFoundation.h>
 
 @class CLLocation;
 @class MKUserLocationInternal;
 
-NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
+MK_CLASS_AVAILABLE(NA, 3_0)
 @interface MKUserLocation : NSObject <MKAnnotation> {
   @private
     MKUserLocationInternal *_internal;
@@ -21,12 +22,15 @@ NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 @property (readonly, nonatomic, getter=isUpdating) BOOL updating;
 
 // Returns nil if the owning MKMapView's showsUserLocation is NO or the user's location has yet to be determined.
-@property (readonly, nonatomic) CLLocation *location;
+@property (readonly, retain, nonatomic) CLLocation *location;
+
+// Returns nil if not in MKUserTrackingModeFollowWithHeading
+@property (readonly, nonatomic, retain) CLHeading *heading NS_AVAILABLE(NA, 5_0);
 
 // The title to be displayed for the user location annotation.
-@property (retain, nonatomic) NSString *title;
+@property (nonatomic, copy) NSString *title;
 
 // The subtitle to be displayed for the user location annotation.
-@property (retain, nonatomic) NSString *subtitle;
+@property (nonatomic, copy) NSString *subtitle;
 
 @end

@@ -2,7 +2,7 @@
 //  UIVideoEditorController.h
 //  UIKit
 //
-//  Copyright 2009-2010 Apple Computer, Inc.. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc.. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,7 +14,7 @@
 
 UIKIT_CLASS_AVAILABLE(3_1) @interface UIVideoEditorController : UINavigationController {
   @private
-    int                               _previousStatusBarMode;
+    int                               _previousStatusBarStyle;
     NSMutableDictionary              *_properties;
     
     struct {

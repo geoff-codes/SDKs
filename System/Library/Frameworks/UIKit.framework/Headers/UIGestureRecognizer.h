@@ -2,7 +2,7 @@
 //  UIGestureRecognizer.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -39,8 +39,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIGestureRecognizer : NSObject {
     NSMutableSet                     *_failureDependents;
     NSMutableSet                     *_dynamicFailureRequirements;
     NSMutableSet                     *_dynamicFailureDependents;
-    NSMutableSet                     *_unfailedGestures;
-    NSMutableSet                     *_unfailedGesturesForReset;
+    id                                _failureMap;
     
     NSMutableSet                     *_friends;
     
@@ -53,6 +52,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIGestureRecognizer : NSObject {
         unsigned int delegateShouldRecognizeSimultaneously:1;
         unsigned int delegateShouldReceiveTouch:1;
         unsigned int delegateShouldRequireFailure:1;
+        unsigned int delegateShouldBeRequiredToFail:1;
         unsigned int delegateFailed:1;
         unsigned int privateDelegateShouldBegin:1;
         unsigned int privateDelegateShouldRecognizeSimultaneously:1;

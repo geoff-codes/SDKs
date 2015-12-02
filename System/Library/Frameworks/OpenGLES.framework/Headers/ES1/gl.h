@@ -58,8 +58,8 @@ typedef void            GLvoid;
 typedef int             GLfixed;
 typedef int             GLclampx;
 
-typedef int             GLintptr;
-typedef int             GLsizeiptr;
+typedef long            GLintptr;
+typedef long            GLsizeiptr;
 
 
 /*************************************************************/

@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <EventKit/EventKitDefines.h>
 
 /*!
     @const      EKErrorDomain 
@@ -13,7 +14,7 @@
     @discussion This error domain is used as the domain for all NSError instances stemming from the
                 EventKit Framework.
 */
-extern NSString *const EKErrorDomain __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+EVENTKIT_EXTERN NSString *const EKErrorDomain __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*!
     @enum       EKErrorCode
@@ -35,6 +36,10 @@ extern NSString *const EKErrorDomain __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_
     @constant   EKErrorObjectBelongsToDifferentStore    The object you are passing doesn't belong to the calendar store you're dealing with.
     @constant   EKErrorInvitesCannotBeMoved             The event is an invite, and therefore cannot move to another calendar.
     @constant   EKErrorInvalidSpan                      An invalid span was passed when saving/deleting.
+    @constant   EKErrorCalendarHasNoSource              An attempt to save a calendar with no source set was made.
+    @constant   EKErrorCalendarSourceCannotBeModified   The calendar cannot be moved to another source.
+    @constant   EKErrorCalendarIsImmutable              The calendar is immutable and cannot be modified or deleted.
+    @constant   EKErrorSourceDoesNotAllowCalendarAddDelete   Some sources (accounts) do not allow calendars to be added or removed.
 */
 
 #if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
@@ -53,7 +58,11 @@ typedef enum EKErrorCode {
     EKErrorObjectBelongsToDifferentStore,
     EKErrorInvitesCannotBeMoved,
     EKErrorInvalidSpan,
-    
+    EKErrorCalendarHasNoSource,
+    EKErrorCalendarSourceCannotBeModified,
+    EKErrorCalendarIsImmutable,
+    EKErrorSourceDoesNotAllowCalendarAddDelete,
+
     EKErrorLast // used internally
 } EKErrorCode;
 #endif

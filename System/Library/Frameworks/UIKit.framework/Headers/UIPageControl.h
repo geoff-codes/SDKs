@@ -2,7 +2,7 @@
 //  UIPageControl.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

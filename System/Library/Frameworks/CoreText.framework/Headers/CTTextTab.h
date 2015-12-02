@@ -2,7 +2,7 @@
  *	CTTextTab.h
  *	CoreText
  *
- *	Copyright (c) 2004-2010 Apple Inc. All rights reserved.
+ *	Copyright (c) 2004-2011 Apple Inc. All rights reserved.
  *
  */
 

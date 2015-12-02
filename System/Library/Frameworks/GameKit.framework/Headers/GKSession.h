@@ -7,6 +7,8 @@
  The Game Connectivity Kit (GCK) is a framework for handling connectivity and data transport in multiplayer network games.  
  
  With the GCK API, a developer can setup a game network, which consists of players connected to each other for a game.  The API supports setting up and connecting a client/server game, or a peer-to-peer game (any peer can be the game server).
+ 
+ This a not a Game Center feature. To support Game Center and online play, see GKMatch.
 */
 
 #import <Foundation/Foundation.h>
@@ -14,6 +16,8 @@
 #import <GameKit/GKPublicProtocols.h>
 
 /* The GKSession handles networking between peers for a game, which includes establishing and maintaining connections over a game network, and network data transport.
+ 
+ This a not a Game Center feature. To support Game Center and online play, see GKMatch.
 */
 NS_CLASS_AVAILABLE(NA, 4_1)
 GK_EXTERN_CLASS @interface GKSession : NSObject {

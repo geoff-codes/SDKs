@@ -20,5 +20,8 @@
 #include <vecLib/vecLib.h>
 #endif
 
+#ifndef VIMAGE_H
+#include <vImage/vImage.h>
+#endif
 
 #endif /* __ACCELERATE__ */

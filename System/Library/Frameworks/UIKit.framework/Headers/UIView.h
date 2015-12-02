@@ -2,13 +2,14 @@
 //  UIView.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIResponder.h>
 #import <UIKit/UIInterface.h>
 #import <UIKit/UIKitDefines.h>
+#import <UIKit/UIAppearance.h>
 
 typedef enum {
     UIViewAnimationCurveEaseInOut,         // slow at beginning and end
@@ -60,7 +61,7 @@ enum {
     UIViewAnimationOptionRepeat                    = 1 <<  3, // repeat animation indefinitely
     UIViewAnimationOptionAutoreverse               = 1 <<  4, // if repeat, run animation back and forth
     UIViewAnimationOptionOverrideInheritedDuration = 1 <<  5, // ignore nested duration
-    UIViewAnimationOptionOverrideInheritedCurve    = 1 <<  6, // ignore nested duration
+    UIViewAnimationOptionOverrideInheritedCurve    = 1 <<  6, // ignore nested curve
     UIViewAnimationOptionAllowAnimatedContent      = 1 <<  7, // animate contents (applies to transitions only)
     UIViewAnimationOptionShowHideTransitionViews   = 1 <<  8, // flip to/from hidden state instead of adding/removing
     
@@ -74,13 +75,16 @@ enum {
     UIViewAnimationOptionTransitionFlipFromRight   = 2 << 20,
     UIViewAnimationOptionTransitionCurlUp          = 3 << 20,
     UIViewAnimationOptionTransitionCurlDown        = 4 << 20,
+    UIViewAnimationOptionTransitionCrossDissolve   = 5 << 20,
+    UIViewAnimationOptionTransitionFlipFromTop     = 6 << 20,
+    UIViewAnimationOptionTransitionFlipFromBottom  = 7 << 20,
 };
 typedef NSUInteger UIViewAnimationOptions;
 #endif
 
 @class UIEvent, UIWindow, UIViewController, UIColor, UIGestureRecognizer, CALayer;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding, UIAppearance, UIAppearanceContainer> {
   @package
     CALayer        *_layer;
     id              _tapInfo;
@@ -90,6 +94,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding> {
     float           _charge;
     NSInteger       _tag;
     UIViewController *_viewDelegate;
+    NSString         *_backgroundColorSystemColorName;
     struct {
         unsigned int userInteractionDisabled:1;
         unsigned int implementsDrawRect:1;
@@ -123,7 +128,10 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding> {
         unsigned int needsDisplayOnBoundsChange:1;
         unsigned int hasTiledLayer:1;
         unsigned int hasLargeContent:1;
-	unsigned int alwaysScaleContent:1;
+        unsigned int isInAnimatedVCTransition:1;
+        unsigned int traversalMark:1;
+        unsigned int appearanceIsInvalid:1;
+        unsigned int monitorsSubtree:1;
     } _viewFlags;
 }
 
@@ -151,7 +159,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIView : UIResponder<NSCoding> {
 @property(nonatomic,getter=isMultipleTouchEnabled) BOOL multipleTouchEnabled;   // default is NO
 @property(nonatomic,getter=isExclusiveTouch) BOOL       exclusiveTouch;         // default is NO
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event;   // recursively calls -pointInside:withEvent:. point is in frame coordinates
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event;   // recursively calls -pointInside:withEvent:. point is in the receiver's coordinate system
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event;   // default returns YES if point is in bounds
 
 - (CGPoint)convertPoint:(CGPoint)point toView:(UIView *)view;

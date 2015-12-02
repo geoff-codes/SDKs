@@ -33,11 +33,15 @@ typedef enum {
 
 enum {
     ALAssetsGroupLibrary        = (1 << 0),         // The Library group that includes all assets.
-    ALAssetsGroupAlbum          = (1 << 1),         // All the albums synced from iTunes.
+    ALAssetsGroupAlbum          = (1 << 1),         // All the albums synced from iTunes or created on the device.
     ALAssetsGroupEvent          = (1 << 2),         // All the events synced from iTunes.
     ALAssetsGroupFaces          = (1 << 3),         // All the faces albums synced from iTunes.
     ALAssetsGroupSavedPhotos    = (1 << 4),         // The Saved Photos album.
-    ALAssetsGroupAll            = 0xFFFFFFFF,       // The same as ORing together all the group types.
+#if __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    ALAssetsGroupPhotoStream    = (1 << 5),         // The PhotoStream album.
+#endif
+    ALAssetsGroupAll            = 0xFFFFFFFF,       // The same as ORing together all the available group types, 
+                                                    // with the exception that ALAssetsGroupLibrary is not included.
 };
 typedef NSUInteger ALAssetsGroupType;
 
@@ -49,6 +53,10 @@ typedef void (^ALAssetsLibraryGroupsEnumerationResultsBlock)(ALAssetsGroup *grou
 // This block is executed if the user has granted access to the caller to access the data managed by the framework.
 // If the asset is not found, asset is nil.
 typedef void (^ALAssetsLibraryAssetForURLResultBlock)(ALAsset *asset);
+
+// This block is executed if the user has granted access to the caller to access the data managed by the framework.
+// If the group is not found, group is nil.
+typedef void (^ALAssetsLibraryGroupResultBlock)(ALAssetsGroup *group) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 // This block is executed if the user does not grant access to the caller to access the data managed by the framework or if the data is currently unavailable.
 typedef void (^ALAssetsLibraryAccessFailureBlock)(NSError *error);
@@ -73,9 +81,21 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 - (void)enumerateGroupsWithTypes:(ALAssetsGroupType)types usingBlock:(ALAssetsLibraryGroupsEnumerationResultsBlock)enumerationBlock failureBlock:(ALAssetsLibraryAccessFailureBlock)failureBlock;
 
 // Returns an ALAsset object in the result block for a URL previously retrieved from an ALAsset object.
-// When the ALAsset is requested, the user may be asked to confirm the application's access to the data. If the user denies access to the application or if no application is allowed to access the data the failure block will be called.
+// When the ALAsset is requested, the user may be asked to confirm the application's access to the data. If the user denies access to the application or if no application is allowed to access the data, the failure block will be called.
 // If the data is currently unavailable, the failure block will be called.
 - (void)assetForURL:(NSURL *)assetURL resultBlock:(ALAssetsLibraryAssetForURLResultBlock)resultBlock failureBlock:(ALAssetsLibraryAccessFailureBlock)failureBlock;
+
+// Returns an ALAssetsGroup object in the result block for a URL previously retrieved from an ALAssetsGroup object.
+// When the ALAssetsGroup is requested, the user may be asked to confirm the application's access to the data.  If the user denies access to the application or if no application is allowed to access the data, the failure block will be called.
+// If the data is currently unavailable, the failure block will be called.
+- (void)groupForURL:(NSURL *)groupURL resultBlock:(ALAssetsLibraryGroupResultBlock)resultBlock failureBlock:(ALAssetsLibraryAccessFailureBlock)failureBlock __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Add a new ALAssetsGroup to the library.
+// The name of the ALAssetsGroup is name and the type is ALAssetsGroupAlbum.  The editable property of this ALAssetsGroup returns YES.
+// If name conflicts with another ALAssetsGroup with the same name, then the group is not created and the result block returns a nil group.
+// When the ALAssetsGroup is added, the user may be asked to confirm the application's access to the data.  If the user denies access to the application or if no application is allowed to access the data, the failure block will be called.
+// If the data is currently unavailable, the failure block will be called.
+- (void)addAssetsGroupAlbumWithName:(NSString *)name resultBlock:(ALAssetsLibraryGroupResultBlock)resultBlock failureBlock:(ALAssetsLibraryAccessFailureBlock)failureBlock __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 // These methods can be used to add photos or videos to the saved photos album.
 
@@ -110,7 +130,7 @@ extern NSString *const ALAssetsLibraryErrorDomain __OSX_AVAILABLE_STARTING(__MAC
 enum {
     ALAssetsLibraryUnknownError =                 -1,      // Error (reason unknown)
     
-    // These errors would be returned in the completion blocks for -[ALAssetsLibrary writeImageToSavedPhotosAlbum:completionBlock:] and -[ALAssetsLibrary writeVideoAtPathToSavedPhotosAlbum:completionBlock:],
+    // These errors would be returned in the ALAssetsLibraryWriteImageCompletionBlock and ALAssetsLibraryWriteVideoCompletionBlock completion blocks,
     // as well as in the completion selector for UIImageWriteToSavedPhotosAlbum() and UISaveVideoAtPathToSavedPhotosAlbum()
     ALAssetsLibraryWriteFailedError =           -3300,      // Write error (write failed)
     ALAssetsLibraryWriteBusyError =             -3301,      // Write error (writing is busy, try again)
@@ -119,12 +139,11 @@ enum {
     ALAssetsLibraryWriteDataEncodingError =     -3304,      // Write error (data has invalid encoding)
     ALAssetsLibraryWriteDiskSpaceError =        -3305,      // Write error (out of disk space)
 
-    // This error would be returned in the ALAssetsLibraryAccessFailureBlock for -[ALAssetsLibrary enumerateGroupsWithTypes:usingBlock:failureBlock:] and -[ALAssetsLibrary assetForURL:resultBlock:failureBlock:],
-    // in the completion blocks for -[ALAssetsLibrary writeImageToSavedPhotosAlbum:completionBlock:] and -[ALAssetsLibrary writeVideoAtPathToSavedPhotosAlbum:completionBlock:],
+    // This error would be returned in the ALAssetsLibraryAccessFailureBlock, ALAssetsLibraryWriteImageCompletionBlock, and ALAssetsLibraryWriteVideoCompletionBlock completion blocks,
     // as well as in the completion selector for UIImageWriteToSavedPhotosAlbum() and UISaveVideoAtPathToSavedPhotosAlbum()
     ALAssetsLibraryDataUnavailableError =       -3310,      // Data unavailable (data currently unavailable)    
     
-    // These errors would be returned in the ALAssetsLibraryAccessFailureBlock for -[ALAssetsLibrary enumerateGroupsWithTypes:usingBlock:failureBlock:] and -[ALAssetsLibrary assetForURL:resultBlock:failureBlock:]
+    // These errors would be returned in the ALAssetsLibraryAccessFailureBlock
     ALAssetsLibraryAccessUserDeniedError =      -3311,      // Access error (user denied access request)
     ALAssetsLibraryAccessGloballyDeniedError =  -3312,      // Access error (access globally denied)
 };

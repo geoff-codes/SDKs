@@ -135,6 +135,27 @@ struct AudioFormatInfo
 typedef struct AudioFormatInfo AudioFormatInfo;
 
 /*!
+    @struct		ExtendedAudioFormatInfo
+    @abstract   this struct is used as a specifier for the kAudioFormatProperty_FormatList property
+    @field      mASBD 
+					an AudioStreamBasicDescription
+    @field      mMagicCookie 
+					a pointer to the decompression info for the data described in mASBD
+    @field      mMagicCookieSize 
+					the size in bytes of mMagicCookie
+	@field		mClassDescription
+					an AudioClassDescription specifying the codec to be used in answering the question.
+*/
+struct ExtendedAudioFormatInfo
+{
+	AudioStreamBasicDescription		mASBD;
+	const void*						mMagicCookie;
+	UInt32							mMagicCookieSize;
+	AudioClassDescription			mClassDescription;
+};
+typedef struct ExtendedAudioFormatInfo ExtendedAudioFormatInfo;
+
+/*!
     @struct		AudioFormatListItem
     @abstract   this struct is used as output from the kAudioFormatProperty_FormatList property
     @field      mASBD 
@@ -177,6 +198,9 @@ typedef struct AudioFormatListItem AudioFormatListItem;
 					the format to ask about. The value is a UInt32 where non-zero means
 					the format is externally framed. Any format which has variable byte sized packets
 					requires AudioStreamPacketDescriptions.
+    @constant   kAudioFormatProperty_FormatIsEncrypted
+                    Returns whether or not a format is encrypted. The specifier is a UInt32 format ID.
+                    The value is a UInt32 where non-zero means the format is encrypted.
     @constant   kAudioFormatProperty_EncodeFormatIDs
 					No specifier needed. Must be set to NULL.
 					Returns an array of UInt32 format IDs for formats that are valid output formats 
@@ -243,7 +267,7 @@ typedef struct AudioFormatListItem AudioFormatListItem;
 	@constant   kAudioFormatProperty_ValidateChannelLayout
 					The specifier is an AudioChannelLayout. The property value and size are not used and must be set to NULL.
 					This property validates an AudioChannelLayout. This is useful if the layout has come from an untrusted source such as a file.
-					It returns noErr if the AudioChannelLayout is OK, paramErr if there is a structural problem with the layout,
+					It returns noErr if the AudioChannelLayout is OK, kAudio_ParamError if there is a structural problem with the layout,
 					or kAudioFormatUnknownFormatError for unrecognized layout tags or channel labels.
 	@constant   kAudioFormatProperty_ChannelLayoutForTag
 					Returns the channel descriptions for a standard channel layout.
@@ -365,6 +389,7 @@ enum
 	kAudioFormatProperty_FirstPlayableFormatFromList	= 'fpfl',
 	kAudioFormatProperty_FormatIsVBR					= 'fvbr',	
 	kAudioFormatProperty_FormatIsExternallyFramed		= 'fexf',
+	kAudioFormatProperty_FormatIsEncrypted				= 'cryp',
 	kAudioFormatProperty_Encoders						= 'aven',	
 	kAudioFormatProperty_Decoders						= 'avde',
 	kAudioFormatProperty_AvailableEncodeBitRates		= 'aebr',
@@ -385,9 +410,9 @@ enum
 	kAudioFormatProperty_ChannelLayoutForTag			= 'cmpl',
 	kAudioFormatProperty_TagForChannelLayout			= 'cmpt',
 	kAudioFormatProperty_ChannelLayoutName				= 'lonm',
+	kAudioFormatProperty_ChannelLayoutSimpleName		= 'lsnm',
 	kAudioFormatProperty_ChannelLayoutForBitmap			= 'cmpb',
 	kAudioFormatProperty_ChannelName					= 'cnam',
-	kAudioFormatProperty_ChannelLayoutSimpleName		= 'lsnm',
 	kAudioFormatProperty_ChannelShortName				= 'csnm',
 
 	kAudioFormatProperty_TagsForNumberOfChannels		= 'tagc',				

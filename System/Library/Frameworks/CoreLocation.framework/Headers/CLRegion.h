@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CLLocation.h>
+#import <CoreLocation/CLAvailability.h>
 
 /*
  *  CLRegion
@@ -15,7 +16,7 @@
  *  Discussion:
  *    A geographic area.
  */
-NS_CLASS_AVAILABLE(NA, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface CLRegion : NSObject <NSCopying, NSCoding>
 {
 @private
@@ -33,7 +34,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  */
 - (id)initCircularRegionWithCenter:(CLLocationCoordinate2D)center
                             radius:(CLLocationDistance)radius
-                        identifier:(NSString *)identifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+                        identifier:(NSString *)identifier __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  center
@@ -41,7 +42,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  *  Discussion:
  *    Returns the coordinate of the center of the region.
  */
-@property (readonly, nonatomic) CLLocationCoordinate2D center __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (readonly, nonatomic) CLLocationCoordinate2D center __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  radius
@@ -49,7 +50,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  *  Discussion:
  *    Returns the radius of the region.
  */
-@property (readonly, nonatomic) CLLocationDistance radius __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (readonly, nonatomic) CLLocationDistance radius __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  identifier
@@ -57,7 +58,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  *  Discussion:
  *    Returns the region's identifier.
  */
-@property (readonly, nonatomic) NSString *identifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (readonly, nonatomic) NSString *identifier __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  containsCoordinate:
@@ -65,6 +66,6 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  *  Discussion:
  *    Returns YES if the coordinate lies inside the region, and NO otherwise.
  */
-- (BOOL)containsCoordinate:(CLLocationCoordinate2D)coordinate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (BOOL)containsCoordinate:(CLLocationCoordinate2D)coordinate __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 @end

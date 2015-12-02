@@ -2,7 +2,7 @@
  *	CTStringAttributes.h
  *	CoreText
  *
- *	Copyright (c) 2004-2010 Apple Inc. All rights reserved.
+ *	Copyright (c) 2004-2011 Apple Inc. All rights reserved.
  *
  */
 
@@ -187,7 +187,7 @@ extern const CFStringRef kCTUnderlineColorAttributeName CT_AVAILABLE_STARTING( _
 				indicates that vertical glyph forms are to be used.
 */
 
-extern const CFStringRef kCTVerticalFormsAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_NA);
+extern const CFStringRef kCTVerticalFormsAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_4_3);
 
 
 /*!

@@ -7,9 +7,10 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <GameKit/GKDefines.h>
 
 // domain
-GK_EXTERN NSString * const GKSessionErrorDomain;
+GK_EXTERN_WEAK NSString * const GKSessionErrorDomain;
 
 // code
 typedef enum {

@@ -2,20 +2,21 @@
 //  MKShape.h
 //  MapKit
 //
-//  Copyright 2010 Apple, Inc. All rights reserved.
+//  Copyright (c) 2010-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <MapKit/MKAnnotation.h>
+#import <MapKit/MKFoundation.h>
 
-NS_CLASS_AVAILABLE(__MAC_NA, 4_0)
+MK_CLASS_AVAILABLE(NA, 4_0)
 @interface MKShape : NSObject <MKAnnotation> {
 @package
     NSString *_title;
     NSString *_subtitle;
 }
 
-@property (copy) NSString *title;
-@property (copy) NSString *subtitle;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *subtitle;
 
 @end

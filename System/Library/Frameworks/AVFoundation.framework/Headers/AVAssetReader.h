@@ -3,11 +3,9 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 
 */
-
-#if ! TARGET_OS_IPHONE || 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <AVFoundation/AVBase.h>
 #import <Foundation/Foundation.h>
@@ -64,6 +62,7 @@ typedef NSInteger AVAssetReaderStatus;
 	AVAssetReaderAudioMixOutput mixes multiple audio tracks of the asset after reading them, while
 	AVAssetReaderVideoCompositionOutput composites multiple video tracks after reading them.
  */
+NS_CLASS_AVAILABLE(10_7, 4_1)
 @interface AVAssetReader : NSObject
 {
 @private
@@ -219,5 +218,3 @@ typedef NSInteger AVAssetReaderStatus;
 - (void)cancelReading;
 
 @end
-
-#endif // ! TARGET_OS_IPHONE || 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED

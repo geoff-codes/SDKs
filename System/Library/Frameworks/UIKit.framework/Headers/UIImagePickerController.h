@@ -2,7 +2,7 @@
 //  UIImagePickerController.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -21,9 +21,15 @@ typedef NSUInteger UIImagePickerControllerSourceType;
 
 enum {
     UIImagePickerControllerQualityTypeHigh = 0,       // highest quality 
-    UIImagePickerControllerQualityType640x480 = 3,    // VGA quality
     UIImagePickerControllerQualityTypeMedium = 1,     // medium quality, suitable for transmission via Wi-Fi 
-    UIImagePickerControllerQualityTypeLow = 2         // lowest quality, suitable for tranmission via cellular network
+    UIImagePickerControllerQualityTypeLow = 2,         // lowest quality, suitable for tranmission via cellular network
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_0
+    UIImagePickerControllerQualityType640x480 = 3,    // VGA quality
+#endif
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_5_0
+    UIImagePickerControllerQualityTypeIFrame1280x720 = 4,
+    UIImagePickerControllerQualityTypeIFrame960x540 = 5
+#endif
 };
 typedef NSUInteger UIImagePickerControllerQualityType;
 
@@ -52,8 +58,8 @@ UIKIT_EXTERN NSString *const UIImagePickerControllerOriginalImage;  // a UIImage
 UIKIT_EXTERN NSString *const UIImagePickerControllerEditedImage;    // a UIImage
 UIKIT_EXTERN NSString *const UIImagePickerControllerCropRect;       // an NSValue (CGRect)
 UIKIT_EXTERN NSString *const UIImagePickerControllerMediaURL;       // an NSURL
-UIKIT_EXTERN NSString *const UIImagePickerControllerReferenceURL    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);  // an NSURL that references an asset in the AssetsLibrary framework
-UIKIT_EXTERN NSString *const UIImagePickerControllerMediaMetadata   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);  // an NSDictionary containing metadata from a captured photo
+UIKIT_EXTERN NSString *const UIImagePickerControllerReferenceURL        __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);  // an NSURL that references an asset in the AssetsLibrary framework
+UIKIT_EXTERN NSString *const UIImagePickerControllerMediaMetadata       __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);  // an NSDictionary containing metadata from a captured photo
 
 UIKIT_CLASS_AVAILABLE(2_0) @interface UIImagePickerController : UINavigationController <NSCoding> {
   @private
@@ -62,7 +68,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIImagePickerController : UINavigationCont
     CGRect                            _cropRect;
     NSArray                          *_mediaTypes;
     NSMutableDictionary              *_properties;
-    int                               _previousStatusBarMode;
+    int                               _previousStatusBarStyle;
     
     struct {
         unsigned int visible:1;
@@ -82,13 +88,14 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIImagePickerController : UINavigationCont
 @property(nonatomic,assign)    id <UINavigationControllerDelegate, UIImagePickerControllerDelegate> delegate;
 
 @property(nonatomic)           UIImagePickerControllerSourceType     sourceType;                                                        // default value is UIImagePickerControllerSourceTypePhotoLibrary.
-@property(nonatomic,copy)      NSArray                              *mediaTypes;                                                        // default value is an array containing kUTTypeImage.
+@property(nonatomic,copy)      NSArray                              *mediaTypes;  
+    // default value is an array containing kUTTypeImage.
 @property(nonatomic)           BOOL                                  allowsEditing __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_1);     // replacement for -allowsImageEditing; default value is NO.
 @property(nonatomic)           BOOL                                  allowsImageEditing __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_1);
 
 // video properties apply only if mediaTypes includes kUTTypeMovie
 @property(nonatomic)           NSTimeInterval                        videoMaximumDuration __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_1); // default value is 10 minutes.
-@property(nonatomic)           UIImagePickerControllerQualityType    videoQuality __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_1);         // default value is UIImagePickerControllerQualityTypeMedium
+@property(nonatomic)           UIImagePickerControllerQualityType    videoQuality __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_1);         // default value is UIImagePickerControllerQualityTypeMedium. If the cameraDevice does not support the videoQuality, it will use the default value.
 
 // camera additions available only if sourceType is UIImagePickerControllerSourceTypeCamera.
 @property(nonatomic)           BOOL                                  showsCameraControls __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_1);   // set to NO to hide all standard camera UI. default is YES

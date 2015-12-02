@@ -2,7 +2,7 @@
 //  UISearchDisplayController.h
 //  UIKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -22,6 +22,7 @@ UIKIT_CLASS_AVAILABLE(3_0) @interface UISearchDisplayController : NSObject {
     UISearchBar                *_searchBar;
     UILabel                    *_noResultsLabel;
     NSString                   *_noResultsMessage;
+    NSString                   *_resultsTitle;
     id<UISearchDisplayDelegate> _delegate;
     id<UITableViewDataSource>   _tableViewDataSource;
     id<UITableViewDelegate>     _tableViewDelegate;
@@ -42,6 +43,7 @@ UIKIT_CLASS_AVAILABLE(3_0) @interface UISearchDisplayController : NSObject {
         unsigned int dimTableViewOnEmptySearchString:1;
         unsigned int isRotatingWithPopover:1;
         unsigned int cancelButtonManagementDisabled:1;
+        unsigned int allowDisablingNavigationBarHiding:1;
     } _searchDisplayControllerFlags;
 }
 
@@ -57,6 +59,7 @@ UIKIT_CLASS_AVAILABLE(3_0) @interface UISearchDisplayController : NSObject {
 @property(nonatomic,readonly)                         UITableView                *searchResultsTableView;   // will return non-nil. create if requested
 @property(nonatomic,assign)                           id<UITableViewDataSource>   searchResultsDataSource;  // default is nil. delegate can provide
 @property(nonatomic,assign)                           id<UITableViewDelegate>     searchResultsDelegate;    // default is nil. delegate can provide
+@property(nonatomic,copy)                             NSString                   *searchResultsTitle __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // default is nil. If nil, the controller uses the default title string
 
 @end
 

@@ -1,14 +1,9 @@
 /*	
     NSURLProtectionSpace.h
-    Copyright (c) 2003-2010, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2011, Apple Inc. All rights reserved.    
     
     Public header file.
 */
-
-// Note: To use the APIs described in these headers, you must perform
-// a runtime check for Foundation-462.1 or later.
-#import <AvailabilityMacros.h>
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/NSObject.h>
 #import <Security/Security.h>
@@ -114,7 +109,7 @@ FOUNDATION_EXPORT NSString * const NSURLAuthenticationMethodServerTrust NS_AVAIL
     @discussion This class represents a protection space requiring authentication.
 */
 
-@interface NSURLProtectionSpace : NSObject <NSCopying>
+@interface NSURLProtectionSpace : NSObject <NSCoding, NSCopying>
 {
 @private
     NSURLProtectionSpaceInternal *_internal;
@@ -242,5 +237,3 @@ FOUNDATION_EXPORT NSString * const NSURLAuthenticationMethodServerTrust NS_AVAIL
 - (SecTrustRef)serverTrust NS_AVAILABLE(10_6, 3_0);
 
 @end
-
-#endif

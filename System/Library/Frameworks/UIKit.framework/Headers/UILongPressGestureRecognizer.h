@@ -2,7 +2,7 @@
 //  UILongPressGestureRecognizer.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -19,7 +19,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UILongPressGestureRecognizer : UIGestureRe
     NSArray          *_touches;
     NSMutableSet     *_activeTouches;
     NSInteger         _numberOfTouchesRequired;
-    CFTimeInterval    _delay;
+    CFTimeInterval    _minimumPressDuration;
     CGFloat           _allowableMovement;
     CGPoint           _startPointScreen;
     id                _enoughTimeElapsed;

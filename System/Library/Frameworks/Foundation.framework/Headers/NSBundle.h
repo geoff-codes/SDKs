@@ -1,5 +1,5 @@
 /*	NSBundle.h
-	Copyright (c) 1994-2010, Apple Inc.  All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc.  All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -10,9 +10,9 @@
    to receive an already initialized object back from [super initWithPath:] */
 @interface NSBundle : NSObject {
 @private
-    NSUInteger	_flags;
+    NSUInteger		_flags;
     id		        _cfBundle;
-    NSUInteger	_refCount;
+    NSUInteger		_reserved2;
     Class		_principalClass;
     id                  _tmp1;
     id                  _tmp2;
@@ -36,8 +36,8 @@
 
 /* Methods for loading and unloading bundles. */
 - (BOOL)load;
-- (BOOL)isLoaded NS_AVAILABLE(10_2, 2_0);
-- (BOOL)unload NS_AVAILABLE(10_2, 2_0);
+- (BOOL)isLoaded;
+- (BOOL)unload;
 
 - (BOOL)preflightAndReturnError:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 - (BOOL)loadAndReturnError:(NSError **)error NS_AVAILABLE(10_5, 2_0);
@@ -52,6 +52,8 @@
 - (NSURL *)sharedFrameworksURL NS_AVAILABLE(10_6, 4_0);
 - (NSURL *)sharedSupportURL NS_AVAILABLE(10_6, 4_0);
 - (NSURL *)builtInPlugInsURL NS_AVAILABLE(10_6, 4_0);
+
+- (NSURL *)appStoreReceiptURL NS_AVAILABLE_MAC(10_7);
 
 - (NSString *)bundlePath;
 - (NSString *)resourcePath;
@@ -91,18 +93,18 @@
 /* Methods for obtaining various information about a bundle. */
 - (NSString *)bundleIdentifier;
 - (NSDictionary *)infoDictionary;
-- (NSDictionary *)localizedInfoDictionary NS_AVAILABLE(10_2, 2_0);
-- (id)objectForInfoDictionaryKey:(NSString *)key NS_AVAILABLE(10_2, 2_0);
+- (NSDictionary *)localizedInfoDictionary;
+- (id)objectForInfoDictionaryKey:(NSString *)key;
 - (Class)classNamed:(NSString *)className;
 - (Class)principalClass;
 
 /* Methods for dealing with localizations. */
 - (NSArray *)localizations;
 - (NSArray *)preferredLocalizations;
-- (NSString *)developmentLocalization NS_AVAILABLE(10_2, 2_0);
+- (NSString *)developmentLocalization;
 
 + (NSArray *)preferredLocalizationsFromArray:(NSArray *)localizationsArray;
-+ (NSArray *)preferredLocalizationsFromArray:(NSArray *)localizationsArray forPreferences:(NSArray *)preferencesArray NS_AVAILABLE(10_2, 2_0);
++ (NSArray *)preferredLocalizationsFromArray:(NSArray *)localizationsArray forPreferences:(NSArray *)preferencesArray;
 
 /* Method for determining executable architectures. */
 enum {

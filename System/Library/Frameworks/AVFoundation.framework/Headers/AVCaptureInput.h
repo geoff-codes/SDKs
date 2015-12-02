@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
@@ -26,7 +26,8 @@
 	is represented by an AVCaptureInputPort object. Within a capture session, connections are made between
 	AVCaptureInput instances and AVCaptureOutput instances via AVCaptureConnection objects that define the mapping
 	between a set of AVCaptureInputPort objects and a single AVCaptureOutput.
- */
+*/
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureInput : NSObject 
 {
 @private
@@ -41,7 +42,7 @@
  @discussion
 	The value of this property is an array of AVCaptureInputPort objects, each exposing an interface to a single stream
 	of media data provided by an input.
- */
+*/
 @property(nonatomic, readonly) NSArray *ports;
 
 @end
@@ -54,8 +55,8 @@
  
  @discussion
 	The notification object is the AVCaptureInputPort instance whose format description changed.
- */
-extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+*/
+AVF_EXPORT NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification NS_AVAILABLE(10_7, 4_0);
 
 @class AVCaptureInputPortInternal;
 
@@ -70,7 +71,8 @@ extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification 
 	property. Input ports provide information about the format of their media data via the mediaType and
 	formatDescription properties, and allow clients to control the flow of data via the enabled property. Input ports
 	are used by an AVCaptureConnection to define the mapping between inputs and outputs in an AVCaptureSession.
- */
+*/
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureInputPort : NSObject
 {
 @private
@@ -84,7 +86,7 @@ extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification 
  
  @discussion
 	The value of this property is an AVCaptureInput instance that owns the receiver.
- */
+*/
 @property(nonatomic, readonly) AVCaptureInput *input;
 
 /*!
@@ -95,7 +97,7 @@ extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification 
  @discussion
 	The value of this property is a constant describing the type of media, such as AVMediaTypeVideo or AVMediaTypeAudio,
 	provided by the receiver. Media type constants are defined in AVMediaFormat.h.
- */
+*/
 @property(nonatomic, readonly) NSString *mediaType;
 
 /*!
@@ -107,7 +109,7 @@ extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification 
 	The value of this property is a CMFormatDescription that describes the format of the media data currently provided
 	by the receiver. Clients can be notified of changes to the format by observing the
 	AVCaptureInputPortFormatDescriptionDidChangeNotification.
- */
+*/
 @property(nonatomic, readonly) CMFormatDescriptionRef formatDescription;
 
 /*!
@@ -119,7 +121,7 @@ extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification 
 	The value of this property is a BOOL that determines whether the receiver should provide data to outputs when a
 	session is running. Clients can set this property to fine tune which media streams from a given input will be used
 	during capture. The default value is YES.
- */
+*/
 @property(nonatomic, getter=isEnabled) BOOL enabled;
 
 @end
@@ -136,7 +138,8 @@ extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification 
  @discussion
 	Instances of AVCaptureDeviceInput are input sources for AVCaptureSession that provide media data from devices
 	connected to the system, represented by instances of AVCaptureDevice.
- */
+*/
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureDeviceInput : AVCaptureInput 
 {
 @private
@@ -161,7 +164,7 @@ extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification 
 	an AVCaptureSession. This method attempts to open the device for capture, taking exclusive control of it if
 	necessary. If the device cannot be opened because it is no longer available or because it is in use, for example,
 	this method returns nil, and the optional outError parameter points to an NSError describing the problem.
- */
+*/
 + (id)deviceInputWithDevice:(AVCaptureDevice *)device error:(NSError **)outError;
 
 /*!
@@ -182,7 +185,7 @@ extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification 
 	an AVCaptureSession. This method attempts to open the device for capture, taking exclusive control of it if
 	necessary. If the device cannot be opened because it is no longer available or because it is in use, for example,
 	this method returns nil, and the optional outError parameter points to an NSError describing the problem.
- */
+*/
 - (id)initWithDevice:(AVCaptureDevice *)device error:(NSError **)outError;
 
 /*!
@@ -192,7 +195,7 @@ extern NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification 
  
  @discussion
 	The value of this property is the AVCaptureDevice instance that was used to create the receiver.
- */
+*/
 @property(nonatomic, readonly) AVCaptureDevice *device;
 
 @end

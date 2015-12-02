@@ -51,14 +51,22 @@ extern "C" {
 #define GL_APPLE_texture_format_BGRA8888                        1
 #define GL_APPLE_texture_max_level                              1
 #define GL_EXT_blend_minmax                                     1
+#define GL_EXT_color_buffer_half_float                          1
+#define GL_EXT_debug_label                                      1
+#define GL_EXT_debug_marker                                     1
 #define GL_EXT_discard_framebuffer                              1
+#define GL_EXT_occlusion_query_boolean                          1
 #define GL_EXT_read_format_bgra                                 1
+#define GL_EXT_separate_shader_objects                          1
+#define GL_EXT_shadow_samplers                                  1
 #define GL_EXT_shader_texture_lod                               1
 #define GL_EXT_texture_filter_anisotropic                       1
+#define GL_EXT_texture_rg                                       1
 #define GL_IMG_read_format                                      1
 #define GL_IMG_texture_compression_pvrtc                        1
 #define GL_OES_depth_texture                                    1
 #define GL_OES_depth24                                          1
+#define GL_OES_element_index_uint                               1
 #define GL_OES_fbo_render_mipmap                                1
 #define GL_OES_mapbuffer                                        1
 #define GL_OES_packed_depth_stencil                             1
@@ -67,6 +75,16 @@ extern "C" {
 #define GL_OES_texture_float                                    1
 #define GL_OES_texture_half_float                               1
 #define GL_OES_vertex_array_object                              1
+
+/**************************************************************************/
+
+#ifndef __gltypes_h_
+#if GL_OES_texture_half_float
+typedef unsigned short GLhalf;
+#endif
+#endif
+
+/**************************************************************************/
 
 /*------------------------------------------------------------------------*
  * APPLE extension tokens
@@ -82,9 +100,9 @@ extern "C" {
 #endif
 
 #if GL_APPLE_rgb_422
-#define GL_RGB_422_APPLE                   0x8A1F
-#define GL_UNSIGNED_SHORT_8_8_APPLE        0x85BA
-#define GL_UNSIGNED_SHORT_8_8_REV_APPLE    0x85BB
+#define GL_RGB_422_APPLE                                        0x8A1F
+#define GL_UNSIGNED_SHORT_8_8_APPLE                             0x85BA
+#define GL_UNSIGNED_SHORT_8_8_REV_APPLE                         0x85BB
 #endif
 
 #if GL_APPLE_texture_format_BGRA8888
@@ -107,10 +125,36 @@ extern "C" {
 #define GL_MAX_EXT                                              0x8008
 #endif
 
+#if GL_EXT_color_buffer_half_float
+#define GL_RGBA16F_EXT                                          0x881A
+#define GL_RGB16F_EXT                                           0x881B
+#define GL_RG16F_EXT                                            0x822F
+#define GL_R16F_EXT                                             0x822D
+#define GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT            0x8211
+#define GL_UNSIGNED_NORMALIZED_EXT                              0x8C17
+#endif
+
+#if GL_EXT_debug_label
+#define GL_BUFFER_OBJECT_EXT                                    0x9151
+#define GL_SHADER_OBJECT_EXT                                    0x8B48
+#define GL_PROGRAM_OBJECT_EXT                                   0x8B40
+#define GL_QUERY_OBJECT_EXT                                     0x9153
+#define GL_VERTEX_ARRAY_OBJECT_EXT                              0x9154
+#define GL_PROGRAM_PIPELINE_OBJECT_EXT                          0x8A4F
+#endif
+
 #if GL_EXT_discard_framebuffer
 #define GL_COLOR_EXT                                            0x1800
 #define GL_DEPTH_EXT                                            0x1801
 #define GL_STENCIL_EXT                                          0x1802
+#endif
+
+#if GL_EXT_occlusion_query_boolean
+#define GL_ANY_SAMPLES_PASSED_EXT                               0x8C2F
+#define GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT                  0x8D6A
+#define GL_CURRENT_QUERY_EXT                                    0x8865
+#define GL_QUERY_RESULT_EXT                                     0x8866
+#define GL_QUERY_RESULT_AVAILABLE_EXT                           0x8867
 #endif
 
 #if GL_EXT_read_format_bgra
@@ -123,9 +167,31 @@ extern "C" {
 #define GL_UNSIGNED_SHORT_4_4_4_4_REV                           0x8365
 #endif
 
+#if GL_EXT_separate_shader_objects
+#define GL_VERTEX_SHADER_BIT_EXT                                0x00000001
+#define GL_FRAGMENT_SHADER_BIT_EXT                              0x00000002
+#define GL_ALL_SHADER_BITS_EXT                                  0xFFFFFFFF
+#define GL_PROGRAM_SEPARABLE_EXT                                0x8258
+#define GL_ACTIVE_PROGRAM_EXT                                   0x8259
+#define GL_PROGRAM_PIPELINE_BINDING_EXT                         0x825A
+#endif
+
+#if GL_EXT_shadow_samplers
+#define GL_TEXTURE_COMPARE_MODE_EXT                             0x884C
+#define GL_TEXTURE_COMPARE_FUNC_EXT                             0x884D
+#define GL_COMPARE_REF_TO_TEXTURE_EXT                           0x884E
+#endif
+
 #if GL_EXT_texture_filter_anisotropic
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT                           0x84FE
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT                       0x84FF
+#endif
+
+#if GL_EXT_texture_rg
+#define GL_RED_EXT                                              0x1903
+#define GL_RG_EXT                                               0x8227
+#define GL_R8_EXT                                               0x8229
+#define GL_RG8_EXT                                              0x822B
 #endif
 
 /*------------------------------------------------------------------------*
@@ -193,8 +259,68 @@ GL_API GLvoid glResolveMultisampleFramebufferAPPLE(void)  __OSX_AVAILABLE_STARTI
 /*------------------------------------------------------------------------*
  * EXT extension functions
  *------------------------------------------------------------------------*/
+#if GL_EXT_debug_label
+GL_API GLvoid glLabelObjectEXT(GLenum type, GLuint object, GLsizei length, const GLchar *label)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glGetObjectLabelEXT(GLenum type, GLuint object, GLsizei bufSize, GLsizei *length, GLchar *label)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+#endif
+
+#if GL_EXT_debug_marker
+GL_API GLvoid glInsertEventMarkerEXT(GLsizei length, const GLchar *marker)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glPushGroupMarkerEXT(GLsizei length, const GLchar *marker)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glPopGroupMarkerEXT(void)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+#endif
+
 #if GL_EXT_discard_framebuffer
 GL_API GLvoid GL_APIENTRY glDiscardFramebufferEXT(GLenum target, GLsizei numAttachments, const GLenum *attachments)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+#endif
+
+#if GL_EXT_occlusion_query_boolean
+GL_API GLvoid glGenQueriesEXT(GLsizei n, GLuint *ids)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glDeleteQueriesEXT(GLsizei n, const GLuint *ids)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLboolean glIsQueryEXT(GLuint id)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glBeginQueryEXT(GLenum target, GLuint id)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glEndQueryEXT(GLenum target)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glGetQueryivEXT(GLenum target, GLenum pname, GLint *params)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glGetQueryObjectivEXT(GLuint id, GLenum pname, GLint *params)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glGetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+#endif
+
+#if GL_EXT_separate_shader_objects
+GL_API GLvoid glUseProgramStagesEXT(GLuint pipeline, GLbitfield stages, GLuint program)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glActiveShaderProgramEXT(GLuint pipeline, GLuint program)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLuint glCreateShaderProgramvEXT(GLenum type, GLsizei count, const GLchar **strings)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glBindProgramPipelineEXT(GLuint pipeline)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glDeleteProgramPipelinesEXT(GLsizei n, const GLuint *pipelines)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glGenProgramPipelinesEXT(GLsizei n, GLuint *pipelines)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLboolean glIsProgramPipelineEXT(GLuint pipeline)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramParameteriEXT(GLuint program, GLenum pname, GLint value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glGetProgramPipelineivEXT(GLuint pipeline, GLenum pname, GLint *params)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glValidateProgramPipelineEXT(GLuint pipeline)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glGetProgramPipelineInfoLogEXT(GLuint pipeline, GLsizei bufSize, GLsizei *length, GLchar *infoLog)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+GL_API GLvoid glProgramUniform1iEXT(GLuint program, GLint location, GLint x)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform2iEXT(GLuint program, GLint location, GLint x, GLint y)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform3iEXT(GLuint program, GLint location, GLint x, GLint y, GLint z)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform4iEXT(GLuint program, GLint location, GLint x, GLint y, GLint z, GLint w)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+GL_API GLvoid glProgramUniform1fEXT(GLuint program, GLint location, GLfloat x)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform2fEXT(GLuint program, GLint location, GLfloat x, GLfloat y)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform3fEXT(GLuint program, GLint location, GLfloat x, GLfloat y, GLfloat z)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform4fEXT(GLuint program, GLint location, GLfloat x, GLfloat y, GLfloat z, GLfloat w)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+GL_API GLvoid glProgramUniform1ivEXT(GLuint program, GLint location, GLsizei count, const GLint *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform2ivEXT(GLuint program, GLint location, GLsizei count, const GLint *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform3ivEXT(GLuint program, GLint location, GLsizei count, const GLint *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform4ivEXT(GLuint program, GLint location, GLsizei count, const GLint *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+GL_API GLvoid glProgramUniform1fvEXT(GLuint program, GLint location, GLsizei count, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform2fvEXT(GLuint program, GLint location, GLsizei count, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform3fvEXT(GLuint program, GLint location, GLsizei count, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniform4fvEXT(GLuint program, GLint location, GLsizei count, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+GL_API GLvoid glProgramUniformMatrix2fvEXT(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniformMatrix3fvEXT(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glProgramUniformMatrix4fvEXT(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 #endif
 
 /*------------------------------------------------------------------------*

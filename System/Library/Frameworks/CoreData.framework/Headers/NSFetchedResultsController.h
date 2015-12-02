@@ -47,7 +47,7 @@ Handling of Invalidated Objects
 @class NSFetchRequest;
 @class NSManagedObjectContext;
 
-NS_CLASS_AVAILABLE(NA, 3_0)
+NS_CLASS_AVAILABLE(NA,3_0)
 @interface NSFetchedResultsController : NSObject {
 @private
 	NSFetchRequest *_fetchRequest;

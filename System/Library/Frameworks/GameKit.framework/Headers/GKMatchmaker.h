@@ -6,13 +6,8 @@
 //
 
 
-#import <UIKit/UIKit.h>
-@class GKConnection;
-@class GKSession;
 @class GKPlayer;
 @class GKMatch;
-@class GKMatchmakerViewController;
-@class GKMatchPlayersDataRequest;
 
 // GKMatchRequest represents the parameters needed to create the match.
 NS_CLASS_AVAILABLE(NA, 4_1)

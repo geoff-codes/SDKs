@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2009 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2006-2009,2011 Apple Inc. All Rights Reserved.
  * 
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -52,12 +52,12 @@ enum
     /* For SecKeyRawSign/SecKeyRawVerify only, data to be signed is an MD2
        hash; standard ASN.1 padding will be done, as well as PKCS1 padding
        of the underlying RSA operation. */
-    kSecPaddingPKCS1MD2  = 0x8000,
+    kSecPaddingPKCS1MD2  = 0x8000,  /* Unsupported as of iOS 5.0 */
 
     /* For SecKeyRawSign/SecKeyRawVerify only, data to be signed is an MD5
        hash; standard ASN.1 padding will be done, as well as PKCS1 padding
        of the underlying RSA operation. */
-    kSecPaddingPKCS1MD5  = 0x8001,
+    kSecPaddingPKCS1MD5  = 0x8001,  /* Unsupported as of iOS 5.0 */
 
     /* For SecKeyRawSign/SecKeyRawVerify only, data to be signed is a SHA1
        hash; standard ASN.1 padding will be done, as well as PKCS1 padding
@@ -271,6 +271,7 @@ OSStatus SecKeyDecrypt(
  */
 size_t SecKeyGetBlockSize(SecKeyRef key)
     __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);
+    
 
 #if defined(__cplusplus)
 }

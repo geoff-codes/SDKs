@@ -2,7 +2,6 @@
  *  CoreTelephonyDefines.h
  *  CFTelephony
  *
- *  Created by Jared Grubb on 7/26/06.
  *  Copyright 2010 Apple Inc. All rights reserved.
  *
  */
@@ -18,5 +17,6 @@
 #endif
 
 #define	CORETELEPHONY_EXTERN_CLASS	__attribute__((visibility("default")))
+#define CORETELEPHONY_CLASS_AVAILABLE(_iphoneIntro) __attribute__((visibility("default"))) NS_CLASS_AVAILABLE(NA, _iphoneIntro)
 
 #endif

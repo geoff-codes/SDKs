@@ -62,7 +62,7 @@ EAGL_EXTERN_CLASS
 EAGL_EXTERN_CLASS
 @interface EAGLContext : NSObject
 {
-@package
+@public
 	struct _EAGLContextPrivate *_private;
 }
 

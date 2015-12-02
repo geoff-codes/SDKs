@@ -14,6 +14,7 @@ EA_EXTERN_CLASS_AVAILABLE(3_0) @interface EASession : NSObject {
     NSString *_protocolString;
     NSInputStream *_inputStream;
     NSOutputStream *_outputStream;
+    BOOL _openCompleted;
 }
 
 - (id)initWithAccessory:(EAAccessory *)accessory forProtocol:(NSString *)protocolString __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);

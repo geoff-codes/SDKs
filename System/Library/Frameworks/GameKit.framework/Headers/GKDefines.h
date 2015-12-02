@@ -15,3 +15,7 @@
 #endif
 
 #define	GK_EXTERN_CLASS	__attribute__((visibility("default")))
+
+#ifndef GK_EXTERN_WEAK
+#define GK_EXTERN_WEAK  GK_EXTERN __attribute__((weak_import))
+#endif

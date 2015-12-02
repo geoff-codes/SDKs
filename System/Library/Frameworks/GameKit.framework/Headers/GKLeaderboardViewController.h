@@ -8,7 +8,6 @@
 #import <UIKit/UIKit.h>
 #import <GameKit/GKLeaderboard.h>
 
-@class GKGame;
 @protocol GKLeaderboardViewControllerDelegate;
 
 // View controller that provides the standard user interface for leaderboards.  Present modally from the top view controller.

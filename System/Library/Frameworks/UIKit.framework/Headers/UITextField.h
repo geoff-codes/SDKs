@@ -2,7 +2,7 @@
 //  UITextField.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,7 +11,7 @@
 #import <UIKit/UIControl.h>
 #import <UIKit/UIFont.h>
 #import <UIKit/UIStringDrawing.h>
-#import <UIKit/UITextInputTraits.h>
+#import <UIKit/UITextInput.h>
 
 @class UIImage, UIImageView, UILabel, UIColor, UIButton;
 @class UITextFieldAtomBackgroundView;
@@ -21,6 +21,7 @@
 @class UITextInputTraits;
 @class UITextSelectionView;
 @class UITextInteractionAssistant;
+@class UIPopoverController;
 @protocol UITextFieldDelegate;
 @protocol UITextSelecting;
 
@@ -38,7 +39,7 @@ typedef enum {
     UITextFieldViewModeAlways
 } UITextFieldViewMode;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInputTraits, NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInput, NSCoding> {
   @private
     NSString           *_text;
     UIColor            *_textColor;
@@ -61,10 +62,10 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInputTraits
     CGFloat             _paddingRight;
     CGFloat             _paddingBottom;
     NSString           *_textFont; // This ivar will go away. This is deprecated and people should use _font
-    UIColor            *_caretColor;
     NSRange             _selectionRange;
     int                 _scrollXOffset;
     int                 _scrollYOffset;
+    int                 _suffixWidth;
     float               _progress;
     NSString           *_style;
     CFTimeInterval      _mouseDownTime;
@@ -81,6 +82,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInputTraits
     
     UITextFieldLabel *_textLabel;
     UITextFieldLabel *_placeholderLabel;
+    UITextFieldLabel *_suffixLabel;
+    UITextFieldLabel *_prefixLabel;
     UIImageView      *_iconView;
     UILabel          *_label;
     CGFloat          _labelOffset;
@@ -92,6 +95,13 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInputTraits
     UIView             *_inputAccessoryView;
 
     UITextFieldAtomBackgroundView *_atomBackgroundView;
+    
+    UIPopoverController* _definitionPopoverController;
+    UIViewController* _definitionModalViewController;
+
+    UIColor         *_shadowColor;
+    CGSize           _shadowOffset;
+    CGFloat          _shadowBlur;
 
     struct {
         unsigned int secureTextChanged:1;
@@ -102,13 +112,17 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextField : UIControl <UITextInputTraits
         unsigned int inactiveHasDimAppearance:1;
         unsigned int becomesFirstResponderOnClearButtonTap:1;
         unsigned int clearsOnBeginEditing:1;
+        unsigned int clearsPlaceholderOnBeginEditing:1;
         unsigned int adjustsFontSizeToFitWidth:1;
         unsigned int fieldEditorAttached:1;
         unsigned int canBecomeFirstResponder:1;
+        unsigned int shouldSuppressShouldBeginEditing:1;
         unsigned int inResignFirstResponder:1;
         unsigned int undoDisabled:1;
         unsigned int contentsRTL:1;
         unsigned int explicitAlignment:1;
+        unsigned int implementsCustomDrawing:1;
+        unsigned int needsClearing:1;
     } _textFieldFlags;
 }
 

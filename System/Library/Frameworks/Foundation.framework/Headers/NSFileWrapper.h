@@ -1,6 +1,6 @@
 /*
 	NSFileWrapper.h
-	Copyright (c) 1995-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1995-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -56,7 +56,7 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 
 #pragma mark *** Initialization ***
 
-/* A designated initializer for creating an instance whose kind (directory, regular file, or symbolic link) is determined based on what the URL locates. If reading is not successful return NO after setting *outError to an NSError that encapsulates the reason why the file wrapper could not be read.
+/* A designated initializer for creating an instance whose kind (directory, regular file, or symbolic link) is determined based on what the URL locates. If reading is not successful return nil after setting *outError to an NSError that encapsulates the reason why the file wrapper could not be read.
 */
 - (id)initWithURL:(NSURL *)url options:(NSFileWrapperReadingOptions)options error:(NSError **)outError NS_AVAILABLE(10_6, 4_0);
 
@@ -84,7 +84,7 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 - (BOOL)isRegularFile;
 - (BOOL)isSymbolicLink;
 
-/* The file name that is "preferred." When the receiver is added to a parent directory file wrapper the parent will attempt to use this name as the key into its dictionary of children. Usually the preferred file name will actually get used in this situation but it won't be if if that key is already in use. The default implementation of this method causes existing parents to remove and re-add the child to accommodate the change. Preferred file names of children are not effectively preserved when you write a file wrapper to disk and then later instantiate another file wrapper by reading. If your application needs to preserve the user-visible names of attachments it has to make its own arrangements for their storage.
+/* The file name that is "preferred." When the receiver is added to a parent directory file wrapper the parent will attempt to use this name as the key into its dictionary of children. Usually the preferred file name will actually get used in this situation but it won't be if that key is already in use. The default implementation of this method causes existing parents to remove and re-add the child to accommodate the change. Preferred file names of children are not effectively preserved when you write a file wrapper to disk and then later instantiate another file wrapper by reading. If your application needs to preserve the user-visible names of attachments it has to make its own arrangements for their storage.
 */
 - (void)setPreferredFilename:(NSString *)fileName;
 - (NSString *)preferredFilename;
@@ -128,7 +128,7 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 
 /* Each of these methods throw an exception when [receiver isDirectory]==NO. */
 
-/* Add a file wrapper to the receiver's children and return the file name that uniquely identifies it among the receiver's children. The unique file name will be the same as the passed-in file wrapper's preferred file name unless that name is already in use as a key into the receiver's dictionary of children.
+/* Add a file wrapper to the receiver's children and return the file name that uniquely identifies it among the receiver's children. The unique file name will be the same as the passed-in file wrapper's preferred file name unless that name is already in use as a key into the receiver's dictionary of children. Beware of the fact that -initDirectoryWithFileWrappers:, -initRegularFileWithContents:, and -initSymbolicLinkWithDestinationURL: do not automatically set the preferred file name.
 */
 - (NSString *)addFileWrapper:(NSFileWrapper *)child;
 
@@ -166,13 +166,13 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 
 @end
 
-#if TARGET_OS_MAC
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
 @interface NSFileWrapper(NSDeprecated)
 
 #pragma mark *** Backward Compatibility ***
 
-/* Methods that were deprecated in Mac OS 10.6 and never available on iPhone OS. You can instead use -initWithURL:options:error: and -initSymbolicLinkWithDestinationURL:.
+/* Methods that were deprecated in Mac OS 10.6 and never available on iPhone OS. You can instead use -initWithURL:options:error: and -initSymbolicLinkWithDestinationURL:. One thing to pay attention to is that -initSymbolicLinkWithDestination: sets the preferrred file name but its replacement, -initSymbolicLinkWithDestinationURL:, does not, for better consistency with -initDirectoryWithFileWrappers: and -initRegularFileWithContents:.
 */
 - (id)initWithPath:(NSString *)path;
 - (id)initSymbolicLinkWithDestination:(NSString *)path;

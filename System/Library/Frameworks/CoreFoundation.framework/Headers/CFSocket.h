@@ -1,17 +1,9 @@
 /*	CFSocket.h
-	Copyright (c) 1999-2010, Apple Inc.  All rights reserved.
+	Copyright (c) 1999-2011, Apple Inc.  All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFSOCKET__)
 #define __COREFOUNDATION_CFSOCKET__ 1
-
-#include <TargetConditionals.h>
-
-#if TARGET_OS_WIN32
-typedef uintptr_t CFSocketNativeHandle;
-#else
-typedef int CFSocketNativeHandle;
-#endif
 
 #include <CoreFoundation/CFRunLoop.h>
 #include <CoreFoundation/CFData.h>
@@ -118,27 +110,22 @@ enum {
     kCFSocketReadCallBack = 1,
     kCFSocketAcceptCallBack = 2,
     kCFSocketDataCallBack = 3,
-    kCFSocketConnectCallBack = 4
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
-    ,
+    kCFSocketConnectCallBack = 4,
     kCFSocketWriteCallBack = 8
-#endif
 };
 typedef CFOptionFlags CFSocketCallBackType;
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 /* Socket flags */
 enum {
     kCFSocketAutomaticallyReenableReadCallBack = 1,
     kCFSocketAutomaticallyReenableAcceptCallBack = 2,
     kCFSocketAutomaticallyReenableDataCallBack = 3,
     kCFSocketAutomaticallyReenableWriteCallBack = 8,
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
     kCFSocketLeaveErrors = 64,
 #endif
     kCFSocketCloseOnInvalidate = 128
 };
-#endif
 
 typedef void (*CFSocketCallBack)(CFSocketRef s, CFSocketCallBackType type, CFDataRef address, const void *data, void *info);
 /* If the callback wishes to keep hold of address or data after the point that it returns, then it must copy them. */
@@ -150,6 +137,12 @@ typedef struct {
     void	(*release)(const void *info);
     CFStringRef	(*copyDescription)(const void *info);
 } CFSocketContext;
+
+#if TARGET_OS_WIN32
+typedef uintptr_t CFSocketNativeHandle;
+#else
+typedef int CFSocketNativeHandle;
+#endif
 
 CF_EXPORT CFTypeID	CFSocketGetTypeID(void);
 
@@ -171,12 +164,11 @@ CF_EXPORT CFSocketNativeHandle	CFSocketGetNative(CFSocketRef s);
 
 CF_EXPORT CFRunLoopSourceRef	CFSocketCreateRunLoopSource(CFAllocatorRef allocator, CFSocketRef s, CFIndex order);
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 CF_EXPORT CFOptionFlags	CFSocketGetSocketFlags(CFSocketRef s);
 CF_EXPORT void		CFSocketSetSocketFlags(CFSocketRef s, CFOptionFlags flags);
 CF_EXPORT void		CFSocketDisableCallBacks(CFSocketRef s, CFOptionFlags callBackTypes);
 CF_EXPORT void		CFSocketEnableCallBacks(CFSocketRef s, CFOptionFlags callBackTypes);
-#endif
+
 
 /* For convenience, a function is provided to send data using the socket with a timeout.  The timeout will be used only if the specified value is positive.  The address should be left NULL if the socket is already connected. */
 CF_EXPORT CFSocketError	CFSocketSendData(CFSocketRef s, CFDataRef address, CFDataRef data, CFTimeInterval timeout);

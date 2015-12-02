@@ -2,7 +2,7 @@
 //  UITableViewCell.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,8 +10,9 @@
 #import <UIKit/UIView.h>
 #import <UIKit/UIStringDrawing.h>
 #import <UIKit/UIKitDefines.h>
+#import <UIKit/UIGestureRecognizer.h>
 
-@class UIImage, UIColor, UILabel, UIImageView, UIButton, UITextField;
+@class UIImage, UIColor, UILabel, UIImageView, UIButton, UITextField, UITableView, UILongPressGestureRecognizer;
 
 typedef enum {
     UITableViewCellStyleDefault,	// Simple cell with text label and optional image view (behavior of UITableViewCell in iPhoneOS 2.x)
@@ -54,8 +55,9 @@ typedef NSUInteger UITableViewCellStateMask;        // available in iPhone OS 3.
 
 #define UITableViewCellStateEditingMask UITableViewCellStateShowingEditControlMask
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding> {
+UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding, UIGestureRecognizerDelegate> {
   @private
+    UITableView *_tableView;
     id           _layoutManager;
     id           _target;
     SEL          _editAction;
@@ -72,6 +74,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding> {
     UILabel     *_detailTextLabel;
     UIView      *_backgroundView;
     UIView      *_selectedBackgroundView;
+    UIView      *_multipleSelectionBackgroundView;
     UIView      *_selectedOverlayView;
     CGFloat      _selectionFadeDuration;
     UIColor     *_backgroundColor;
@@ -83,6 +86,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding> {
     UIView      *_topShadowAnimationView;
     UIView      *_bottomShadowAnimationView;
     CFMutableDictionaryRef _unhighlightedStates;
+    id           _selectionSegueTemplate;
     struct {
         unsigned int showingDeleteConfirmation:1;
         unsigned int separatorStyle:3;
@@ -96,6 +100,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding> {
         unsigned int showsReorderControl:1;
         unsigned int showDisclosure:1;
         unsigned int showTopSeparator:1;
+        unsigned int hideTopSeparatorDuringReordering:1;
         unsigned int disclosureClickable:1;
         unsigned int disclosureStyle:1;
         unsigned int showingRemoveControl:1;
@@ -115,6 +120,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding> {
         unsigned int animatingSelection:1;
         unsigned int backgroundColorSet:1;
         unsigned int needsSetup:1;
+        unsigned int dontDrawTopShadow:1;
+        unsigned int usingMultiselectbackgroundView:1;
+        unsigned int layoutLoopCounter:2;
     } _tableCellFlags;
     
     UIButton *_accessoryView;
@@ -129,6 +137,10 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding> {
     NSTimer *_deselectTimer;
     CGFloat _textFieldOffset;
     SEL _returnAction;
+    UIColor *_selectionTintColor;
+    UIColor *_accessoryTintColor;
+    UIImage *_reorderControlImage;
+    UILongPressGestureRecognizer* _menuGesture;
 }
 
 // Designated initializer.  If the cell can be reused, you must pass in a reuse identifier.  You should use the same reuse identifier for all cells of the same form.  
@@ -148,6 +160,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewCell : UIView <NSCoding> {
 
 // Default is nil for cells in UITableViewStylePlain, and non-nil for UITableViewStyleGrouped. The 'selectedBackgroundView' will be added as a subview directly above the backgroundView if not nil, or behind all other views. It is added as a subview only when the cell is selected. Calling -setSelected:animated: will cause the 'selectedBackgroundView' to animate in and out with an alpha fade.
 @property(nonatomic,retain) UIView                *selectedBackgroundView;
+
+// If not nil, takes the place of the selectedBackgroundView when using multiple selection.
+@property(nonatomic,retain) UIView                *multipleSelectionBackgroundView __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 @property(nonatomic,readonly,copy) NSString       *reuseIdentifier;
 - (void)prepareForReuse;                                                        // if the cell is reusable (has a reuse identifier), this is called just before the cell is returned from the table view method dequeueReusableCellWithIdentifier:.  If you override, you MUST call super.

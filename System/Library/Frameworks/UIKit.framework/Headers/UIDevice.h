@@ -2,7 +2,7 @@
 //  UIDevice.h
 //  UIKit
 //
-//  Copyright 2007-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -46,6 +46,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIDevice : NSObject {
     struct {
 	unsigned int batteryMonitoringEnabled:1;
 	unsigned int proximityMonitoringEnabled:1;
+	unsigned int expectsFaceContactInLandscape:1;
         unsigned int orientation:3;
         unsigned int batteryState:2;
         unsigned int proximityState:1;
@@ -59,8 +60,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIDevice : NSObject {
 @property(nonatomic,readonly,retain) NSString    *localizedModel;    // localized version of model
 @property(nonatomic,readonly,retain) NSString    *systemName;        // e.g. @"iOS"
 @property(nonatomic,readonly,retain) NSString    *systemVersion;     // e.g. @"4.0"
-@property(nonatomic,readonly) UIDeviceOrientation orientation;       // return current device orientation
-@property(nonatomic,readonly,retain) NSString    *uniqueIdentifier;  // a string unique to each device based on various hardware info.
+@property(nonatomic,readonly) UIDeviceOrientation orientation;       // return current device orientation.  this will return UIDeviceOrientationUnknown unless device orientation notifications are being generated.
+@property(nonatomic,readonly,retain) NSString    *uniqueIdentifier  __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_5_0);  // a string unique to each device based on various hardware info.
 
 @property(nonatomic,readonly,getter=isGeneratingDeviceOrientationNotifications) BOOL generatesDeviceOrientationNotifications;
 - (void)beginGeneratingDeviceOrientationNotifications;      // nestable
@@ -92,4 +93,3 @@ UIKIT_EXTERN NSString *const UIDeviceOrientationDidChangeNotification;
 UIKIT_EXTERN NSString *const UIDeviceBatteryStateDidChangeNotification   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 UIKIT_EXTERN NSString *const UIDeviceBatteryLevelDidChangeNotification   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 UIKIT_EXTERN NSString *const UIDeviceProximityStateDidChangeNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-

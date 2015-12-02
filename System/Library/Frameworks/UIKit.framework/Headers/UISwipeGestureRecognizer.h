@@ -2,7 +2,7 @@
 //  UISwipeGestureRecognizer.h
 //  UIKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>

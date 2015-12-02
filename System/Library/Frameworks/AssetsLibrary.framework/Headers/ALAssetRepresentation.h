@@ -18,8 +18,6 @@
 
 #if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
-@class AVURLAsset;
-
 NS_CLASS_AVAILABLE(NA, 4_0)
 @interface ALAssetRepresentation : NSObject {
 @package
@@ -28,6 +26,9 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 
 // Returns the representation's UTI.
 - (NSString *)UTI;
+
+// Returns the dimensions of this representation.  If the representation does not have valid dimensions, this method will return CGSizeZero.
+- (CGSize)dimensions;
 
 // Returns the size of the file for this representation. Callers can use this to allocate buffers of the right size for -getBytes:fromOffset:length:error:
 - (long long)size;
@@ -61,6 +62,10 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 
 // Returns the representation's scale.
 - (float)scale;
+
+// Returns a string representing the filename of the representation on disk.  
+// For representations synced from iTunes, this will be the filename of the represenation on the host.
+- (NSString *)filename __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 @end
 

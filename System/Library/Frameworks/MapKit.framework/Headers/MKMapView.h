@@ -6,10 +6,11 @@
 //  the associated interfaces binds you to the Google Maps/Google Earth API terms of service. You can
 //  find these terms of service at http://code.google.com/apis/maps/iphone/terms.html
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <MapKit/MKAnnotationView.h>
+#import <MapKit/MKFoundation.h>
 #import <MapKit/MKGeometry.h>
 #import <MapKit/MKTypes.h>
 #import <MapKit/MKOverlay.h>
@@ -22,14 +23,21 @@
 #import <MapKit/MKPolylineView.h>
 #import <MapKit/MKCircleView.h>
 
-#import <UIKit/UIKit.h>
-
 @class MKUserLocation;
 @class MKMapViewInternal;
 
 @protocol MKMapViewDelegate;
 
-NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
+#if (__IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED)
+enum {
+	MKUserTrackingModeNone = 0, // the user's location is not followed
+	MKUserTrackingModeFollow, // the map follows the user's location
+	MKUserTrackingModeFollowWithHeading, // the map follows the user's location and heading
+};
+#endif
+typedef NSInteger MKUserTrackingMode;
+
+MK_CLASS_AVAILABLE(NA, 3_0)
 @interface MKMapView : UIView <NSCoding>
 {
 @private
@@ -80,6 +88,9 @@ NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 // The annotation representing the user's location
 @property (nonatomic, readonly) MKUserLocation *userLocation;
 
+@property (nonatomic) MKUserTrackingMode userTrackingMode NS_AVAILABLE(NA, 5_0);
+- (void)setUserTrackingMode:(MKUserTrackingMode)mode animated:(BOOL)animated NS_AVAILABLE(NA, 5_0);
+
 // Returns YES if the user's location is displayed within the currently visible map region.
 @property (nonatomic, readonly, getter=isUserLocationVisible) BOOL userLocationVisible;
 
@@ -92,7 +103,7 @@ NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 - (void)removeAnnotations:(NSArray *)annotations;
 
 @property (nonatomic, readonly) NSArray *annotations;
-- (NSSet *)annotationsInMapRect:(MKMapRect)mapRect __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2);
+- (NSSet *)annotationsInMapRect:(MKMapRect)mapRect NS_AVAILABLE(NA, 4_2);
 
 // Currently displayed view for an annotation; returns nil if the view for the annotation isn't being displayed.
 - (MKAnnotationView *)viewForAnnotation:(id <MKAnnotation>)annotation;
@@ -116,22 +127,22 @@ NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 // Overlays are models used to represent areas to be drawn on top of the map.
 // This is in contrast to annotations, which represent points on the map.
 // Implement -mapView:viewForOverlay: on MKMapViewDelegate to return the view for each overlay.
-- (void)addOverlay:(id <MKOverlay>)overlay __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)addOverlays:(NSArray *)overlays __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)addOverlay:(id <MKOverlay>)overlay NS_AVAILABLE(NA, 4_0);
+- (void)addOverlays:(NSArray *)overlays NS_AVAILABLE(NA, 4_0);
 
-- (void)removeOverlay:(id <MKOverlay>)overlay __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)removeOverlays:(NSArray *)overlays __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)removeOverlay:(id <MKOverlay>)overlay NS_AVAILABLE(NA, 4_0);
+- (void)removeOverlays:(NSArray *)overlays NS_AVAILABLE(NA, 4_0);
 
-- (void)insertOverlay:(id <MKOverlay>)overlay atIndex:(NSUInteger)index __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)exchangeOverlayAtIndex:(NSUInteger)index1 withOverlayAtIndex:(NSUInteger)index2 __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)insertOverlay:(id <MKOverlay>)overlay atIndex:(NSUInteger)index NS_AVAILABLE(NA, 4_0);
+- (void)exchangeOverlayAtIndex:(NSUInteger)index1 withOverlayAtIndex:(NSUInteger)index2 NS_AVAILABLE(NA, 4_0);
 
-- (void)insertOverlay:(id <MKOverlay>)overlay aboveOverlay:(id <MKOverlay>)sibling __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)insertOverlay:(id <MKOverlay>)overlay belowOverlay:(id <MKOverlay>)sibling __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)insertOverlay:(id <MKOverlay>)overlay aboveOverlay:(id <MKOverlay>)sibling NS_AVAILABLE(NA, 4_0);
+- (void)insertOverlay:(id <MKOverlay>)overlay belowOverlay:(id <MKOverlay>)sibling NS_AVAILABLE(NA, 4_0);
 
-@property (nonatomic, readonly) NSArray *overlays __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (nonatomic, readonly) NSArray *overlays NS_AVAILABLE(NA, 4_0);
 
 // Currently displayed view for overlay; returns nil if the view has not been created yet.
-- (MKOverlayView *)viewForOverlay:(id <MKOverlay>)overlay __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (MKOverlayView *)viewForOverlay:(id <MKOverlay>)overlay NS_AVAILABLE(NA, 4_0);
 
 @end
 
@@ -158,20 +169,22 @@ NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 // mapView:annotationView:calloutAccessoryControlTapped: is called when the user taps on left & right callout accessory UIControls.
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control;
 
-- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view NS_AVAILABLE(NA, 4_0);
+- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view NS_AVAILABLE(NA, 4_0);
 
-- (void)mapViewWillStartLocatingUser:(MKMapView *)mapView __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)mapViewDidStopLocatingUser:(MKMapView *)mapView __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-- (void)mapView:(MKMapView *)mapView didFailToLocateUserWithError:(NSError *)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)mapViewWillStartLocatingUser:(MKMapView *)mapView NS_AVAILABLE(NA, 4_0);
+- (void)mapViewDidStopLocatingUser:(MKMapView *)mapView NS_AVAILABLE(NA, 4_0);
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation NS_AVAILABLE(NA, 4_0);
+- (void)mapView:(MKMapView *)mapView didFailToLocateUserWithError:(NSError *)error NS_AVAILABLE(NA, 4_0);
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view didChangeDragState:(MKAnnotationViewDragState)newState 
-   fromOldState:(MKAnnotationViewDragState)oldState __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+   fromOldState:(MKAnnotationViewDragState)oldState NS_AVAILABLE(NA, 4_0);
 
-- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id <MKOverlay>)overlay __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id <MKOverlay>)overlay NS_AVAILABLE(NA, 4_0);
 
 // Called after the provided overlay views have been added and positioned in the map.
-- (void)mapView:(MKMapView *)mapView didAddOverlayViews:(NSArray *)overlayViews __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)mapView:(MKMapView *)mapView didAddOverlayViews:(NSArray *)overlayViews NS_AVAILABLE(NA, 4_0);
+
+- (void)mapView:(MKMapView *)mapView didChangeUserTrackingMode:(MKUserTrackingMode)mode animated:(BOOL)animated NS_AVAILABLE(NA, 5_0);
 
 @end

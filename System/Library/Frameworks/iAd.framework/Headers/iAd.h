@@ -7,3 +7,4 @@
  */
 
 #import <iAd/ADBannerView.h>
+#import <iAd/ADInterstitialAd.h>

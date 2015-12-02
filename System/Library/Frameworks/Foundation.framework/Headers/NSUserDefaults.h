@@ -1,5 +1,5 @@
 /*	NSUserDefaults.h
-	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -12,7 +12,7 @@ FOUNDATION_EXPORT NSString * const NSRegistrationDomain;
 
 @interface NSUserDefaults : NSObject {
 @private
-    id _private;
+    NSInteger _unused;
     void *_reserved[4];
 }
 
@@ -62,10 +62,8 @@ FOUNDATION_EXPORT NSString * const NSRegistrationDomain;
 
 - (BOOL)synchronize;
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (BOOL)objectIsForcedForKey:(NSString *)key;
 - (BOOL)objectIsForcedForKey:(NSString *)key inDomain:(NSString *)domain;
-#endif
 
 
 @end

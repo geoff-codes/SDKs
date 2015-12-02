@@ -2,7 +2,7 @@
  *  CoreText.h
  *	CoreText
  *
- *  Copyright (c) 2006-2010 Apple Inc. All rights reserved.
+ *  Copyright (c) 2006-2011 Apple Inc. All rights reserved.
  *
  */
 
@@ -24,7 +24,7 @@
 #include <CoreText/CTFontDescriptor.h>
 #if !TARGET_OS_IPHONE || __IPHONE_OS_VERSION_MIN_REQUIRED >= 40100
 #include <CoreText/CTFontManager.h>
-#endif // !TARGET_OS_IPHONE
+#endif // !TARGET_OS_IPHONE || __IPHONE_OS_VERSION_MIN_REQUIRED >= 40100
 #include <CoreText/CTFontTraits.h>
 #include <CoreText/CTFrame.h>
 #include <CoreText/CTFramesetter.h>
@@ -32,11 +32,15 @@
 #include <CoreText/CTLine.h>
 #include <CoreText/CTParagraphStyle.h>
 #include <CoreText/CTRun.h>
+#if TARGET_OS_IPHONE
+#include <CoreText/CTRunDelegate.h>
+#endif // TARGET_OS_IPHONE
 #include <CoreText/CTStringAttributes.h>
 #include <CoreText/CTTextTab.h>
 #include <CoreText/CTTypesetter.h>
 #if TARGET_OS_IPHONE
-#include <CoreText/CTRunDelegate.h>
+#include <CoreText/SFNTLayoutTypes.h>
+#include <CoreText/SFNTTypes.h>
 #endif // TARGET_OS_IPHONE
 
 #if defined(__cplusplus)

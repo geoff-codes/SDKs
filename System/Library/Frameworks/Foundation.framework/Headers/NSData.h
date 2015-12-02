@@ -1,5 +1,5 @@
 /*	NSData.h
-	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -11,8 +11,11 @@
 /****************	Read/Write Options	****************/
 
 enum {
-    NSDataReadingMapped =   1UL << 0,	// Hint to map the file in if possible
-    NSDataReadingUncached = 1UL << 1	// Hint to get the file not to be cached in the kernel
+    NSDataReadingMappedIfSafe =   1UL << 0,	// Hint to map the file in if possible and safe
+    NSDataReadingUncached = 1UL << 1,	// Hint to get the file not to be cached in the kernel
+#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    NSDataReadingMappedAlways = 1UL << 3,	// Hint to map the file in if possible. This takes precedence over NSDataReadingMappedIfSafe if both are given.
+#endif
 };
 typedef NSUInteger NSDataReadingOptions;
 
@@ -20,17 +23,22 @@ enum {
     NSDataWritingAtomic = 1UL << 0,	// Hint to use auxiliary file when saving; equivalent to atomically:YES
     
 #if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-    NSDataWritingFileProtectionNone     = 0x10000000,
-    NSDataWritingFileProtectionComplete = 0x20000000,
-    NSDataWritingFileProtectionMask     = 0xf0000000
+    NSDataWritingFileProtectionNone                                 = 0x10000000,
+    NSDataWritingFileProtectionComplete                             = 0x20000000,
+#if __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    NSDataWritingFileProtectionCompleteUnlessOpen                   = 0x30000000,
+    NSDataWritingFileProtectionCompleteUntilFirstUserAuthentication = 0x40000000,
+#endif
+    NSDataWritingFileProtectionMask                                 = 0xf0000000
 #endif
 };
 typedef NSUInteger NSDataWritingOptions;
 
 
 enum {	// Options with old names for NSData reading methods. Please stop using these old names.
-    NSMappedRead = NSDataReadingMapped,	    // Deprecated name for NSDataReadingMapped
-    NSUncachedRead = NSDataReadingUncached  // Deprecated name for NSDataReadingUncached
+    NSDataReadingMapped = NSDataReadingMappedIfSafe,	// Deprecated name for NSDataReadingMappedIfSafe
+    NSMappedRead = NSDataReadingMapped,			// Deprecated name for NSDataReadingMapped
+    NSUncachedRead = NSDataReadingUncached		// Deprecated name for NSDataReadingUncached
 };
 
 enum {	// Options with old names for NSData writing methods. Please stop using these old names.
@@ -64,10 +72,8 @@ typedef NSUInteger NSDataSearchOptions;
 - (NSData *)subdataWithRange:(NSRange)range;
 - (BOOL)writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile;
 - (BOOL)writeToURL:(NSURL *)url atomically:(BOOL)atomically; // the atomically flag is ignored if the url is not of a type the supports atomic writes
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (BOOL)writeToFile:(NSString *)path options:(NSDataWritingOptions)writeOptionsMask error:(NSError **)errorPtr;
 - (BOOL)writeToURL:(NSURL *)url options:(NSDataWritingOptions)writeOptionsMask error:(NSError **)errorPtr;
-#endif
 - (NSRange)rangeOfData:(NSData *)dataToFind options:(NSDataSearchOptions)mask range:(NSRange)searchRange NS_AVAILABLE(10_6, 4_0);
 
 @end
@@ -77,28 +83,18 @@ typedef NSUInteger NSDataSearchOptions;
 + (id)data;
 + (id)dataWithBytes:(const void *)bytes length:(NSUInteger)length;
 + (id)dataWithBytesNoCopy:(void *)bytes length:(NSUInteger)length;
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 + (id)dataWithBytesNoCopy:(void *)bytes length:(NSUInteger)length freeWhenDone:(BOOL)b;
-#endif
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 + (id)dataWithContentsOfFile:(NSString *)path options:(NSDataReadingOptions)readOptionsMask error:(NSError **)errorPtr;
 + (id)dataWithContentsOfURL:(NSURL *)url options:(NSDataReadingOptions)readOptionsMask error:(NSError **)errorPtr;
-#endif
 + (id)dataWithContentsOfFile:(NSString *)path;
 + (id)dataWithContentsOfURL:(NSURL *)url;
-+ (id)dataWithContentsOfMappedFile:(NSString *)path;
 - (id)initWithBytes:(const void *)bytes length:(NSUInteger)length;
 - (id)initWithBytesNoCopy:(void *)bytes length:(NSUInteger)length;
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (id)initWithBytesNoCopy:(void *)bytes length:(NSUInteger)length freeWhenDone:(BOOL)b;
-#endif
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (id)initWithContentsOfFile:(NSString *)path options:(NSDataReadingOptions)readOptionsMask error:(NSError **)errorPtr;
 - (id)initWithContentsOfURL:(NSURL *)url options:(NSDataReadingOptions)readOptionsMask error:(NSError **)errorPtr;
-#endif
 - (id)initWithContentsOfFile:(NSString *)path;
 - (id)initWithContentsOfURL:(NSURL *)url;
-- (id)initWithContentsOfMappedFile:(NSString *)path;
 - (id)initWithData:(NSData *)data;
 + (id)dataWithData:(NSData *)data;
 
@@ -109,6 +105,11 @@ typedef NSUInteger NSDataSearchOptions;
 /* This method is unsafe because it could potentially cause buffer overruns. You should use -getBytes:length: or -getBytes:range: instead.
 */
 - (void)getBytes:(void *)buffer;
+
+/* These methods are deprecated. You should use +dataWithContentsOfURL:options:error: or -initWithContentsOfURL:options:error: with NSDataReadingMappedIfSafe or NSDataReadingMappedAlways instead.
+*/
++ (id)dataWithContentsOfMappedFile:(NSString *)path;
+- (id)initWithContentsOfMappedFile:(NSString *)path;
 
 @end
 
@@ -129,9 +130,7 @@ typedef NSUInteger NSDataSearchOptions;
 - (void)replaceBytesInRange:(NSRange)range withBytes:(const void *)bytes;
 - (void)resetBytesInRange:(NSRange)range;
 - (void)setData:(NSData *)data;
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (void)replaceBytesInRange:(NSRange)range withBytes:(const void *)replacementBytes length:(NSUInteger)replacementLength;
-#endif
 
 @end
 
@@ -143,7 +142,6 @@ typedef NSUInteger NSDataSearchOptions;
 - (id)initWithLength:(NSUInteger)length;
 
 @end
-
 
 /****************	    Purgeable Data	****************/
 

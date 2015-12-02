@@ -2,7 +2,7 @@
 //  UIKit.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKitDefines.h>
@@ -20,6 +20,7 @@
 #import <UIKit/UIDataDetectors.h>
 #import <UIKit/UIDatePicker.h>
 #import <UIKit/UIDevice.h>
+#import <UIKit/UIDocument.h>
 #import <UIKit/UIDocumentInteractionController.h>
 #import <UIKit/UIEvent.h>
 #import <UIKit/UIFont.h>
@@ -34,6 +35,7 @@
 #import <UIKit/UILocalNotification.h>
 #import <UIKit/UILocalizedIndexedCollation.h>
 #import <UIKit/UILongPressGestureRecognizer.h>
+#import <UIKit/UIManagedDocument.h>
 #import <UIKit/UIMenuController.h>
 #import <UIKit/UINavigationBar.h>
 #import <UIKit/UINavigationController.h>
@@ -41,11 +43,13 @@
 #import <UIKit/UINibDeclarations.h>
 #import <UIKit/UINibLoading.h>
 #import <UIKit/UIPageControl.h>
+#import <UIKit/UIPageViewController.h>
 #import <UIKit/UIPanGestureRecognizer.h>
 #import <UIKit/UIPasteboard.h>
 #import <UIKit/UIPickerView.h>
 #import <UIKit/UIPinchGestureRecognizer.h>
 #import <UIKit/UIPopoverController.h>
+#import <UIKit/UIPopoverBackgroundView.h>
 #import <UIKit/UIPrintError.h>
 #import <UIKit/UIPrintFormatter.h>
 #import <UIKit/UIPrintInfo.h>
@@ -53,6 +57,7 @@
 #import <UIKit/UIPrintPageRenderer.h>
 #import <UIKit/UIPrintPaper.h>
 #import <UIKit/UIProgressView.h>
+#import <UIKit/UIReferenceLibraryViewController.h>
 #import <UIKit/UIResponder.h>
 #import <UIKit/UIRotationGestureRecognizer.h>
 #import <UIKit/UIScreen.h>
@@ -63,6 +68,10 @@
 #import <UIKit/UISegmentedControl.h>
 #import <UIKit/UISlider.h>
 #import <UIKit/UISplitViewController.h>
+#import <UIKit/UIStepper.h>
+#import <UIKit/UIStoryboard.h>
+#import <UIKit/UIStoryboardPopoverSegue.h>
+#import <UIKit/UIStoryboardSegue.h>
 #import <UIKit/UIStringDrawing.h>
 #import <UIKit/UISwipeGestureRecognizer.h>
 #import <UIKit/UISwitch.h>

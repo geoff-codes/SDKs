@@ -478,6 +478,10 @@ typedef struct AudioFilePacketTableInfo AudioFilePacketTableInfo;
 #define kAFInfoDictionary_NominalBitRate                "nominal bit rate"
 #define kAFInfoDictionary_ChannelLayout					"channel layout"
 #define kAFInfoDictionary_ApproximateDurationInSeconds  "approximate duration in seconds"
+#define kAFInfoDictionary_SourceBitDepth				"source bit depth"
+#define kAFInfoDictionary_ISRC							"ISRC"					// International Standard Recording Code
+#define kAFInfoDictionary_SubTitle						"subtitle"
+
 
 //=============================================================================
 //	Routines
@@ -974,7 +978,13 @@ AudioFileRemoveUserData ( AudioFileID			inAudioFile,
 					A void * pointing to memory set up by the caller to contain a fully formatted ID3 tag (get/set v2.2, v2.3, or v2.4, v1 get only).
 					The ID3 tag is not manipulated in anyway either for read or write. 
 					When setting, this property must be called before calling AudioFileWritePackets.
-*/
+	@constant	kAudioFilePropertySourceBitDepth
+					For encoded data this property returns the bit depth of the source as an SInt32, if known.
+					The bit depth is expressed as a negative number if the source was floating point, e.g. -32 for float, -64 for double.
+	@constant	kAudioFilePropertyAlbumArtwork
+					returns a CFDataRef filled with the Album Art. Data will formatted as either JFIF (JPEG) or PNG (PNG) 
+					The caller is responsible for releasing the CFObject.
+ */
 enum
 {
 	kAudioFilePropertyFileFormat			=	'ffmt',
@@ -1002,7 +1012,9 @@ enum
 	kAudioFilePropertyReserveDuration		=	'rsrv',
 	kAudioFilePropertyEstimatedDuration		=	'edur',
 	kAudioFilePropertyBitRate				=	'brat',
-	kAudioFilePropertyID3Tag				=	'id3t'
+	kAudioFilePropertyID3Tag				=	'id3t',
+	kAudioFilePropertySourceBitDepth		=	'sbtd',
+	kAudioFilePropertyAlbumArtwork			=	'aart'
 };
 
 

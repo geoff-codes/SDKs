@@ -10,8 +10,12 @@
 #import <UIKit/UITextField.h>
 #import <UIKit/UIView.h>
 
-
-
+typedef enum {
+    UIAlertViewStyleDefault = 0,
+    UIAlertViewStyleSecureTextInput,
+    UIAlertViewStylePlainTextInput,
+    UIAlertViewStyleLoginAndPasswordInput
+} UIAlertViewStyle;
 
 @protocol UIAlertViewDelegate;
 @class UILabel, UIToolbar, UITabBar, UIWindow, UIBarButtonItem, UIPopoverController;
@@ -81,6 +85,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIAlertView : UIView {
         unsigned int delegateWillDismiss2:1;
         unsigned int delegateDidDismiss:1;
         unsigned int delegateDidDismiss2:1;
+        unsigned int delegateShouldEnableFirstOtherButton:1;
         unsigned int forceHorizontalButtonsLayout:1; // for <rdar://problem/7309708> Apex8A118+kb root: Alert bleeds offscreen. Should be removed 
         unsigned int suppressKeyboardOnPopup:1; // the folder creation alert has text fields but we need to pop up without the keyboard 
         unsigned int keyboardShowing:1;
@@ -91,6 +96,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIAlertView : UIView {
         unsigned int shouldHandleFirstKeyUpEvent:1; // when presenting with hardware KB we have to handle the first key up event we get so we don't end up repeating the last key
         unsigned int forceKeyboardUse:1;
         unsigned int cancelWhenDoneAnimating:1;
+        unsigned int alertViewStyle:3;
+        unsigned int isSBAlert:1;
+        unsigned int isBeingDismissed:1; 
     } _modalViewFlags;
 }
 
@@ -118,6 +126,13 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIAlertView : UIView {
 // it does not need to be called if the user presses on a button
 - (void)dismissWithClickedButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated;
 
+// Alert view style - defaults to UIAlertViewStyleDefault
+@property(nonatomic,assign) UIAlertViewStyle alertViewStyle __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+/* Retrieve a text field at an index - raises NSRangeException when textFieldIndex is out-of-bounds. 
+   The field at index 0 will be the first text field (the single field or the login field), the field at index 1 will be the password field. */
+- (UITextField *)textFieldAtIndex:(NSInteger)textFieldIndex __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
 @end
 
 @protocol UIAlertViewDelegate <NSObject>
@@ -135,5 +150,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIAlertView : UIView {
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex; // before animation and hiding view
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;  // after animation
+
+// Called after edits in any of the default fields added by the style
+- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView;
 
 @end

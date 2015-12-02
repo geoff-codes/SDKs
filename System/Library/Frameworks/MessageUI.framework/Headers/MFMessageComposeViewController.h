@@ -29,6 +29,23 @@ enum MessageComposeResult {
 };
 typedef enum MessageComposeResult MessageComposeResult;   // available in iPhone 4.0
 
+/*!
+ @const      MFMessageComposeViewControllerTextMessageAvailabilityDidChangeNotification
+ @abstract   Notification posted when the value of <tt>+[MFMessageComposeViewController canSendText]</tt> has changed.
+ @discussion This notification is posted when the value of <tt>+[MFMessageComposeViewController canSendText]</tt>
+             has changed. Clients should invalidate any caches and update UI as appropriate.
+*/
+extern NSString *const MFMessageComposeViewControllerTextMessageAvailabilityDidChangeNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+/*!
+ @const      MFMessageComposeViewControllerTextMessageAvailabilityKey
+ @abstract   UserInfo key for MFMessageComposeViewControllerTextMessageAvailabilityDidChangeNotification
+             containing the value of <tt>+[MFMessageComposeViewController canSendText]</tt>
+ @discussion The value of this key is an NSNumber containing a BOOL value. This value matches
+             the result of <tt>+[MFMessageComposeViewController canSendText]</tt>.
+*/
+extern NSString *const MFMessageComposeViewControllerTextMessageAvailabilityKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
 @protocol MFMessageComposeViewControllerDelegate;
 
 /*!

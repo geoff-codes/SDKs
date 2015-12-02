@@ -821,11 +821,9 @@ extern CFTypeRef kSecUseItemList
     SecKeyRef, SecCertificateRef, or SecIdentityRef items. The objects in the
     provided array must be of the same type.
 
-    To convert from persistent item references to normal item references,
-    specify a kSecMatchItemList whose value is a CFArray containing one or
-    more CFDataRef elements (the persistent reference), and a kSecReturnRef
-    whose value is kCFBooleanTrue. The objects in the provided array must be
-    of the same type.
+    To convert from a persistent item reference to a normal item reference,
+    specify a kSecValuePersistentRef whose value a CFDataRef (the persistent 
+    reference), and a kSecReturnRef whose value is kCFBooleanTrue.
 */
 OSStatus SecItemCopyMatching(CFDictionaryRef query, CFTypeRef *result)
     __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_2_0);

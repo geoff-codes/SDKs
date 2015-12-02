@@ -2,7 +2,7 @@
 //  UINibLoading.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

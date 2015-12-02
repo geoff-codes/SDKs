@@ -3,9 +3,10 @@
 	
 	Framework:  AVFoundation
 
-	Copyright 2008-2010 Apple Inc. All rights reserved.
+	Copyright 2008-2012 Apple Inc. All rights reserved.
 */
 
+#import <AVFoundation/AVBase.h>
 #import <Foundation/NSObject.h>
 #import <Foundation/NSDate.h>  /* for NSTimeInterval */
 #import <AVFoundation/AVAudioSettings.h>
@@ -14,7 +15,7 @@
 @class NSData, NSURL, NSError, NSDictionary;
 @protocol AVAudioPlayerDelegate;
 
-/* This class is available with iPhone 2.2 or later */
+NS_CLASS_AVAILABLE(10_7, 2_2)
 @interface AVAudioPlayer : NSObject {
 @private
     __strong void *_impl;
@@ -32,41 +33,37 @@
 /* methods that return BOOL return YES on success and NO on failure. */
 - (BOOL)prepareToPlay;	/* get ready to play the sound. happens automatically on play. */
 - (BOOL)play;			/* sound is played asynchronously. */
-#if defined(__MAC_10_7) || defined(__IPHONE_4_0)
-- (BOOL)playAtTime:(NSTimeInterval) time  /* play a sound some time in the future. time should be greater than deviceCurrentTime. */
-	__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
-#endif
+- (BOOL)playAtTime:(NSTimeInterval)time NS_AVAILABLE(10_7, 4_0); /* play a sound some time in the future. time should be greater than deviceCurrentTime. */
 - (void)pause;			/* pauses playback, but remains ready to play. */
 - (void)stop;			/* stops playback. no longer ready to play. */
 
 /* properties */
 
-@property(readonly, getter=isPlaying) BOOL playing;
+@property(readonly, getter=isPlaying) BOOL playing; /* is it playing or not? */
 
 @property(readonly) NSUInteger numberOfChannels;
 @property(readonly) NSTimeInterval duration; /* the duration of the sound. */
 
-@property(assign) id<AVAudioPlayerDelegate> delegate; /* the delegate will be sent playerDidFinishPlaying */ 
+/* the delegate will be sent messages from the AVAudioPlayerDelegate protocol */ 
+@property(assign) id<AVAudioPlayerDelegate> delegate; 
 
-/* one of these three properties will be non-nil based on the init... method used */
+/* one of these properties will be non-nil based on the init... method used */
 @property(readonly) NSURL *url; /* returns nil if object was not created with a URL */
 @property(readonly) NSData *data; /* returns nil if object was not created with a data object */
 
-#if defined(__MAC_10_7) || defined(__IPHONE_4_0)
-@property float pan /* set panning. -1.0 is left, 0.0 is center, 1.0 is right. */
-	__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
-#endif
+@property float pan NS_AVAILABLE(10_7, 4_0); /* set panning. -1.0 is left, 0.0 is center, 1.0 is right. */
 @property float volume; /* The volume for the sound. The nominal range is from 0.0 to 1.0. */
+
+@property BOOL enableRate NS_AVAILABLE_IOS(5_0); /* You must set enableRate to YES for the rate property to take effect. You must set this before calling prepareToPlay. */
+@property float rate NS_AVAILABLE_IOS(5_0); /* See enableRate. The playback rate for the sound. 1.0 is normal, 0.5 is half speed, 2.0 is double speed. */
+
 
 /*  If the sound is playing, currentTime is the offset into the sound of the current playback position.  
 If the sound is not playing, currentTime is the offset into the sound where playing would start. */
 @property NSTimeInterval currentTime;
 
 /* returns the current time associated with the output device */
-#if defined(__MAC_10_7) || defined(__IPHONE_4_0)
-@property(readonly) NSTimeInterval deviceCurrentTime 
-	__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
-#endif
+@property(readonly) NSTimeInterval deviceCurrentTime NS_AVAILABLE(10_7, 4_0);
 
 /* "numberOfLoops" is the number of times that the sound will return to the beginning upon reaching the end. 
 A value of zero means to play the sound just once.
@@ -76,10 +73,7 @@ Any negative number will loop indefinitely until stopped.
 @property NSInteger numberOfLoops;
 
 /* settings */
-#if defined(__MAC_10_7) || defined(__IPHONE_4_0)
-@property(readonly) NSDictionary *settings /* returns a settings dictionary with keys as described in AVAudioSettings.h */
-	__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
-#endif
+@property(readonly) NSDictionary *settings NS_AVAILABLE(10_7, 4_0); /* returns a settings dictionary with keys as described in AVAudioSettings.h */
 
 /* metering */
 
@@ -102,17 +96,17 @@ Any negative number will loop indefinitely until stopped.
 - (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error;
 
 #if TARGET_OS_IPHONE
+
 /* audioPlayerBeginInterruption: is called when the audio session has been interrupted while the player was playing. The player will have been paused. */
 - (void)audioPlayerBeginInterruption:(AVAudioPlayer *)player;
 
 /* audioPlayerEndInterruption:withFlags: is called when the audio session interruption has ended and this player had been interrupted while playing. */
 /* Currently the only flag is AVAudioSessionInterruptionFlags_ShouldResume. */
-#if defined(__MAC_10_7) || defined(__IPHONE_4_0)
-- (void)audioPlayerEndInterruption:(AVAudioPlayer *)player withFlags:(NSUInteger)flags
-		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-#endif
+- (void)audioPlayerEndInterruption:(AVAudioPlayer *)player withFlags:(NSUInteger)flags NS_AVAILABLE_IOS(4_0);
 
 /* audioPlayerEndInterruption: is called when the preferred method, audioPlayerEndInterruption:withFlags:, is not implemented. */
 - (void)audioPlayerEndInterruption:(AVAudioPlayer *)player;
+
 #endif // TARGET_OS_IPHONE
+
 @end

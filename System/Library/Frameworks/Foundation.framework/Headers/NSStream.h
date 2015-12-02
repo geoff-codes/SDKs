@@ -1,10 +1,8 @@
 /*	NSStream.h
-        Copyright (c) 2003-2010, Apple Inc. All rights reserved
+        Copyright (c) 2003-2011, Apple Inc. All rights reserved
 */
 
 #import <Foundation/NSObject.h>
-
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @class NSData, NSDictionary, NSError, NSHost, NSInputStream, NSOutputStream, NSRunLoop, NSString, NSURL;
 @protocol NSStreamDelegate;
@@ -152,10 +150,11 @@ FOUNDATION_EXPORT NSString * const NSStreamSOCKSErrorDomain			NS_AVAILABLE(10_3,
 // allows the system to properly handle the request with respect to
 // routing, suspension behavior and other networking related attributes
 // appropriate for the given service type.  The service types supported
-// are documented below.  Most streams should not need to set this
-// property.
-FOUNDATION_EXPORT NSString * const NSStreamNetworkServiceType		    NS_AVAILABLE_IPHONE(4_0);
+// are documented below.
+FOUNDATION_EXPORT NSString * const NSStreamNetworkServiceType		    NS_AVAILABLE(10_7, 4_0);
 // Supported network service types:
-FOUNDATION_EXPORT NSString * const NSStreamNetworkServiceTypeVoIP	    NS_AVAILABLE_IPHONE(4_0);
+FOUNDATION_EXPORT NSString * const NSStreamNetworkServiceTypeVoIP	    NS_AVAILABLE(10_7, 4_0);
+FOUNDATION_EXPORT NSString * const NSStreamNetworkServiceTypeVideo	    NS_AVAILABLE(10_7, 5_0);
+FOUNDATION_EXPORT NSString * const NSStreamNetworkServiceTypeBackground	    NS_AVAILABLE(10_7, 5_0);
+FOUNDATION_EXPORT NSString * const NSStreamNetworkServiceTypeVoice	    NS_AVAILABLE(10_7, 5_0);
 
-#endif		// Availability guard

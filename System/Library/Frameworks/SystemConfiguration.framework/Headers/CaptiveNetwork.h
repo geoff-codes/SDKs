@@ -97,25 +97,25 @@ CNMarkPortalOffline	(CFStringRef	interfaceName)		__OSX_AVAILABLE_STARTING(__MAC_
 	 You MUST release the returned value.
  */
 CFArrayRef
-CNCopySupportedInterfaces  (void)                               __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
+CNCopySupportedInterfaces	(void)				__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
 
 /*!
  @constant kCNNetworkInfoKeySSIDData
  @discussion NetworkInfo Dictionary key for SSID in CFData format
  */
-extern const CFStringRef kCNNetworkInfoKeySSIDData;            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
+extern const CFStringRef kCNNetworkInfoKeySSIDData		__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
 
 /*!
  @constant kCNNetworkInfoKeySSID
  @discussion NetworkInfo Dictionary key for SSID in CFString format
  */
-extern const CFStringRef kCNNetworkInfoKeySSID;                __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
+extern const CFStringRef kCNNetworkInfoKeySSID			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
 
 /*!
  @constant kCNNetworkInfoKeyBSSID
  @discussion NetworkInfo Dictionary key for BSSID in CFString format
  */
-extern const CFStringRef kCNNetworkInfoKeyBSSID;               __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
+extern const CFStringRef kCNNetworkInfoKeyBSSID			__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
 
 /*!
  @function CNCopyCurrentNetworkInfo
@@ -124,26 +124,20 @@ extern const CFStringRef kCNNetworkInfoKeyBSSID;               __OSX_AVAILABLE_S
 	keys, and values:
 	<pre>
 	@textblock
-
-		Keys                            :        Values
-
-		===================================================
-
-		kCNNetworkInfoKeySSIDData       :        CFDataRef
-
-		kCNNetworkInfoKeySSID           :        CFStringRef
-
-		kCNNetworkInfoKeyBSSID          :        CFStringRef
+	Keys                      : Values
+	=======================================
+	kCNNetworkInfoKeySSIDData : CFDataRef
+	kCNNetworkInfoKeySSID     : CFStringRef
+	kCNNetworkInfoKeyBSSID    : CFStringRef
 	@/textblock
 	</pre>
-
  @param interfaceName Name of the interface you are interested in
  @result Network Info dictionary associated with the interface.
 	 Returns NULL if an error was encountered.
 	 You MUST release the returned value.
  */
 CFDictionaryRef
-CNCopyCurrentNetworkInfo  (CFStringRef interfaceName)          __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
+CNCopyCurrentNetworkInfo	(CFStringRef interfaceName)	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_1);
 
 __END_DECLS
 

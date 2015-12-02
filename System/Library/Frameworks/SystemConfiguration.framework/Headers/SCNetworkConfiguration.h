@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2010 Apple Inc. All rights reserved.
+ * Copyright (c) 2004-2011 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -543,7 +543,6 @@ SCNetworkInterfaceCopyMTU			(SCNetworkInterfaceRef		interface,
 	@param interface The desired network interface.
 	@param subtype The desired media subtype (e.g. "autoselect", "100baseTX", ...).
 	@param options The desired media options (e.g. "half-duplex", "full-duplex", ...).
-		If NULL, the active options will not be returned.
 	@result TRUE if the configuration was updated; FALSE if an error was encountered.
  */
 Boolean

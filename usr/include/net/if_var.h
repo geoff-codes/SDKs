@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000-2010 Apple Inc. All rights reserved.
+ * Copyright (c) 2000-2011 Apple Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
@@ -214,8 +214,8 @@ struct if_data64 {
 	struct IF_DATA_TIMEVAL ifi_lastchange;	/* time of last administrative change */
 };
 
-#pragma pack()
 
+#pragma pack()
 
 /*
  * Structure defining a queue for a network interface.

@@ -3,7 +3,7 @@
 
 	Framework:  CoreMedia
  
-    Copyright 2005-2010 Apple Inc. All rights reserved.
+    Copyright 2005-2011 Apple Inc. All rights reserved.
 
 */
 
@@ -129,11 +129,35 @@ CFTypeID CMFormatDescriptionGetTypeID(void)
 */
 CM_EXPORT
 Boolean CMFormatDescriptionEqual(
-	CMFormatDescriptionRef ffd1,	/*! @param ffd1
+	CMFormatDescriptionRef desc1,	/*! @param desc1
 									The first formatDescription. */
-	CMFormatDescriptionRef ffd2)	/*! @param ffd2
+	CMFormatDescriptionRef desc2)	/*! @param desc2
 									The second formatDescription. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+/*!
+	@function	CMFormatDescriptionEqualIgnoringExtensionKeys
+	@abstract	Compares two CMFormatDescription objects for equality, ignoring differences in specified lists of format description extension keys and sample description extension keys.
+	@discussion
+		This function is NULL safe.
+		If any keys are passed, kCMFormatDescriptionExtension_VerbatimSampleDescription
+		and kCMFormatDescriptionExtension_VerbatimISOSampleEntry will also be automatically
+		ignored for the purpose of comparison.
+	@param formatDescriptionExtensionKeysToIgnore
+		Either a single format description extension key (CFString) 
+		or a CFArray of such keys.  
+	@param sampleDescriptionExtensionAtomKeysToIgnore
+		Either a single sample description extension atom key (four-character CFString) 
+		or a CFArray of such keys.  
+		See kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms.
+*/
+CM_EXPORT
+Boolean CMFormatDescriptionEqualIgnoringExtensionKeys(
+	CMFormatDescriptionRef desc1,
+	CMFormatDescriptionRef desc2,
+	CFTypeRef formatDescriptionExtensionKeysToIgnore,
+	CFTypeRef sampleDescriptionExtensionAtomKeysToIgnore )
+							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_3);
 
 /*!
 	@function	CMFormatDescriptionGetMediaType
@@ -522,6 +546,11 @@ typedef FourCharCode CMPixelFormatType;
 	@constant	kCMVideoCodecType_DVCPROHD1080i50	Panasonic DVCPro-HD 1080i50 format
 	@constant	kCMVideoCodecType_DVCPROHD1080p30	Panasonic DVCPro-HD 1080p30 format
 	@constant	kCMVideoCodecType_DVCPROHD1080p25	Panasonic DVCPro-HD 1080p25 format
+	@constant	kCMVideoCodecType_AppleProRes4444	Apple ProRes 4444 format
+	@constant	kCMVideoCodecType_AppleProRes422HQ	Apple ProRes 422 HQ format
+	@constant	kCMVideoCodecType_AppleProRes422	Apple ProRes 422 format
+	@constant	kCMVideoCodecType_AppleProRes422LT	Apple ProRes 422 LT format
+	@constant	kCMVideoCodecType_AppleProRes422Proxy	Apple ProRes 422 Proxy format
 */
 enum {
 	kCMVideoCodecType_422YpCbCr8       = kCMPixelFormat_422YpCbCr8,
@@ -548,6 +577,12 @@ enum {
 	kCMVideoCodecType_DVCPROHD1080i50  = 'dvh5',
 	kCMVideoCodecType_DVCPROHD1080p30  = 'dvh3',
 	kCMVideoCodecType_DVCPROHD1080p25  = 'dvh2',
+	
+	kCMVideoCodecType_AppleProRes4444  = 'ap4h',
+	kCMVideoCodecType_AppleProRes422HQ = 'apch',
+	kCMVideoCodecType_AppleProRes422   = 'apcn',
+	kCMVideoCodecType_AppleProRes422LT = 'apcs',
+	kCMVideoCodecType_AppleProRes422Proxy = 'apco',
 };
 typedef FourCharCode CMVideoCodecType;
 
@@ -610,6 +645,9 @@ CM_EXPORT const CFStringRef kCMFormatDescriptionKey_CleanApertureVerticalOffsetR
 #define kCMFormatDescriptionYCbCrMatrix_ITU_R_709_2				kCVImageBufferYCbCrMatrix_ITU_R_709_2			// CFString
 #define kCMFormatDescriptionYCbCrMatrix_ITU_R_601_4				kCVImageBufferYCbCrMatrix_ITU_R_601_4			// CFString
 #define kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995			kCVImageBufferYCbCrMatrix_SMPTE_240M_1995		// CFString
+
+CM_EXPORT const CFStringRef kCMFormatDescriptionExtension_FullRangeVideo										// CFBoolean; by default, false for YCbCr-based compressed formats, indicating that pixel values are video-range rather than full-range
+							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_3);
 
 CM_EXPORT const CFStringRef kCMFormatDescriptionExtension_ICCProfile											// CFData
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
@@ -950,6 +988,7 @@ enum {
     kCMTextDisplayFlag_continuousKaraoke           = 0x00000800,
     kCMTextDisplayFlag_writeTextVertically         = 0x00020000,
     kCMTextDisplayFlag_fillTextRegion              = 0x00040000,
+    kCMTextDisplayFlag_obeySubtitleFormatting      = 0x20000000,
     kCMTextDisplayFlag_forcedSubtitlesPresent      = 0x40000000,
     kCMTextDisplayFlag_allSubtitlesForced          = 0x80000000,
 };

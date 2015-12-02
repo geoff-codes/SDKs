@@ -2,22 +2,24 @@
 //  UIPickerView.h
 //  UIKit
 //
-//  Copyright 2006-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIView.h>
+#import <UIKit/UITableView.h>
 #import <UIKit/UIKitDefines.h>
 
 @protocol UIPickerViewDataSource, UIPickerViewDelegate;
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UIPickerView : UIView <NSCoding>
+UIKIT_CLASS_AVAILABLE(2_0) @interface UIPickerView : UIView <NSCoding, UITableViewDataSource>
 { 
   @private
     NSMutableArray            *_tables;
     UIView                    *_topFrame;
     NSMutableArray            *_dividers;
+    NSMutableArray            *_selectionBars;
     id<UIPickerViewDataSource> _dataSource;
     id<UIPickerViewDelegate>   _delegate;
     UIView                    *_backgroundView;
@@ -32,10 +34,12 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIPickerView : UIView <NSCoding>
         unsigned int delegateRespondsToTitleForRow:1;
         unsigned int delegateRespondsToWidthForComponent:1;
         unsigned int delegateRespondsToRowHeightForComponent:1;
+        unsigned int delegateRespondsToCheckableForRow:1;
         unsigned int showsSelectionBar:1;
         unsigned int allowsMultipleSelection:1;
         unsigned int allowSelectingCells:1;
         unsigned int soundsDisabled:1;
+        unsigned int usesCheckedSelection:1;
     } _pickerViewFlags;
 }
 

@@ -65,50 +65,18 @@ extern "C" {
 *                                                                               *
 ********************************************************************************/
 
-
-
 typedef struct {
-    union
-    {
-        struct
-        {
-            unsigned int            __fpscr;    
-            unsigned int            __reserved0;
-            unsigned int            __reserved1;
-            unsigned int            __reserved2;
-        };
-#if defined( __GNUC__ )
-        struct
-        {
-            unsigned int        __fpscr_cmp_n : 1;
-            unsigned int        __fpscr_cmp_z : 1;
-            unsigned int        __fpscr_cmp_c : 1;
-            unsigned int        __fpscr_cmp_v : 1;
-            unsigned int        __fpscr_do_not_modify_1 : 2;            /* Should be zero */
-            unsigned int        __fpscr_default_nan_mode : 1;
-            unsigned int        __fpscr_flush_to_zero : 1;
-            unsigned int        __fpscr_rounding_mode : 2;
-            unsigned int        __fpscr_stride : 2;
-            unsigned int        __fpscr_do_not_modify_2 : 1;            /* Should be zero */
-            unsigned int        __fpscr_len : 3 ;
-            unsigned int        __fpscr_trap_enable_subnormal : 1 ;     /* Note: we run under "Run Fast Mode". Setting this bit has undefined results. */
-            unsigned int        __fpscr_do_not_modfify_3 : 2;           /* Should be zero */
-            unsigned int        __fpscr_trap_enable_inexact : 1;        /* Note: we run under "Run Fast Mode". Setting this bit has undefined results. */
-            unsigned int        __fpscr_trap_enable_underflow : 1;      /* Note: we run under "Run Fast Mode". Setting this bit has undefined results. */
-            unsigned int        __fpscr_trap_enable_overflow : 1;       /* Note: we run under "Run Fast Mode". Setting this bit has undefined results. */
-            unsigned int        __fpscr_trap_enable_div_by_zero : 1;    /* Note: we run under "Run Fast Mode". Setting this bit has undefined results. */
-            unsigned int        __fpscr_trap_enable_invalid : 1;        /* Note: we run under "Run Fast Mode". Setting this bit has undefined results. */
-            unsigned int        __fpscr_fp_state_flag_subnormal : 1;
-            unsigned int        __fpscr_do_not_modify_4 : 2;            /* Should be zero */
-            unsigned int        __fpscr_fp_state_flag_inexact : 1;
-            unsigned int        __fpscr_fp_state_flag_underflow : 1;
-            unsigned int        __fpscr_fp_state_flag_overflow : 1;
-            unsigned int        __fpscr_fp_state_flag_div_by_zero : 1;
-            unsigned int        __fpscr_fp_state_flag_invalid : 1;
-        } __attribute((packed));
-#endif
-    };
+    unsigned int            __fpscr;    
+    unsigned int            __reserved0;
+    unsigned int            __reserved1;
+    unsigned int            __reserved2;
 } fenv_t;
+
+/* Masks for useful bits in the __fpscr field of the fenv_t type.             */
+enum {
+    __fpscr_default_nan   = 0x02000000,
+    __fpscr_flush_to_zero = 0x01000000,
+};
 
 typedef unsigned short fexcept_t;
 

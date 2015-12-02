@@ -2,7 +2,7 @@
  *	CTRun.h
  *	CoreText
  *
- *	Copyright (c) 2004-2010 Apple Inc. All rights reserved.
+ *	Copyright (c) 2004-2011 Apple Inc. All rights reserved.
  *
  */
 
@@ -387,6 +387,13 @@ double CTRunGetTypographicBounds(
 	@function	CTRunGetImageBounds
 	@abstract	Calculates the image bounds for a glyph range.
 
+	@discussion The image bounds for a run is the union of all non-empty glyph
+				bounding rects, each positioned as it would be if drawn using
+				CTRunDraw using the current context. Note that the result is
+				ideal and does not account for raster coverage due to rendering.
+				This function is purely a convenience for using glyphs as an
+				image and should not be used for typographic purposes.
+
 	@param		run
 				The run that you want to calculate the image bounds for.
 
@@ -405,6 +412,8 @@ double CTRunGetTypographicBounds(
 				that is, it will be translated by the supplied context's text
 				position and the positions of the individual glyphs. If the run,
 				context, or range is invalid, CGRectNull will be returned.
+
+	@seealso	CTRunGetTypographicBounds
 */
 
 CGRect CTRunGetImageBounds(

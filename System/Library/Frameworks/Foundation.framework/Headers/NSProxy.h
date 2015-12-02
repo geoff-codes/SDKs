@@ -1,5 +1,5 @@
 /*	NSProxy.h
-	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -11,7 +11,7 @@
 }
 
 + (id)alloc;
-+ (id)allocWithZone:(NSZone *)zone;
++ (id)allocWithZone:(NSZone *)zone NS_AUTOMATED_REFCOUNT_UNAVAILABLE;
 + (Class)class;
 
 - (void)forwardInvocation:(NSInvocation *)invocation;
@@ -19,7 +19,13 @@
 - (void)dealloc;
 - (void)finalize;
 - (NSString *)description;
+- (NSString *)debugDescription;
 + (BOOL)respondsToSelector:(SEL)aSelector;
+
+- (BOOL)allowsWeakReference NS_UNAVAILABLE;
+- (BOOL)retainWeakReference NS_UNAVAILABLE;
+
+// - (id)forwardingTargetForSelector:(SEL)aSelector;
 
 @end
 

@@ -2,7 +2,7 @@
 //  UIPanGestureRecognizer.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -21,10 +21,13 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIPanGestureRecognizer : UIGestureRecogniz
     id              _previousVelocitySample;
     NSMutableArray  *_touches;
     NSUInteger      _lastTouchCount;
-    NSUInteger      _minTouchCount;
-    NSUInteger      _maxTouchCount;
+    NSUInteger      _minimumNumberOfTouches;
+    NSUInteger      _maximumNumberOfTouches;
     CGFloat         _hysteresis;
+    CGPoint         _lastUnadjustedScreenLocation;
     unsigned int    _failsPastMaxTouches:1;
+    unsigned int    _canPanHorizontally:1;
+    unsigned int    _canPanVertically:1;
 }
 
 @property (nonatomic)          NSUInteger minimumNumberOfTouches;   // default is 1. the minimum number of touches required to match

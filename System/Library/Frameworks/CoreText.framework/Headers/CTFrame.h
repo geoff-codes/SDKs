@@ -2,7 +2,7 @@
  *	CTFrame.h
  *	CoreText
  *
- *	Copyright (c) 2003-2010 Apple Inc. All rights reserved.
+ *	Copyright (c) 2003-2011 Apple Inc. All rights reserved.
  *
  */
  
@@ -113,9 +113,10 @@ typedef uint32_t CTFramePathFillRule;
 
 /*!
 	@const		kCTFramePathFillRuleAttributeName
-	@abstract	Specifies fill rule for a frame.
-
-	@discussion Value must be a CFNumberRef containing a CTFramePathFill.
+	@abstract	Specifies fill rule for a frame if this attribute is used at top level of frameAttributes dictionary, or specify
+				fill rule for a clipping path if used in a dictionary contained in an array specified by kCTFrameClippingPathsAttributeName.
+				
+	@discussion Value must be a CFNumberRef containing kCTFramePathFillEvenOdd or kCTFramePathFillWindingNumber.
 				Default is kCTFramePathFillEvenOdd.
 
 	@seealso	CTFramesetterCreateFrame
@@ -125,7 +126,9 @@ extern const CFStringRef kCTFramePathFillRuleAttributeName CT_AVAILABLE_STARTING
 
 /*!
 	@const		kCTFramePathWidthAttributeName
-	@abstract	Specifies frame width.
+	@abstract	Specifies frame width if this attribute is used at top level of frameAttributes dictionary, or specify
+				clipping path width if used in a dictionary contained in an array specified by kCTFrameClippingPathsAttributeName.
+
 
 	@discussion Value must be a CFNumberRef specifying frame width.
 				Default is zero.
@@ -136,6 +139,30 @@ extern const CFStringRef kCTFramePathFillRuleAttributeName CT_AVAILABLE_STARTING
 extern const CFStringRef kCTFramePathWidthAttributeName CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_4_2);
 
 	
+/*!
+	@const		kCTFrameClippingPathsAttributeName
+	@abstract	Specifies array of paths to clip frame.
+	
+	@discussion Value must be a CFArrayRef containing CFDictionaryRefs.
+				Each dictionary should have a kCTFramePathClippingPathAttributeName key-value pair, and can have a kCTFramePathFillRuleAttributeName key-value pair 
+				and kCTFramePathFillRuleAttributeName key-value pair as optional parameters.
+
+	@seealso	CTFramesetterCreateFrame
+*/
+
+extern const CFStringRef kCTFrameClippingPathsAttributeName CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_4_3);
+
+/*!
+	@const		kCTFramePathClippingPathAttributeName
+	@abstract	Specifies clipping path.  This attribute is valid only in a dictionary contained in an array specified by kCTFrameClippingPathsAttributeName.
+
+	@discussion Value must be a CGPathRef specifying a clipping pat.
+
+	@seealso	kCTFrameClippingPathsAttributeName
+ */
+
+extern const CFStringRef kCTFramePathClippingPathAttributeName CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_4_3);
+
 /* --------------------------------------------------------------------------- */
 /* Frame Accessors */
 /* --------------------------------------------------------------------------- */

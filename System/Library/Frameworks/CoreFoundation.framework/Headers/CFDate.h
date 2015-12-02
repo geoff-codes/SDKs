@@ -1,5 +1,5 @@
 /*	CFDate.h
-	Copyright (c) 1998-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2011, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFDATE__)

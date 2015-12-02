@@ -16,8 +16,11 @@
 #import <GameKit/GKLeaderboardViewController.h>
 #import <GameKit/GKLocalPlayer.h>
 #import <GameKit/GKMatch.h>
+#import <GameKit/GKTurnBasedMatch.h>
 #import <GameKit/GKMatchmaker.h>
 #import <GameKit/GKMatchmakerViewController.h>
+#import <GameKit/GKNotificationBanner.h>
+#import <GameKit/GKTurnBasedMatchmakerViewController.h>
 #import <GameKit/GKPlayer.h>
 #import <GameKit/GKScore.h>
 #import <GameKit/GKVoiceChat.h>

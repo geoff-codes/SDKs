@@ -11,7 +11,7 @@
 
 @class CTCall;
 
-CORETELEPHONY_EXTERN_CLASS
+CORETELEPHONY_CLASS_AVAILABLE(4_0)
 @interface CTCallCenter : NSObject
 {
 @private

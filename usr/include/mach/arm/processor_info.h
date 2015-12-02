@@ -17,6 +17,7 @@ struct processor_cpu_stat {
 	uint32_t	undef_ex_cnt;
 	uint32_t	unaligned_cnt;
 	uint32_t	vfp_cnt;
+	uint32_t	vfp_shortv_cnt;
 	uint32_t	data_ex_cnt;
 	uint32_t	instr_ex_cnt;
 };

@@ -1,5 +1,5 @@
 /*	CFTimeZone.h
-	Copyright (c) 1998-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2011, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFTIMEZONE__)
@@ -68,7 +68,7 @@ CFTimeInterval CFTimeZoneGetDaylightSavingTimeOffset(CFTimeZoneRef tz, CFAbsolut
 CF_EXPORT
 CFAbsoluteTime CFTimeZoneGetNextDaylightSavingTimeTransition(CFTimeZoneRef tz, CFAbsoluteTime at) CF_AVAILABLE(10_5, 2_0);
 
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
 enum {
 	kCFTimeZoneNameStyleStandard,
 	kCFTimeZoneNameStyleShortStandard,
@@ -77,11 +77,11 @@ enum {
 	kCFTimeZoneNameStyleGeneric,
 	kCFTimeZoneNameStyleShortGeneric
 };
+#endif
 typedef CFIndex CFTimeZoneNameStyle;
 
 CF_EXPORT
 CFStringRef CFTimeZoneCopyLocalizedName(CFTimeZoneRef tz, CFTimeZoneNameStyle style, CFLocaleRef locale) CF_AVAILABLE(10_5, 2_0);
-#endif
 
 CF_EXPORT
 const CFStringRef kCFTimeZoneSystemTimeZoneDidChangeNotification CF_AVAILABLE(10_5, 2_0);

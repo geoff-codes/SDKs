@@ -11,168 +11,20 @@
 //  until the client has passed the modified event to EKEventStore's saveEvent: method.
 
 #import <Foundation/Foundation.h>
+#import <EventKit/EventKitDefines.h>
+#import <EventKit/EKRecurrenceEnd.h>
+#import <EventKit/EKRecurrenceDayOfWeek.h>
+#import <EventKit/EKTypes.h>
+#import <EventKit/EKObject.h>
 
-@class EKEventStore;
+@class EKEventStore, EKCalendarItem;
 
-enum {
-    EKSunday = 1,
-    EKMonday,
-    EKTuesday,
-    EKWednesday,
-    EKThursday,
-    EKFriday,
-    EKSaturday
-};
-
-/*!
-    @class      EKRecurrenceEnd
-    @abstract   Class which represents when a recurrence should end.
-    @discussion EKRecurrenceEnd is an attribute of EKRecurrenceRule that defines how long
-                the recurrence is scheduled to repeat. The recurrence can be defined either
-                with an NSUInteger that indicates the total number times it repeats, or with
-                an NSDate, after which it no longer repeats. An event which is set to never
-                end should have its EKRecurrenceEnd set to nil.
- 
-                If the end of the pattern is defines with an NSDate, the client must pass a
-                valid NSDate, nil cannot be passed. If the end of the pattern is defined as
-                terms of a number of occurrences, the occurrenceCount passed to the initializer
-                must be positive, it cannot be 0. If the client attempts to initialize a
-                EKRecurrenceEnd with a nil NSDate or OccurrenceCount of 0, an exception is raised.
-
-                A EKRecurrenceEnd initialized with an end date will return 0 for occurrenceCount.
-                One initialized with a number of occurrences will return nil for its endDate.
-*/
-NS_CLASS_AVAILABLE(NA, 4_0)
-@interface EKRecurrenceEnd : NSObject <NSCopying> {
-@private
-    NSDate *_endDate;
-    NSUInteger _occurrenceCount;
-}
-
-/*!
-    @method     recurrenceEndWithEndDate:
-    @abstract   Creates an autoreleased recurrence end with a specific end date.
-*/
-+ (id)recurrenceEndWithEndDate:(NSDate *)endDate;
-
-/*!
-    @method     recurrenceEndWithOccurrenceCount:
-    @abstract   Creates an autoreleased recurrence end with a maximum occurrence count.
-*/
-+ (id)recurrenceEndWithOccurrenceCount:(NSUInteger)occurrenceCount;
-
-/*!
-    @property   endDate
-    @abstract   The end date of this recurrence, or nil if it's count-based.
-*/
-@property(nonatomic, readonly) NSDate *endDate;
-
-/*!
-    @property   occurrenceCount
-    @abstract   The maximum occurrence count, or 0 if it's date-based.
-*/
-@property(nonatomic, readonly) NSUInteger occurrenceCount;
-@end
-
-/*!
-    @class      EKRecurrenceDayOfWeek
-    @abstract   Class which represents a day of the week this recurrence will occur.
-    @discussion EKRecurrenceDayOfWeek specifies either a simple day of the week, or the nth instance
-                of a particular day of the week, such as the third Tuesday of every month. The week
-                number is only valid when used with monthly or yearly recurrences, since it would
-                be otherwise meaningless.
-
-                Valid values for dayOfTheWeek are integers 1-7, which correspond to days of the week
-                with Sunday = 1. Valid values for weekNumber portion are (+/-)1-53, where a negative
-                value indicates a value from the end of the range. For example, in a yearly event -1
-                means last week of the year. -1 in a Monthly recurrence indicates the last week of
-                the month. 
-
-                The value 0 also indicates the weekNumber is irrelevant (every Sunday, etc.).
-
-                Day-of-week weekNumber values that are out of bounds for the recurrence type will
-                result in an exception when trying to initialize the recurrence. In particular,
-                weekNumber must be zero when passing EKRecurrenceDayOfWeek objects to initialize a weekly 
-                recurrence.
-*/
-
-NS_CLASS_AVAILABLE(NA, 4_0)
-@interface EKRecurrenceDayOfWeek : NSObject <NSCopying> {
-@private
-    NSInteger _dayOfTheWeek;
-    NSInteger _weekNumber;
-}
-
-/*!
-    @method     dayOfWeek:
-    @abstract   Creates an autoreleased object with a day of the week and week number of zero.
-*/
-+ (id)dayOfWeek:(NSInteger)dayOfTheWeek;
-
-/*!
-    @method     dayOfWeek:weekNumber:
-    @abstract   Creates an autoreleased object with a specific day of week and week number.
-*/
-+ (id)dayOfWeek:(NSInteger)dayOfTheWeek weekNumber:(NSInteger)weekNumber;
-
-/*!
-    @property   dayOfTheWeek
-    @abstract   The day of the week.
-*/
-@property(nonatomic, readonly) NSInteger dayOfTheWeek;
-
-/*!
-    @property   weekNumber
-    @abstract   The week number.
-*/
-@property(nonatomic, readonly) NSInteger weekNumber;
-
-@end
-
-/*!
-    @enum       EKRecurrenceFrequency
-    @abstract   The frequency of a recurrence
-    @discussion EKRecurrenceFrequency designates the unit of time used to describe the recurrence.
-                It has four possible values, which correspond to recurrence rules that are defined
-                in terms of days, weeks, months, and years.
-*/
-typedef enum {
-    EKRecurrenceFrequencyDaily,
-    EKRecurrenceFrequencyWeekly,
-    EKRecurrenceFrequencyMonthly,
-    EKRecurrenceFrequencyYearly
-} EKRecurrenceFrequency;
-
- //  The interval of a EKRecurrenceRule is an NSUInteger which specifies how often the recurrence rule repeats over the
- //  unit of time described by the frequency. For example, if the frequency is EKRecurrenceWeekly, then 
- //  an interval of 1 means the pattern is repeated every week. A NSUInteger of 2 indicates it is repeated every other 
- //  week, 3 means every third week, and so on. The NSUInteger must be a positive integer; 0 is not a valid value, and 
- //  nil will be returned if the client attempts to initialize a rule with a negative or zero interval.
- //
- //  Together, frequency and interval define how often the EKRecurrenceRule's pattern repeats.
- 
 /*!
     @class      EKRecurrenceRule
     @abstract   Represents how an event repeats.
 */
-NS_CLASS_AVAILABLE(NA, 4_0)
-@interface EKRecurrenceRule : NSObject {
-@private
-    id                      _owner;
-
-    NSArray                *_monthsOfTheYear;
-    NSArray                *_daysOfTheMonth;
-    NSArray                *_daysOfTheWeek;
-    NSArray                *_setPositions;
-    NSArray                *_weeksOfTheYear;
-    NSArray                *_daysOfTheYear;
-    NSInteger               _firstDayOfTheWeek;
-    NSInteger               _interval;
-    EKRecurrenceFrequency   _frequency;
-    EKRecurrenceEnd        *_recurrenceEnd;
-    NSDate                 *_cachedEndDate;
-        
-    UInt32                  _dirtyFlags;
+EVENTKIT_CLASS_AVAILABLE(4_0)
+@interface EKRecurrenceRule : EKObject <NSCopying> {
 }
 
 /*!
@@ -181,7 +33,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
     @discussion This is used to create a simple recurrence with a specific type, interval and end. If interval is
                 0, an exception is raised. The end parameter can be nil.
 */
-- (id)initRecurrenceWithFrequency:(EKRecurrenceFrequency)type interval:(NSUInteger)interval end:(EKRecurrenceEnd *)end;
+- (id)initRecurrenceWithFrequency:(EKRecurrenceFrequency)type interval:(NSInteger)interval end:(EKRecurrenceEnd *)end;
 
 /*!
     @method     initRecurrenceWithFrequency:interval:daysOfTheWeek:daysOfTheMonth:monthsOfTheYear:weeksOfTheYear:daysOfTheYear:setPositions:end:
@@ -191,7 +43,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
                 will be ignored.
     @param      type            The type of recurrence
     @param      interval        The interval. Passing zero will raise an exception.
-    @param      daysOfTheWeek   An array of EKNthWeekDay objects. Valid for all recurrence types except daily. Ignored otherwise.
+    @param      daysOfTheWeek   An array of EKRecurrenceDayOfWeek objects. Valid for all recurrence types except daily. Ignored otherwise.
                                 Corresponds to the BYDAY value in the iCalendar specification.
     @param      daysOfTheMonth  An array of NSNumbers ([+/-] 1 to 31). Negative numbers infer counting from the end of the month.
                                 For example, -1 means the last day of the month. Valid only for monthly recurrences. Ignored otherwise.
@@ -243,10 +95,10 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 
 /*!
     @property       interval
-    @discussion     The interval of a EKRecurrenceRule is an NSUInteger which specifies how often the recurrence rule repeats
+    @discussion     The interval of a EKRecurrenceRule is an integer value which specifies how often the recurrence rule repeats
                     over the unit of time described by the EKRecurrenceFrequency. For example, if the EKRecurrenceFrequency is
-                    EKRecurrenceWeekly, then an interval of 1 means the pattern is repeated every week. A NSUInteger of 2
-                    indicates it is repeated every other week, 3 means every third week, and so on. The NSUInteger must be a
+                    EKRecurrenceWeekly, then an interval of 1 means the pattern is repeated every week. A value of 2
+                    indicates it is repeated every other week, 3 means every third week, and so on. The value must be a
                     positive integer; 0 is not a valid value, and nil will be returned if the client attempts to initialize a
                     rule with a negative or zero interval. 
 */

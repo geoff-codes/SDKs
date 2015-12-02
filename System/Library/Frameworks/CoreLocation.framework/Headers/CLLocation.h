@@ -6,8 +6,8 @@
  *
  */
 
-#import <Availability.h>
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CLAvailability.h>
 
 /*
  *  CLLocationDegrees
@@ -88,7 +88,7 @@ extern const CLLocationDistance kCLDistanceFilterNone;
  *    power performance, be sure to specify an appropriate accuracy for your usage scenario (eg,
  *    use a large accuracy value when only a coarse location is needed).
  */
-extern const CLLocationAccuracy kCLLocationAccuracyBestForNavigation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+extern const CLLocationAccuracy kCLLocationAccuracyBestForNavigation __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 extern const CLLocationAccuracy kCLLocationAccuracyBest;
 extern const CLLocationAccuracy kCLLocationAccuracyNearestTenMeters;
 extern const CLLocationAccuracy kCLLocationAccuracyHundredMeters;
@@ -101,7 +101,7 @@ extern const CLLocationAccuracy kCLLocationAccuracyThreeKilometers;
  *  Discussion:
  *    Used to specify an invalid CLLocationCoordinate2D.
  */
-extern const CLLocationCoordinate2D kCLLocationCoordinate2DInvalid __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+extern const CLLocationCoordinate2D kCLLocationCoordinate2DInvalid __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 #ifdef __cplusplus
 extern "C" {
@@ -113,7 +113,7 @@ extern "C" {
  *  Discussion:
  *    Returns YES if the specified coordinate is valid, NO otherwise.
  */
-BOOL CLLocationCoordinate2DIsValid(CLLocationCoordinate2D coord) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+BOOL CLLocationCoordinate2DIsValid(CLLocationCoordinate2D coord) __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  CLLocationCoordinate2DMake:
@@ -121,7 +121,7 @@ BOOL CLLocationCoordinate2DIsValid(CLLocationCoordinate2D coord) __OSX_AVAILABLE
  *  Discussion:
  *    Returns a new CLLocationCoordinate2D at the given latitude and longitude
  */
-CLLocationCoordinate2D CLLocationCoordinate2DMake(CLLocationDegrees latitude, CLLocationDegrees longitude) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+CLLocationCoordinate2D CLLocationCoordinate2DMake(CLLocationDegrees latitude, CLLocationDegrees longitude) __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 #ifdef __cplusplus
 }
@@ -173,7 +173,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
     verticalAccuracy:(CLLocationAccuracy)vAccuracy
     course:(CLLocationDirection)course
     speed:(CLLocationSpeed)speed
-    timestamp:(NSDate *)timestamp __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2);
+    timestamp:(NSDate *)timestamp __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_2);
 
 /*
  *  coordinate
@@ -216,7 +216,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Range:
  *    0.0 - 359.9 degrees, 0 being true North
  */
-@property(readonly, nonatomic) CLLocationDirection course __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_2);
+@property(readonly, nonatomic) CLLocationDirection course __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_2_2);
 
 /*
  *  speed
@@ -224,7 +224,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *    Returns the speed of the location in m/s. Negative if speed is invalid.
  */
-@property(readonly, nonatomic) CLLocationSpeed speed __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_2);
+@property(readonly, nonatomic) CLLocationSpeed speed __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_2_2);
 
 /*
  *  timestamp

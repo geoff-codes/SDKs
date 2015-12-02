@@ -1,5 +1,5 @@
 /*	CFBundle.h
-	Copyright (c) 1999-2010, Apple Inc.  All rights reserved.
+	Copyright (c) 1999-2011, Apple Inc.  All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFBUNDLE__)
@@ -39,7 +39,7 @@ CF_EXPORT
 const CFStringRef kCFBundleNameKey;
     /* The human-readable name of the bundle.  This key is often found in the InfoPlist.strings since it is usually localized. */
 CF_EXPORT
-const CFStringRef kCFBundleLocalizationsKey CF_AVAILABLE(10_2, 2_0);
+const CFStringRef kCFBundleLocalizationsKey;
     /* Allows an unbundled application that handles localization itself to specify which localizations it has available. */
 
 /* ===================== Finding Bundles ===================== */
@@ -185,7 +185,7 @@ CFArrayRef CFBundleCopyPreferredLocalizationsFromArray(CFArrayRef locArray);
     /* result of CFBundleCopyBundleLocalizations().  */
 
 CF_EXPORT
-CFArrayRef CFBundleCopyLocalizationsForPreferences(CFArrayRef locArray, CFArrayRef prefArray) CF_AVAILABLE(10_2, 2_0);
+CFArrayRef CFBundleCopyLocalizationsForPreferences(CFArrayRef locArray, CFArrayRef prefArray);
     /* Given an array of possible localizations, returns the one or more of */
     /* them that CFBundle would use, without reference to the current application */
     /* context, if the user's preferred localizations were given by prefArray. */
@@ -210,14 +210,14 @@ CFArrayRef CFBundleCopyResourceURLsOfTypeForLocalization(CFBundleRef bundle, CFS
 /* This API is provided to enable developers to retrieve bundle-related */
 /* information about an application that may be bundled or unbundled.   */
 CF_EXPORT
-CFDictionaryRef CFBundleCopyInfoDictionaryForURL(CFURLRef url) CF_AVAILABLE(10_2, 2_0);
+CFDictionaryRef CFBundleCopyInfoDictionaryForURL(CFURLRef url);
     /* For a directory URL, this is equivalent to CFBundleCopyInfoDictionaryInDirectory(). */
     /* For a plain file URL representing an unbundled executable, this will attempt to read */
     /* an info dictionary from the (__TEXT, __info_plist) section, if it is a Mach-o file, */
     /* or from a 'plst' resource.  */
 
 CF_EXPORT
-CFArrayRef CFBundleCopyLocalizationsForURL(CFURLRef url) CF_AVAILABLE(10_2, 2_0);
+CFArrayRef CFBundleCopyLocalizationsForURL(CFURLRef url);
     /* For a directory URL, this is equivalent to calling CFBundleCopyBundleLocalizations() */
     /* on the corresponding bundle.  For a plain file URL representing an unbundled executable, */
     /* this will attempt to determine its localizations using the CFBundleLocalizations and */
@@ -238,14 +238,14 @@ CFArrayRef CFBundleCopyExecutableArchitecturesForURL(CFURLRef url) CF_AVAILABLE(
 CF_EXPORT
 CFURLRef CFBundleCopyExecutableURL(CFBundleRef bundle);
 
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
 enum {
     kCFBundleExecutableArchitectureI386     = 0x00000007,
     kCFBundleExecutableArchitecturePPC      = 0x00000012,
     kCFBundleExecutableArchitectureX86_64   = 0x01000007,
     kCFBundleExecutableArchitecturePPC64    = 0x01000012
 };
-#endif /* MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED */
+#endif /* MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED */
 
 CF_EXPORT
 CFArrayRef CFBundleCopyExecutableArchitectures(CFBundleRef bundle) CF_AVAILABLE(10_5, 2_0);

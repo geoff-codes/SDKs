@@ -123,6 +123,7 @@
 #define __MAC_10_4      1040
 #define __MAC_10_5      1050
 #define __MAC_10_6      1060
+#define __MAC_10_7      1070
 #define __MAC_NA        9999   /* not available */
 
 #define __IPHONE_2_0     20000
@@ -134,6 +135,9 @@
 #define __IPHONE_4_0     40000
 #define __IPHONE_4_1     40100
 #define __IPHONE_4_2     40200
+#define __IPHONE_4_3     40300
+#define __IPHONE_5_0     50000
+#define __IPHONE_5_1     50100
 #define __IPHONE_NA      99999  /* not available */
 
 #include <AvailabilityInternal.h>

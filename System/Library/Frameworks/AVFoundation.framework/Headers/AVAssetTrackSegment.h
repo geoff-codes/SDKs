@@ -3,14 +3,14 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 
 */
 
 /*!
-    @class			AVAssetTrackSegment
+	@class			AVAssetTrackSegment
 
-    @abstract		AVAssetTrackSegment represents a segment of an AVAssetTrack, comprising of a
+	@abstract		AVAssetTrackSegment represents a segment of an AVAssetTrack, comprising of a
 					time mapping from the source to the asset track timeline.
 */
 
@@ -18,6 +18,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreMedia/CMTimeRange.h>
 
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVAssetTrackSegment : NSObject
 {
 @private

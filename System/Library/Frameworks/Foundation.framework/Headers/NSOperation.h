@@ -1,17 +1,20 @@
 /*	NSOperation.h
-	Copyright (c) 2006-2010, Apple Inc. All rights reserved.
+	Copyright (c) 2006-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @class NSArray, NSSet;
 
+NS_CLASS_AVAILABLE(10_5, 2_0)
 @interface NSOperation : NSObject {
 @private
     id _private;
-    void *_reserved;
+    int32_t _private1;
+#if __LP64__
+    int32_t _private1b;
+#endif
 }
 
 - (id)init; // designated initializer
@@ -59,7 +62,6 @@ typedef NSInteger NSOperationQueuePriority;
 @end
 
 
-#if NS_BLOCKS_AVAILABLE
 
 NS_CLASS_AVAILABLE(10_6, 4_0)
 @interface NSBlockOperation : NSOperation {
@@ -68,16 +70,17 @@ NS_CLASS_AVAILABLE(10_6, 4_0)
     void *_reserved2;
 }
 
-+ (id)blockOperationWithBlock:(void (^)(void))block NS_AVAILABLE(10_6, 4_0);
+#if NS_BLOCKS_AVAILABLE
++ (id)blockOperationWithBlock:(void (^)(void))block;
 
-- (void)addExecutionBlock:(void (^)(void))block NS_AVAILABLE(10_6, 4_0);
-- (NSArray *)executionBlocks NS_AVAILABLE(10_6, 4_0);
+- (void)addExecutionBlock:(void (^)(void))block;
+- (NSArray *)executionBlocks;
+#endif
 
 @end
 
-#endif
 
-
+NS_CLASS_AVAILABLE(10_5, 2_0)
 @interface NSInvocationOperation : NSOperation {
 @private
     id _inv;
@@ -94,10 +97,10 @@ NS_CLASS_AVAILABLE(10_6, 4_0)
 
 @end
 
-FOUNDATION_EXPORT NSString * const NSInvocationOperationVoidResultException;
-FOUNDATION_EXPORT NSString * const NSInvocationOperationCancelledException;
+FOUNDATION_EXPORT NSString * const NSInvocationOperationVoidResultException NS_AVAILABLE(10_5, 2_0);
+FOUNDATION_EXPORT NSString * const NSInvocationOperationCancelledException NS_AVAILABLE(10_5, 2_0);
 
-
+NS_CLASS_AVAILABLE(10_5, 2_0)
 @interface NSOperationQueue : NSObject {
 @private
     id _private;
@@ -136,5 +139,4 @@ enum {
 
 @end
 
-#endif
 

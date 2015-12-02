@@ -2,7 +2,7 @@
 //  UISearchBar.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,6 +11,13 @@
 #import <UIKit/UIGeometry.h>
 #import <UIKit/UITextField.h>
 #import <UIKit/UIKitDefines.h>
+
+typedef enum {
+    UISearchBarIconSearch, // The magnifying glass
+    UISearchBarIconClear, // The circle with an x in it
+    UISearchBarIconBookmark, // The open book icon
+    UISearchBarIconResultsList, // The list lozenge icon
+} UISearchBarIcon;
 
 @protocol UISearchBarDelegate;
 @class UITextField, UILabel, UIButton, UIColor;
@@ -30,7 +37,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISearchBar : UIView {
     UIView                 *_background;
     UIView                 *_scopeBar;
     UIEdgeInsets            _contentInset;
-    id                      _appearance;
+    id                      _appearanceStorage;
     struct {
         unsigned int barStyle:3;
         unsigned int showsBookmarkButton:1;
@@ -65,12 +72,59 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISearchBar : UIView {
 // available text input traits
 @property(nonatomic) UITextAutocapitalizationType autocapitalizationType;  // default is UITextAutocapitalizationTypeNone
 @property(nonatomic) UITextAutocorrectionType     autocorrectionType;      // default is UITextAutocorrectionTypeDefault
+@property(nonatomic) UITextSpellCheckingType      spellCheckingType;       // default is UITextSpellCheckingTypeDefault
 @property(nonatomic) UIKeyboardType               keyboardType;            // default is UIKeyboardTypeDefault
 
 @property(nonatomic,copy) NSArray   *scopeButtonTitles        __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // array of NSStrings. no scope bar shown unless 2 or more items
 @property(nonatomic)      NSInteger  selectedScopeButtonIndex __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // index into array of scope button titles. default is 0. ignored if out of range
 @property(nonatomic)      BOOL       showsScopeBar            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // default is NO. if YES, shows the scope bar. call sizeToFit: to update frame
 
+// 1pt wide images and resizable images will be scaled or tiled according to the resizable area, otherwise the image will be tiled
+@property(nonatomic,retain) UIImage *backgroundImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIImage *scopeBarBackgroundImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+/* In general, you should specify a value for the normal state to be used by other states which don't have a custom value set
+ */
+
+/* The rounded-rect search text field image. Valid states are UIControlStateNormal and UIControlStateDisabled
+ */
+- (void)setSearchFieldBackgroundImage:(UIImage *)backgroundImage forState:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (UIImage *)searchFieldBackgroundImageForState:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+- (void)setImage:(UIImage *)iconImage forSearchBarIcon:(UISearchBarIcon)icon state:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (UIImage *)imageForSearchBarIcon:(UISearchBarIcon)icon state:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+//
+// Customizing the appearance of the scope bar buttons.
+//
+
+/* If backgroundImage is an image returned from -[UIImage resizableImageWithCapInsets:] the cap widths will be calculated from the edge insets, otherwise, the cap width will be calculated by subtracting one from the image's width then dividing by 2. The cap widths will also be used as the margins for text placement. To adjust the margin use the margin adjustment methods.
+ */
+- (void)setScopeBarButtonBackgroundImage:(UIImage *)backgroundImage forState:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR; 
+- (UIImage *)scopeBarButtonBackgroundImageForState:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+/* To customize the segmented control appearance you will need to provide divider images to go between two unselected segments (leftSegmentState:UIControlStateNormal rightSegmentState:UIControlStateNormal), selected on the left and unselected on the right (leftSegmentState:UIControlStateSelected rightSegmentState:UIControlStateNormal), and unselected on the left and selected on the right (leftSegmentState:UIControlStateNormal rightSegmentState:UIControlStateSelected).
+ */
+- (void)setScopeBarButtonDividerImage:(UIImage *)dividerImage forLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (UIImage *)scopeBarButtonDividerImageForLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+/* You may specify the font, text color, text shadow color, and text shadow offset for the title in the text attributes dictionary, using the keys found in UIStringDrawing.h.
+ */
+- (void)setScopeBarButtonTitleTextAttributes:(NSDictionary *)attributes forState:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (NSDictionary *)scopeBarButtonTitleTextAttributesForState:(UIControlState)state __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+/* To nudge the position of the search text field background in the search bar
+ */
+@property(nonatomic) UIOffset searchFieldBackgroundPositionAdjustment __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+/* To nudge the position of the text within the search text field background
+ */
+@property(nonatomic) UIOffset searchTextPositionAdjustment __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+/* To nudge the position of the icon within the search text field
+ */
+- (void)setPositionAdjustment:(UIOffset)adjustment forSearchBarIcon:(UISearchBarIcon)icon __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+- (UIOffset)positionAdjustmentForSearchBarIcon:(UISearchBarIcon)icon __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
 @end
 
 @protocol UISearchBarDelegate <NSObject>

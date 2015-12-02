@@ -2,7 +2,7 @@
 //  UIImageView.h
 //  UIKit
 //
-//  Copyright 2006-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

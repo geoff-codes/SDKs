@@ -2,11 +2,12 @@
 //  UIAccessibilityElement.h
 //  UIAccessibility
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIAccessibilityConstants.h>
+#import <UIKit/UIAccessibilityIdentification.h>
 
 /*
  UIAccessibilityElement
@@ -16,7 +17,7 @@
  of UIAccessibilityElement to cover for user interface items that are not
  backed by a UIView (for example: painted text or icon).
  */
-UIKIT_CLASS_AVAILABLE(3_0) @interface UIAccessibilityElement : NSObject
+UIKIT_CLASS_AVAILABLE(3_0) @interface UIAccessibilityElement : NSObject<UIAccessibilityIdentification>
 {
 @private
     id _storage;

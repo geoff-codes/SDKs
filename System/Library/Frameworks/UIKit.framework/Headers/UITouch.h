@@ -2,7 +2,7 @@
 //  UITouch.h
 //  UIKit
 //
-//  Copyright 2007-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -38,7 +38,9 @@ UITOUCH_IVARS_PRIVATE
     UIWindow        *_window;
     UIView          *_view;
     UIView          *_gestureView;
+    UIView          *_warpedIntoView;
     NSMutableArray  *_gestureRecognizers;
+    NSMutableArray  *_forwardingRecord;
 
     CGPoint         _locationInWindow;
     CGPoint         _previousLocationInWindow;
@@ -48,9 +50,9 @@ UITOUCH_IVARS_PRIVATE
     struct {
         unsigned int _firstTouchForView:1;
         unsigned int _isTap:1;
-        unsigned int _isWarped:1;
         unsigned int _isDelayed:1;
         unsigned int _sentTouchesEnded:1;
+        unsigned int _abandonForwardingRecord:1;
     } _touchFlags;
 }
 

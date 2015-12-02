@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import <EventKit/EventKit.h>
+#import <EventKitUI/EventKitUIDefines.h>
 
 @class EKEventStore, EKEvent;
 
@@ -38,14 +39,13 @@ typedef enum {
 */
 @protocol EKEventEditViewDelegate;
 
-NS_CLASS_AVAILABLE(NA, 4_0)
+EVENTKITUI_CLASS_AVAILABLE(4_0)
 @interface EKEventEditViewController : UINavigationController {
 @private
     EKEventStore                   *_store;
     EKEvent                        *_event;
     id<EKEventEditViewDelegate>     _editViewDelegate;
     NSString                       *_eventId;
-    id                              _internal;
 }
 
 @property(nonatomic, assign) id<EKEventEditViewDelegate>  editViewDelegate;

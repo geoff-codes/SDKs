@@ -1,14 +1,9 @@
 /*	
     NSURLRequest.h
-    Copyright (c) 2003-2010, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2011, Apple Inc. All rights reserved.    
     
     Public header file.
 */
-
-// Note: To use the APIs described in these headers, you must perform
-// a runtime check for Foundation-462.1 or later.
-#import <AvailabilityMacros.h>
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSDate.h>
@@ -112,28 +107,39 @@ enum
 };
 typedef NSUInteger NSURLRequestCachePolicy;
 
-
 /*!
-    @enum NSURLRequestNetworkServiceType
+ @enum NSURLRequestNetworkServiceType
+ 
+ @discussion The NSURLRequestNetworkServiceType enum defines constants that
+ can be used to specify the service type to associate with this request.  The
+ service type is used to provide the networking layers a hint of the purpose 
+ of the request.
+ 
+ @constant NSURLNetworkServiceTypeDefault Is the default value for an NSURLRequest
+ when created.  This value should be left unchanged for the vast majority of requests.
+ 
+ @constant NSURLNetworkServiceTypeVoIP Specifies that the request is for voice over IP
+ control traffic.
+ 
+ @constant NSURLNetworkServiceTypeVideo Specifies that the request is for video
+ traffic.
 
-    @discussion The NSURLRequestNetworkServiceType enum defines constants that
-    can be used to specify the service type to associate with this request.  Most
-    requests should not need to set a service type.  The service type is used to
-    provide the networking layers a hint of the purpose of the request.
+ @constant NSURLNetworkServiceTypeBackground Specifies that the request is for background
+ traffic (such as a file download).
 
-    @constant NSURLNetworkServiceTypeDefault Is the default value for an NSURLRequest
-    when created.  This value should be left unchanged for the vast majority of requests.
-
-    @constant NSURLNetworkServiceTypeVoIP Specifies that the request is for voice over IP
-    traffic.
+ @constant NSURLNetworkServiceTypeVoice Specifies that the request is for voice data.
 
 */
 enum
 {
     NSURLNetworkServiceTypeDefault = 0,	// Standard internet traffic
-    NSURLNetworkServiceTypeVoIP = 1	// Voice over IP traffic
+    NSURLNetworkServiceTypeVoIP = 1,	// Voice over IP control traffic
+    NSURLNetworkServiceTypeVideo = 2,	// Video traffic
+    NSURLNetworkServiceTypeBackground = 3, // Background traffic
+    NSURLNetworkServiceTypeVoice = 4	   // Voice data
 };
 typedef NSUInteger NSURLRequestNetworkServiceType;
+
 
 /*!
     @class NSURLRequest
@@ -185,7 +191,7 @@ typedef NSUInteger NSURLRequestNetworkServiceType;
 + (id)requestWithURL:(NSURL *)URL;
 
 /*! 
-    @method requestWithURL:cachePolicy:properties:
+    @method requestWithURL:cachePolicy:timeoutInterval:
     @abstract Allocates and initializes a NSURLRequest with the given
     URL and cache policy.
     @param URL The URL for the request. 
@@ -268,13 +274,13 @@ typedef NSUInteger NSURLRequestNetworkServiceType;
 - (NSURL *)mainDocumentURL;
 
 /*!
-    @method networkServiceType
-    @abstract Returns the NSURLRequestNetworkServiceType associated with this request.
-    @discussion  This will return NSURLNetworkServiceTypeDefault for requests that have
-    not explicitly set a networkServiceType (using the setNetworkServiceType method).
-    @result The NSURLRequestNetworkServiceType associated with this request.
-*/
-- (NSURLRequestNetworkServiceType)networkServiceType NS_AVAILABLE_IPHONE(4_0);
+ @method networkServiceType
+ @abstract Returns the NSURLRequestNetworkServiceType associated with this request.
+ @discussion  This will return NSURLNetworkServiceTypeDefault for requests that have
+ not explicitly set a networkServiceType (using the setNetworkServiceType method).
+ @result The NSURLRequestNetworkServiceType associated with this request.
+ */
+- (NSURLRequestNetworkServiceType)networkServiceType NS_AVAILABLE(10_7, 4_0);
 
 @end
 
@@ -358,15 +364,14 @@ typedef NSUInteger NSURLRequestNetworkServiceType;
 */
 - (void)setMainDocumentURL:(NSURL *)URL;
 
-
 /*!
-    @method setNetworkServiceType:
-    @abstract Sets the NSURLRequestNetworkServiceType to associate with this request
-    @param networkServiceType The NSURLRequestNetworkServiceType to associate with the request.
-    @discussion This method is used to provide the network layers with a hint as to the purpose
-    of the request.  Most clients should not need to use this method.
-*/
-- (void)setNetworkServiceType:(NSURLRequestNetworkServiceType)networkServiceType NS_AVAILABLE_IPHONE(4_0);
+ @method setNetworkServiceType:
+ @abstract Sets the NSURLRequestNetworkServiceType to associate with this request
+ @param networkServiceType The NSURLRequestNetworkServiceType to associate with the request.
+ @discussion This method is used to provide the network layers with a hint as to the purpose
+ of the request.  Most clients should not need to use this method.
+ */
+- (void)setNetworkServiceType:(NSURLRequestNetworkServiceType)networkServiceType NS_AVAILABLE(10_7, 4_0);
 
 @end
 
@@ -416,7 +421,6 @@ typedef NSUInteger NSURLRequestNetworkServiceType;
 */
 - (NSData *)HTTPBody;
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 /*!
     @method HTTPBodyStream
     @abstract Returns the request body stream of the receiver
@@ -430,7 +434,6 @@ typedef NSUInteger NSURLRequestNetworkServiceType;
     @result The request body stream of the receiver.
 */
 - (NSInputStream *)HTTPBodyStream;
-#endif
 
 /*! 
     @method HTTPShouldHandleCookies
@@ -448,7 +451,7 @@ typedef NSUInteger NSURLRequestNetworkServiceType;
  @result YES if the receiver should transmit before the previous response is received. 
  NO if the receiver should wait for the previous response before transmitting.
  */
-- (BOOL)HTTPShouldUsePipelining NS_AVAILABLE_IPHONE(4_0);
+- (BOOL)HTTPShouldUsePipelining NS_AVAILABLE(10_7, 4_0);
 
 @end
 
@@ -520,7 +523,6 @@ typedef NSUInteger NSURLRequestNetworkServiceType;
 */
 - (void)setHTTPBody:(NSData *)data;
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 /*!
     @method setHTTPBodyStream:
     @abstract Sets the request body to be the contents of the given stream. 
@@ -532,7 +534,6 @@ typedef NSUInteger NSURLRequestNetworkServiceType;
     @param inputStream the new input stream for use by the receiver
 */
 - (void)setHTTPBodyStream:(NSInputStream *)inputStream;
-#endif
 
 /*! 
     @method setHTTPShouldHandleCookies
@@ -560,8 +561,7 @@ typedef NSUInteger NSURLRequestNetworkServiceType;
  with these servers, requests may have to wait for the previous response before 
  transmitting.
  */
-- (void)setHTTPShouldUsePipelining:(BOOL)shouldUsePipelining NS_AVAILABLE_IPHONE(4_0);
+- (void)setHTTPShouldUsePipelining:(BOOL)shouldUsePipelining NS_AVAILABLE(10_7, 4_0);
 
 @end
 
-#endif

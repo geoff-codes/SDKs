@@ -46,6 +46,6 @@
 @end
 
 #import <SenTestingKit/SenTestDefines.h>
-SENTEST_EXPORT NSString *SenTestCaseDidStartNotification;
-SENTEST_EXPORT NSString *SenTestCaseDidStopNotification;
-SENTEST_EXPORT NSString *SenTestCaseDidFailNotification;
+SENTEST_EXPORT NSString * const SenTestCaseDidStartNotification;
+SENTEST_EXPORT NSString * const SenTestCaseDidStopNotification;
+SENTEST_EXPORT NSString * const SenTestCaseDidFailNotification;

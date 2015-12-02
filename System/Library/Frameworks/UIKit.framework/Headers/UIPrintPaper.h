@@ -11,8 +11,8 @@
 
 UIKIT_CLASS_AVAILABLE(4_2) @interface UIPrintPaper : NSObject {
   @private
-    BOOL _landscape;
-    id   _internal;
+    int _paperOrientation;
+    id  _internal;
 }
 
 + (UIPrintPaper *)bestPaperForPageSize:(CGSize)contentSize withPapersFromArray:(NSArray *)paperList; // for use by delegate. pass in list

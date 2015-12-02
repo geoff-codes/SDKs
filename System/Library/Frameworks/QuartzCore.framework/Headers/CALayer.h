@@ -27,16 +27,10 @@ enum CAEdgeAntialiasingMask
 @private
   struct _CALayerIvars {
     int32_t refcount;
-    uint32_t flags;
-    uintptr_t parent;
-    CALayerArray *sublayers;
-    CALayer *mask;
-    struct _CALayerState *state;
-    struct _CALayerState *previous_state;
-    struct _CALayerAnimation *animations;
-    uintptr_t slots[3];
-#if defined (__LP64__) && __LP64__
-    uint32_t reserved;
+    uint32_t magic;
+    void *layer;
+#if TARGET_OS_MAC && !TARGET_RT_64_BIT
+    void *unused1[8];
 #endif
   } _attr;
 }
@@ -127,7 +121,7 @@ enum CAEdgeAntialiasingMask
 
 /** Geometry and layer hierarchy properties. **/
 
-/* The bounds of the layer. Defaults to the null rectangle. Animatable. */
+/* The bounds of the layer. Defaults to CGRectZero. Animatable. */
 
 @property CGRect bounds;
 

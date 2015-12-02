@@ -8,6 +8,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CLAvailability.h>
 #import <CoreLocation/CLLocation.h>
 
 /*
@@ -66,11 +67,11 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  locationServicesEnabled
  *
  *  Discussion:
- *      Determines whether the user has location services enabled on the device (Settings -> General -> Location Services).
+ *      Determines whether the user has location services enabled.
  *      If NO, and you proceed to call other CoreLocation API, user will be prompted with the warning
  *      dialog. You may want to check this property and use location services only when explicitly requested by the user.
  */
-+ (BOOL)locationServicesEnabled __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
++ (BOOL)locationServicesEnabled __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  headingAvailable
@@ -78,7 +79,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *      Returns YES if the device supports the heading service, otherwise NO.
  */
-+ (BOOL)headingAvailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
++ (BOOL)headingAvailable __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  significantLocationChangeMonitoringAvailable
@@ -86,7 +87,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *      Returns YES if the device supports significant location change monitoring, otherwise NO.
  */
-+ (BOOL)significantLocationChangeMonitoringAvailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
++ (BOOL)significantLocationChangeMonitoringAvailable __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  regionMonitoringAvailable
@@ -95,7 +96,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *      Determines whether the device supports region monitoring.
  *      If NO, all attempts to monitor regions will fail.
  */
-+ (BOOL)regionMonitoringAvailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
++ (BOOL)regionMonitoringAvailable __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  regionMonitoringEnabled
@@ -103,7 +104,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *      Determines whether region monitoring services are enabled on the device.
  */
-+ (BOOL)regionMonitoringEnabled __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
++ (BOOL)regionMonitoringEnabled __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  authorizationStatus
@@ -111,7 +112,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *      Returns the current authorization status of the calling application.
  */
-+ (CLAuthorizationStatus)authorizationStatus __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2);
++ (CLAuthorizationStatus)authorizationStatus __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_2);
 
 @property(assign, nonatomic) id<CLLocationManagerDelegate> delegate;
 
@@ -131,7 +132,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *      will be displayed along with the standard Location permissions dialogs. This property will need to be
  *      set prior to calling startUpdatingLocation.
  */
-@property(copy, nonatomic) NSString *purpose __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_2);
+@property(copy, nonatomic) NSString *purpose __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_3_2);
 
 /*
  *  distanceFilter
@@ -157,7 +158,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
 @property(assign, nonatomic) CLLocationAccuracy desiredAccuracy;
 
 /*
- *  lastLocation
+ *  location
  *  
  *  Discussion:
  *      The last location received. Will be nil until a location has been received.
@@ -178,7 +179,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *      Specifies the minimum amount of change in degrees needed for a heading service update. Client will not
  *      be notified of updates less than the stated filter value. Pass in kCLHeadingFilterNone to be
- *      notified of all updates. By default, kCLHeadingFilterNone is used.
+ *      notified of all updates. By default, 1 degree is used.
  */
 @property(assign, nonatomic) CLLocationDegrees headingFilter __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
@@ -209,7 +210,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *       Attempts to register a region larger than this will generate a kCLErrorRegionMonitoringFailure.
  *       This value may vary based on the hardware features of the device, as well as on dynamically changing resource constraints.
  */
-@property (readonly, nonatomic) CLLocationDistance maximumRegionMonitoringDistance __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (readonly, nonatomic) CLLocationDistance maximumRegionMonitoringDistance __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  monitoredRegions
@@ -219,7 +220,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *       has been instructed to monitor a region, during this or previous launches of your application, it will
  *       be present in this set.
  */
-@property (readonly, nonatomic) NSSet *monitoredRegions __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (readonly, nonatomic) NSSet *monitoredRegions __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  startUpdatingLocation
@@ -270,7 +271,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *      location service.
  *
  */
-- (void)startMonitoringSignificantLocationChanges __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)startMonitoringSignificantLocationChanges __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  stopMonitoringSignificantLocationChanges
@@ -279,7 +280,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *      Stop monitoring significant location changes.
  *
  */
-- (void)stopMonitoringSignificantLocationChanges __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)stopMonitoringSignificantLocationChanges __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
  *  startMonitoringForRegion:desiredAccuracy:
@@ -292,17 +293,34 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *      capable of providing the precision desired.
  *
  *      If a region with the same identifier is already being monitored for this application, it will be removed from monitoring.
+ *
+ *      This is done asynchronously and may not be immediately reflected in monitoredRegions.
  */
 - (void)startMonitoringForRegion:(CLRegion *)region
-                 desiredAccuracy:(CLLocationAccuracy)accuracy __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+                 desiredAccuracy:(CLLocationAccuracy)accuracy __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 		
 /*
- *  stopMonitoringForReason:
+ *  stopMonitoringForRegion:
  *
  *  Discussion:
  *      Stop monitoring the specified region.  It is valid to call stopMonitoringForRegion: for a region that was registered
  *      for monitoring with a different location manager object, during this or previous launches of your application.
+ *
+ *      This is done asynchronously and may not be immediately reflected in monitoredRegions.
  */
-- (void)stopMonitoringForRegion:(CLRegion *)region __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (void)stopMonitoringForRegion:(CLRegion *)region __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+/*
+ *  startMonitoringForRegion:
+ *
+ *  Discussion:
+ *      Start monitoring the specified region.
+ *
+ *      If a region with the same identifier is already being monitored for this application, it will be removed from monitoring.
+ *      The region monitoring service will prioritize regions by their sizes, favoring smaller regions over larger regions.
+ *
+ *      This is done asynchronously and may not be immediately reflected in monitoredRegions.
+ */
+- (void)startMonitoringForRegion:(CLRegion *)region __OSX_AVAILABLE_STARTING(__MAC_TBD,__IPHONE_5_0);
 
 @end

@@ -2,7 +2,7 @@
 //  UILabel.h
 //  UIKit
 //
-//  Copyright 2006-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -28,6 +28,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UILabel : UIView <NSCoding>
     NSInteger  _numberOfLines;
     CGFloat    _lastLineBaseline;
     NSInteger  _lineSpacing;
+    CGFloat    _shadowBlur;
     struct {
         unsigned int lineBreakMode:3;
         unsigned int highlighted:1;
@@ -38,6 +39,11 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UILabel : UIView <NSCoding>
         unsigned int enabled:1;
         unsigned int wordRoundingEnabled:1;
         unsigned int explicitAlignment:1;
+        unsigned int marqueeEnabled:1;
+        unsigned int marqueeRunable:1;
+        unsigned int marqueeRequired:1;
+        unsigned int drawsLetterpress:1;
+        unsigned int drawsUnderline:1;
     } _textLabelFlags;
 }
 

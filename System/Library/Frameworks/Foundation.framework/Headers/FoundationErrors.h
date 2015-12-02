@@ -1,10 +1,8 @@
 /*	FoundationErrors.h
-	Copyright (c) 2004-2010, Apple Inc. All rights reserved.
+	Copyright (c) 2004-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
-
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 /* NSError codes in NSCocoaErrorDomain. Note that other frameworks (such as AppKit and CoreData) also provide additional NSCocoaErrorDomain error codes.
 */
@@ -26,6 +24,9 @@ enum {
     NSFileWriteUnknownError = 512,			    // Write error (reason unknown)
     NSFileWriteNoPermissionError = 513,                     // Write error (permission problem)
     NSFileWriteInvalidFileNameError = 514,                  // Write error (invalid file name)
+#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    NSFileWriteFileExistsError = 516,			    // Write error (file exists)
+#endif
     NSFileWriteInapplicableStringEncodingError = 517,       // Write error (string encoding not applicable) also NSStringEncodingErrorKey
     NSFileWriteUnsupportedSchemeError = 518,		    // Write error (unsupported URL scheme)
     NSFileWriteOutOfSpaceError = 640,                       // Write error (out of disk space)
@@ -73,6 +74,4 @@ enum {
 #endif /* MAC_OS_X_VERSION_10_6 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED */
     
 };
-
-#endif /* MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED */
 

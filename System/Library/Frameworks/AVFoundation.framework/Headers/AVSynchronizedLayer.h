@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 
 */
 
@@ -47,6 +47,7 @@
 @class AVPlayerItem;
 @class AVSynchronizedLayerInternal;
 
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVSynchronizedLayer : CALayer
 {
 	AVSynchronizedLayerInternal		*_syncLayer;

@@ -2,7 +2,7 @@
 //  UISlider.h
 //  UIKit
 //
-//  Copyright 2006-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -17,6 +17,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISlider : UIControl <NSCoding> {
     float _value;
     float _minValue;
     float _maxValue;
+    CGFloat _alpha;
 
     CFMutableDictionaryRef _contentLookup;
 
@@ -38,6 +39,10 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISlider : UIControl <NSCoding> {
     } _sliderFlags;
 
     CGFloat _hitOffset;
+    
+    UIColor *_minTintColor;
+    UIColor *_maxTintColor;
+    UIColor *_thumbTintColor;
 }
 
 @property(nonatomic) float value;                                 // default 0.0. this value will be pinned to min/max
@@ -49,10 +54,14 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UISlider : UIControl <NSCoding> {
 
 @property(nonatomic,getter=isContinuous) BOOL continuous;        // if set, value change events are generated any time the value changes due to dragging. default = YES
 
+@property(nonatomic,retain) UIColor *minimumTrackTintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *maximumTrackTintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *thumbTintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
 - (void)setValue:(float)value animated:(BOOL)animated; // move slider at fixed velocity (i.e. duration depends on distance). does not send action
 
 // set the images for the slider. there are 3, the thumb which is centered by default and the track. You can specify different left and right track
-// e.g blue on the left as you increase and white to the right of the thumb. The track images should be 3 part stretchable along the direction that is longer
+// e.g blue on the left as you increase and white to the right of the thumb. The track images should be 3 part resizable (via UIImage's resizableImage methods) along the direction that is longer
 
 - (void)setThumbImage:(UIImage *)image forState:(UIControlState)state;
 - (void)setMinimumTrackImage:(UIImage *)image forState:(UIControlState)state;

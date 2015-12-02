@@ -108,18 +108,20 @@ struct dyld_all_image_infos {
 	void*							coreSymbolicationShmPage;
 	/* the following field is only in version 7 (Mac OS X 10.6, iPhoneOS 3.1) and later */
 	uintptr_t						systemOrderFlag;
-	/* the following field is only in version 8 (iPhoneOS 3.1) and later */
+	/* the following field is only in version 8 (Mac OS X 10.7, iPhoneOS 3.1) and later */
 	uintptr_t						uuidArrayCount;
 	const struct dyld_uuid_info*	uuidArray;		/* only images not in dyld shared cache */
-	/* the following field is only in version 9 (Mac OS X 10.7) and later */
+	/* the following field is only in version 9 (Mac OS X 10.7, iOS 4.0) and later */
 	struct dyld_all_image_infos*	dyldAllImageInfosAddress;
-	/* the following field is only in version 10 (Mac OS X 10.7) and later */
+	/* the following field is only in version 10 (Mac OS X 10.7, iOS 4.2) and later */
 	uintptr_t						initialImageCount;
-	/* the following field is only in version 11 (Mac OS X 10.7) and later */
+	/* the following field is only in version 11 (Mac OS X 10.7, iOS 4.2) and later */
 	uintptr_t						errorKind;
 	const char*						errorClientOfDylibPath;
 	const char*						errorTargetDylibPath;
 	const char*						errorSymbol;
+	/* the following field is only in version 12 (Mac OS X 10.7, iOS 4.3) and later */
+	uintptr_t						sharedCacheSlide;
 };
 extern struct dyld_all_image_infos  dyld_all_image_infos;
 

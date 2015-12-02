@@ -2,7 +2,7 @@
 //  UIPinchGestureRecognizer.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -24,6 +24,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIPinchGestureRecognizer : UIGestureRecogn
     CGPoint           _anchorPoint;
     UITouch          *_touches[2];
     CGFloat           _hysteresis;
+    id                _transformAnalyzer;
     unsigned int      _endsOnSingleTouch:1;
 }
 

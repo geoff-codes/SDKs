@@ -3,7 +3,7 @@
  	
  	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
@@ -31,7 +31,8 @@
  
 	Concrete AVCaptureOutput instances can be added to an AVCaptureSession using the -[AVCaptureSession addOutput:]
 	method.
- */
+*/
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureOutput : NSObject
 {
 @private
@@ -46,8 +47,23 @@
  @discussion
 	The value of this property is an NSArray of AVCaptureConnection objects, each describing the mapping between the
 	receiver and the AVCaptureInputPorts of one or more AVCaptureInputs.
- */
+*/
 @property(nonatomic, readonly) NSArray *connections;
+
+/*!
+ @property connectionWithMediaType:
+ @abstract
+	Returns the first connection in the connections array with an inputPort of the specified mediaType.
+	
+ @param mediaType
+	An AVMediaType constant from AVMediaFormat.h, e.g. AVMediaTypeVideo.
+
+ @discussion
+	This convenience method returns the first AVCaptureConnection in the receiver's
+	connections array that has an AVCaptureInputPort of the specified mediaType.  If no
+	connection with the specified mediaType is found, nil is returned.
+*/
+- (AVCaptureConnection *)connectionWithMediaType:(NSString *)mediaType NS_AVAILABLE(10_7, 5_0);
 
 @end
 
@@ -64,7 +80,8 @@
  @discussion
 	Instances of AVCaptureVideoDataOutput produce video frames suitable for processing using other media APIs.
 	Applications can access the frames with the captureOutput:didOutputSampleBuffer:fromConnection: delegate method.
- */
+*/
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureVideoDataOutput : AVCaptureOutput 
 {
 @private
@@ -102,7 +119,7 @@
 	A serial dispatch queue must be used to guarantee that video frames will be delivered in order.
 	The sampleBufferCallbackQueue parameter may not be NULL, except when setting the sampleBufferDelegate
 	to nil.
- */
+*/
 - (void)setSampleBufferDelegate:(id<AVCaptureVideoDataOutputSampleBufferDelegate>)sampleBufferDelegate queue:(dispatch_queue_t)sampleBufferCallbackQueue;
 
 /*!
@@ -114,7 +131,7 @@
 	The value of this property is an object conforming to the AVCaptureVideoDataOutputSampleBufferDelegate protocol that
 	will receive sample buffers after they are captured. The delegate is set using the setSampleBufferDelegate:queue:
 	method.
- */
+*/
 @property(nonatomic, readonly) id<AVCaptureVideoDataOutputSampleBufferDelegate> sampleBufferDelegate;
 
 /*!
@@ -124,24 +141,47 @@
 
  @discussion
 	The value of this property is a dispatch_queue_t. The queue is set using the setSampleBufferDelegate:queue: method.
- */
+*/
 @property(nonatomic, readonly) dispatch_queue_t sampleBufferCallbackQueue;
 
 /*!
  @property videoSettings
  @abstract
-	Specifies the settings used decode or re-encode video before it is output by the receiver.
+	Specifies the settings used to decode or re-encode video before it is output by the receiver.
 
  @discussion
 	The value of this property is an NSDictionary containing values for compression settings keys defined in
 	AVVideoSettings.h, or pixel buffer attributes keys defined in <CoreVideo/CVPixelBuffer.h>.  When
-    videoSettings is set to nil, the VideoDataOutput vends samples in their device native format.
+    videoSettings is set to nil, the AVCaptureVideoDataOutput vends samples in their device native format.
 	
 	Currently, the only supported key is kCVPixelBufferPixelFormatTypeKey. Supported pixel formats are
 	kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange and kCVPixelFormatType_32BGRA,
     except on iPhone 3G, where the supported pixel formats are kCVPixelFormatType_422YpCbCr8 and kCVPixelFormatType_32BGRA.
- */
+*/
 @property(nonatomic, copy) NSDictionary *videoSettings;
+
+/*!
+  @property availableVideoCVPixelFormatTypes
+  @abstract
+    Indicates the supported video pixel formats that can be specified in videoSettings.
+
+  @discussion
+	The value of this property is an NSArray of NSNumbers that can be used as values for the 
+	kCVPixelBufferPixelFormatTypeKey in the receiver's videoSettings property.  The first
+    format in the returned list is the most efficient output format.
+*/
+@property(nonatomic, readonly) NSArray *availableVideoCVPixelFormatTypes NS_AVAILABLE(10_7, 5_0);
+
+/*!
+  @property availableVideoCodecTypes
+  @abstract
+	Indicates the supported video codec formats that can be specified in videoSettings.
+
+  @discussion
+	The value of this property is an NSArray of NSStrings that can be used as values for the 
+	AVVideoCodecKey in the receiver's videoSettings property.
+*/
+@property(nonatomic, readonly) NSArray *availableVideoCodecTypes NS_AVAILABLE(10_7, 5_0);
 
 /*!
  @property minFrameDuration
@@ -152,9 +192,10 @@
 	The value of this property is a CMTime specifying the minimum duration of each video frame output by the receiver,
 	placing a lower bound on the amount of time that should separate consecutive frames. This is equivalent to the
 	inverse of the maximum frame rate. A value of kCMTimeZero or kCMTimeInvalid indicates an unlimited maximum frame
-	rate. The default value is kCMTimeInvalid 
- */
-@property(nonatomic) CMTime minFrameDuration;
+	rate. The default value is kCMTimeInvalid.  As of iOS 5.0, minFrameDuration is deprecated.  Use AVCaptureConnection's
+	videoMinFrameDuration property instead.
+*/
+@property(nonatomic) CMTime minFrameDuration NS_DEPRECATED_IOS(4_0, 5_0);
 
 /*!
  @property alwaysDiscardsLateVideoFrames
@@ -168,7 +209,7 @@
 	delegate method. When the value of this property is NO, delegates will be allowed more time to process old frames
 	before new frames are discarded, but application memory usage may increase significantly as a result. The default
 	value is YES.
- */
+*/
 @property(nonatomic) BOOL alwaysDiscardsLateVideoFrames;
 
 @end
@@ -177,7 +218,7 @@
  @protocol AVCaptureVideoDataOutputSampleBufferDelegate
  @abstract
 	Defines an interface for delegates of AVCaptureVideoDataOutput to receive captured video sample buffers.
- */
+*/
 @protocol AVCaptureVideoDataOutputSampleBufferDelegate <NSObject>
 
 @optional
@@ -213,7 +254,7 @@
 	but it needs access to the sample data for a long period of time, consider copying the data into a new buffer and
 	then calling CFRelease on the sample buffer if it was previously retained so that the memory it references can be
 	reused.
- */
+*/
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection;
 
 @end
@@ -232,7 +273,8 @@
 	Instances of AVCaptureAudioDataOutput produce audio sample buffers suitable for processing using other media APIs.
 	Applications can access the sample buffers with the captureOutput:didOutputSampleBuffer:fromConnection: delegate
 	method.
- */
+*/
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureAudioDataOutput : AVCaptureOutput 
 {
 @private
@@ -278,7 +320,7 @@
 	The value of this property is an object conforming to the AVCaptureAudioDataOutputSampleBufferDelegate protocol that
 	will receive sample buffers after they are captured. The delegate is set using the setSampleBufferDelegate:queue:
 	method.
- */
+*/
 @property(nonatomic, readonly) id<AVCaptureAudioDataOutputSampleBufferDelegate> sampleBufferDelegate;
 
 /*!
@@ -288,7 +330,7 @@
 
  @discussion
 	The value of this property is a dispatch_queue_t. The queue is set using the setSampleBufferDelegate:queue: method.
- */
+*/
 @property(nonatomic, readonly) dispatch_queue_t sampleBufferCallbackQueue;
 
 @end
@@ -297,7 +339,7 @@
  @protocol AVCaptureAudioDataOutputSampleBufferDelegate
  @abstract
 	Defines an interface for delegates of AVCaptureAudioDataOutput to receive captured audio sample buffers.
- */
+*/
 @protocol AVCaptureAudioDataOutputSampleBufferDelegate <NSObject>
 
 @optional
@@ -323,7 +365,7 @@
  
 	Clients that need to reference the CMSampleBuffer object outside of the scope of this method must CFRetain it and
 	then CFRelease it when they are finished with it.
- */
+*/
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection;
 
 @end
@@ -340,13 +382,14 @@
  
  @discussion
 	This abstract superclass defines the interface for outputs that record media samples to files. File outputs can start
-	recording to a new file using the startRecordingToOutputFileURL: method. A file output can stop recording using the
+	recording to a new file using the startRecordingToOutputFileURL:recordingDelegate: method. A file output can stop recording using the
 	stopRecording method. Because files are recorded in the background, applications will need to specify a delegate for
 	each new file so that they can be notified when recorded files are finished.
  
 	The only concrete subclasses of AVCaptureFileOutput is AVCaptureMovieFileOutput, which records media to a QuickTime
 	movie file.
- */
+*/
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureFileOutput : AVCaptureOutput 
 {
 @private
@@ -361,7 +404,7 @@
  @discussion
 	The value of this property is an NSURL object containing the file URL of the file currently being written by the
 	receiver. Returns nil if the receiver is not recording to any file.
- */
+*/
 @property(nonatomic, readonly) NSURL *outputFileURL;
 
 /*!
@@ -389,7 +432,7 @@
 	captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error: method. The recording delegate can also
 	optionally implement methods that inform it when data starts being written, when recording is paused and resumed, and
 	when recording is about to be finished.
- */
+*/
 - (void)startRecordingToOutputFileURL:(NSURL*)outputFileURL recordingDelegate:(id<AVCaptureFileOutputRecordingDelegate>)delegate;
 
 /*!
@@ -399,7 +442,7 @@
 
  @discussion
 	Clients can call this method when they want to stop recording new samples to the current file, and do not want to
-	continue recording to another file. CLients that want to switch from one file to another should not call this method.
+	continue recording to another file. Clients that want to switch from one file to another should not call this method.
 	Instead they should simply call startRecordingToOutputFileURL:recordingDelegate: with the new file URL.
  
 	When recording is stopped either by calling this method, by changing files using
@@ -407,7 +450,7 @@
 	included to the file will be written in the background. Therefore, before using the file, clients must wait until the
 	delegate that was specified in startRecordingToOutputFileURL:recordingDelegate: is notified when all data has been
 	written to the file using the captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error: method.
- */
+*/
 - (void)stopRecording;
 
 /*!
@@ -418,7 +461,7 @@
  @discussion
 	The value of this property is YES when the receiver currently has a file to which it is writing new samples, NO
 	otherwise.
- */
+*/
 @property(nonatomic, readonly, getter=isRecording) BOOL recording;
 
 /*!
@@ -428,7 +471,7 @@
 
  @discussion
 	If recording is in progress, this property returns the total time recorded so far.
- */
+*/
 @property(nonatomic, readonly) CMTime recordedDuration;
 
 /*!
@@ -438,7 +481,7 @@
 
  @discussion
 	If a recording is in progress, this property returns the size in bytes of the data recorded so far.
- */
+*/
 @property(nonatomic, readonly) int64_t recordedFileSize;	
 
 /*!
@@ -450,7 +493,7 @@
 	This property specifies a hard limit on the duration of recorded files. Recording is stopped when the limit is
 	reached and the captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error: delegate method is invoked
 	with an appropriate error. The default value of this property is kCMTimeInvalid, which indicates no limit.
- */
+*/
 @property(nonatomic) CMTime maxRecordedDuration;
 
 /*!
@@ -462,7 +505,7 @@
 	This property specifies a hard limit on the data size of recorded files. Recording is stopped when the limit is
 	reached and the captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error: delegate method is invoked
 	with an appropriate error. The default value of this property is 0, which indicates no limit.
- */
+*/
 @property(nonatomic) int64_t maxRecordedFileSize;
 
 /*!
@@ -475,7 +518,7 @@
 	recording to continue. Recording is stopped when the limit is reached and the
 	captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error: delegate method is invoked with an
 	appropriate error.
- */
+*/
 @property(nonatomic) int64_t minFreeDiskSpaceLimit;
 
 @end
@@ -485,7 +528,7 @@
  @abstract
 	Defines an interface for delegates of AVCaptureFileOutput to respond to events that occur in the process of recording
 	a single file.
- */
+*/
 @protocol AVCaptureFileOutputRecordingDelegate <NSObject>
 
 @optional
@@ -511,7 +554,7 @@
 	
 	Clients should not assume that this method will be called on a specific thread, and should also try to make this
 	method as efficient as possible.
- */
+*/
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didStartRecordingToOutputFileAtURL:(NSURL *)fileURL fromConnections:(NSArray *)connections;
 
 @required
@@ -540,7 +583,7 @@
 	Clients should not assume that this method will be called on a specific thread.
  
 	Delegates are required to implement this method.
- */
+*/
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error;
 
 @end
@@ -559,7 +602,8 @@
 	media data to QuickTime movie files. In addition, instances of AVCaptureMovieFileOutput allow clients to configure
 	options specific to the QuickTime file format, including allowing them to write metadata collections to each file,
 	and specify an interval at which movie fragments should be written.
- */
+*/
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureMovieFileOutput : AVCaptureFileOutput
 {
 @private
@@ -579,7 +623,7 @@
  
 	Changing the value of this property will not affect the movie fragment interval of the file currently being written,
 	if there is one.
- */
+*/
 @property(nonatomic) CMTime movieFragmentInterval;
 
 /*!
@@ -590,7 +634,7 @@
  @discussion
 	The value of this property is an array of AVMetadataItem objects representing the collection of top-level metadata to
 	be written in each output file.
- */
+*/
 @property(nonatomic, copy) NSArray *metadata;
 
 @end
@@ -609,7 +653,8 @@
 	capture source. Clients can request a still image for the current time using the
 	captureStillImageAsynchronouslyFromConnection:completionHandler: method. Clients can also configure still image
 	outputs to produce still images in specific image formats.
- */
+*/
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureStillImageOutput : AVCaptureOutput 
 {
 @private
@@ -627,15 +672,15 @@
 	The only currently supported keys are AVVideoCodecKey and kCVPixelBufferPixelFormatTypeKey. 
     Use -availableImageDataCVPixelFormatTypes and -availableImageDataCodecTypes to determine what 
     codec keys and pixel formats are supported.
- */
+*/
 @property(nonatomic, copy) NSDictionary *outputSettings;
 
 /*!
-@property availableImageDataCVPixelFormatTypes
-@abstract
+  @property availableImageDataCVPixelFormatTypes
+  @abstract
 	Indicates the supported image pixel formats that can be specified in outputSettings.
 
-@discussion
+  @discussion
 	The value of this property is an NSArray of NSNumbers that can be used as values for the 
 	kCVPixelBufferPixelFormatTypeKey in the receiver's outputSettings property.  The first
     format in the returned list is the most efficient output format.
@@ -643,15 +688,27 @@
 @property(nonatomic, readonly) NSArray *availableImageDataCVPixelFormatTypes;
 
 /*!
-@property availableImageDataCodecTypes
-@abstract
+  @property availableImageDataCodecTypes
+  @abstract
 	Indicates the supported image codec formats that can be specified in outputSettings.
 
-@discussion
+  @discussion
 	The value of this property is an NSArray of NSStrings that can be used as values for the 
 	AVVideoCodecKey in the receiver's outputSettings property.
 */
 @property(nonatomic, readonly) NSArray *availableImageDataCodecTypes;
+
+/*!
+ @property capturingStillImage
+ @abstract
+	A boolean value that becomes true when a still image is being captured.
+
+ @discussion
+	The value of this property is a BOOL that becomes true when a still image is being
+	captured, and false when no still image capture is underway.  This property is
+	key-value observable.
+*/
+@property(readonly, getter=isCapturingStillImage) BOOL capturingStillImage NS_AVAILABLE_IOS(5_0);
 
 /*!
  @method captureStillImageAsynchronouslyFromConnection:completionHandler:
@@ -661,8 +718,8 @@
  @param connection
 	The AVCaptureConnection object from which to capture the still image.
  @param handler
-	A block that will be called when the still image capture is complete. the block will be passed a CMSampleBuffer
-	object containing the image data and an NSError object if an image could not be captured.
+	A block that will be called when the still image capture is complete. The block will be passed a CMSampleBuffer
+	object containing the image data or an NSError object if an image could not be captured.
 
  @discussion
 	This method will return immediately after it is invoked, later calling the provided completion handler block when
@@ -674,7 +731,7 @@
 	<ImageIO/CGImageProperties.h> for a list of keys and value types.
  
 	Clients should not assume that the completion handler will be called on a specific thread.
- */
+*/
 - (void)captureStillImageAsynchronouslyFromConnection:(AVCaptureConnection *)connection completionHandler:(void (^)(CMSampleBufferRef imageDataSampleBuffer, NSError *error))handler;
 
 /*!

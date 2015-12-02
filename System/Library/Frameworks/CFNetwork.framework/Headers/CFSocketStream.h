@@ -47,6 +47,38 @@ extern "C" {
 #endif
 
 /*
+ *  kCFStreamPropertySSLContext 
+ *
+ * The SSLContextRef used for both read and write operations on a
+ * CFSocketStream.
+ *
+ * CFReadStreamCopyProperty or CFWriteStreamCopyProperty return an
+ * appropriately reference counted SSLContextRef.  If the stream has
+ * not yet been opened, this SSLContext may be configured directly
+ * using the appropriate SecureTransport APIs.
+ *
+ * CFReadStreamSetProperty or CFWriteStreamSetProperty will allow you
+ * to specify an SSLContextRef for a stream.  If the stream has not
+ * been opened, the SSLContextRef will replace any existing
+ * SSLContextRef and be used in the initial stream handshake.  If the
+ * stream has been opened without SSL enabled, setting this property
+ * will initiate an SSL handshake over the existing socket.
+ *
+ * If an SSL settings dictionary was set via
+ * kCFStreamPropertySSLSettings, a SSLContextRef is created internally
+ * and configured as per the dictionary.  However, if an SSLContextRef
+ * is set after this, its configuration will take precedence over the
+ * previously configured context.
+ *
+ * Reconfiguring an SSLContext after the stream it is bound to has
+ * opened is unsupported.
+ *
+ * Note that this property is currently only supported on iOS 5.0 and
+ * later.
+ */
+CFN_EXPORT const CFStringRef kCFStreamPropertySSLContext __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+/*
  *  kCFStreamPropertySSLPeerTrust
  *  
  *  Discussion:
@@ -256,7 +288,10 @@ CFN_EXPORT const CFStringRef kCFStreamSSLAllowsAnyRoot				   __OSX_STREAM_PROPER
 CFN_EXPORT const CFStringRef kCFStreamNetworkServiceType		__OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
 
 /* supported network service types: */
-CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVoIP __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);		// voice over IP
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVoIP __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);		// voice over IP control
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVideo __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);		// video
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeBackground __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);	// background
+CFN_EXPORT const CFStringRef kCFStreamNetworkServiceTypeVoice __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);		// voice data
 
 /*
  *  kCFStreamErrorDomainWinSock

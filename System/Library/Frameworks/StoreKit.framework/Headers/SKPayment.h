@@ -16,7 +16,9 @@ SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPayment : NSObject <NSCopying, NSMut
 }
 
 + (id)paymentWithProduct:(SKProduct *)product __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
-+ (id)paymentWithProductIdentifier:(NSString *)identifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+
+// Deprecated: Use +paymentWithProduct: after fetching the available products using SKProductsRequest
++ (id)paymentWithProductIdentifier:(NSString *)identifier __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_3_0,__IPHONE_5_0);
 
 // Identifier agreed upon with the store.  Required.
 @property(nonatomic, copy, readonly) NSString *productIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
@@ -30,8 +32,7 @@ SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPayment : NSObject <NSCopying, NSMut
 @end
 
 
-SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKMutablePayment : SKPayment {
-}
+SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKMutablePayment : SKPayment
 
 @property(nonatomic, copy, readwrite) NSString *productIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 @property(nonatomic, readwrite) NSInteger quantity __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);

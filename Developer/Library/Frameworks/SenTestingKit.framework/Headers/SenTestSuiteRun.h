@@ -43,6 +43,6 @@
 @end
 
 #import <SenTestingKit/SenTestDefines.h>
-SENTEST_EXPORT NSString *SenTestSuiteDidStartNotification;
-SENTEST_EXPORT NSString *SenTestSuiteDidStopNotification;
+SENTEST_EXPORT NSString * const SenTestSuiteDidStartNotification;
+SENTEST_EXPORT NSString * const SenTestSuiteDidStopNotification;
 

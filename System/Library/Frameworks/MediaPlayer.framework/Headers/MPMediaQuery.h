@@ -25,10 +25,7 @@ typedef NSInteger MPMediaGrouping;
 
 // MPMediaQuery represents a collection of items or playlists determined by a chain of MPMediaPredicate objects.
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaQuery : NSObject <NSCoding, NSCopying> {
-@private
-    void *_internal;
-}
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaQuery : NSObject <NSCoding, NSCopying>
 
 - (id)init;
 - (id)initWithFilterPredicates:(NSSet *)filterPredicates;
@@ -83,10 +80,7 @@ enum {
 };
 typedef NSInteger MPMediaPredicateComparison;
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPropertyPredicate : MPMediaPredicate {
-@private
-    void *_internal;
-}
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPropertyPredicate : MPMediaPredicate
 
 + (MPMediaPropertyPredicate *)predicateWithValue:(id)value forProperty:(NSString *)property; // comparisonType is MPMediaPredicateComparisonEqualTo
 + (MPMediaPropertyPredicate *)predicateWithValue:(id)value forProperty:(NSString *)property comparisonType:(MPMediaPredicateComparison)comparisonType;

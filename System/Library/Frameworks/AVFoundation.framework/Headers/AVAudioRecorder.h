@@ -3,9 +3,10 @@
 	
 	Framework:  AVFoundation
 
-	Copyright 2008-2010 Apple Inc. All rights reserved.
+	Copyright 2008-2012 Apple Inc. All rights reserved.
 */
 
+#import <AVFoundation/AVBase.h>
 #import <Foundation/NSObject.h>
 #import <Foundation/NSDate.h>  /* for NSTimeInterval */
 #import <AVFoundation/AVAudioSettings.h>
@@ -14,7 +15,7 @@
 @protocol AVAudioRecorderDelegate;
 @class NSDictionary, NSURL, NSError;
 
-/* This class is available with iPhone 3.0 or later */
+NS_CLASS_AVAILABLE(10_7, 3_0)
 @interface AVAudioRecorder : NSObject {
 @private
     __strong void *_impl;
@@ -36,14 +37,15 @@
 
 /* properties */
 
-@property(readonly, getter=isRecording) BOOL recording;
+@property(readonly, getter=isRecording) BOOL recording; /* is it recording or not? */
 
 @property(readonly) NSURL *url; /* URL of the recorded file */
 
 /* these settings are fully valid only when prepareToRecord has been called */
 @property(readonly) NSDictionary *settings;
 
-@property(assign) id<AVAudioRecorderDelegate> delegate;
+/* the delegate will be sent messages from the AVAudioRecorderDelegate protocol */ 
+@property(assign) id<AVAudioRecorderDelegate> delegate;  
 
 /* get the current time of the recording - only valid while recording */
 @property(readonly) NSTimeInterval currentTime;
@@ -71,18 +73,17 @@
 - (void)audioRecorderEncodeErrorDidOccur:(AVAudioRecorder *)recorder error:(NSError *)error;
 
 #if TARGET_OS_IPHONE
+
 /* audioRecorderBeginInterruption: is called when the audio session has been interrupted while the recorder was recording. The recorder will have been paused. */
 - (void)audioRecorderBeginInterruption:(AVAudioRecorder *)recorder;
 
 /* audioRecorderEndInterruption:withFlags: is called when the audio session interruption has ended and this recorder had been interrupted while recording. */
 /* Currently the only flag is AVAudioSessionInterruptionFlags_ShouldResume. */
-#if defined(__MAC_10_7) || defined(__IPHONE_4_0)
-- (void)audioRecorderEndInterruption:(AVAudioRecorder *)recorder withFlags:(NSUInteger)flags
-	__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
-#endif
+- (void)audioRecorderEndInterruption:(AVAudioRecorder *)recorder withFlags:(NSUInteger)flags NS_AVAILABLE_IOS(4_0);
 
 /* audioRecorderEndInterruption: is called when the preferred method, audioRecorderEndInterruption:withFlags:, is not implemented. */
 - (void)audioRecorderEndInterruption:(AVAudioRecorder *)recorder;
+
 #endif // TARGET_OS_IPHONE
 
 @end

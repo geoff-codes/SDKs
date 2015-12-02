@@ -81,8 +81,9 @@ extern int32_t NSVersionOfLinkTimeLibrary(const char* libraryName)           __O
 
 /*
  * _NSGetExecutablePath() copies the path of the main executable into the buffer. The bufsize parameter
- * should initially be the size of the buffer.  The function returns 0 if the path was successfully copied.
- * It returns -1 if the buffer is not large enough, and *bufsize is set to the size required. 
+ * should initially be the size of the buffer.  The function returns 0 if the path was successfully copied,
+ * and *bufsize is left unchanged. It returns -1 if the buffer is not large enough, and *bufsize is set 
+ * to the size required. 
  * 
  * Note that _NSGetExecutablePath will return "a path" to the executable not a "real path" to the executable. 
  * That is the path may be a symbolic link and not the real file. With deep directories the total bufsize 

@@ -2,7 +2,7 @@
  *  CTFont.h
  *  CoreText
  *
- *  Copyright (c) 2006-2010 Apple Inc. All rights reserved.
+ *  Copyright (c) 2006-2011 Apple Inc. All rights reserved.
  *
  */
 
@@ -1177,6 +1177,7 @@ enum {
     kCTFontTableHsty    = 'hsty',   // Horizontal style
     kCTFontTableJust    = 'just',   // Justification
     kCTFontTableKern    = 'kern',   // Kerning
+    kCTFontTableKerx    = 'kerx',   // Extended kerning
     kCTFontTableLcar    = 'lcar',   // Ligature caret
     kCTFontTableLoca    = 'loca',   // Index to location
     kCTFontTableMaxp    = 'maxp',   // Maximum profile
@@ -1261,11 +1262,11 @@ CFDataRef CTFontCopyTable(
     @result     void
 */
 void CTFontDrawGlyphs(
-    CTFontRef font, 
-    const CGGlyph glyphs[], 
-    const CGPoint positions[], 
-    size_t count, 
-    CGContextRef context) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_4_2);
+    CTFontRef       font, 
+    const CGGlyph   glyphs[], 
+    const CGPoint   positions[], 
+    size_t          count, 
+    CGContextRef    context ) CT_AVAILABLE_STARTING( __MAC_10_7, __IPHONE_4_2);
 
 
 /*!

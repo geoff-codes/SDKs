@@ -11,10 +11,7 @@
 
 // An MPMediaItemCollection is a collection of related MPMediaItems in a media library.
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaItemCollection : MPMediaEntity {
-@private
-    void *_internal;
-}
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaItemCollection : MPMediaEntity
 
 // Creates a media item collection by copying an array of MPMediaItems.
 + (MPMediaItemCollection *)collectionWithItems:(NSArray *)items;

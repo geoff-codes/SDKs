@@ -2,7 +2,7 @@
 //  UIPopoverController.h
 //  UIKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 
@@ -11,6 +11,8 @@
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UIApplication.h>
 #import <UIKit/UIViewController.h>
+#import <UIKit/UIAppearance.h>
+#import <UIKit/UIGeometry.h>
 
 @class UIBarButtonItem, UIView;
 @protocol UIPopoverControllerDelegate;
@@ -26,33 +28,7 @@ enum {
 typedef NSUInteger UIPopoverArrowDirection;
 
 UIKIT_CLASS_AVAILABLE(3_2)
-@interface UIPopoverController : NSObject {
-  @private
-    id _delegate;
-    UIViewController *_contentViewController;
-    UIView *_popoverView;
-    id _private1;
-    NSArray *_passthroughViews;
-    UIPopoverArrowDirection _popoverArrowDirection;
-    NSUInteger _popoverBackgroundStyle;
-    CGSize _popoverContentSize;
-    UIBarButtonItem *_targetBarButtonItem;
-    UIViewAutoresizing _toViewAutoResizingMask;
-    UIViewController *_modalPresentationFromViewController;
-    UIViewController *_modalPresentationToViewController;
-    UIViewController *_slidingViewController;
-    id _target;
-    SEL _didEndSelector;
-    UIBarStyle _existingNavBarStyle;
-    UIBarStyle _existingToolBarStyle;
-    struct {
-	unsigned int isPresentingOrDismissing:1;
-        unsigned int isPresentingModalViewController:1;
-        unsigned int isPresentingActionSheet:1;
-        unsigned int needsRepresentAfterRotation:1;
-        unsigned int dimsWhenModal:1;
-    } _popoverControllerFlags;
-}
+@interface UIPopoverController : NSObject <UIAppearanceContainer> {}
 
 /* The view controller provided becomes the content view controller for the UIPopoverController. This is the designated initializer for UIPopoverController.
  */
@@ -93,6 +69,14 @@ UIKIT_CLASS_AVAILABLE(3_2)
 /* Called to dismiss the popover programmatically. The delegate methods for "should" and "did" dismiss are not called when the popover is dismissed in this way.
  */
 - (void)dismissPopoverAnimated:(BOOL)animated;
+
+/* Clients may wish to change the available area for popover display. The default implementation of this method always returns insets which define 10 points from the edges of the display, and presentation of popovers always accounts for the status bar. The rectangle being inset is always expressed in terms of the current device orientation; (0, 0) is always in the upper-left of the device. This may require insets to change on device rotation.
+ */
+@property (nonatomic, readwrite) UIEdgeInsets popoverLayoutMargins __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+/* Clients may customize the popover background chrome by providing a class which subclasses `UIPopoverBackgroundView` and which implements the required instance and class methods on that class.
+ */
+@property (nonatomic, readwrite, retain) Class popoverBackgroundViewClass __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 @end
 

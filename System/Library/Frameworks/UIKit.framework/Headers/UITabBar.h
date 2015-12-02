@@ -2,7 +2,7 @@
 //  UITabBar.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,7 +14,8 @@
 
 UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBar : UIView {
   @private
-    UIView*                _customizeView;
+    UIView                *_customizeView;
+    UIView                *_backgroundView;
     id<UITabBarDelegate>   _delegate;
     NSArray               *_items;
     UITabBarItem          *_selectedItem;
@@ -25,10 +26,11 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBar : UIView {
         unsigned int customized:1;
         unsigned int downButtonSentAction:1;
         unsigned int isLocked:1;
+        unsigned int backgroundIsPattern:1;
     } _tabBarFlags;
     NSArray               *_buttonItems;
     CFMutableArrayRef      _hiddenItems;
-    id _appearance;
+    id _appearanceStorage;
 }
 
 @property(nonatomic,assign) id<UITabBarDelegate> delegate;     // weak reference. default is nil
@@ -42,6 +44,25 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBar : UIView {
 - (void)beginCustomizingItems:(NSArray *)items;   // list all items that can be reordered. always animates a sheet up. visible items not listed are fixed in place
 - (BOOL)endCustomizingAnimated:(BOOL)animated;    // hide customization sheet. normally you should let the user do it. check list of items to see new layout. returns YES if layout changed
 - (BOOL)isCustomizing;
+
+/* tintColor will be applied to the tab bar background
+ */
+@property(nonatomic,retain) UIColor *tintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+/* selectedImageTintColor will be applied to the gradient image used when creating the
+ selected image. Default is nil and will result in the system bright blue for selected
+ tab item images. If you wish to also customize the unselected image appearance, you must
+ use -setFinishedSelectedImage:finishedUnselectedImage: on individual tab bar items.
+ */
+@property(nonatomic,retain) UIColor *selectedImageTintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+/* The background image will be tiled to fit, even if it was not created via the UIImage resizableImage methods.
+ */
+@property(nonatomic,retain) UIImage *backgroundImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR;
+
+/* The selection indicator image is drawn on top of the tab bar, behind the bar item icon.
+ */
+@property(nonatomic,retain) UIImage *selectionIndicatorImage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0) UI_APPEARANCE_SELECTOR; 
 
 @end
 

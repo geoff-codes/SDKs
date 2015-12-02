@@ -1,5 +1,5 @@
 /*	NSString.h
-	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
 */
 
 typedef unsigned short unichar;
@@ -13,9 +13,7 @@ typedef unsigned short unichar;
 
 FOUNDATION_EXPORT NSString * const NSParseErrorException; // raised by -propertyList
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
 #define NSMaximumStringLength	(INT_MAX-1)
-#endif
 
 /* These options apply to the various search/find and comparison methods (except where noted).
 */
@@ -31,10 +29,10 @@ enum {
     NSWidthInsensitiveSearch = 256, /* If specified, ignores width differences ('a' == UFF41) */
     NSForcedOrderingSearch = 512 /* If specified, comparisons are forced to return either NSOrderedAscending or NSOrderedDescending if the strings are equivalent but not strictly equal, for stability when sorting (e.g. "aaa" > "AAA" with NSCaseInsensitiveSearch specified) */
 #endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 */
-#if __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
     ,
     NSRegularExpressionSearch = 1024    /* Applies to rangeOfString:..., stringByReplacingOccurrencesOfString:..., and replaceOccurrencesOfString:... methods only; the search string is treated as an ICU-compatible regular expression; if set, no other options can apply except NSCaseInsensitiveSearch and NSAnchoredSearch */
-#endif /* __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED */
+#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7 || __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED */
 };
 typedef NSUInteger NSStringCompareOptions;
 
@@ -63,24 +61,20 @@ enum {
 
     NSUTF16StringEncoding = NSUnicodeStringEncoding,      /* An alias for NSUnicodeStringEncoding */
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
     NSUTF16BigEndianStringEncoding = 0x90000100,          /* NSUTF16StringEncoding encoding with explicit endianness specified */
     NSUTF16LittleEndianStringEncoding = 0x94000100,       /* NSUTF16StringEncoding encoding with explicit endianness specified */
 
     NSUTF32StringEncoding = 0x8c000100,                   
     NSUTF32BigEndianStringEncoding = 0x98000100,          /* NSUTF32StringEncoding encoding with explicit endianness specified */
     NSUTF32LittleEndianStringEncoding = 0x9c000100        /* NSUTF32StringEncoding encoding with explicit endianness specified */
-#endif
 };
 typedef NSUInteger NSStringEncoding;
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 enum {
     NSStringEncodingConversionAllowLossy = 1,
     NSStringEncodingConversionExternalRepresentation = 2
 };
 typedef NSUInteger NSStringEncodingConversionOptions;
-#endif
 
 FOUNDATION_EXPORT NSString * const NSCharacterConversionException;
 
@@ -124,9 +118,7 @@ FOUNDATION_EXPORT NSString * const NSCharacterConversionException;
 - (NSRange)rangeOfString:(NSString *)aString;
 - (NSRange)rangeOfString:(NSString *)aString options:(NSStringCompareOptions)mask;
 - (NSRange)rangeOfString:(NSString *)aString options:(NSStringCompareOptions)mask range:(NSRange)searchRange;
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-- (NSRange)rangeOfString:(NSString *)aString options:(NSStringCompareOptions)mask range:(NSRange)searchRange locale:(NSLocale *)locale;
-#endif
+- (NSRange)rangeOfString:(NSString *)aString options:(NSStringCompareOptions)mask range:(NSRange)searchRange locale:(NSLocale *)locale NS_AVAILABLE(10_5, 2_0);
 
 /* These return the range of the first character from the set in the string, not the range of a sequence of characters. 
 */
@@ -135,9 +127,7 @@ FOUNDATION_EXPORT NSString * const NSCharacterConversionException;
 - (NSRange)rangeOfCharacterFromSet:(NSCharacterSet *)aSet options:(NSStringCompareOptions)mask range:(NSRange)searchRange;
 
 - (NSRange)rangeOfComposedCharacterSequenceAtIndex:(NSUInteger)index;
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-- (NSRange)rangeOfComposedCharacterSequencesForRange:(NSRange)range;
-#endif
+- (NSRange)rangeOfComposedCharacterSequencesForRange:(NSRange)range NS_AVAILABLE(10_5, 2_0);
 
 - (NSString *)stringByAppendingString:(NSString *)aString;
 - (NSString *)stringByAppendingFormat:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
@@ -147,16 +137,12 @@ FOUNDATION_EXPORT NSString * const NSCharacterConversionException;
 - (double)doubleValue;
 - (float)floatValue;
 - (int)intValue;
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-- (NSInteger)integerValue;
-- (long long)longLongValue;
-- (BOOL)boolValue;  // Skips initial space characters (whitespaceSet), or optional -/+ sign followed by zeroes. Returns YES on encountering one of "Y", "y", "T", "t", or a digit 1-9. It ignores any trailing characters.
-#endif
+- (NSInteger)integerValue NS_AVAILABLE(10_5, 2_0);
+- (long long)longLongValue NS_AVAILABLE(10_5, 2_0);
+- (BOOL)boolValue NS_AVAILABLE(10_5, 2_0);  // Skips initial space characters (whitespaceSet), or optional -/+ sign followed by zeroes. Returns YES on encountering one of "Y", "y", "T", "t", or a digit 1-9. It ignores any trailing characters.
 
 - (NSArray *)componentsSeparatedByString:(NSString *)separator;
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-- (NSArray *)componentsSeparatedByCharactersInSet:(NSCharacterSet *)separator;
-#endif
+- (NSArray *)componentsSeparatedByCharactersInSet:(NSCharacterSet *)separator NS_AVAILABLE(10_5, 2_0);
 
 - (NSString *)commonPrefixWithString:(NSString *)aString options:(NSStringCompareOptions)mask;
 
@@ -164,18 +150,14 @@ FOUNDATION_EXPORT NSString * const NSCharacterConversionException;
 - (NSString *)lowercaseString;
 - (NSString *)capitalizedString;
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (NSString *)stringByTrimmingCharactersInSet:(NSCharacterSet *)set;
 - (NSString *)stringByPaddingToLength:(NSUInteger)newLength withString:(NSString *)padString startingAtIndex:(NSUInteger)padIndex;
-#endif
 
 - (void)getLineStart:(NSUInteger *)startPtr end:(NSUInteger *)lineEndPtr contentsEnd:(NSUInteger *)contentsEndPtr forRange:(NSRange)range;
 - (NSRange)lineRangeForRange:(NSRange)range;
 
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (void)getParagraphStart:(NSUInteger *)startPtr end:(NSUInteger *)parEndPtr contentsEnd:(NSUInteger *)contentsEndPtr forRange:(NSRange)range;
 - (NSRange)paragraphRangeForRange:(NSRange)range;
-#endif
 
 #if NS_BLOCKS_AVAILABLE
 enum {
@@ -210,7 +192,6 @@ typedef NSUInteger NSStringEnumerationOptions;
 
 - (BOOL)canBeConvertedToEncoding:(NSStringEncoding)encoding;
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 /* Methods to convert NSString to a NULL-terminated cString using the specified encoding. Note, these are the "new" cString methods, and are not deprecated like the older cString methods which do not take encoding arguments.
 */
 - (__strong const char *)cStringUsingEncoding:(NSStringEncoding)encoding;	// "Autoreleased"; NULL return if encoding conversion not possible; for performance reasons, lifetime of this should not be considered longer than the lifetime of the receiving string (if the receiver string is freed, this might go invalid then, before the end of the autorelease scope)
@@ -233,32 +214,27 @@ typedef NSUInteger NSStringEnumerationOptions;
 */
 - (NSUInteger)maximumLengthOfBytesUsingEncoding:(NSStringEncoding)enc;	// Result in O(1) time; the estimate may be way over what's needed. Returns 0 on error (overflow)
 - (NSUInteger)lengthOfBytesUsingEncoding:(NSStringEncoding)enc;		// Result in O(n) time; the result is exact. Returns 0 on error (cannot convert to specified encoding, or overflow)
-#endif
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (NSString *)decomposedStringWithCanonicalMapping;
 - (NSString *)precomposedStringWithCanonicalMapping;
 - (NSString *)decomposedStringWithCompatibilityMapping;
 - (NSString *)precomposedStringWithCompatibilityMapping;
-#endif
 
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 /* Returns a string with the character folding options applied. theOptions is a mask of compare flags with *InsensitiveSearch suffix.
 */
-- (NSString *)stringByFoldingWithOptions:(NSStringCompareOptions)options locale:(NSLocale *)locale;
+- (NSString *)stringByFoldingWithOptions:(NSStringCompareOptions)options locale:(NSLocale *)locale NS_AVAILABLE(10_5, 2_0);
 
 /* Replace all occurrences of the target string in the specified range with replacement. Specified compare options are used for matching target. If NSRegularExpressionSearch is specified, the replacement is treated as a template, as in the corresponding NSRegularExpression methods, and no other options can apply except NSCaseInsensitiveSearch and NSAnchoredSearch.
 */
-- (NSString *)stringByReplacingOccurrencesOfString:(NSString *)target withString:(NSString *)replacement options:(NSStringCompareOptions)options range:(NSRange)searchRange;
+- (NSString *)stringByReplacingOccurrencesOfString:(NSString *)target withString:(NSString *)replacement options:(NSStringCompareOptions)options range:(NSRange)searchRange NS_AVAILABLE(10_5, 2_0);
 
 /* Replace all occurrences of the target string with replacement. Invokes the above method with 0 options and range of the whole string.
 */
-- (NSString *)stringByReplacingOccurrencesOfString:(NSString *)target withString:(NSString *)replacement;
+- (NSString *)stringByReplacingOccurrencesOfString:(NSString *)target withString:(NSString *)replacement NS_AVAILABLE(10_5, 2_0);
 
 /* Replace characters in range with the specified string, returning new string.
 */
-- (NSString *)stringByReplacingCharactersInRange:(NSRange)range withString:(NSString *)replacement;
-#endif
+- (NSString *)stringByReplacingCharactersInRange:(NSRange)range withString:(NSString *)replacement NS_AVAILABLE(10_5, 2_0);
 
 - (__strong const char *)UTF8String;	// Convenience to return null-terminated UTF8 representation
 
@@ -284,9 +260,7 @@ typedef NSUInteger NSStringEnumerationOptions;
 - (id)initWithFormat:(NSString *)format locale:(id)locale arguments:(va_list)argList NS_FORMAT_FUNCTION(1,0);
 - (id)initWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
 - (id)initWithBytes:(const void *)bytes length:(NSUInteger)len encoding:(NSStringEncoding)encoding;
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (id)initWithBytesNoCopy:(void *)bytes length:(NSUInteger)len encoding:(NSStringEncoding)encoding freeWhenDone:(BOOL)freeBuffer;	/* "NoCopy" is a hint */
-#endif
 
 + (id)string;
 + (id)stringWithString:(NSString *)string;
@@ -295,7 +269,6 @@ typedef NSUInteger NSStringEnumerationOptions;
 + (id)stringWithFormat:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
 + (id)localizedStringWithFormat:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (id)initWithCString:(const char *)nullTerminatedCString encoding:(NSStringEncoding)encoding;
 + (id)stringWithCString:(const char *)cString encoding:(NSStringEncoding)enc;
 
@@ -317,9 +290,6 @@ typedef NSUInteger NSStringEnumerationOptions;
 */
 - (BOOL)writeToURL:(NSURL *)url atomically:(BOOL)useAuxiliaryFile encoding:(NSStringEncoding)enc error:(NSError **)error;
 - (BOOL)writeToFile:(NSString *)path atomically:(BOOL)useAuxiliaryFile encoding:(NSStringEncoding)enc error:(NSError **)error;
-
-#endif
-
 
 @end
 
@@ -345,18 +315,18 @@ typedef NSUInteger NSStringEnumerationOptions;
 - (id)initWithCapacity:(NSUInteger)capacity;
 + (id)stringWithCapacity:(NSUInteger)capacity;
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 /* This method replaces all occurrences of the target string with the replacement string, in the specified range of the receiver string, and returns the number of replacements. NSBackwardsSearch means the search is done from the end of the range (the results could be different); NSAnchoredSearch means only anchored (but potentially multiple) instances will be replaced. NSLiteralSearch and NSCaseInsensitiveSearch also apply. NSNumericSearch is ignored. Use NSMakeRange(0, [receiver length]) to process whole string. If NSRegularExpressionSearch is specified, the replacement is treated as a template, as in the corresponding NSRegularExpression methods, and no other options can apply except NSCaseInsensitiveSearch and NSAnchoredSearch.
 */
 - (NSUInteger)replaceOccurrencesOfString:(NSString *)target withString:(NSString *)replacement options:(NSStringCompareOptions)options range:(NSRange)searchRange;
-#endif
 
 @end
 
 
 
 @interface NSString (NSExtendedStringPropertyListParsing)
-    
+
+/* These methods are no longer recommended since they do not work with property lists and strings files in binary plist format. Please use the APIs in NSPropertyList.h instead.
+*/
 - (id)propertyList;
 - (NSDictionary *)propertyListFromStringsFileFormat;
 
@@ -395,12 +365,9 @@ typedef NSUInteger NSStringEnumerationOptions;
 
 @end
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
 enum {
     NSProprietaryStringEncoding = 65536    /* Installation-specific encoding */
 };
-#endif
-
 
 
 

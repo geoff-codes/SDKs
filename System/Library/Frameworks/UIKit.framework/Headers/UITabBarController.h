@@ -2,7 +2,7 @@
 //  UITabBarController.h
 //  UIKit
 //
-//  Copyright 2007-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -31,8 +31,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBarController : UIViewController <UIT
     
     UIView                 *_containerView;
     UIView                 *_viewControllerTransitionView;
-    
-    NSMutableArray         *_viewControllers;
+
     id                      _tabBarItemsToViewControllers;
     UIViewController       *_selectedViewController;
 
@@ -63,7 +62,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITabBarController : UIViewController <UIT
 @property(nonatomic,assign) UIViewController *selectedViewController; // This may return the "More" navigation controller if it exists.
 @property(nonatomic) NSUInteger selectedIndex;
 
-@property(nonatomic,readonly) UINavigationController *moreNavigationController; // Returns the "More" navigation controller if it exists.
+@property(nonatomic,readonly) UINavigationController *moreNavigationController; // Returns the "More" navigation controller, creating it if it does not already exist.
 @property(nonatomic,copy) NSArray *customizableViewControllers; // If non-nil, then the "More" view will include an "Edit" button that displays customization UI for the specified controllers. By default, all view controllers are customizable.
 
 @property(nonatomic,readonly) UITabBar *tabBar __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0); // Provided for -[UIActionSheet showFromTabBar:]. Attempting to modify the contents of the tab bar directly will throw an exception.

@@ -2,7 +2,7 @@
  *	CTParagraphStyle.h
  *	CoreText
  *
- *	Copyright (c) 2004-2010 Apple Inc. All rights reserved.
+ *	Copyright (c) 2004-2011 Apple Inc. All rights reserved.
  *
  */
 
@@ -256,13 +256,11 @@ typedef int8_t CTWritingDirection;
 
 
 	@constant	kCTParagraphStyleSpecifierLineSpacing
-				The space in points added between lines within the paragraph
-				(commonly known as leading). This value is always
-				nonnegative.
-
-				Type: CGFloat
-				Default: 0.0
-				Application: CTFramesetter
+				Deprecated.
+				Use kCTParagraphStyleSpecifierMaximumLineSpacing, kCTParagraphStyleSpecifierMinimumLineSpacing,
+				and kCTParagraphStyleSpecifierLineSpaceAdjustment to control
+				space between lines.
+				
 
 
 	@constant	kCTParagraphStyleSpecifierParagraphSpacing
@@ -293,7 +291,35 @@ typedef int8_t CTWritingDirection;
 				Type: CTWritingDirection
 				Default: kCTWritingDirectionNatural
 				Application: CTFramesetter, CTTypesetter
-*/
+
+	@constant	kCTParagraphStyleSpecifierMaximumLineSpacing
+				The maximum space in points between lines within the paragraph
+				(commonly known as leading). This value is always
+				nonnegative.
+
+				Type: CGFloat
+				Default: some large number.
+				Application: CTFramesetter
+ 
+	@constant	kCTParagraphStyleSpecifierMinimumLineSpacing
+				The minimum space in points between lines within the paragraph
+				(commonly known as leading). This value is always
+				nonnegative.
+
+				Type: CGFloat
+				Default: 0.0
+				Application: CTFramesetter
+ 
+	@constant	kCTParagraphStyleSpecifierLineSpaceAdjustment
+				The space in points added between lines within the paragraph
+				(commonly known as leading). 
+
+				Type: CGFloat
+				Default: 0.0
+				Application: CTFramesetter
+ 
+ 
+ */
 
 enum
 {
@@ -307,12 +333,15 @@ enum
 	kCTParagraphStyleSpecifierLineHeightMultiple = 7,
 	kCTParagraphStyleSpecifierMaximumLineHeight = 8,
 	kCTParagraphStyleSpecifierMinimumLineHeight = 9,
-	kCTParagraphStyleSpecifierLineSpacing = 10,
+	kCTParagraphStyleSpecifierLineSpacing = 10,			/* deprecated */
 	kCTParagraphStyleSpecifierParagraphSpacing = 11,
 	kCTParagraphStyleSpecifierParagraphSpacingBefore = 12,
 	kCTParagraphStyleSpecifierBaseWritingDirection = 13,
+	kCTParagraphStyleSpecifierMaximumLineSpacing = 14,
+	kCTParagraphStyleSpecifierMinimumLineSpacing = 15,
+	kCTParagraphStyleSpecifierLineSpacingAdjustment = 16,
 
-	kCTParagraphStyleSpecifierCount = 14
+	kCTParagraphStyleSpecifierCount = 17
 };
 typedef uint32_t CTParagraphStyleSpecifier;
 

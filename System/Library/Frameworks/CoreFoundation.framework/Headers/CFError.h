@@ -1,5 +1,5 @@
 /*	CFError.h
-	Copyright (c) 2006-2010, Apple Inc. All rights reserved.
+	Copyright (c) 2006-2011, Apple Inc. All rights reserved.
 */
 
 /*!
@@ -65,6 +65,8 @@ CF_EXPORT const CFStringRef kCFErrorDescriptionKey                  CF_AVAILABLE
 
 // Other keys in userInfo.
 CF_EXPORT const CFStringRef kCFErrorUnderlyingErrorKey              CF_AVAILABLE(10_5, 2_0);   // Key to identify the underlying error in userInfo.
+CF_EXPORT const CFStringRef kCFErrorURLKey                          CF_AVAILABLE(10_7, 5_0);    // Key to identify associated URL in userInfo.  Typically one of this or kCFErrorFilePathKey is provided.
+CF_EXPORT const CFStringRef kCFErrorFilePathKey                     CF_AVAILABLE(10_7, 5_0);    // Key to identify associated file path in userInfo.    Typically one of this or kCFErrorURLKey is provided.
 
 
 /*!

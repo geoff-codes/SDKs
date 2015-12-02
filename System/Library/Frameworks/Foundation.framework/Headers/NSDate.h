@@ -1,5 +1,5 @@
 /*	NSDate.h
-	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -25,7 +25,7 @@ typedef double NSTimeInterval;
 - (NSTimeInterval)timeIntervalSince1970;
 
 - (id)addTimeInterval:(NSTimeInterval)seconds NS_DEPRECATED(10_0, 10_6, 2_0, 4_0);
-- (id)dateByAddingTimeInterval:(NSTimeInterval)ti NS_AVAILABLE(10_5, 2_0);
+- (id)dateByAddingTimeInterval:(NSTimeInterval)ti NS_AVAILABLE(10_6, 2_0);
 
 - (NSDate *)earlierDate:(NSDate *)anotherDate;
 - (NSDate *)laterDate:(NSDate *)anotherDate;
@@ -46,7 +46,7 @@ typedef double NSTimeInterval;
 + (id)dateWithTimeIntervalSinceNow:(NSTimeInterval)secs;    
 + (id)dateWithTimeIntervalSinceReferenceDate:(NSTimeInterval)secs;
 + (id)dateWithTimeIntervalSince1970:(NSTimeInterval)secs;
-+ (id)dateWithTimeInterval:(NSTimeInterval)ti sinceDate:(NSDate *)date NS_AVAILABLE(10_4, 2_0);
++ (id)dateWithTimeInterval:(NSTimeInterval)ti sinceDate:(NSDate *)date;
 
 + (id)distantFuture;
 + (id)distantPast;
@@ -54,7 +54,7 @@ typedef double NSTimeInterval;
 - (id)init;
 - (id)initWithTimeIntervalSinceNow:(NSTimeInterval)secs;
 - (id)initWithTimeIntervalSinceReferenceDate:(NSTimeInterval)secsToBeAdded;
-- (id)initWithTimeIntervalSince1970:(NSTimeInterval)ti NS_AVAILABLE(10_4, 2_0);
+- (id)initWithTimeIntervalSince1970:(NSTimeInterval)ti;
 - (id)initWithTimeInterval:(NSTimeInterval)secsToBeAdded sinceDate:(NSDate *)anotherDate;
 
 @end

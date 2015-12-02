@@ -2,7 +2,7 @@
 //  UIMenuController.h
 //  UIKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -53,6 +53,7 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIMenuItem : NSObject {
   @private
     NSString *_title;
     SEL       _action;
+    BOOL      _dontDismiss;
 }
 
 - (id)initWithTitle:(NSString *)title action:(SEL)action;

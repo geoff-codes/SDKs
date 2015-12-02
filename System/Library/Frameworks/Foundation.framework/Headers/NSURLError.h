@@ -1,14 +1,9 @@
 /*	
     NSURLError.h
-    Copyright (c) 2003-2010, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2011, Apple Inc. All rights reserved.    
     
     Public header file.
 */
-
-// Note: To use the APIs described in these headers, you must perform
-// a runtime check for Foundation-462.1 or later.
-#import <AvailabilityMacros.h>
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 // Retrieve kCFURLError* values used in the NSURLError* assignments
 #if TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_OS_WIN32
@@ -16,6 +11,7 @@
 #else
 #import <CoreServices/CoreServices.h>
 #endif
+#import <Foundation/NSObjCRuntime.h>
 
 @class NSString;
 
@@ -78,12 +74,6 @@ enum
     NSURLErrorCannotDecodeRawData =             kCFURLErrorCannotDecodeRawData,
     NSURLErrorCannotDecodeContentData =         kCFURLErrorCannotDecodeContentData,
     NSURLErrorCannotParseResponse =             kCFURLErrorCannotParseResponse,
-#if MAC_OS_X_VERSION_10_6 <= MAC_OS_X_VERSION_MAX_ALLOWED
-    NSURLErrorInternationalRoamingOff =         kCFURLErrorInternationalRoamingOff,
-    NSURLErrorCallIsActive =                    kCFURLErrorCallIsActive,
-    NSURLErrorDataNotAllowed =                  kCFURLErrorDataNotAllowed,
-    NSURLErrorRequestBodyStreamExhausted =      kCFURLErrorRequestBodyStreamExhausted,
-#endif
     NSURLErrorFileDoesNotExist = 		kCFURLErrorFileDoesNotExist,
     NSURLErrorFileIsDirectory = 		kCFURLErrorFileIsDirectory,
     NSURLErrorNoPermissionsToReadFile = 	kCFURLErrorNoPermissionsToReadFile,
@@ -110,6 +100,12 @@ enum
     NSURLErrorCannotMoveFile = 			kCFURLErrorCannotMoveFile,
     NSURLErrorDownloadDecodingFailedMidStream = kCFURLErrorDownloadDecodingFailedMidStream,
     NSURLErrorDownloadDecodingFailedToComplete =kCFURLErrorDownloadDecodingFailedToComplete,
+
+#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    NSURLErrorInternationalRoamingOff =         kCFURLErrorInternationalRoamingOff,
+    NSURLErrorCallIsActive =                    kCFURLErrorCallIsActive,
+    NSURLErrorDataNotAllowed =                  kCFURLErrorDataNotAllowed,
+    NSURLErrorRequestBodyStreamExhausted =      kCFURLErrorRequestBodyStreamExhausted,
+#endif
 };
 
-#endif

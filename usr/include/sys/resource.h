@@ -68,6 +68,7 @@
 #include <sys/cdefs.h>
 #include <sys/_types.h>
 
+#include <Availability.h>
 
 /* [XSI] The timeval structure shall be defined as described in
  * <sys/time.h>
@@ -243,13 +244,13 @@ struct rlimit {
 __BEGIN_DECLS
 int	getpriority(int, id_t);
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
-int	getiopolicy_np(int, int);
+int	getiopolicy_np(int, int) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
 #endif /* !_POSIX_C_SOURCE || _DARWIN_C_SOURCE */
 int	getrlimit(int, struct rlimit *) __DARWIN_ALIAS(getrlimit);
 int	getrusage(int, struct rusage *);
 int	setpriority(int, id_t, int);
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
-int	setiopolicy_np(int, int, int);
+int	setiopolicy_np(int, int, int) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
 #endif /* !_POSIX_C_SOURCE || _DARWIN_C_SOURCE */
 int	setrlimit(int, const struct rlimit *) __DARWIN_ALIAS(setrlimit);
 __END_DECLS

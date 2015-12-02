@@ -23,6 +23,8 @@
 
 #define VM_PAGE_SIZE	ARM_PGBYTES
 
+#define	machine_ptob(x)	((x) << ARM_PGSHIFT)
+
 #define KERNEL_STACK_SIZE	(4*ARM_PGBYTES)
 #define INTSTACK_SIZE		(4*ARM_PGBYTES)
 						/* interrupt stack size */
@@ -35,13 +37,8 @@
  */
 
 
-/*
- * ARMtodo: Make user address spaces small for now (to make
- * context switch more efficient).  Since we don't have VM
- * pageout yet, just make it 1GB for now.
- */
 #define VM_MIN_ADDRESS		((vm_address_t) 0x00000000)
-#define VM_MAX_ADDRESS		((vm_address_t) 0x40000000)
+#define VM_MAX_ADDRESS		((vm_address_t) 0x80000000)
 
 #define HIGH_EXC_VECTORS	((vm_address_t) 0xFFFF0000) /* exception vectors virt */
 

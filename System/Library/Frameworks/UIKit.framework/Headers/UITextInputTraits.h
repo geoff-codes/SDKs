@@ -2,7 +2,7 @@
 //  UITextInputTraits.h
 //  UIKit
 //
-//  Copyright 2006-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -35,6 +35,19 @@ typedef enum {
     UITextAutocorrectionTypeYes,
 } UITextAutocorrectionType;
 
+#if __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+//
+// UITextSpellCheckingType
+//
+// Controls the annotation of misspelled words for a text widget.
+// Note: Some input methods do not support spell checking.
+typedef enum {
+    UITextSpellCheckingTypeDefault,
+    UITextSpellCheckingTypeNo,
+    UITextSpellCheckingTypeYes,
+} UITextSpellCheckingType;
+#endif
+
 //
 // UIKeyboardType
 //
@@ -56,6 +69,9 @@ typedef enum {
     UIKeyboardTypeEmailAddress,           // A type optimized for multiple email address entry (shows space @ . prominently).
 #if __IPHONE_4_1 <= __IPHONE_OS_VERSION_MAX_ALLOWED
     UIKeyboardTypeDecimalPad,             // A number pad with a decimal point.
+#endif
+#if __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    UIKeyboardTypeTwitter,                // A type optimized for twitter text entry (easy access to @ #)
 #endif
 
     UIKeyboardTypeAlphabet = UIKeyboardTypeASCIICapable, // Deprecated
@@ -110,11 +126,12 @@ typedef enum {
 
 @property(nonatomic) UITextAutocapitalizationType autocapitalizationType; // default is UITextAutocapitalizationTypeSentences
 @property(nonatomic) UITextAutocorrectionType autocorrectionType;         // default is UITextAutocorrectionTypeDefault
+@property(nonatomic) UITextSpellCheckingType spellCheckingType __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // default is UITextSpellCheckingTypeDefault;
 @property(nonatomic) UIKeyboardType keyboardType;                         // default is UIKeyboardTypeDefault
 @property(nonatomic) UIKeyboardAppearance keyboardAppearance;             // default is UIKeyboardAppearanceDefault
 @property(nonatomic) UIReturnKeyType returnKeyType;                       // default is UIReturnKeyDefault (See note under UIReturnKeyType enum)
 @property(nonatomic) BOOL enablesReturnKeyAutomatically;                  // default is NO (when YES, will automatically disable return key when text widget has zero-length contents, and will automatically enable when text widget has non-zero-length contents)
-@property(nonatomic,getter=isSecureTextEntry) BOOL secureTextEntry;      // default is NO
+@property(nonatomic,getter=isSecureTextEntry) BOOL secureTextEntry;       // default is NO
 
 @end
 

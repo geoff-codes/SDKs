@@ -3,7 +3,7 @@
 
     Contains:   AudioQueue Interfaces for the AudioToolbox
 
-    Copyright:  © 2006-2010 by Apple, Inc., all rights reserved.
+    Copyright:  © 2006-2011 by Apple, Inc., all rights reserved.
 
     Bugs?:      For bug reports, consult the following page on
                 the World Wide Web:
@@ -119,6 +119,8 @@ extern "C" {
                                                     audio queue.
     @constant   kAudioQueueErr_InvalidTapContext    GetTapSourceAudio can only be called from the
                                                     tap's callback.
+    @constant   kAudioQueueErr_RecordUnderrun       During recording, data was lost because there
+                                                    was no enqueued buffer into which to store it.
     @constant   kAudioQueueErr_EnqueueDuringReset   During Reset, Stop, or Dispose, it is not
                                                     permitted to enqueue buffers.
     @constant   kAudioQueueErr_InvalidOfflineMode   The operation requires the queue to be in
@@ -144,6 +146,7 @@ enum {
     kAudioQueueErr_CodecNotFound        = -66673,
     kAudioQueueErr_InvalidCodecAccess   = -66672,
     kAudioQueueErr_QueueInvalidated     = -66671,
+    kAudioQueueErr_RecordUnderrun       = -66668,
     kAudioQueueErr_EnqueueDuringReset   = -66632,
     kAudioQueueErr_InvalidOfflineMode   = -66626,
 };
@@ -199,6 +202,9 @@ enum {
         an output audio queue decodes buffers. A large buffer provides more reliability and
         better long-term performance at the expense of memory and decreased responsiveness
         in some situations.
+    @constant   kAudioQueueProperty_ConverterError
+        A read-only property whose value is a UInt32 indicating the most recent error (if any)
+        encountered by the queue's internal encoding/decoding process.
     @constant   kAudioQueueProperty_EnableTimePitch
         A read/write property whose value is a UInt32 describing whether there is an AUTimePitch
         inserted into the queue's audio signal chain. This property may only be set while
@@ -230,6 +236,7 @@ enum { // typedef UInt32 AudioQueuePropertyID
     kAudioQueueProperty_CurrentLevelMeterDB     = 'aqmd',       // value is array of AudioQueueLevelMeterState, 1 per channel
 
     kAudioQueueProperty_DecodeBufferSizeFrames  = 'dcbf',       // value is UInt32
+    kAudioQueueProperty_ConverterError          = 'qcve',       // value is UInt32
 
 #if !TARGET_OS_IPHONE
     kAudioQueueProperty_EnableTimePitch         = 'q_tp',       // value is UInt32, 0/1
@@ -1069,6 +1076,11 @@ AudioQueuePrime(                    AudioQueueRef           inAQ,
         asynchronously). Buffer callbacks are invoked as necessary until the queue actually
         stops. Also, a playback audio queue callback calls this function when there is no more
         audio to play.
+
+		Note that when stopping immediately, all pending buffer callbacks are normally invoked
+		during the process of stopping. But if the calling thread is responding to a buffer
+		callback, then it is possible for additional buffer callbacks to occur after
+		AudioQueueStop returns.
     @result     An OSStatus result code.
 */
 extern OSStatus
@@ -1122,6 +1134,10 @@ AudioQueueFlush(                    AudioQueueRef           inAQ)            __O
         the decoder and DSP state information is reset. Hence, a discontinuity (that is, a
         "glitch") might occur.
 
+		Note that when resetting, all pending buffer callbacks are normally invoked
+		during the process of resetting. But if the calling thread is responding to a buffer
+		callback, then it is possible for additional buffer callbacks to occur after
+		AudioQueueReset returns.
     @param      inAQ
         The audio queue to reset.
 

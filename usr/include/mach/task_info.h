@@ -69,6 +69,7 @@
 #include <mach/machine/vm_types.h>
 #include <mach/time_value.h>
 #include <mach/policy.h>
+#include <Availability.h>
 
 #include <sys/cdefs.h>
 
@@ -106,12 +107,15 @@ typedef struct task_basic_info_32       *task_basic_info_32_t;
                 (sizeof(task_basic_info_32_data_t) / sizeof(natural_t))
 
 
-#define TASK_BASIC_INFO_64      5       /* 64-bit capable basic info */
-
 struct task_basic_info_64 {
         integer_t       suspend_count;  /* suspend count for task */
+#ifdef __arm__
         mach_vm_size_t  virtual_size;   /* virtual memory size (bytes) */
         mach_vm_size_t  resident_size;  /* resident memory size (bytes) */
+#else /* __arm__ */
+        mach_vm_size_t  virtual_size;   /* virtual memory size (bytes) */
+        mach_vm_size_t  resident_size;  /* resident memory size (bytes) */
+#endif /* __arm__ */
         time_value_t    user_time;      /* total user run time for
                                            terminated threads */
         time_value_t    system_time;    /* total system run time for
@@ -120,8 +124,24 @@ struct task_basic_info_64 {
 };
 typedef struct task_basic_info_64       task_basic_info_64_data_t;
 typedef struct task_basic_info_64       *task_basic_info_64_t;
+
+#ifdef __arm__
+	#if   defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_5_0)
+	
+	#define TASK_BASIC_INFO_64      5    
+	#define TASK_BASIC_INFO_64_COUNT   \
+                (sizeof(task_basic_info_64_data_t) / sizeof(natural_t))
+	
+	#else 
+	
+	#define TASK_BASIC_INFO_64      	TASK_BASIC_INFO_64_2	
+	#define TASK_BASIC_INFO_64_COUNT  	TASK_BASIC_INFO_64_2_COUNT
+	#endif 
+#else /* __arm__ */
+#define TASK_BASIC_INFO_64      5       /* 64-bit capable basic info */
 #define TASK_BASIC_INFO_64_COUNT   \
                 (sizeof(task_basic_info_64_data_t) / sizeof(natural_t))
+#endif
 
 
 /* localized structure - cannot be safely passed between tasks of differing sizes */
@@ -195,6 +215,20 @@ typedef struct task_absolutetime_info	*task_absolutetime_info_t;
 #define TASK_ABSOLUTETIME_INFO_COUNT	((mach_msg_type_number_t) \
 		(sizeof (task_absolutetime_info_data_t) / sizeof (natural_t)))
 
+#define TASK_KERNELMEMORY_INFO	7
+
+struct task_kernelmemory_info {
+	uint64_t		total_palloc;	/* private kernel mem alloc'ed */
+	uint64_t		total_pfree;	/* private kernel mem freed */
+	uint64_t		total_salloc;	/* shared kernel mem alloc'ed */
+	uint64_t		total_sfree;	/* shared kernel mem freed */
+};
+
+typedef struct task_kernelmemory_info	task_kernelmemory_info_data_t;
+typedef struct task_kernelmemory_info	*task_kernelmemory_info_t;
+#define TASK_KERNELMEMORY_INFO_COUNT	((mach_msg_type_number_t) \
+		(sizeof (task_kernelmemory_info_data_t) / sizeof (natural_t)))
+
 #define TASK_SECURITY_TOKEN		13
 #define TASK_SECURITY_TOKEN_COUNT	((mach_msg_type_number_t) \
 		(sizeof(security_token_t) / sizeof(natural_t)))
@@ -232,6 +266,27 @@ typedef struct task_dyld_info	*task_dyld_info_t;
 #define TASK_DYLD_ALL_IMAGE_INFO_64	1	/* format value */
 
 #pragma pack()
+
+#ifdef __arm__
+
+/* Compatibility for old 32-bit mach_vm_*_t */
+#define TASK_BASIC_INFO_64_2     18       /* 64-bit capable basic info */
+
+struct task_basic_info_64_2 {
+        integer_t       suspend_count;  /* suspend count for task */
+        mach_vm_size_t  virtual_size;   /* virtual memory size (bytes) */
+        mach_vm_size_t  resident_size;  /* resident memory size (bytes) */
+        time_value_t    user_time;      /* total user run time for
+                                           terminated threads */
+        time_value_t    system_time;    /* total system run time for
+                                           terminated threads */
+	policy_t	policy;		/* default policy for new threads */
+};
+typedef struct task_basic_info_64_2       task_basic_info_64_2_data_t;
+typedef struct task_basic_info_64_2       *task_basic_info_64_2_t;
+#define TASK_BASIC_INFO_64_2_COUNT   \
+                (sizeof(task_basic_info_64_2_data_t) / sizeof(natural_t))
+#endif
 
 
 /*

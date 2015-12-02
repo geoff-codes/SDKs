@@ -56,5 +56,5 @@
 - (NSException *) exception;
 @end
 
-// Setting the SenTestObserverClass user default to the name of a subclass of SenTestObserver indicates that OCUnit should use that subclass for reporting test results rather than the default, SenTestLog.
-SENTEST_EXPORT NSString *SenTestObserverClassKey;
+// Setting the SenTestObserverClass user default to the name of a subclass of SenTestObserver indicates that OCUnit should use that subclass for reporting test results rather than the default, SenTestLog.  You can specify multiple subclasses of SenTestObserver by specifying a comma between each one, for example @"SenTestLog,SenTestDistributedNotifier".
+SENTEST_EXPORT NSString * const SenTestObserverClassKey;

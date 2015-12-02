@@ -2,7 +2,7 @@
  *	CTRunDelegate.h
  *	CoreText
  *
- *	Copyright 2006-2010 Apple Inc. All rights reserved.
+ *	Copyright 2006-2011 Apple Inc. All rights reserved.
  *
  */
 
@@ -101,8 +101,8 @@ typedef CGFloat (*CTRunDelegateGetWidthCallback) (
 				
 	@field		version
 				The version number of the callbacks being passed in as a
-				parameter to CTRunDelegateCreate. This
-				structure is version 0.
+				parameter to CTRunDelegateCreate. This field should always 
+				be set to kCTRunDelegateCurrentVersion.
 				
 	@field		dealloc
 				The callback used when a CTRunDelegate's retain count reaches
@@ -140,7 +140,7 @@ typedef struct
 
 /*!
 	@enum		Run Delegate Versions
-	@discussion Set kCTRunDelegateCurrentVersion to version field of CTRunDelegateCallbacks 
+	@discussion Set version field of CTRunDelegateCallbacks to kCTRunDelegateCurrentVersion
 				when calling CTRunDelegateCreate.
  */
 enum {

@@ -1,10 +1,8 @@
 /*	NSValueTransformer.h
-        Copyright (c) 2002-2010, Apple Inc. All rights reserved.
+        Copyright (c) 2002-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
-
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_3_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @class NSArray, NSString;
 
@@ -14,6 +12,7 @@ FOUNDATION_EXPORT NSString * const NSIsNotNilTransformerName		NS_AVAILABLE(10_3,
 FOUNDATION_EXPORT NSString * const NSUnarchiveFromDataTransformerName	NS_AVAILABLE(10_3, 3_0);
 FOUNDATION_EXPORT NSString * const NSKeyedUnarchiveFromDataTransformerName	NS_AVAILABLE(10_5, 3_0);
 
+NS_CLASS_AVAILABLE(10_3, 3_0)
 @interface NSValueTransformer : NSObject {
 }
 
@@ -32,4 +31,3 @@ FOUNDATION_EXPORT NSString * const NSKeyedUnarchiveFromDataTransformerName	NS_AV
 
 @end
 
-#endif

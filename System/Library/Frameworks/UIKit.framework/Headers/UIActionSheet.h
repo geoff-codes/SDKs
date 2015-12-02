@@ -98,6 +98,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIActionSheet : UIView {
         unsigned int dontCallDismissDelegate:1;
         unsigned int useAutomaticKB:1;
         unsigned int twoColumnsLayoutMode:7; // one column || even width (leaves empty space) || first button wider || last button wider
+        unsigned int threeColumnsLayoutMode:7; // one column || even width (leaves empty space) || first button wider || last button wider
         unsigned int shouldHandleFirstKeyUpEvent:1; // when presenting with hardware KB we have to handle the first key up event we get so we don't end up repeating the last key
         unsigned int cancelWhenDoneAnimating:1;
         unsigned int useThreePartButtons:1; // phone numbers layout

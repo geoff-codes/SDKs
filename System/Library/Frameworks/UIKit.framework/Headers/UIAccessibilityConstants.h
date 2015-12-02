@@ -2,7 +2,7 @@
 //  UIAccessibilityConstants.h
 //  UIKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -83,6 +83,15 @@ UIKIT_EXTERN UIAccessibilityTraits UIAccessibilityTraitStartsMediaSession __OSX_
  */
 UIKIT_EXTERN UIAccessibilityTraits UIAccessibilityTraitAdjustable __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0);
 
+// Used when an element allows direct touch interaction for VoiceOver users (for example, a view representing a piano keyboard).
+UIKIT_EXTERN UIAccessibilityTraits UIAccessibilityTraitAllowsDirectInteraction __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+/*
+ Informs VoiceOver that it should scroll to the next page when it finishes reading the contents of the
+ element. VoiceOver will scroll by calling accessibilityScroll: with UIAccessibilityScrollDirectionNext and will 
+ stop scrolling when it detects the content has not changed.
+ */
+UIKIT_EXTERN UIAccessibilityTraits UIAccessibilityTraitCausesPageTurn __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 /*
  Accessibility Notifications

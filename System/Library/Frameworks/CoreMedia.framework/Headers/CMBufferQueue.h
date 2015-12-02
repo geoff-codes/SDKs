@@ -3,7 +3,7 @@
 	
 	Framework:  CoreMedia
  
-    Copyright 2006-2010 Apple Inc. All rights reserved.
+    Copyright 2006-2011 Apple Inc. All rights reserved.
   
 */
 
@@ -214,6 +214,13 @@ typedef struct {
 */
 CM_EXPORT const CMBufferCallbacks *CMBufferQueueGetCallbacksForUnsortedSampleBuffers(void)
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+/*!
+	 @function	CMBufferQueueGetCallbacksForOutputPTSSortedSampleBuffers
+	 @abstract	Returns a pointer to a callback struct for CMSampleBuffers sorted by output presentation timestamp, provided as a convenience.
+ */
+CM_EXPORT const CMBufferCallbacks *CMBufferQueueGetCallbacksForSampleBuffersSortedByOutputPTS(void)
+							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_3);
 
 /*!
 	@function	CMBufferQueueCreate

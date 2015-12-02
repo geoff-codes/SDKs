@@ -17,9 +17,10 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 @interface GKMatchmakerViewController : UINavigationController {
 }
 
-@property(nonatomic, assign) id<GKMatchmakerViewControllerDelegate> matchmakerDelegate;
-@property(nonatomic, readonly, retain) GKMatchRequest *matchRequest;
-@property(nonatomic, assign, getter=isHosted) BOOL hosted;  // set to YES to receive hosted (eg. not peer-to-peer) match results. Will cause the controller to return an array of players instead of a match.
+@property(nonatomic, assign) id<GKMatchmakerViewControllerDelegate>     matchmakerDelegate;
+@property(nonatomic, readonly, retain) GKMatchRequest                   *matchRequest;
+@property(nonatomic, assign, getter=isHosted) BOOL                      hosted;  // set to YES to receive hosted (eg. not peer-to-peer) match results. Will cause the controller to return an array of players instead of a match.
+@property(nonatomic, copy) NSString                                     *defaultInvitationMessage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // default message to use when inviting friends. Can be edited by the user.
 
 // Initialize with a matchmaking request, allowing the user to send invites and/or start matchmaking
 - (id)initWithMatchRequest:(GKMatchRequest *)request;
@@ -27,8 +28,15 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 // Initialize with an accepted invite, allowing the user to see the status of other invited players and get notified when the game starts
 - (id)initWithInvite:(GKInvite *)invite;
 
-// Update the status of a server-hosted player to ready, this should be called once an invited player has connected to the app's server
-- (void)setHostedPlayerReady:(NSString *)playerID;
+// Add additional players (not currently connected) to an existing peer-to-peer match.  
+// Apps should elect a single device to do this, otherwise conflicts could arise resulting in unexpected connection errors.
+- (void)addPlayersToMatch:(GKMatch *)match __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+// Update the displayed connection status for a remote server-hosted player
+- (void)setHostedPlayer:(NSString *)playerID connected:(BOOL)connected __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+// Deprecated, use setConnected:forHostedPlayer: instead.
+- (void)setHostedPlayerReady:(NSString *)playerID __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_1,__IPHONE_5_0);
 
 @end
 
@@ -46,5 +54,8 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 
 // Players have been found for a server-hosted game, the game should start
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindPlayers:(NSArray *)playerIDs;
+
+// An invited player has accepted a hosted invite.  Apps should connect through the hosting server and then update the player's connected state (using setConnected:forHostedPlayer:)
+- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didReceiveAcceptFromHostedPlayer:(NSString *)playerID __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 @end
 

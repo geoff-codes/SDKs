@@ -71,6 +71,10 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMusicPlayerController : NSObject {
 // Setting the nowPlayingItem to an item in the current queue will begin playback at that item.
 @property(nonatomic, copy) MPMediaItem *nowPlayingItem;
 
+// Returns the index of the now playing item in the current playback queue.
+// May return NSNotFound if the index is not valid (e.g. an empty queue or an infinite playlist).
+@property(nonatomic, readonly) NSUInteger indexOfNowPlayingItem NS_AVAILABLE_IPHONE(5_0);
+
 // Call -play to begin playback after setting an item queue source. Setting a query will implicitly use MPMediaGroupingTitle.
 - (void)setQueueWithQuery:(MPMediaQuery *)query;
 - (void)setQueueWithItemCollection:(MPMediaItemCollection *)itemCollection;

@@ -1,5 +1,5 @@
 /* CoreGraphics - CGBase.h
-   Copyright (c) 2000-2009 Apple Inc.
+   Copyright (c) 2000-2011 Apple Inc.
    All rights reserved. */
 
 #ifndef CGBASE_H_
@@ -9,84 +9,186 @@
 #include <stddef.h>
 #include <float.h>
 
+/* Definition of `__CG_HAS_COMPILER_ATTRIBUTE'. */
+
+#if !defined(__CG_HAS_COMPILER_ATTRIBUTE)
+# if defined(__has_attribute)
+#  define __CG_HAS_COMPILER_ATTRIBUTE(attribute) __has_attribute(attribute)
+# elif defined(__GNUC__) && __GNUC__ >= 4
+#  define __CG_HAS_COMPILER_ATTRIBUTE(attribute) (1)
+# else
+#  define __CG_HAS_COMPILER_ATTRIBUTE(attribute) (0)
+# endif
+#endif
+
+/* Definition of `__CG_HAS_COMPILER_FEATURE'. */
+
+#if !defined(__CG_HAS_COMPILER_FEATURE)
+# if defined(__has_feature)
+#  define __CG_HAS_COMPILER_FEATURE(feature) __has_feature(feature)
+# else
+#  define __CG_HAS_COMPILER_FEATURE(feature) (0)
+# endif
+#endif
+
+/* Definition of `__CG_HAS_COMPILER_EXTENSION'. */
+
+#if !defined(__CG_HAS_COMPILER_EXTENSION)
+# if defined(__has_extension)
+#  define __CG_HAS_COMPILER_EXTENSION(extension) __has_extension(extension)
+# else
+#  define __CG_HAS_COMPILER_EXTENSION(extension)			      \
+     __CG_HAS_COMPILER_FEATURE(extension)
+# endif
+#endif
+
+/* Define `__WIN32__' where appropriate if it's not already defined. */
+
 # if defined(_WIN32) || defined(__CYGWIN32__)
 #  define __WIN32__ 1
 # endif
 
-#if defined(CG_BUILDING_CG)
-# define CG_AVAILABLE_STARTING(_mac,_iphone)
-# define CG_AVAILABLE_BUT_DEPRECATED(_mac,_macDep,_iphone,_iphoneDep)
-#else /* !defined(CG_BUILDING_CG) */
-# include <Availability.h>
-# define CG_AVAILABLE_STARTING __OSX_AVAILABLE_STARTING
-# define CG_AVAILABLE_BUT_DEPRECATED __OSX_AVAILABLE_BUT_DEPRECATED
-#endif /* !defined(CG_BUILDING_CG) */
+/* Definition of `CG_EXTERN'. */
 
 #if !defined(CG_EXTERN)
 #  if defined(__cplusplus)
 #   define CG_EXTERN extern "C"
-#  else /* !defined(__cplusplus) */
+#  else
 #   define CG_EXTERN extern
-#  endif /* !defined(__cplusplus) */
+#  endif
 #endif /* !defined(CG_EXTERN) */
 
+/* Definition of `CG_LOCAL'. */
+
 #if !defined(CG_LOCAL)
-# if defined(__GNUC__)
+# if __CG_HAS_COMPILER_ATTRIBUTE(visibility)
 #  define CG_LOCAL extern __attribute__((visibility("hidden")))
-# else /* !defined(__GNUC__) */
+# else
 #  define CG_LOCAL CG_EXTERN
-# endif /* !defined(__GNUC__) */
+# endif
 #endif /* !defined(CG_LOCAL) */
 
-#if !defined(CG_PRIVATE_EXTERN)
-# define CG_PRIVATE_EXTERN CG_LOCAL
+/* Definition of `__CG_DEPRECATED'. */
+
+#if !defined(__CG_DEPRECATED)
+# if __CG_HAS_COMPILER_ATTRIBUTE(deprecated) && !defined(CG_BUILDING_CG)
+#  define __CG_DEPRECATED __attribute__((deprecated))
+# else
+#  define __CG_DEPRECATED
+# endif
 #endif
 
-#if !defined(CG_OBSOLETE)
-# if defined(CG_BUILDING_CG)
-#  define CG_OBSOLETE
-# else /* !defined(CG_BUILDING_CG) */
-#  if defined(__GNUC__)
-#   if (__GNUC__ == 3 && __GNUC_MINOR__ >= 1) || __GNUC__ >= 4
-#    define CG_OBSOLETE __attribute__((deprecated))
-#   else
-#    define CG_OBSOLETE
-#   endif
-#  else /* !defined(__GNUC__) */
-#   define CG_OBSOLETE
-#  endif /* !defined(__GNUC__) */
-# endif /* !defined(CG_BUILDING_CG) */
-#endif /* !defined(CG_OBSOLETE) */
+/* Definition of `__CG_DEPRECATED_WITH_MSG'. */
+
+#if !defined(__CG_DEPRECATED_WITH_MSG)
+# if __CG_HAS_COMPILER_ATTRIBUTE(deprecated)				      \
+    && __CG_HAS_COMPILER_EXTENSION(attribute_deprecated_with_message)	      \
+    && !defined(CG_BUILDING_CG)
+#  define __CG_DEPRECATED_WITH_MSG(msg) __attribute__((deprecated(msg)))
+# else
+#  define __CG_DEPRECATED_WITH_MSG(msg) __CG_DEPRECATED
+# endif
+#endif
+
+/* Definition of `__CG_DEPRECATED_ENUMERATOR'. */
+
+#if !defined(__CG_DEPRECATED_ENUMERATOR)
+# if __CG_HAS_COMPILER_ATTRIBUTE(deprecated)				      \
+   && __CG_HAS_COMPILER_EXTENSION(enumerator_attributes)		      \
+   && !defined(CG_BUILDING_CG)
+#  define __CG_DEPRECATED_ENUMERATOR __attribute__((deprecated))
+# else
+#  define __CG_DEPRECATED_ENUMERATOR
+# endif
+#endif
+
+/* Define `CG_AVAILABLE_STARTING' and `CG_AVAILABLE_BUT_DEPRECATED'. */
+
+#if defined(CG_BUILDING_CG)
+# define CG_AVAILABLE_STARTING(_mac, _iphone)
+# define CG_AVAILABLE_BUT_DEPRECATED(_mac, _macDep, _iphone, _iphoneDep)
+#else
+# include <Availability.h>
+# define CG_AVAILABLE_STARTING __OSX_AVAILABLE_STARTING
+# define CG_AVAILABLE_BUT_DEPRECATED __OSX_AVAILABLE_BUT_DEPRECATED
+#endif
+
+/* Definition of `CG_INLINE'. */
 
 #if !defined(CG_INLINE)
 # if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #  define CG_INLINE static inline
-# elif defined(__MWERKS__) || defined(__cplusplus)
+# elif defined(__cplusplus)
 #  define CG_INLINE static inline
 # elif defined(__GNUC__)
 #  define CG_INLINE static __inline__
 # else
 #  define CG_INLINE static    
 # endif
-#endif /* !defined(CG_INLINE) */
-
-#if !(defined(__GNUC__) || (defined(__MWERKS__) && !defined(__WIN32__)))
-# define __attribute__(attribute)
 #endif
+
+/* Definition of `__CG_NO_INLINE'. */
+
+#if !defined(__CG_NO_INLINE)
+# if __CG_HAS_COMPILER_ATTRIBUTE(noinline)
+#  define __CG_NO_INLINE static __attribute__((noinline))
+# else
+#  define __CG_NO_INLINE static
+# endif
+#endif
+
+/* Definition of `__CG_FORMAT_PRINTF'. */
+
+#if !defined(__CG_FORMAT_PRINTF)
+# if __CG_HAS_COMPILER_ATTRIBUTE(format)
+#  define __CG_FORMAT_PRINTF(FORMAT_STRING, STARTING_ARG)		      \
+     __attribute__((format(printf, FORMAT_STRING, STARTING_ARG)))
+# else
+#  define __CG_FORMAT_PRINTF(FORMAT_STRING, STARTING_ARG)
+# endif
+#endif
+
+/* Definition of `__CG_FORMAT_VPRINTF'. */
+
+#if !defined(__CG_FORMAT_VPRINTF)
+# if __CG_HAS_COMPILER_ATTRIBUTE(format)
+#  define __CG_FORMAT_VPRINTF(FORMAT_STRING)				      \
+     __attribute__((format(printf, FORMAT_STRING, 0)))
+# else
+#  define __CG_FORMAT_VPRINTF(FORMAT_STRING)
+# endif
+#endif
+
+/* Definition of `CGFLOAT_TYPE', `CGFLOAT_IS_DOUBLE', `CGFLOAT_MIN', and
+   `CGFLOAT_MAX'. */
 
 #if defined(__LP64__) && __LP64__
 # define CGFLOAT_TYPE double
 # define CGFLOAT_IS_DOUBLE 1
 # define CGFLOAT_MIN DBL_MIN
 # define CGFLOAT_MAX DBL_MAX
-#else /* !defined(__LP64__) || !__LP64__ */
+#else
 # define CGFLOAT_TYPE float
 # define CGFLOAT_IS_DOUBLE 0
 # define CGFLOAT_MIN FLT_MIN
 # define CGFLOAT_MAX FLT_MAX
-#endif /* !defined(__LP64__) || !__LP64__ */
+#endif
+
+/* Definition of the `CGFloat' type and `CGFLOAT_DEFINED'. */
 
 typedef CGFLOAT_TYPE CGFloat;
 #define CGFLOAT_DEFINED 1
+
+/* Definition of `CG_OBSOLETE'. */
+
+#if !defined(CG_OBSOLETE)
+# define CG_OBSOLETE __CG_DEPRECATED
+#endif
+
+/* Definition of `CG_PRIVATE_EXTERN'. */
+
+#if !defined(CG_PRIVATE_EXTERN)
+# define CG_PRIVATE_EXTERN CG_LOCAL
+#endif
 
 #endif /* CGBASE_H_ */

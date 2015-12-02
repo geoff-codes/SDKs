@@ -300,16 +300,15 @@ enum {
 					SoundFont formats. It fully supports GM-MIDI and the basic extensions of 
 					GS-MIDI
 	@constant		kAudioUnitSubType_Sampler			
-						- desktop only
 					A mono-timbral music device which is a sampler synthesizer and supports full 
 					interactive editing of all state.
 */
-#if !TARGET_OS_IPHONE
 enum {
+#if !TARGET_OS_IPHONE
 	kAudioUnitSubType_DLSSynth				= 'dls ',
+#endif
 	kAudioUnitSubType_Sampler				= 'samp'
 };
-#endif
 
 /*!
 	@enum			Apple converter audio unit sub types 
@@ -329,7 +328,6 @@ enum {
 					process audio files.
 					
 	@constant		kAudioUnitSubType_Varispeed
-						- desktop only
 					An audio unit that can be used to control playback rate (as the rate is faster, 
 					the pitch is higher). It provides a generic view, so can be used in both a UI 
 					and programmatic context. It also comes in an Offline version so can be used 
@@ -367,12 +365,14 @@ enum{
 #if !TARGET_OS_IPHONE
 	kAudioUnitSubType_NewTimePitch			= 'nutp',
 	kAudioUnitSubType_TimePitch				= 'tmpt',
-	kAudioUnitSubType_Varispeed				= 'vari',
 	kAudioUnitSubType_DeferredRenderer		= 'defr',
 	kAudioUnitSubType_Splitter				= 'splt',
-	kAudioUnitSubType_Merger				= 'merg'
+	kAudioUnitSubType_Merger				= 'merg',
+	kAudioUnitSubType_RoundTripAAC			= 'raac'
 #else
-	kAudioUnitSubType_AUiPodTime			= 'iptm'
+	kAudioUnitSubType_Varispeed				= 'vari',
+	kAudioUnitSubType_AUiPodTime			= 'iptm',
+	kAudioUnitSubType_AUiPodTimeOther		= 'ipto'
 #endif
 };
 
@@ -385,27 +385,21 @@ enum{
 					A delay audio unit
 					
 	@constant		kAudioUnitSubType_LowPassFilter			
-						- desktop only
 					A filter that passes frequencies below a specified cut-off frequency
 					
 	@constant		kAudioUnitSubType_HighPassFilter		
-						- desktop only
 					A filter that passes frequencies above a specified cut-off frequency
 					
 	@constant		kAudioUnitSubType_BandPassFilter		
-						- desktop only
 					A filter that passes frequencies between a low and high cut-off frequency.
 					
 	@constant		kAudioUnitSubType_HighShelfFilter		
-						- desktop only
 					A filter that can be used to implement a "treble" control
 					
 	@constant		kAudioUnitSubType_LowShelfFilter		
-						- desktop only
 					A filter that can be used to implement a "bass" control
 
 	@constant		kAudioUnitSubType_ParametricEQ			
-						- desktop only
 					A parametric EQ filter
 					
 	@constant		kAudioUnitSubType_GraphicEQ				
@@ -413,11 +407,9 @@ enum{
 					A 10 or 31 band Graphic EQ
 					
 	@constant		kAudioUnitSubType_PeakLimiter			
-						- desktop only
 					A peak limiter
 					
 	@constant		kAudioUnitSubType_DynamicsProcessor		
-						- desktop only
 					A dynamics compressor/expander
 					
 	@constant		kAudioUnitSubType_MultiBandCompressor	
@@ -447,7 +439,6 @@ enum{
 					across the network (or between different applications)
 					
 	@constant		kAudioUnitSubType_Distortion			
-						- desktop only
 					A distortion audio unit 
 					
 	@constant		kAudioUnitSubType_RogerBeep				
@@ -457,30 +448,40 @@ enum{
 					
 	@constant		kAudioUnitSubType_AUiPodEQ				
 						- iPhone only
-					A graphic EQ
+					A simple graphic EQ with common presets
+	
+	@constant		kAudioUnitSubType_NBandEQ
+						- iPhone only
+					A generalized N-band graphic EQ with specifiable filter types per-band
+	
+	@constant		kAudioUnitSubType_Reverb2
+						- iPhone only
+					A reverb for iOS
 */
 enum {
-#if !TARGET_OS_IPHONE
-	kAudioUnitSubType_Delay					= 'dely',
+	kAudioUnitSubType_PeakLimiter			= 'lmtr',
+	kAudioUnitSubType_DynamicsProcessor		= 'dcmp',
 	kAudioUnitSubType_LowPassFilter			= 'lpas',
 	kAudioUnitSubType_HighPassFilter		= 'hpas',
 	kAudioUnitSubType_BandPassFilter		= 'bpas',
 	kAudioUnitSubType_HighShelfFilter		= 'hshf',
 	kAudioUnitSubType_LowShelfFilter		= 'lshf',
 	kAudioUnitSubType_ParametricEQ			= 'pmeq',
+	kAudioUnitSubType_Distortion			= 'dist',
+#if !TARGET_OS_IPHONE
+	kAudioUnitSubType_Delay					= 'dely',
 	kAudioUnitSubType_GraphicEQ				= 'greq',
-	kAudioUnitSubType_PeakLimiter			= 'lmtr',
-	kAudioUnitSubType_DynamicsProcessor		= 'dcmp',
 	kAudioUnitSubType_MultiBandCompressor	= 'mcmp',
 	kAudioUnitSubType_MatrixReverb			= 'mrev',
 	kAudioUnitSubType_SampleDelay			= 'sdly',
 	kAudioUnitSubType_Pitch					= 'tmpt',
 	kAudioUnitSubType_AUFilter				= 'filt',
 	kAudioUnitSubType_NetSend				= 'nsnd',
-	kAudioUnitSubType_Distortion			= 'dist',
-	kAudioUnitSubType_RogerBeep				= 'rogr'
+	kAudioUnitSubType_RogerBeep				= 'rogr',
 #else
+	kAudioUnitSubType_Reverb2				= 'rvb2',
 	kAudioUnitSubType_AUiPodEQ				= 'ipeq',
+	kAudioUnitSubType_NBandEQ				= 'nbeq'
 #endif
 };
 
@@ -565,13 +566,11 @@ enum {
 	@discussion		These are the subtypes for the various generator units that apple ships
 
 	@constant		kAudioUnitSubType_ScheduledSoundPlayer
-						- desktop only
 					A generator unit that can be used to schedule slices of audio to be played at 
 					a specified time. The audio is scheduled using the time stamps for the render 
 					operation, and can be scheduled from any thread.
 					
 	@constant		kAudioUnitSubType_AudioFilePlayer
-						- desktop only
 					A generator unit that is used to play a file. It presents a custom UI so can 
 					be used in a UI context as well
 					
@@ -580,13 +579,13 @@ enum {
 					A generator unit that is paired with _NetSend to receive the audio that unit 
 					sends. It presents a custom UI so can be used in a UI context as well
 */
-#if !TARGET_OS_IPHONE
 enum {
-	kAudioUnitSubType_ScheduledSoundPlayer	= 'sspl',
-	kAudioUnitSubType_AudioFilePlayer		= 'afpl',
-	kAudioUnitSubType_NetReceive			= 'nrcv'
-};
+#if !TARGET_OS_IPHONE
+	kAudioUnitSubType_NetReceive			= 'nrcv',
 #endif
+	kAudioUnitSubType_ScheduledSoundPlayer	= 'sspl',
+	kAudioUnitSubType_AudioFilePlayer		= 'afpl'
+};
 
 
 //================================================================================================
@@ -1424,6 +1423,7 @@ AudioUnitReset(						AudioUnit			inUnit,
 	@constant		kAudioUnitResetSelect
 	@constant		kAudioUnitComplexRenderSelect
 	@constant		kAudioUnitProcessSelect
+	@constant		kAudioUnitProcessMultipleSelect
 */
 enum
 {
@@ -1444,7 +1444,8 @@ enum
 	kAudioUnitRenderSelect					= 0x000E,
 	kAudioUnitResetSelect					= 0x0009,
 	kAudioUnitComplexRenderSelect			= 0x0013,
-	kAudioUnitProcessSelect					= 0x0014
+	kAudioUnitProcessSelect					= 0x0014,
+	kAudioUnitProcessMultipleSelect			= 0x0015
 };
 
 //================================================================================================
@@ -1475,6 +1476,10 @@ typedef OSStatus
 
 typedef OSStatus	
 (*AudioUnitRemovePropertyListenerProc) (void *self, AudioUnitPropertyID prop, 
+									AudioUnitPropertyListenerProc proc);
+
+typedef OSStatus	
+(*AudioUnitRemovePropertyListenerWithUserDataProc) (void *self, AudioUnitPropertyID prop, 
 									AudioUnitPropertyListenerProc proc, void *userData);
 
 typedef OSStatus	
@@ -1499,15 +1504,16 @@ typedef OSStatus
 (*AudioUnitProcessProc) (void *self, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, 
 									UInt32 inNumberFrames, AudioBufferList *ioData);
 
-
+typedef OSStatus	
+(*AudioUnitProcessMultipleProc) (void *self, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, 
+									UInt32 inNumberFrames, UInt32 inNumberInputBufferLists, const AudioBufferList **inInputBufferLists,
+									UInt32 inNumberOutputBufferLists, AudioBufferList **ioOutputBufferLists);
 
 
 /*!
 	@typedef		AudioUnitGetParameterProc
-	@discussion		This proc can be exported through the FastDispatch property. A host can
-					then retrieve this Proc using that property and thus make a direct
-					call into your audio unit bypassing the component dispatch glue which
-					can add considerable overhead and is desirable to avoid.
+	@discussion		This proc can be exported through the FastDispatch property or is used as the prototype for
+					an audio component dispatch for this selector. 
 					
 					The arguments are the same as are provided to the corresponding API call
 	
@@ -1528,10 +1534,8 @@ typedef OSStatus
 								
 /*!
 	@typedef		AudioUnitSetParameterProc
-	@discussion		This proc can be exported through the FastDispatch property. A host can
-					then retrieve this Proc using that property and thus make a direct
-					call into your audio unit bypassing the component dispatch glue which
-					can add considerable overhead and is desirable to avoid.
+	@discussion		This proc can be exported through the FastDispatch property or is used as the prototype for
+					an audio component dispatch for this selector. 
 					
 					The arguments are the same as are provided to the corresponding API call
 	
@@ -1554,10 +1558,8 @@ typedef OSStatus
 								
 /*!
 	@typedef		AudioUnitRenderProc
-	@discussion		This proc can be exported through the FastDispatch property. A host can
-					then retrieve this Proc using that property and thus make a direct
-					call into your audio unit bypassing the component dispatch glue which
-					can add considerable overhead and is desirable to avoid.
+	@discussion		This proc can be exported through the FastDispatch property or is used as the prototype for
+					an audio component dispatch for this selector. 
 					
 					The arguments are the same as are provided to the corresponding API call
 	

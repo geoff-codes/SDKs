@@ -1,15 +1,11 @@
 /*
     NSPersistentStore.h
     Core Data
-    Copyright (c) 2004-2009 Apple Inc.
+    Copyright (c) 2004-2010 Apple Inc.
     All rights reserved.
 */
 
-#import <Availability.h>
-
-#import <Foundation/NSObject.h>
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 || __IPHONE_3_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
+#import <Foundation/Foundation.h>
 
 @class NSPersistentStoreCoordinator;
 
@@ -29,18 +25,22 @@ NS_CLASS_AVAILABLE(10_5, 3_0)
         unsigned int _RESERVED:29;
     } _flags;
 	void *_temporaryIDClass;
-	void *_reserved2;
+	id _externalRecordsMonitor;
 	void *_reserved3;
 }
 
-// gets the metadata from the persistent store of this object store class at the given URL
-
+/* Get metadata from the persistent store at url. Must be overriden by subclasses.
+   Subclasses should validate that the URL is the type of URL they are expecting, and 
+   should verify that the file contents are appropriate for the store type before
+   attempting to read from it. This method should never raise an exception.
+ */
 + (NSDictionary *)metadataForPersistentStoreWithURL:(NSURL *)url error:(NSError **)error;    
+/* Set the medatada of the store at url to metadata. Must be overriden by subclasses. */
 + (BOOL)setMetadata:(NSDictionary *)metadata forPersistentStoreWithURL:(NSURL*)url error:(NSError **)error;
 
 /* Returns the NSMigrationManager class optimized for this store class.  Subclasses of NSPersistentStore can override this to provide a custom migration manager subclass (eg to take advantage of store-specific functionality to improve migration performance).
  */
-+ (Class)migrationManagerClass __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_3_0);
++ (Class)migrationManagerClass NS_AVAILABLE(10_6, 3_0);
 
 /* the designated initializer for object stores. */
 - (id)initWithPersistentStoreCoordinator:(NSPersistentStoreCoordinator *)root configurationName:(NSString *)name URL:(NSURL *)url options:(NSDictionary *)options ;
@@ -78,4 +78,3 @@ NS_CLASS_AVAILABLE(10_5, 3_0)
 
 @end
 
-#endif

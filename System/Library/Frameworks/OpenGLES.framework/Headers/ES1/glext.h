@@ -51,6 +51,8 @@ extern "C" {
 #define GL_APPLE_texture_format_BGRA8888                        1
 #define GL_APPLE_texture_max_level                              1
 #define GL_EXT_blend_minmax                                     1
+#define GL_EXT_debug_label                                      1
+#define GL_EXT_debug_marker                                     1
 #define GL_EXT_discard_framebuffer                              1
 #define GL_EXT_read_format_bgra                                 1
 #define GL_EXT_texture_filter_anisotropic                       1
@@ -61,6 +63,7 @@ extern "C" {
 #define GL_OES_blend_func_separate                              1
 #define GL_OES_blend_subtract                                   1
 #define GL_OES_depth24                                          1
+#define GL_OES_element_index_uint                               1
 #define GL_OES_fbo_render_mipmap                                1
 #define GL_OES_framebuffer_object                               1
 #define GL_OES_mapbuffer                                        1
@@ -103,6 +106,11 @@ extern "C" {
 #if GL_EXT_blend_minmax
 #define GL_MIN_EXT                                              0x8007
 #define GL_MAX_EXT                                              0x8008
+#endif
+
+#if GL_EXT_debug_label
+#define GL_BUFFER_OBJECT_EXT                                    0x9151
+#define GL_VERTEX_ARRAY_OBJECT_EXT                              0x9154
 #endif
 
 #if GL_EXT_discard_framebuffer
@@ -243,6 +251,10 @@ extern "C" {
 #define GL_VERTEX_ARRAY_BINDING_OES                             0x85B5
 #endif
 
+#if GL_OES_element_index_uint
+#define GL_UNSIGNED_INT_OES                                     0x1405
+#endif
+
 /**************************************************************************/
 
 /*------------------------------------------------------------------------*
@@ -256,6 +268,17 @@ GL_API GLvoid glResolveMultisampleFramebufferAPPLE(void)  __OSX_AVAILABLE_STARTI
 /*------------------------------------------------------------------------*
  * EXT extension functions
  *------------------------------------------------------------------------*/
+#if GL_EXT_debug_label
+GL_API GLvoid glLabelObjectEXT(GLenum type, GLuint object, GLsizei length, const char *label)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glGetObjectLabelEXT(GLenum type, GLuint object, GLsizei bufSize, GLsizei *length, char *label)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+#endif
+
+#if GL_EXT_debug_marker
+GL_API GLvoid glInsertEventMarkerEXT(GLsizei length, const char *marker)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glPushGroupMarkerEXT(GLsizei length, const char *marker)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLvoid glPopGroupMarkerEXT(void)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+#endif
+
 #if GL_EXT_discard_framebuffer
 GL_API GLvoid GL_APIENTRY glDiscardFramebufferEXT(GLenum target, GLsizei numAttachments, const GLenum *attachments)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 #endif

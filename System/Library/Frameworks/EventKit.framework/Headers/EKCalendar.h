@@ -5,82 +5,57 @@
 //  Copyright 2009-2010 Apple Inc. All rights reserved.
 //
 
+#import <EventKit/EventKitDefines.h>
+#import <EventKit/EKObject.h>
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
+#import <EventKit/EKTypes.h>
 
-/*!
-    @enum       EKCalendarType
-    @abstract   An enum representing the type of a calendar.
- 
-    @constant   EKCalendarTypeLocal        This calendar is sync'd from either Mobile Me or tethered.
-    @constant   EKCalendarTypeCalDAV       This calendar is from a CalDAV server.
-    @constant   EKCalendarTypeExchange     This calendar comes from an Exchange server.
-    @constant   EKCalendarTypeSubscription This is a subscribed calendar.
-    @constant   EKCalendarTypeBirthday     This is the built-in birthday calendar.
-*/
-
-typedef enum {
-    EKCalendarTypeLocal,
-    EKCalendarTypeCalDAV,
-    EKCalendarTypeExchange,
-    EKCalendarTypeSubscription,
-    EKCalendarTypeBirthday,
-} EKCalendarType;
-
-// Event availability support (free/busy)
-enum {
-    EKCalendarEventAvailabilityNone         = 0,    // calendar doesn't support event availability
-    
-    EKCalendarEventAvailabilityBusy         = (1 << 0),
-    EKCalendarEventAvailabilityFree         = (1 << 1),
-    EKCalendarEventAvailabilityTentative    = (1 << 2),
-    EKCalendarEventAvailabilityUnavailable  = (1 << 3),
-};
-typedef NSUInteger EKCalendarEventAvailabilityMask;
-
-@class EKEventStore;
+@class EKEventStore, EKSource;
 
 /*!
     @class       EKCalendar
     @abstract    The EKCalendar class represents a calendar for events.
-    @discussion  The EKCalendar class represents a calendar for events. In this release,
-                 calendars are immutable. You can inspect them, but you cannot alter them,
-                 nor can you add or delete calendars from the calendar store.
 */
 
-NS_CLASS_AVAILABLE(NA, 4_0)
-@interface EKCalendar : NSObject {
-@private
-    EKEventStore       *_store;
-    void               *_record;
-    NSNumber           *_calendarId;
-    id                  _source;
+EVENTKIT_CLASS_AVAILABLE(4_0)
+@interface EKCalendar : EKObject
 
-    NSString           *_title;
-    CGColorRef          _color;
-    EKCalendarType      _type;
-    BOOL                _editable;
-    int                 _maxAlarms;
-    int                 _maxRecurrences;
-    UInt32              _constraints;
-    BOOL                _isMain;
-    
-    UInt32              _loadFlags;
-    UInt32              _dirtyFlags;
-    int                 _order;
-}
+// Create a new calendar in the specified event store.
++ (EKCalendar*)calendarWithEventStore:(EKEventStore *)eventStore;
+
+/*!
+    @property   source
+    @abstract   The source representing the 'account' this calendar belongs to.
+                This is only settable when initially creating a calendar and then
+                effectively read-only after that in iOS 5.0. That is, you can create
+                a calendar, but you cannot move it to another source.
+*/
+@property(nonatomic, retain) EKSource        *source;
+
+/*!
+    @property   calendarIdentifier
+    @abstract   A unique identifier for the calendar. It is not sync-proof in that a full
+                sync will lose this identifier, so you should always have a back up plan for dealing
+                with a calendar that is no longer fetchable by this property, e.g. by title, type, color, etc.
+                Use [EKEventStore calendarWithIdentifier:] to look up the calendar by this value.
+*/
+@property(nonatomic, readonly) NSString         *calendarIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 /*!
     @property   title
     @abstract   The title of the calendar.
 */
-@property(nonatomic, readonly)     NSString          *title;
+@property(nonatomic, copy)     NSString          *title;
 
 /*!
     @property   type
-    @abstract   The type of the calendar as a EKCalendarType.
+    @abstract   The type of the calendar as a EKCalendarType. This is actually based on
+                what source the calendar is in, as well as whether it is a subscribed
+                calendar.
 */
 @property(nonatomic, readonly)     EKCalendarType     type;
+
 
 /*!
     @property   allowsContentModifications
@@ -88,11 +63,26 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 */
 @property(nonatomic, readonly) BOOL allowsContentModifications;
 
+
+/*!
+    @property   subscribed
+    @abstract   YES if this calendar is a subscribed calendar.
+*/
+@property(nonatomic, readonly, getter=isSubscribed) BOOL subscribed __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+/*!
+    @property   immutable
+    @abstract   If this is set to YES, it means you cannot modify any attributes of
+                the calendar or delete it. It does NOT imply that you cannot add events
+                to the calendar.
+*/
+@property(nonatomic, readonly, getter=isImmutable) BOOL immutable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
 /*!
     @property   color
     @abstract   Returns the calendar color as a CGColorRef.
 */
-@property(nonatomic, readonly) CGColorRef      CGColor;
+@property(nonatomic) CGColorRef      CGColor;
 
 /*!
     @property   supportedEventAvailabilities

@@ -2,15 +2,16 @@
 //  MKAnnotationView.h
 //  MapKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MKFoundation.h>
 
 // Post this notification to re-query callout information.
-UIKIT_EXTERN NSString *MKAnnotationCalloutInfoDidChangeNotification;
+MK_EXTERN NSString * const MKAnnotationCalloutInfoDidChangeNotification;
 
-#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+#if (__IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED)
 
 enum {
     MKAnnotationViewDragStateNone = 0,      // View is at rest, sitting on the map.
@@ -22,12 +23,12 @@ enum {
 
 typedef NSUInteger MKAnnotationViewDragState;
 
-#endif // #if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+#endif // #if (__IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED)
 
 @class MKAnnotationViewInternal;
 @protocol MKAnnotation;
 
-NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
+MK_CLASS_AVAILABLE(NA, 3_0)
 @interface MKAnnotationView : UIView
 {
 @private
@@ -46,10 +47,10 @@ NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 @property (nonatomic, retain) UIImage *image;
 
 // By default, the center of annotation view is placed over the coordinate of the annotation.
-// centerOffset is the offset in pixels from the center of the annotion view.
+// centerOffset is the offset in screen points from the center of the annotion view.
 @property (nonatomic) CGPoint centerOffset;
 
-// calloutOffset is the offset in pixels from the top-middle of the annotation view, where the anchor of the callout should be shown.
+// calloutOffset is the offset in screen points from the top-middle of the annotation view, where the anchor of the callout should be shown.
 @property (nonatomic) CGPoint calloutOffset;
 
 // Defaults to YES. If NO, ignores touch events and subclasses may draw differently.
@@ -74,14 +75,14 @@ NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
 
 // If YES and the underlying id<MKAnnotation> responds to setCoordinate:, 
 // the user will be able to drag this annotation view around the map.
-@property (nonatomic, getter=isDraggable) BOOL draggable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (nonatomic, getter=isDraggable) BOOL draggable NS_AVAILABLE(NA, 4_0);
 
 // Automatically set to MKAnnotationViewDragStateStarting, Canceling, and Ending when necessary.
 // Implementer is responsible for transitioning to Dragging and None states as appropriate.
-@property (nonatomic) MKAnnotationViewDragState dragState __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (nonatomic) MKAnnotationViewDragState dragState NS_AVAILABLE(NA, 4_0);
 
 // Developers targeting iOS 4.2 and after must use setDragState:animated: instead of setDragState:.
-- (void)setDragState:(MKAnnotationViewDragState)newDragState animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2);
+- (void)setDragState:(MKAnnotationViewDragState)newDragState animated:(BOOL)animated NS_AVAILABLE(NA, 4_2);
 
 
 @end

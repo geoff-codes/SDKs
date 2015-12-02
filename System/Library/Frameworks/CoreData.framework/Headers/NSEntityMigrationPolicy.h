@@ -1,7 +1,7 @@
 /*
     NSEntityMigrationPolicy.h
     Core Data
-    Copyright (c) 2004-2009 Apple Inc.
+    Copyright (c) 2004-2010 Apple Inc.
     All rights reserved.
 */
 
@@ -10,8 +10,6 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSError.h>
 #import <Foundation/NSArray.h>
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 || __IPHONE_3_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <CoreData/CoreDataDefines.h>
 
@@ -23,18 +21,18 @@
  NSMigrationPropertyMappingKey   $propertyMapping
  NSMigrationEntityPolicyKey      $entityPolicy
 */
-COREDATA_EXTERN NSString * const NSMigrationManagerKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
-COREDATA_EXTERN NSString * const NSMigrationSourceObjectKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
-COREDATA_EXTERN NSString * const NSMigrationDestinationObjectKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
-COREDATA_EXTERN NSString * const NSMigrationEntityMappingKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
-COREDATA_EXTERN NSString * const NSMigrationPropertyMappingKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
-COREDATA_EXTERN NSString * const NSMigrationEntityPolicyKey __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
+COREDATA_EXTERN NSString * const NSMigrationManagerKey NS_AVAILABLE(10_5,3_0);
+COREDATA_EXTERN NSString * const NSMigrationSourceObjectKey NS_AVAILABLE(10_5,3_0);
+COREDATA_EXTERN NSString * const NSMigrationDestinationObjectKey NS_AVAILABLE(10_5,3_0);
+COREDATA_EXTERN NSString * const NSMigrationEntityMappingKey NS_AVAILABLE(10_5,3_0);
+COREDATA_EXTERN NSString * const NSMigrationPropertyMappingKey NS_AVAILABLE(10_5,3_0);
+COREDATA_EXTERN NSString * const NSMigrationEntityPolicyKey NS_AVAILABLE(10_5,3_0);
 
 @class NSManagedObject;
 @class NSEntityMapping;
 @class NSMigrationManager;
 
-NS_CLASS_AVAILABLE(10_5, 3_0)
+NS_CLASS_AVAILABLE(10_5,3_0)
 @interface NSEntityMigrationPolicy : NSObject
 
 
@@ -76,4 +74,3 @@ associate the source and destination instances as required if super is not calle
 
 @end
 
-#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 */

@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 
 */
 
@@ -32,15 +32,16 @@
 				+exportPresetsCompatibleWithAsset: to obtain a list of presets that are compatible
 				with a specific AVAsset.
 
-				After you have initialized an AVAssetExportSession with the AVAsset that contains
-				the source media, the export preset name, and the output file type (a UTI string
-				from among those defined in AVMediaFormat.h), you can start the export running by
-				invoking -exportAsynchronouslyWithCompletionHandler:. This method returns
-				immediately; the export is performed asynchronously. Invoke the -progress method to
-				check on the progress. Note that in some cases, depending on the capabilities of the
-				device, when multiple exports are attempted at the same time some may be queued
-				until others have been completed. When this happens, the status of a queued export
-				will indicate that it's "waiting".
+				To configure an export, initialize an AVAssetExportSession with an AVAsset that contains
+				the source media, an AVAssetExportPreset, the output file type, (a UTI string from 
+				those defined in AVMediaFormat.h) and the output URL.
+
+				After configuration is complete, invoke exportAsynchronouslyWithCompletionHandler: 
+				to start the export process. This method returns immediately; the export is performed 
+				asynchronously. Invoke the -progress method to check on the progress. Note that in 
+				some cases, depending on the capabilities of the device, when multiple exports are 
+				attempted at the same time some may be queued until others have been completed. When 
+				this happens, the status of a queued export will indicate that it's "waiting".
 
 				Whether the export fails, completes, or is cancelled, the completion handler you
 				supply to -exportAsynchronouslyWithCompletionHandler: will be called. Upon
@@ -54,43 +55,49 @@
 
 
 #if TARGET_OS_IPHONE
+
 /* These export options can be used to produce QuickTime .mov files with video size appropriate to the device.
 	The export will not scale the video up from a smaller size. The video will be compressed using
 	H.264 and the audio will be compressed using AAC.  */
-extern NSString *const AVAssetExportPresetLowQuality        __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-extern NSString *const AVAssetExportPresetMediumQuality     __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
-extern NSString *const AVAssetExportPresetHighestQuality    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+AVF_EXPORT NSString *const AVAssetExportPresetLowQuality        NS_AVAILABLE_IOS(4_0);
+AVF_EXPORT NSString *const AVAssetExportPresetMediumQuality     NS_AVAILABLE_IOS(4_0);
+AVF_EXPORT NSString *const AVAssetExportPresetHighestQuality    NS_AVAILABLE_IOS(4_0);
+
 #endif // TARGET_OS_IPHONE
 
 /* These export options can be used to produce QuickTime .mov files with the specified video size.
 	The export will not scale the video up from a smaller size. The video will be compressed using
 	H.264 and the audio will be compressed using AAC.  Some devices cannot support some sizes. */
-extern NSString *const AVAssetExportPreset640x480   __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
-extern NSString *const AVAssetExportPreset960x540   __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
-extern NSString *const AVAssetExportPreset1280x720  __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
-#if ! TARGET_OS_IPHONE
-extern NSString *const AVAssetExportPreset1920x1080  __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_NA);
-#endif // ! TARGET_OS_IPHONE
+AVF_EXPORT NSString *const AVAssetExportPreset640x480			NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVAssetExportPreset960x540   		NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVAssetExportPreset1280x720  		NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVAssetExportPreset1920x1080			NS_AVAILABLE(10_7, 5_0);
 
 /*  This export option will produce an audio-only .m4a file with appropriate iTunes gapless playback data */
-extern NSString *const AVAssetExportPresetAppleM4A	__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+AVF_EXPORT NSString *const AVAssetExportPresetAppleM4A			NS_AVAILABLE(10_7, 4_0);
 
 /* This export option will cause the media of all tracks to be passed through to the output exactly as stored in the source asset, except for
    tracks for which passthrough is not possible, usually because of constraints of the container format as indicated by the specified outputFileType.
    This option is not included in the arrays returned by -allExportPresets and -exportPresetsCompatibleWithAsset. */
-extern NSString *const AVAssetExportPresetPassthrough __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+AVF_EXPORT NSString *const AVAssetExportPresetPassthrough		NS_AVAILABLE(10_7, 4_0);
 
-#if ! TARGET_OS_IPHONE
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+
 /* These export options are used to produce files that can be played on the specified Apple devices. 
 	These presets are available for Desktop export only.
 	The files should have .m4v extensions (or .m4a for exports with audio only sources). */
-extern NSString *const AVAssetExportPresetAppleM4VCellular   __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_NA);
-extern NSString *const AVAssetExportPresetAppleM4V480pSD     __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_NA);
-extern NSString *const AVAssetExportPresetAppleM4VAppleTV    __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_NA);
-extern NSString *const AVAssetExportPresetAppleM4VWiFi       __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_NA);
-extern NSString *const AVAssetExportPresetAppleM4V720pHD     __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_NA);
+AVF_EXPORT NSString *const AVAssetExportPresetAppleM4VCellular	NS_AVAILABLE(10_7, NA);
+AVF_EXPORT NSString *const AVAssetExportPresetAppleM4ViPod		NS_AVAILABLE(10_7, NA);
+AVF_EXPORT NSString *const AVAssetExportPresetAppleM4V480pSD	NS_AVAILABLE(10_7, NA);
+AVF_EXPORT NSString *const AVAssetExportPresetAppleM4VAppleTV	NS_AVAILABLE(10_7, NA);
+AVF_EXPORT NSString *const AVAssetExportPresetAppleM4VWiFi		NS_AVAILABLE(10_7, NA);
+AVF_EXPORT NSString *const AVAssetExportPresetAppleM4V720pHD	NS_AVAILABLE(10_7, NA);
 
-#endif // ! TARGET_OS_IPHONE
+/* This export option will produce a QuickTime movie with Apple ProRes 422 video and LPCM audio. */
+AVF_EXPORT NSString *const AVAssetExportPresetAppleProRes422LPCM	NS_AVAILABLE(10_7, NA);
+
+#endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
 
 @class AVAsset;
@@ -108,6 +115,7 @@ enum {
 };
 typedef NSInteger AVAssetExportSessionStatus;
 
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVAssetExportSession : NSObject
 {
 @private
@@ -134,7 +142,7 @@ typedef NSInteger AVAssetExportSessionStatus;
 	@param asset				An AVAsset object that is intended to be exported.
 	@result						An NSArray containing NSString values for the identifiers of compatible export types.  
 								The array is a complete list of the valid identifiers that can be used as arguments to 
-								initWithAsset:presetName:outputURL: with the specified asset.
+								initWithAsset:presetName: with the specified asset.
 */
 + (NSArray *)exportPresetsCompatibleWithAsset:(AVAsset *)asset;
 
@@ -145,10 +153,10 @@ typedef NSInteger AVAssetExportSessionStatus;
 	@param		presetName		An NSString specifying the name of the preset template for the export.
 	@result						An instance of AVAssetExportSession.
 */
-+ (id)exportSessionWithAsset:(AVAsset *)asset presetName:(NSString *)presetName;
++ (id)exportSessionWithAsset:(AVAsset *)asset presetName:(NSString *)presetName NS_AVAILABLE(10_7, 4_1);
 
 /*!
-	@method						initWithAsset:presetName:outputURL:
+	@method						initWithAsset:presetName:
 	@abstract					Initialize an AVAssetExportSession with the specified preset and set the source to the contents of the asset.
 	@param		asset			An AVAsset object that is intended to be exported.
 	@param		presetName		An NSString specifying the name of the preset template for the export.
@@ -161,6 +169,9 @@ typedef NSInteger AVAssetExportSessionStatus;
 
 /* Indicates the name of the preset with which the AVExportSession was initialized */
 @property (nonatomic, readonly) NSString *presetName;
+
+/* Indicates the instance of AVAsset with which the AVExportSession was initialized  */
+@property (nonatomic, retain, readonly) AVAsset *asset NS_AVAILABLE(TBD, 5_0);
 
 /* Indicates the types of files the target can write, using the AVAsset and export preset with which it was initialized */
 @property (nonatomic, readonly) NSArray *supportedFileTypes;
@@ -180,8 +191,15 @@ typedef NSInteger AVAssetExportSessionStatus;
 /* Specifies the progress of the export on a scale from 0 to 1.0.  A value of 0 means the export has not yet begun, A value of 1.0 means the export is complete. This property is not key-value observable. */
 @property (nonatomic, readonly) float progress;
 
+#if TARGET_OS_IPHONE
+
 /* indicates the maximum duration that is allowed for export */
 @property (nonatomic, readonly) CMTime maxDuration;
+
+/* indicates the estimated byte size of exported file */
+@property (nonatomic, readonly) long long estimatedOutputFileLength NS_AVAILABLE_IOS(5_0);
+
+#endif
 
 /* specifies a time range to be exported from the source; the default timeRange of an export session is kCMTimeZero..kCMTimePositiveInfinity, meaning that, pending a possible limit on file length, the full duration of the asset will be exported */
 @property (nonatomic) CMTimeRange timeRange;
@@ -191,8 +209,10 @@ typedef NSInteger AVAssetExportSessionStatus;
    the appropriate metadata keyspace for the output file and written to the output. */
 @property (nonatomic, copy) NSArray *metadata; 
 
+#if TARGET_OS_IPHONE
 /* Indicates the maximum number of bytes that the session is allowed to write to the output URL. The export will stop when the output reaches this size regardless of the duration of the source or the value of the timeRange property. */
 @property (nonatomic) long long fileLengthLimit; 
+#endif
 
 /* indicates whether non-default audio mixing is enabled for export and supplies the parameters for audio mixing */
 @property (nonatomic, copy) AVAudioMix *audioMix;

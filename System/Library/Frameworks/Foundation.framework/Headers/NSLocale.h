@@ -1,11 +1,9 @@
 /*	NSLocale.h
-	Copyright (c) 2003-2010, Apple Inc. All rights reserved.
+	Copyright (c) 2003-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 #import <CoreFoundation/CFLocale.h>
-
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @class NSArray, NSDictionary, NSString;
 
@@ -71,20 +69,20 @@ typedef NSUInteger NSLocaleLanguageDirection;
 FOUNDATION_EXPORT NSString * const NSCurrentLocaleDidChangeNotification NS_AVAILABLE(10_5, 2_0);
 
 
-FOUNDATION_EXPORT NSString * const NSLocaleIdentifier NS_AVAILABLE(10_4, 2_0);		// NSString
-FOUNDATION_EXPORT NSString * const NSLocaleLanguageCode NS_AVAILABLE(10_4, 2_0);	// NSString
-FOUNDATION_EXPORT NSString * const NSLocaleCountryCode NS_AVAILABLE(10_4, 2_0);		// NSString
-FOUNDATION_EXPORT NSString * const NSLocaleScriptCode NS_AVAILABLE(10_4, 2_0);		// NSString
-FOUNDATION_EXPORT NSString * const NSLocaleVariantCode NS_AVAILABLE(10_4, 2_0);		// NSString
-FOUNDATION_EXPORT NSString * const NSLocaleExemplarCharacterSet NS_AVAILABLE(10_4, 2_0);// NSCharacterSet
-FOUNDATION_EXPORT NSString * const NSLocaleCalendar NS_AVAILABLE(10_4, 2_0);		// NSCalendar
-FOUNDATION_EXPORT NSString * const NSLocaleCollationIdentifier NS_AVAILABLE(10_4, 2_0); // NSString
-FOUNDATION_EXPORT NSString * const NSLocaleUsesMetricSystem NS_AVAILABLE(10_4, 2_0);	// NSNumber boolean
-FOUNDATION_EXPORT NSString * const NSLocaleMeasurementSystem NS_AVAILABLE(10_4, 2_0);	// NSString
-FOUNDATION_EXPORT NSString * const NSLocaleDecimalSeparator NS_AVAILABLE(10_4, 2_0);	// NSString
-FOUNDATION_EXPORT NSString * const NSLocaleGroupingSeparator NS_AVAILABLE(10_4, 2_0);	// NSString
-FOUNDATION_EXPORT NSString * const NSLocaleCurrencySymbol NS_AVAILABLE(10_4, 2_0);      // NSString
-FOUNDATION_EXPORT NSString * const NSLocaleCurrencyCode NS_AVAILABLE(10_4, 2_0);	// NSString
+FOUNDATION_EXPORT NSString * const NSLocaleIdentifier;		// NSString
+FOUNDATION_EXPORT NSString * const NSLocaleLanguageCode;	// NSString
+FOUNDATION_EXPORT NSString * const NSLocaleCountryCode;		// NSString
+FOUNDATION_EXPORT NSString * const NSLocaleScriptCode;		// NSString
+FOUNDATION_EXPORT NSString * const NSLocaleVariantCode;		// NSString
+FOUNDATION_EXPORT NSString * const NSLocaleExemplarCharacterSet;// NSCharacterSet
+FOUNDATION_EXPORT NSString * const NSLocaleCalendar;		// NSCalendar
+FOUNDATION_EXPORT NSString * const NSLocaleCollationIdentifier; // NSString
+FOUNDATION_EXPORT NSString * const NSLocaleUsesMetricSystem;	// NSNumber boolean
+FOUNDATION_EXPORT NSString * const NSLocaleMeasurementSystem;	// NSString
+FOUNDATION_EXPORT NSString * const NSLocaleDecimalSeparator;	// NSString
+FOUNDATION_EXPORT NSString * const NSLocaleGroupingSeparator;	// NSString
+FOUNDATION_EXPORT NSString * const NSLocaleCurrencySymbol;      // NSString
+FOUNDATION_EXPORT NSString * const NSLocaleCurrencyCode;	// NSString
 FOUNDATION_EXPORT NSString * const NSLocaleCollatorIdentifier NS_AVAILABLE(10_6, 4_0);  // NSString
 FOUNDATION_EXPORT NSString * const NSLocaleQuotationBeginDelimiterKey NS_AVAILABLE(10_6, 4_0);	// NSString
 FOUNDATION_EXPORT NSString * const NSLocaleQuotationEndDelimiterKey NS_AVAILABLE(10_6, 4_0);	// NSString
@@ -92,17 +90,15 @@ FOUNDATION_EXPORT NSString * const NSLocaleAlternateQuotationBeginDelimiterKey N
 FOUNDATION_EXPORT NSString * const NSLocaleAlternateQuotationEndDelimiterKey NS_AVAILABLE(10_6, 4_0);	// NSString
 
 // Values for NSCalendar identifiers (not the NSLocaleCalendar property key)
-FOUNDATION_EXPORT NSString * const NSGregorianCalendar NS_AVAILABLE(10_4, 2_0);
-FOUNDATION_EXPORT NSString * const NSBuddhistCalendar NS_AVAILABLE(10_4, 2_0);
-FOUNDATION_EXPORT NSString * const NSChineseCalendar NS_AVAILABLE(10_4, 2_0);
-FOUNDATION_EXPORT NSString * const NSHebrewCalendar NS_AVAILABLE(10_4, 2_0);
-FOUNDATION_EXPORT NSString * const NSIslamicCalendar NS_AVAILABLE(10_4, 2_0);
-FOUNDATION_EXPORT NSString * const NSIslamicCivilCalendar NS_AVAILABLE(10_4, 2_0);
-FOUNDATION_EXPORT NSString * const NSJapaneseCalendar NS_AVAILABLE(10_4, 2_0);
+FOUNDATION_EXPORT NSString * const NSGregorianCalendar;
+FOUNDATION_EXPORT NSString * const NSBuddhistCalendar;
+FOUNDATION_EXPORT NSString * const NSChineseCalendar;
+FOUNDATION_EXPORT NSString * const NSHebrewCalendar;
+FOUNDATION_EXPORT NSString * const NSIslamicCalendar;
+FOUNDATION_EXPORT NSString * const NSIslamicCivilCalendar;
+FOUNDATION_EXPORT NSString * const NSJapaneseCalendar;
 FOUNDATION_EXPORT NSString * const NSRepublicOfChinaCalendar NS_AVAILABLE(10_6, 4_0);
 FOUNDATION_EXPORT NSString * const NSPersianCalendar NS_AVAILABLE(10_6, 4_0);
 FOUNDATION_EXPORT NSString * const NSIndianCalendar NS_AVAILABLE(10_6, 4_0);
 FOUNDATION_EXPORT NSString * const NSISO8601Calendar NS_AVAILABLE(10_6, 4_0);
-
-#endif
 

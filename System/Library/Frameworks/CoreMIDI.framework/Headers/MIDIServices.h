@@ -1979,7 +1979,7 @@ MIDIPacketNext(	MIDIPacket *pkt );
 
 #if TARGET_CPU_ARM
 // MIDIPacket must be 4-byte aligned
-#define MIDIPacketNext(pkt)	((MIDIPacket *)((uintptr_t(&(pkt)->data[(pkt)->length]) + 3) & ~3))
+#define MIDIPacketNext(pkt)	((MIDIPacket *)(((uintptr_t)(&(pkt)->data[(pkt)->length]) + 3) & ~3))
 #else
 #define MIDIPacketNext(pkt)	((MIDIPacket *)&(pkt)->data[(pkt)->length])
 #endif

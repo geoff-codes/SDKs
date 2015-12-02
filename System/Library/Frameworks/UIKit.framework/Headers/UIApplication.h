@@ -2,7 +2,7 @@
 //  UIApplication.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -45,7 +45,8 @@ typedef enum {
     UIRemoteNotificationTypeNone    = 0,
     UIRemoteNotificationTypeBadge   = 1 << 0,
     UIRemoteNotificationTypeSound   = 1 << 1,
-    UIRemoteNotificationTypeAlert   = 1 << 2
+    UIRemoteNotificationTypeAlert   = 1 << 2,
+    UIRemoteNotificationTypeNewsstandContentAvailability = 1 << 3,
 } UIRemoteNotificationType;
 #endif
 
@@ -59,6 +60,13 @@ typedef enum {
 typedef NSUInteger UIBackgroundTaskIdentifier;
 UIKIT_EXTERN const UIBackgroundTaskIdentifier UIBackgroundTaskInvalid  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 UIKIT_EXTERN const NSTimeInterval UIMinimumKeepAliveTimeout  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+#endif
+
+#if __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+typedef enum {
+    UIUserInterfaceLayoutDirectionLeftToRight,
+    UIUserInterfaceLayoutDirectionRightToLeft,
+} UIUserInterfaceLayoutDirection;
 #endif
 
 @class UIView, UIWindow, UIStatusBar, UIStatusBarWindow, UILocalNotification;
@@ -81,8 +89,10 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
     id                          _editAlertView;
     UIStatusBar                *_statusBar;
     UIStatusBarWindow          *_statusBarWindow;
+    NSMutableArray             *_observerBlocks;
+    NSString                   *_mainStoryboardName;
     struct {
-        unsigned int isActive:1;
+        unsigned int deactivatingReasonFlags:8;
         unsigned int isSuspended:1;
         unsigned int isSuspendedEventsOnly:1;
         unsigned int isLaunchedSuspended:1;
@@ -98,10 +108,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
         unsigned int showingProgress:1;
         unsigned int receivesPowerMessages:1;
         unsigned int launchEventReceived:1;
-        unsigned int isAnimatingSuspensionOrResumption:1;
+        unsigned int systemIsAnimatingApplicationLifecycleEvent:1; // suspension, resumption, or system gesture
         unsigned int isResuming:1;
         unsigned int isSuspendedUnderLock:1;
-        unsigned int isRunningInTaskSwitcher:1;
         unsigned int shouldExitAfterSendSuspend:1;
         unsigned int shouldExitAfterTaskCompletion:1;
         unsigned int terminating:1;
@@ -123,6 +132,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
         unsigned int delegateDidBecomeActive:1;
         unsigned int delegateWillResignActive:1;
         unsigned int delegateDidEnterBackground:1;
+        unsigned int delegateDidEnterBackgroundWasSent:1;
         unsigned int delegateWillEnterForeground:1;
         unsigned int delegateWillSuspend:1;
         unsigned int delegateDidResume:1;
@@ -131,19 +141,22 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
         unsigned int isHeadsetButtonDown:1;
         unsigned int isFastForwardActive:1;
         unsigned int isRewindActive:1;
-        unsigned int disableViewGroupOpacity:1;
-        unsigned int disableViewEdgeAntialiasing:1;
         unsigned int shakeToEdit:1;
         unsigned int isClassic:1;
         unsigned int zoomInClassicMode:1;
         unsigned int ignoreHeadsetClicks:1;
         unsigned int touchRotationDisabled:1;
         unsigned int taskSuspendingUnsupported:1;
+        unsigned int taskSuspendingOnLockUnsupported:1;
         unsigned int isUnitTests:1;
         unsigned int requiresHighResolution:1;
         unsigned int disableViewContentScaling:1;
         unsigned int singleUseLaunchOrientation:3;
         unsigned int defaultInterfaceOrientation:3;
+        unsigned int delegateWantsNextResponder:1;
+        unsigned int isRunningInApplicationSwitcher:1;
+        unsigned int isSendingEventForProgrammaticTouchCancellation:1;
+        unsigned int calledInitializationDelegates:1;
     } _applicationFlags;
 }
 
@@ -198,6 +211,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
 
 @property(nonatomic,readonly,getter=isProtectedDataAvailable) BOOL protectedDataAvailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
+@property(nonatomic,readonly) UIUserInterfaceLayoutDirection userInterfaceLayoutDirection __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
 @end
 
 @interface UIApplication (UIRemoteNotifications)
@@ -226,6 +241,10 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
 - (void)beginReceivingRemoteControlEvents __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 - (void)endReceivingRemoteControlEvents __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
+@end
+
+@interface UIApplication (UINewsstand)
+- (void)setNewsstandIconImage:(UIImage *)image;
 @end
 
 @protocol UIApplicationDelegate<NSObject>
@@ -262,6 +281,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIApplication : UIResponder <UIActionSheet
 
 - (void)applicationProtectedDataWillBecomeUnavailable:(UIApplication *)application __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 - (void)applicationProtectedDataDidBecomeAvailable:(UIApplication *)application    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+
+@property (nonatomic, retain) UIWindow *window __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 @end
 
@@ -301,4 +322,5 @@ UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsAnnotationKey         __O
 UIKIT_EXTERN NSString *const UIApplicationProtectedDataWillBecomeUnavailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 UIKIT_EXTERN NSString *const UIApplicationProtectedDataDidBecomeAvailable    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocationKey           __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); // app was launched in response to a CoreLocation event.
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsNewsstandDownloadsKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // userInfo contains an NSArray of NKAssetDownload identifiers
 

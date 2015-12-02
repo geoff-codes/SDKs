@@ -2,7 +2,7 @@
 //  MKPinAnnotationView.h
 //  MapKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <MapKit/MKAnnotationView.h>
@@ -16,7 +16,7 @@ typedef NSUInteger MKPinAnnotationColor;
 
 @class MKPinAnnotationViewInternal;
 
-NS_CLASS_AVAILABLE(__MAC_NA, 3_0)
+MK_CLASS_AVAILABLE(NA, 3_0)
 @interface MKPinAnnotationView : MKAnnotationView
 {
 @private

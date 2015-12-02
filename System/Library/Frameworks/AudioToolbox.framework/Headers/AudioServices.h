@@ -3,7 +3,7 @@
 
      Contains:   API for general high level audio services.
 
-     Copyright:  (c) 2006 - 2008 by Apple, Inc., all rights reserved.
+     Copyright:  (c) 2006 - 2011 by Apple, Inc., all rights reserved.
 
      Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
@@ -128,7 +128,7 @@ typedef void
                         playback the alert sound selected by the User in System Preferences.
     @constant       kSystemSoundID_Vibrate
                         Use this constant with the play sound APIs to vibrate the device
-                        - iPhone only 
+                        - iOS only 
                             - on a device with no vibration capability (like iPod Touch) this will 
                             do nothing
     @constant       kSystemSoundID_FlashScreen
@@ -184,7 +184,7 @@ enum
     @param          inSystemSoundID
                         A SystemSoundID for the System Sound server to play. On the desktop you
                         can pass the kSystemSoundID_UserPreferredAlert constant to playback the alert sound 
-                        selected by the user in System Preferences. On iPhone there is no preferred user alert sound.
+                        selected by the user in System Preferences. On iOS there is no preferred user alert sound.
 */
 extern void 
 AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)                                          
@@ -730,8 +730,96 @@ enum {
     kAudioSessionRouteChangeReason_NoSuitableRouteForCategory = 7
 };
 
+// see documentation for kAudioSessionProperty_AudioRouteChange
+// Note: the string refers to "OutputDevice" for historical reasons.  Audio routes may contain zero or more inputs and 
+//      zero or more outputs.
 #define kAudioSession_AudioRouteChangeKey_Reason    "OutputDeviceDidChange_Reason"
-#define kAudioSession_AudioRouteChangeKey_OldRoute  "OutputDeviceDidChange_OldRoute"
+    
+// CFString version of kAudioSession_AudioRouteChangeKey_Reason.  This is more convenient to use than the raw string version.
+// Available in iOS 5.0 or greater          
+extern const CFStringRef kAudioSession_RouteChangeKey_Reason                __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+// CFDictionary keys for kAudioSessionProperty_AudioRouteChange
+// Available in iOS 5.0 or greater      
+extern const CFStringRef   kAudioSession_AudioRouteChangeKey_PreviousRouteDescription  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef   kAudioSession_AudioRouteChangeKey_CurrentRouteDescription   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+// CFDictionary keys for kAudioSessionProperty_AudioRouteDescription    
+// Available in iOS 5.0 or greater    
+extern const CFStringRef   kAudioSession_AudioRouteKey_Inputs   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef   kAudioSession_AudioRouteKey_Outputs  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+// key(s) for the CFDictionary associated with each entry of the CFArrays returned by kAudioSession_AudioRouteKey_Inputs
+// and kAudioSession_AudioRouteKey_Outputs.  
+// Available in iOS 5.0 or greater        
+extern const CFStringRef   kAudioSession_AudioRouteKey_Type     __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+    
+    
+/*!
+    @enum           AudioSession route input types
+    @abstract       These are the strings used with the kAudioSession_AudioRouteKey_Type key for the CFDictionary associated 
+                    with kAudioSession_AudioRouteKey_Inputs.
+                    Available in iOS 5.0 or greater      
+    @constant       kAudioSessionInputRoute_LineIn
+                    A line in input 
+    @constant       kAudioSessionInputRoute_BuiltInMic
+                    A built-in microphone input.  (Note that some devices like early iPods do not have this input)
+    @constant       kAudioSessionInputRoute_HeadsetMic
+                    A microphone that is part of a headset (combined microphone and headphones)
+    @constant       kAudioSessionInputRoute_BluetoothHFP
+                    A microphone that is part of a Bluetooth Hands-Free Profile device
+    @constant       kAudioSessionInputRoute_USBAudio
+                    A Universal Serial Bus input
+ */    
+extern const CFStringRef   kAudioSessionInputRoute_LineIn       __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef   kAudioSessionInputRoute_BuiltInMic   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef   kAudioSessionInputRoute_HeadsetMic   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef   kAudioSessionInputRoute_BluetoothHFP __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef   kAudioSessionInputRoute_USBAudio     __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+    
+/*!
+    @enum           AudioSession route output types
+    @abstract       These are strings used with the kAudioSession_AudioRouteKey_Type key for the CFDictionary associated 
+                    with kAudioSession_AudioRouteKey_Outputs. 
+                    Available in iOS 5.0 or greater       
+    @constant       kAudioSessionOutputRoute_LineOut
+                    A line out output
+    @constant       kAudioSessionOutputRoute_Headphones
+                    Speakers in a headset (mic and headphones) or simple headphones
+    @constant       kAudioSessionOutputRoute_BluetoothHFP
+                    Speakers that are part of a Bluetooth Hands-Free Profile device
+    @constant       kAudioSessionOutputRoute_BluetoothA2DP
+                    Speakers in a Bluetooth A2DP device
+    @constant       kAudioSessionOutputRoute_BuiltInReceiver
+                    The speaker you hold to your ear when on a phone call
+    @constant       kAudioSessionOutputRoute_BuiltInSpeaker
+                    The built-in speaker
+    @constant       kAudioSessionOutputRoute_USBAudio
+                    Speaker(s) in a Universal Serial Bus device
+    @constant       kAudioSessionOutputRoute_HDMI
+                    Output via High-Definition Multimedia Interface
+    @constant       kAudioSessionOutputRoute_AirPlay
+                    Output on a remote Air Play device
+ */
+extern const CFStringRef kAudioSessionOutputRoute_LineOut           __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);        
+extern const CFStringRef kAudioSessionOutputRoute_Headphones        __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);     
+extern const CFStringRef kAudioSessionOutputRoute_BluetoothHFP      __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);   
+extern const CFStringRef kAudioSessionOutputRoute_BluetoothA2DP     __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);  
+extern const CFStringRef kAudioSessionOutputRoute_BuiltInReceiver   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kAudioSessionOutputRoute_BuiltInSpeaker    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kAudioSessionOutputRoute_USBAudio          __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);   
+extern const CFStringRef kAudioSessionOutputRoute_HDMI              __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kAudioSessionOutputRoute_AirPlay           __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);    
+
+    
+// CFDictionary keys for kAudioSessionProperty_InputSources
+extern const CFStringRef   kAudioSession_InputSourceKey_ID            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef   kAudioSession_InputSourceKey_Description   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+// CFDictionary keys for kAudioSessionProperty_OutputDestinations
+extern const CFStringRef   kAudioSession_OutputDestinationKey_ID            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef   kAudioSession_OutputDestinationKey_Description   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+    
     
 //==================================================================================================
 #pragma mark    AudioSession interruption types for end interruption events
@@ -740,7 +828,7 @@ enum {
      @enum          AudioSession Interruption types
      @abstract      When an app's AudioSessionInterruptionListener is called at the end of an interruption event,
                     the app may query to see if it should resume audio or not.  The interruption type can be 
-                    obtained through the kAudioSessionProperty_InterruptionType, available in iPhone OS 4.0 and
+                    obtained through the kAudioSessionProperty_InterruptionType, available in iOS 4.0 and
                     greater.
      @constant      kAudioSessionInterruptionType_ShouldResume 
                         Indicates that the interruption was one where it is appropriate to resume playback
@@ -755,6 +843,39 @@ enum {  // typedef UInt32 AudioSessionInterruptionType
 };
 typedef UInt32 AudioSessionInterruptionType;	    
 
+//==================================================================================================
+#pragma mark    AudioSession mode values
+/*!
+     @enum          AudioSession Modes
+     @abstract      Modes modify the audio category in order to introduce behavior that is tailored to the specific
+                    use of audio within an application.  Available in iOS 5.0 and greater.
+     @constant      kAudioSessionMode_Default 
+                        The default mode.
+     @constant      kAudioSessionMode_VoiceChat
+                        Only valid with kAudioSessionCategory_PlayAndRecord.  Appropriate for Voice Over IP
+                        (VOIP) applications.  Reduces the number of allowable audio routes to be only those
+                        that are appropriate for VOIP applications and may engage appropriate system-supplied
+                        signal processing.  Has the side effect of setting 
+                        kAudioSessionProperty_OverrideCategoryEnableBluetoothInput to true.
+     @constant      kAudioSessionMode_VideoRecording     
+                        Only valid with kAudioSessionCategory_PlayAndRecord or kAudioSessionCategory_RecordAudio.
+                        Modifies the audio routing options and may engage appropriate system-supplied signal processing.
+     @constant      kAudioSessionMode_Measurement
+                        Appropriate for applications that wish to minimize the effect of system-supplied signal
+                        processing for input and/or output audio signals.
+     @constant      kAudioSessionMode_GameChat
+                        Set by Game Kit on behalf of an application that uses a GKVoiceChat object; valid 
+                        only with the kAudioSessionCategory_PlayAndRecord category.
+                        Do not set this mode directly. If you need similar behavior and are not using
+                        a GKVoiceChat object, use the kAudioSessionMode_VoiceChat mode.
+ */
+enum { 
+    kAudioSessionMode_Default               = 'dflt',
+    kAudioSessionMode_VoiceChat             = 'vcct',
+    kAudioSessionMode_VideoRecording        = 'vrcd',
+    kAudioSessionMode_Measurement           = 'msmt',
+    kAudioSessionMode_GameChat              = 'gmct'
+};
 
 //==================================================================================================
 #pragma mark    AudioSession Properties
@@ -770,17 +891,20 @@ typedef UInt32 AudioSessionInterruptionType;
                         The actual IO buffer duration may be different
     @constant       kAudioSessionProperty_AudioCategory 
                         A UInt32 value indicating the audio category for the AudioSession (see constants above).
-    @constant       kAudioSessionProperty_AudioRoute 
-                        A CFStringRef with the name of the current route ("Headphone," "Speaker," etc.)
     @constant       kAudioSessionProperty_AudioRouteChange 
                         The value for this property is ONLY provided with the property changed callback. You 
                         cannot get the value of this property (or set it).
-                        The property changed callback provides a CFDictionaryRef with two keyed values:
+                        The property changed callback provides a CFDictionaryRef with keyed values:
                         Key = kAudioSession_AudioRouteChangeKey_Reason; value is a CFNumberRef with one of the 
                         reasons listed above.
-                        Key = kAudioSession_AudioRouteChangeKey_OldRoute; value is a CFStringRef with the name 
-                        of the old route.
-                        The new route can be obtained by calling AudioSessionGetProperty(kAudioSessionProperty_AudioRoute).
+                        Key = kAudioSession_AudioRouteChangeKey_PreviousRouteDescription; value is a CFDictionaryRef containing
+                        information about the previous route.  This dictionary is of exactly the same format as the 
+                        dictionary associated with kAudioSessionProperty_AudioRouteDescription.  Available in iOS 5.0 or 
+                        greater.
+                        Key = kAudioSession_AudioRouteChangeKey_CurrentRouteDescription; value is a CFDictionaryRef containing
+                        information about the new route.  This dictionary is of exactly the same format as the 
+                        dictionary associated with kAudioSessionProperty_AudioRouteDescription.  Available in iOS 5.0 or 
+                        greater.
     @constant       kAudioSessionProperty_CurrentHardwareSampleRate 
                         A Float64 indicating the current hardware sample rate
     @constant       kAudioSessionProperty_CurrentHardwareInputNumberChannels 
@@ -808,12 +932,12 @@ typedef UInt32 AudioSessionInterruptionType;
                         is attached to the second generation iPod Touch, audio input becomes available via the wired 
                         microphone. 
     @constant       kAudioSessionProperty_ServerDied
-    					Available with iPhone 3.0 or greater
+    					Available with iOS 3.0 or greater
                         The value for this property is ONLY provided with the property changed callback. You cannot get the 
                         value of this property (or set it). The property changed callback notifies you that
                         the audio server has died.
     @constant       kAudioSessionProperty_OtherMixableAudioShouldDuck
-    					Available with iPhone 3.0 or greater
+    					Available with iOS 3.0 or greater
                         If the current session category of an application allows mixing (iPod playback in the background 
                         for example), then that other audio will be ducked when the current application makes any sound. 
                         An example of this is the Nike app that does this as it provides periodic updates to its user (it 
@@ -825,7 +949,7 @@ typedef UInt32 AudioSessionInterruptionType;
                         this value to on, will also make your category mixable with others
                         (kAudioSessionProperty_OverrideCategoryMixWithOthers will be set to true)
     @constant       kAudioSessionProperty_OverrideCategoryMixWithOthers
-    					Available with iPhone 3.0 or greater
+    					Available with iOS 3.0 or greater
                         This allows an application to change the default behavior of some audio session categories with regards to 
                         whether other applications can play while your session is active. The two typical cases are:
                             (1) PlayAndRecord category
@@ -841,7 +965,7 @@ typedef UInt32 AudioSessionInterruptionType;
                         If an application changes their category, they should reassert the override (it is not sticky across 
                         category changes)
     @constant       kAudioSessionProperty_OverrideCategoryDefaultToSpeaker
-    					Available with iPhone 3.1 or greater
+    					Available with iOS 3.1 or greater
                         This allows an application to change the default behaviour of some audio session categories with regards to 
                         the audio route. The current category behavior is:
                             (1) PlayAndRecord category
@@ -853,7 +977,7 @@ typedef UInt32 AudioSessionInterruptionType;
                         An application must be prepared for setting this property to fail as behaviour may change in future releases. 
                         If an application changes their category, they should reassert the override (it is not sticky across category changes)
     @constant       kAudioSessionProperty_OverrideCategoryEnableBluetoothInput
-    					Available with iPhone 3.1 or greater
+    					Available with iOS 3.1 or greater
                         This allows an application to change the default behaviour of some audio session categories with regards to showing 
                         bluetooth devices as available routes. The current category behavior is:
                             (1) PlayAndRecord category
@@ -868,19 +992,86 @@ typedef UInt32 AudioSessionInterruptionType;
                         An application must be prepared for setting this property to fail as behaviour may change in future releases. 
                         If an application changes their category, they should reassert the override (it is not sticky across category changes)
     @constant       kAudioSessionProperty_InterruptionType
-                        Available with iPhone 4.0 or greater
+                        Available with iOS 4.0 or greater
                         This is a read-only property that gives the type of the end interruption event.  Media playback apps (i.e., 
                         those apps that have a "play" button), may use this property as a guideline for when to resume playing after an 
                         interruption ends.  Apps without a "play" button, (e.g., games) should always resume audio playback when the 
                         interruption ends.  This property is only valid within the scope of the client app's AudioSessionInterruptionListener 
                         callback and only valid for the AudioSessionEndInterruption event.  Attempting to read the property at any other 
                         time is invalid.  
-*/
+    @constant       kAudioSessionProperty_Mode
+                        Available with iOS 5.0 or greater
+                        A UInt32 value that specifies the mode to be combined with the Audio Category.  See AudioSession mode 
+                        values defined above.
+    @constant       kAudioSessionProperty_InputSources
+                        Available with iOS 5.0 or greater
+                        For use with certain accessories, such as some USB audio devices, that support input source selection.  
+                        If the attached accessory supports source selection, provides a description of the available sources.
+                        Not to be confused with kAudioSessionProperty_AudioRouteDescription, which provides a description
+                        of the current audio route.  
+                        A CFArray of CFDictionaries with the keys listed below.  If no input sources are 
+                        available, a valid CFArray with 0 entries will be returned by a get operation.
+                        Key = kAudioSession_InputSourceKey_ID; value is a CFNumberRef representing a system-defined identifier
+                        for the input source.  This is the identifier to be used when setting the input source.  
+                        Key = kAudioSession_InputSourceKey_Description; value is a CFStringRef description of the input source 
+                        suitable for displaying in a user interface.  Examples: "Internal Mic", "External Mic", 
+                        "Ext 48V Mic", "Instrument", "External Line Connector"
+    @constant       kAudioSessionProperty_OutputDestinations
+                        Available with iOS 5.0 or greater
+                        For use with certain accessories, such as some USB audio devices, that support output destination selection.  
+                        If the attached accessory supports destination selection, provides a description of the available destinations.
+                        Not to be confused with kAudioSessionProperty_AudioRouteDescription, which provides a description
+                        of the current audio route. 
+                        A CFArray of CFDictionaries with the keys listed below.  If no output destinations are 
+                        available, a valid CFArray with 0 entries will be returned by a get operation.
+                        Key = kAudioSession_OutputDestinationKey_ID; value is a CFNumberRef representing a system-defined identifier
+                        for the output destination.  This is the identifier to be used when setting the destination.
+                        Key = kAudioSession_OutputDestinationKey_Description; value is a CFStringRef description of the output 
+                        destination suitable for displaying in a user interface. 
+    @constant       kAudioSessionProperty_InputSource
+                        Available with iOS 5.0 or greater
+                        For use with certain accessories, such as some USB audio devices, that support input source selection. 
+                        A CFNumberRef value that specifies the input source to be selected.  The value must be one of the 
+                        IDs provided by the kAudioSession_InputSourceKey_ID as part of the data associated with 
+                        kAudioSessionProperty_InputSources.
+    @constant       kAudioSessionProperty_OutputDestination
+                        Available with iOS 5.0 or greater
+                        For use with certain accessories, such as some USB audio devices, that support output destination selection.
+                        A CFNumberRef value that specifies the output destination to be selected.  The value must be one 
+                        of the IDs provided by the kAudioSession_OutputDestinationKey_ID as part of the data associated with
+                        kAudioSessionProperty_OutputDestinations.
+    @constant       kAudioSessionProperty_InputGainAvailable
+                        Available with iOS 5.0 or greater
+                        A UInt32 with a value other than zero when audio input gain is available.  Some inputs may not 
+                        provide the ability to set the input gain, so check this value before attempting to set input gain.
+    @constant       kAudioSessionProperty_InputGainScalar
+                        Available with iOS 5.0 or greater
+                        A Float32 value defined over the range [0.0, 1.0], with 0.0 corresponding to the lowest analog 
+                        gain setting and 1.0 corresponding to the highest analog gain setting.  Attempting to set values
+                        outside of the defined range will result in the value being "clamped" to a valid input.  This is 
+                        a global input gain setting that applies to the current input source for the entire system.  
+                        When no applications are using the input gain control, the system will restore the default input
+                        gain setting for the input source.  Note that some audio accessories, such as USB devices, may 
+                        not have a default value.  This property is only valid if kAudioSessionProperty_InputGainAvailable
+                        is true.  Note that route change events represent substantive changes to the audio system. Input 
+                        gain settings are not guaranteed to persist across route changes. Application code should be aware
+                        that route change events can (and likely will) cause a change to input gain settings, and so should
+                        be prepared to reassess the state of input gain after the new route is established.
+    @constant       kAudioSessionProperty_AudioRouteDescription 
+                        Available with iOS 5.0 or greater
+                        A CFDictionaryRef with information about the current audio route; keyed values:
+                        Key = kAudioSession_AudioRouteKey_Inputs; value is a CFArray of CFDictionaries with information about the 
+                        inputs utilitized in the current audio route.  
+                        Key = kAudioSession_AudioRouteKey_Outputs; value is a CFArray of CFDictionaries with information about the 
+                        outputs utilitized in the current audio route.
+                        Both kAudioSession_AudioRouteKey_Inputs and kAudioSession_AudioRouteKey_Outputs return a CFArray of
+                        CFDictionaries with Key = kAudioSession_AudioRouteKey_Type; value is a CFString corresponding
+                        to the input or output types documented above.
+ */
 enum { // typedef UInt32 AudioSessionPropertyID
     kAudioSessionProperty_PreferredHardwareSampleRate           = 'hwsr',   // Float64          (get/set)
     kAudioSessionProperty_PreferredHardwareIOBufferDuration     = 'iobd',   // Float32          (get/set)
     kAudioSessionProperty_AudioCategory                         = 'acat',   // UInt32           (get/set)
-    kAudioSessionProperty_AudioRoute                            = 'rout',   // CFStringRef      (get only)
     kAudioSessionProperty_AudioRouteChange                      = 'roch',   // CFDictionaryRef  (property listener)
     kAudioSessionProperty_CurrentHardwareSampleRate             = 'chsr',   // Float64          (get only)
     kAudioSessionProperty_CurrentHardwareInputNumberChannels    = 'chic',   // UInt32           (get only)
@@ -898,6 +1089,14 @@ enum { // typedef UInt32 AudioSessionPropertyID
     kAudioSessionProperty_OverrideCategoryDefaultToSpeaker      = 'cspk',   // UInt32           (get, some set)
     kAudioSessionProperty_OverrideCategoryEnableBluetoothInput  = 'cblu',   // UInt32           (get, some set)
     kAudioSessionProperty_InterruptionType                      = 'type',   // UInt32           (get only)
+    kAudioSessionProperty_Mode                                  = 'mode',   // UInt32           (get/set)
+    kAudioSessionProperty_InputSources                          = 'srcs',   // CFArrayRef       (get only/property listener)
+    kAudioSessionProperty_OutputDestinations                    = 'dsts',   // CFArrayRef       (get only/property listener)
+    kAudioSessionProperty_InputSource                           = 'isrc',   // CFNumberRef      (get/set)
+    kAudioSessionProperty_OutputDestination                     = 'odst',   // CFNumberRef      (get/set)
+    kAudioSessionProperty_InputGainAvailable                    = 'igav',   // UInt32           (get only/property listener)
+    kAudioSessionProperty_InputGainScalar                       = 'igsc',   // Float32          (get/set/property listener)
+    kAudioSessionProperty_AudioRouteDescription                 = 'crar',   // CFDictionaryRef  (get only)
 };
     
 //==================================================================================================
@@ -1108,15 +1307,8 @@ AudioSessionAddPropertyListener(    AudioSessionPropertyID              inID,
 
 /*!
     @function       AudioSessionRemovePropertyListener
-    @abstract       Remove a property listener.
-    @discussion     This function can be called to remove the listener for a property.
-                    Valid properties are listed above.
-    @param          inID
-                        The AudioSessionPropertyID for which we want to remove the listener.
-    @return         kAudioSessionNoError if the operation was successful.  If the property does
-                    not support listeners, kAudioSessionUnsupportedPropertyError will be returned.  
-                    Other error codes listed under AudioSession Error Constants also apply to 
-                    this function.
+    @abstract       see AudioSessionRemovePropertyListenerWithUserData
+    @discussion     see AudioSessionRemovePropertyListenerWithUserData
 */
 extern OSStatus
 AudioSessionRemovePropertyListener(	AudioSessionPropertyID          inID)                           
@@ -1125,10 +1317,17 @@ AudioSessionRemovePropertyListener(	AudioSessionPropertyID          inID)
 /*!
     @function       AudioSessionRemovePropertyListener
     @abstract       Remove a property listener.
-    @discussion     This function can be called to remove the listener for a property.
+    @discussion     This function can be called to remove the listener for a property. The caller
+                    provides the same proc and user data that was used to add the listener. This ensures
+                    that there can be more than one listener established for a given property ID,
+                    and each listener can be removed as requested.
                     Valid properties are listed above.
     @param          inID
                         The AudioSessionPropertyID for which we want to remove the listener.
+    @param          inProc
+                        The proc that was used to add the listener that needs to be removed.
+    @param          inClientData
+                        The client data that was used to add the listener that needs to be removed.
     @return         kAudioSessionNoError if the operation was successful.  If the property does
                     not support listeners, kAudioSessionUnsupportedPropertyError will be returned.  
                     Other error codes listed under AudioSession Error Constants also apply to 
@@ -1145,7 +1344,7 @@ AudioSessionRemovePropertyListenerWithUserData(	AudioSessionPropertyID          
 
 /*!
     @enum           AudioSession audio categories states
-    @abstract       These two session categories are deprecated in iPhone 3.0 or later
+    @abstract       These two session categories are deprecated in iOS 3.0 or later
     @constant       kAudioSessionCategory_UserInterfaceSoundEffects
                         use kAudioSessionCategory_AmbientSound
     @constant       kAudioSessionCategory_LiveAudio 
@@ -1156,6 +1355,20 @@ enum {
     kAudioSessionCategory_LiveAudio                  = 'live'
 };
 
+/*!
+ @enum           AudioSession audio categories states
+ @abstract       Deprecated AudioSession properties
+ @constant       kAudioSessionProperty_AudioRoute 
+ Deprecated in iOS 5.0; Use kAudioSessionProperty_AudioRouteDescription 
+ */
+enum {
+    kAudioSessionProperty_AudioRoute                            = 'rout',   // CFStringRef      (get only)        
+};
+
+// deprecated dictionary keys
+    
+// Deprecated in iOS 5.0; Use kAudioSession_AudioRouteChangeKey_PreviousRouteDescription instead    
+#define kAudioSession_AudioRouteChangeKey_OldRoute  "OutputDeviceDidChange_OldRoute"
 //==================================================================================================
 #endif //TARGET_OS_IPHONE
 

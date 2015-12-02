@@ -1,13 +1,12 @@
 /*
 	NSSortDescriptor.h
 	Foundation
-	Copyright (c) 2002-2010, Apple Inc. All rights reserved.
+	Copyright (c) 2002-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSArray.h>
 #import <Foundation/NSSet.h>
 
-#if MAC_OS_X_VERSION_10_3 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @interface NSSortDescriptor : NSObject <NSCoding, NSCopying> {
 @private
@@ -57,6 +56,4 @@
 - (void)sortUsingDescriptors:(NSArray *)sortDescriptors;    // sorts the array itself
 
 @end
-
-#endif
 

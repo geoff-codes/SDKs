@@ -13,5 +13,7 @@
  *    Error returned as code to NSError from CoreMotion.
  */
 typedef enum {
-	CMErrorNULL = 100
+	CMErrorNULL = 100,
+	CMErrorDeviceRequiresMovement,
+	CMErrorTrueNorthNotAvailable
 } CMError;

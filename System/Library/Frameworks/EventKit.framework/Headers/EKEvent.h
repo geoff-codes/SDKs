@@ -6,7 +6,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <EventKit/EventKitDefines.h>
 #import <EventKit/EKParticipant.h>
+#import <EventKit/EKCalendarItem.h>
 
 @class EKEventStore, EKCalendar, EKRecurrenceRule, EKAlarm, EKParticipant;
 
@@ -33,41 +35,8 @@ typedef enum {
                 event is saved, however, it belongs to the store it was saved into. It cannot be saved into
                 a different store later.
 */
-NS_CLASS_AVAILABLE(NA, 4_0)
-@interface EKEvent : NSObject {
-@private
-    EKEventStore       *_store;
-    void               *_event;
-    NSDate             *_occurrenceDate;
-    NSString           *_eventId;
-    NSNumber           *_calendarId;
-    
-    NSDate             *_dateStamp;
-    NSURL              *_url;
-    BOOL                _allDay;
-    BOOL                _detached;
-    BOOL                _unread;
-    NSString           *_title;
-    NSString           *_location;
-    NSString           *_notes;
-    NSMutableArray     *_alarms;
-    NSMutableArray     *_attendees;
-    EKParticipant      *_organizer;
-    NSDate             *_startDate;
-    NSDate             *_endDate;
-    NSTimeInterval      _duration;
-    EKCalendar         *_calendar;
-    int                 _status;
-    EKParticipantStatus _partStatus;
-    int                 _availability;
-    NSString           *_responseComment;
-    NSTimeZone         *_timeZone;
-    NSDate             *_originalStartDate;
-    NSArray            *_exceptionDates;
-    NSArray            *_recurrenceRules;
-    NSInteger           _birthdayId;
-    UInt64              _loadFlags;
-    UInt64              _dirtyFlags;
+EVENTKIT_CLASS_AVAILABLE(4_0)
+@interface EKEvent : EKCalendarItem {
 }
 
 /*!
@@ -84,66 +53,14 @@ NS_CLASS_AVAILABLE(NA, 4_0)
                 has not been deleted out from under you when you get an external change notification
                 via the EKEventStore database changed notification. If eventWithIdentifier: returns nil,
                 the event was deleted.
- 
+                 
                 Please note that if you change the calendar of an event, this ID will likely change. It is
                 currently also possible for the ID to change due to a sync operation. For example, if
                 a user moved an event in iCal to another calendar, we'd see it as a completely new
                 event here.
 */
- 
+
 @property(nonatomic, readonly) NSString *eventIdentifier;
- 
-/*!
-    @property   title
-    @abstract   The title for an event.
-*/
-@property(nonatomic, copy) NSString *title;
-
-/*!
-    @property   location
-    @abstract   The location for an event.
-*/
-@property(nonatomic, copy) NSString *location;
-
-/*!
-    @property   calendar
-    @abstract   The calendar for an event.
-    @discussion This property represents the calendar the event is currently in.
-*/
-@property(nonatomic, retain) EKCalendar *calendar;
-
-/*!
-    @property   notes
-    @abstract   The notes for an event.
-*/
-@property(nonatomic, copy) NSString *notes;
-
-/*!
-    @property   lastModifiedDate
-    @abstract   The date this event was last modified.
-*/
-@property(nonatomic, readonly) NSDate *lastModifiedDate;
-
-/*!
-    @property   alarms
-    @abstract   An array of EKAlarm objects, or nil if none.
-*/
-@property(nonatomic, copy) NSArray *alarms;
-
-/*!
-    @method     addAlarm:
-    @abstract   Adds an alarm to this event.
-    @discussion This method add an alarm to an event. Be warned that some calendars can only
-                allow a certain maximum number of alarms. When this event is saved, it will
-                truncate any extra alarms from the array.
-*/
-- (void)addAlarm:(EKAlarm *)alarm;
-
-/*!
-    @method     removeAlarm:
-    @abstract   Removes an alarm from this event.
-*/
-- (void)removeAlarm:(EKAlarm *)alarm;
 
 /*!
     @property   allDay
@@ -152,12 +69,12 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 @property(nonatomic, getter=isAllDay) BOOL allDay;
 
 /*!
-    @property   startDate
-    @abstract   The start date for the event.
-    @discussion This property represents the start date for this event. Floating events (such
-                as all-day events) are currently always returned in the default time zone.
-                ([NSTimeZone defaultTimeZone])
-*/
+     @property   startDate
+     @abstract   The start date for the event.
+     @discussion This property represents the start date for this event. Floating events (such
+                 as all-day events) are currently always returned in the default time zone.
+                 ([NSTimeZone defaultTimeZone])
+ */
 @property(nonatomic, copy) NSDate *startDate;
 
 /*!
@@ -173,12 +90,6 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 - (NSComparisonResult)compareStartDateWithEvent:(EKEvent *)other;
 
 /*!
-    @property   attendees
-    @abstract   An array of EKParticipant objects, or nil if none.
-*/
-@property(nonatomic, readonly) NSArray *attendees;
-
-/*!
     @property   organizer
     @abstract   The organizer of this event, or nil.
 */
@@ -186,9 +97,10 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 
 /*!
     @property   recurrenceRule
-    @abstract   The recurrence rule for this event.
+    @abstract   The recurrence rule for this event. In iOS 5.0 and later, you can use
+                the recurrenceRules property instead.
 */
-@property(nonatomic, retain) EKRecurrenceRule  *recurrenceRule;
+@property(nonatomic, retain) EKRecurrenceRule  *recurrenceRule __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_0,__IPHONE_5_0);
 
 /*!
     @property   availability
@@ -222,22 +134,31 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 
 
 /*!
-    @method     refresh
-    @abstract   Refreshes an event object to ensure it's still valid.
-    @discussion When the database changes, your application is sent an EKEventStoreChangedNotification
-                note. You should generally consider all EKEvent instances to be invalid as soon as
-                you receive the notification. However, for events you truly care to keep around, you
-                can call this method. It ensures the record is still valid by ensuring the event and
-                start date are still valid. It also attempts to refresh all properties except those
-                you might have modified. If this method returns NO, the record has been deleted or is
-                otherwise invalid. You should not continue to use it. If it returns YES, all is still
-                well, and the record is ready for continued use. You should only call this method on
-                events that are more critical to keep around if possible, such as an event that is
-                being actively edited, as this call is fairly heavyweight. Do not use it to refresh
-                the entire selected range of events you might have had selected. It is mostly pointless
-                anyway, as recurrence information may have changed.
+     @method     refresh
+     @abstract   Refreshes an event object to ensure it's still valid.
+     @discussion When the database changes, your application is sent an EKEventStoreChangedNotification
+                 note. You should generally consider all EKEvent instances to be invalid as soon as
+                 you receive the notification. However, for events you truly care to keep around, you
+                 can call this method. It ensures the record is still valid by ensuring the event and
+                 start date are still valid. It also attempts to refresh all properties except those
+                 you might have modified. If this method returns NO, the record has been deleted or is
+                 otherwise invalid. You should not continue to use it. If it returns YES, all is still
+                 well, and the record is ready for continued use. You should only call this method on
+                 events that are more critical to keep around if possible, such as an event that is
+                 being actively edited, as this call is fairly heavyweight. Do not use it to refresh
+                 the entire selected range of events you might have had selected. It is mostly pointless
+                 anyway, as recurrence information may have changed.
 */
 
 - (BOOL)refresh;
+
+/*!
+    @property   birthdayPersonID
+    @abstract   Specifies the address book ID of the person this event was created for.
+    @disussion  This property is only valid for events in the built-in Birthdays calendar. It specifies
+                the Address Book ID of the person this event was created for. For any other type of event,
+                this property returns -1.
+*/
+@property(nonatomic, readonly) NSInteger    birthdayPersonID __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 @end

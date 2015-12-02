@@ -9,6 +9,41 @@
 #import <CoreMotion/CMAccelerometer.h>
 #import <CoreMotion/CMAttitude.h>
 #import <CoreMotion/CMGyro.h>
+#import <CoreMotion/CMMagnetometer.h>
+
+/*
+ *  CMMagneticFieldCalibrationAccuracy
+ *  
+ *  Discussion:
+ *        CMMagneticFieldCalibrationAccuracy indicates the calibration 
+ *        accuracy of a magnetic field estimate.
+ *
+ */
+typedef enum {
+	CMMagneticFieldCalibrationAccuracyUncalibrated = -1,
+	CMMagneticFieldCalibrationAccuracyLow,
+	CMMagneticFieldCalibrationAccuracyMedium,
+	CMMagneticFieldCalibrationAccuracyHigh
+} CMMagneticFieldCalibrationAccuracy;
+
+/*
+ *  CMCalibratedMagneticField
+ *  
+ *  Discussion:
+ *    A structure containing 3-axis calibrated magnetic field data
+ *    and an estimate of the accuracy of the calibration
+ *
+ *  Fields:
+ *    field:
+ *      The 3-axis calibrated magnetic field vector.
+ *    accuracy:
+ *      An estimate of the calibration accuracy.
+ */
+typedef struct {
+    CMMagneticField field;
+    CMMagneticFieldCalibrationAccuracy accuracy;
+} CMCalibratedMagneticField;
+
 
 /*
  *  CMDeviceMotion
@@ -37,7 +72,7 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *  rotationRate
  *  
  *  Discussion:
- *    Returns the rotation rate of the device.
+ *    Returns the rotation rate of the device for devices with a gyro.
  *
  */
 @property(readonly, nonatomic) CMRotationRate rotationRate;
@@ -63,5 +98,16 @@ NS_CLASS_AVAILABLE(NA,4_0)
  *
  */
 @property(readonly, nonatomic) CMAcceleration userAcceleration;
+
+/*
+ *  magneticField
+ *  
+ *  Discussion:
+ *			Returns the magnetic field vector with respect to the device for devices with a magnetometer.
+ *			Note that this is the total magnetic field in the device's vicinity without device
+ *			bias (Earth's magnetic field plus surrounding fields, without device bias),
+ *			unlike CMMagnetometerData magneticField.
+ */
+@property(readonly, nonatomic) CMCalibratedMagneticField magneticField NS_AVAILABLE(NA,5_0);
 
 @end

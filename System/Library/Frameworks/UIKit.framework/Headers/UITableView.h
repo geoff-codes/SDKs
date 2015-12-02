@@ -2,7 +2,7 @@
 //  UITableView.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,8 +13,8 @@
 #import <UIKit/UIKitDefines.h>
 
 typedef enum {
-    UITableViewStylePlain,              // regular table view
-    UITableViewStyleGrouped             // preferences style table view
+    UITableViewStylePlain,                  // regular table view
+    UITableViewStyleGrouped                 // preferences style table view
 } UITableViewStyle;
 
 typedef enum {
@@ -22,25 +22,31 @@ typedef enum {
     UITableViewScrollPositionTop,    
     UITableViewScrollPositionMiddle,   
     UITableViewScrollPositionBottom
-} UITableViewScrollPosition;            // scroll so row of interest is completely visible at top/center/bottom of view
+} UITableViewScrollPosition;                // scroll so row of interest is completely visible at top/center/bottom of view
 
 typedef enum {
     UITableViewRowAnimationFade,
-    UITableViewRowAnimationRight,       // slide in from right (or out to right)
+    UITableViewRowAnimationRight,           // slide in from right (or out to right)
     UITableViewRowAnimationLeft,
     UITableViewRowAnimationTop,
     UITableViewRowAnimationBottom,
-    UITableViewRowAnimationNone,        // available in iPhone 3.0
-    UITableViewRowAnimationMiddle,      // available in iPhone 3.2.  attempts to keep cell centered in the space it will/did occupy
+    UITableViewRowAnimationNone,            // available in iOS 3.0
+    UITableViewRowAnimationMiddle,          // available in iOS 3.2.  attempts to keep cell centered in the space it will/did occupy
+    UITableViewRowAnimationAutomatic = 100  // available in iOS 5.0.  chooses an appropriate animation style for you
 } UITableViewRowAnimation;
 
 // Including this constant string in the array of strings returned by sectionIndexTitlesForTableView: will cause a magnifying glass icon to be displayed at that location in the index.
 // This should generally only be used as the first title in the index.
 UIKIT_EXTERN NSString *const UITableViewIndexSearch __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
-@class UITableView;
-@protocol UITableViewDataSource;
+// Returning this value from tableView:heightForHeaderInSection: or tableView:heightForFooterInSection: results in a height that fits the value returned from
+// tableView:titleForHeaderInSection: or tableView:titleForFooterInSection: if the title is not nil.
+UIKIT_EXTERN const CGFloat UITableViewAutomaticDimension __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
+@class UITableView;
+@class UINib;
+@protocol UITableViewDataSource;
+@class UILongPressGestureRecognizer;
 
 //_______________________________________________________________________________________________________________
 // this represents the display and behaviour of the cells.
@@ -100,6 +106,12 @@ UIKIT_EXTERN NSString *const UITableViewIndexSearch __OSX_AVAILABLE_STARTING(__M
 
 - (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath; // return 'depth' of row for hierarchies
 
+// Copy/Paste.  All three methods must be implemented by the delegate.
+
+- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+- (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
 @end
 
 UIKIT_EXTERN NSString *const UITableViewSelectionDidChangeNotification;
@@ -125,6 +137,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
     UIView                     *_firstResponderView;
     NSUInteger                  _firstResponderViewType;    
     NSMutableDictionary        *_reusableTableCells;
+    NSMutableDictionary        *_nibMap;
+    NSMutableDictionary        *_nibExternalObjectsTables;
     UITableViewCell            *_topSeparatorCell;
     id                          _topSeparator;
     NSMutableArray             *_extraSeparators;
@@ -162,20 +176,31 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
     NSMutableArray             *_insertItems;
     NSMutableArray             *_deleteItems;
     NSMutableArray             *_reloadItems;
+    NSMutableArray             *_moveItems;
     
     UIColor                    *_separatorColor;
     UIColor                    *_separatorTopShadowColor;
     UIColor                    *_separatorBottomShadowColor;
     UIColor                    *_checkmarkColor;
     UIColor                    *_sectionBorderColor;
+    UIColor                    *_indexColor;
+    UIColor                    *_indexBackgroundColor;
     
     NSArray                    *_defaultSectionIndexTitles;
     
     UISwipeGestureRecognizer   *_swipeGestureRecognizer;
+    UIGestureRecognizer        *_gobblerGestureRecognizer;
 
     NSInteger                   _updateCount;
     
-    id                          _reserved;
+    NSIndexPath                  *_displayingCellContentStringIndexPath;
+    UILongPressGestureRecognizer *_longPressGestureRecognizer;
+    NSTimer                      *_longPressAutoscrollTimer;
+    int                          _longPressAutoscrollDirection;
+    
+    UIEdgeInsets                 _sectionContentInset;
+    
+    id                           _reserved;
 
     struct {
         unsigned int dataSourceNumberOfRowsInSection:1;
@@ -183,12 +208,13 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
         unsigned int dataSourceNumberOfSectionsInTableView:1;
         unsigned int dataSourceTitleForHeaderInSection:1;
         unsigned int dataSourceTitleForFooterInSection:1;
+        unsigned int dataSourceDetailTextForHeaderInSection:1;
         unsigned int dataSourceCommitEditingStyle:1;
         unsigned int dataSourceSectionIndexTitlesForTableView:1;
         unsigned int dataSourceSectionForSectionIndexTitle:1;
         unsigned int dataSourceCanEditRow:1;
         unsigned int dataSourceCanMoveRow:1;
-		unsigned int dataSourceCanUpdateRow:1;
+        unsigned int dataSourceCanUpdateRow:1;
         unsigned int dataSourceShouldShowMenu:1;
         unsigned int dataSourceCanPerformAction:1;
         unsigned int dataSourcePerformAction:1;
@@ -229,6 +255,13 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
         unsigned int delegateHeightForFooter:1;
         unsigned int delegateViewForHeader:1;
         unsigned int delegateViewForFooter:1;
+        unsigned int delegateCalloutTargetRectForCell;
+        unsigned int delegateShouldShowMenu:1;
+        unsigned int delegateCanPerformAction:1;
+        unsigned int delegatePerformAction:1;
+        unsigned int delegateWillBeginReordering:1;
+        unsigned int delegateDidEndReordering:1;
+        unsigned int delegateDidCancelReordering:1;
         unsigned int style:1;
         unsigned int separatorStyle:3;
         unsigned int wasEditing:1;
@@ -252,6 +285,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
         unsigned int reloading:1;
         unsigned int allowsSelection:1;
         unsigned int allowsSelectionDuringEditing:1;
+        unsigned int allowsMultipleSelection:1;
+        unsigned int allowsMultipleSelectionDuringEditing:1;
         unsigned int showsSelectionImmediatelyOnTouchBegin:1;
         unsigned int indexHidden:1;
         unsigned int indexHiddenForSearch:1;
@@ -265,6 +300,13 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
         unsigned int sendReloadFinished:1;
         unsigned int keepFirstResponderWhenInteractionDisabled:1;
         unsigned int keepFirstResponderVisibleOnBoundsChange:1;
+        unsigned int dontDrawTopShadowInGroupedSections:1;
+        unsigned int forceStaticHeadersAndFooters;
+        unsigned int displaysCellContentStringsOnTapAndHold:1;
+        unsigned int displayingCellContentStringCallout:1;
+        unsigned int longPressAutoscrollingActive:1;
+        unsigned int adjustsRowHeightsForSectionLocation:1;
+        unsigned int customSectionContentInsetSet:1;
     } _tableFlags;
     
     unsigned int _selectedSection;
@@ -318,10 +360,12 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
 - (void)insertSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
 - (void)deleteSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
 - (void)reloadSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 - (void)insertRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
 - (void)deleteRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
 - (void)reloadRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)moveRowAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 // Editing. When set, rows show insert/delete/reorder controls based on data source queries
 
@@ -329,11 +373,14 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 @property(nonatomic) BOOL allowsSelection __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);  // default is YES. Controls whether rows can be selected when not in editing mode
-@property(nonatomic) BOOL allowsSelectionDuringEditing;                         // default is NO. Controls whether rows can be selected when in editing mode
+@property(nonatomic) BOOL allowsSelectionDuringEditing;                                     // default is NO. Controls whether rows can be selected when in editing mode
+@property(nonatomic) BOOL allowsMultipleSelection __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);                 // default is NO. Controls whether multiple rows can be selected simultaneously
+@property(nonatomic) BOOL allowsMultipleSelectionDuringEditing __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);   // default is NO. Controls whether multiple rows can be selected simultaneously in editing mode
 
 // Selection
 
-- (NSIndexPath *)indexPathForSelectedRow;                                       // return nil or index path representing section and row of selection.
+- (NSIndexPath *)indexPathForSelectedRow;                                                // returns nil or index path representing section and row of selection.
+- (NSArray *)indexPathsForSelectedRows __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0); // returns nil or a set of index paths representing the sections and rows of the selection.
 
 // Selects and deselects rows. These methods will not call the delegate methods (-tableView:willSelectRowAtIndexPath: or tableView:didSelectRowAtIndexPath:), nor will it send out a notification.
 - (void)selectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated scrollPosition:(UITableViewScrollPosition)scrollPosition;
@@ -349,7 +396,10 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
 @property(nonatomic,retain) UIView *tableHeaderView;                            // accessory view for above row content. default is nil. not to be confused with section header
 @property(nonatomic,retain) UIView *tableFooterView;                            // accessory view below content. default is nil. not to be confused with section footer
 
-- (UITableViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;  // Used by the delegate to acquire an already allocated cell, in lieu of allocating a new one.
+- (id)dequeueReusableCellWithIdentifier:(NSString *)identifier;  // Used by the delegate to acquire an already allocated cell, in lieu of allocating a new one.
+
+// when a nib is registered, calls to dequeueReusableCellWithIdentifier: with the registered identifier will instantiate the cell from the nib if it is not already in the reuse queue
+- (void)registerNib:(UINib *)nib forCellReuseIdentifier:(NSString *)identifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 @end
 
@@ -405,9 +455,9 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableView : UIScrollView <NSCoding> {
 // This category provides convenience methods to make it easier to use an NSIndexPath to represent a section and row
 @interface NSIndexPath (UITableView)
 
-+ (NSIndexPath *)indexPathForRow:(NSUInteger)row inSection:(NSUInteger)section;
++ (NSIndexPath *)indexPathForRow:(NSInteger)row inSection:(NSInteger)section;
 
-@property(nonatomic,readonly) NSUInteger section;
-@property(nonatomic,readonly) NSUInteger row;
+@property(nonatomic,readonly) NSInteger section;
+@property(nonatomic,readonly) NSInteger row;
 
 @end

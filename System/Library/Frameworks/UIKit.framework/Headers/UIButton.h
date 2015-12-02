@@ -2,7 +2,7 @@
 //  UIButton.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -47,14 +47,14 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIButton : UIControl <NSCoding> {
 
 + (id)buttonWithType:(UIButtonType)buttonType;
 
-@property(nonatomic)        UIEdgeInsets    contentEdgeInsets;              // default is UIEdgeInsetsZero
-@property(nonatomic)        UIEdgeInsets    titleEdgeInsets;                // default is UIEdgeInsetsZero
-@property(nonatomic)        BOOL            reversesTitleShadowWhenHighlighted; // default is NO. if YES, shadow reverses to shift between engrave and emboss appearance
-@property(nonatomic)        UIEdgeInsets    imageEdgeInsets;                // default is UIEdgeInsetsZero
-@property(nonatomic)        BOOL            adjustsImageWhenHighlighted;    // default is YES. if YES, image is drawn darker when highlighted(pressed)
-@property(nonatomic)        BOOL            adjustsImageWhenDisabled;       // default is YES. if YES, image is drawn lighter when disabled
-@property(nonatomic)        BOOL            showsTouchWhenHighlighted;      // default is NO. if YES, show a simple feedback (currently a glow) while highlighted
-
+@property(nonatomic)          UIEdgeInsets contentEdgeInsets;              // default is UIEdgeInsetsZero
+@property(nonatomic)          UIEdgeInsets titleEdgeInsets;                // default is UIEdgeInsetsZero
+@property(nonatomic)          BOOL         reversesTitleShadowWhenHighlighted; // default is NO. if YES, shadow reverses to shift between engrave and emboss appearance
+@property(nonatomic)          UIEdgeInsets imageEdgeInsets;                // default is UIEdgeInsetsZero
+@property(nonatomic)          BOOL         adjustsImageWhenHighlighted;    // default is YES. if YES, image is drawn darker when highlighted(pressed)
+@property(nonatomic)          BOOL         adjustsImageWhenDisabled;       // default is YES. if YES, image is drawn lighter when disabled
+@property(nonatomic)          BOOL         showsTouchWhenHighlighted;      // default is NO. if YES, show a simple feedback (currently a glow) while highlighted
+@property(nonatomic,retain)   UIColor     *tintColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // default is nil. only valid for some button types
 @property(nonatomic,readonly) UIButtonType buttonType;
 
 // you can set the image, title color, title shadow color, and background image to use for each state. you can specify data

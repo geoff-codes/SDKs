@@ -38,8 +38,8 @@ NS_CLASS_AVAILABLE(NA, 2_0)
     // The message will be displayed below the alternateName.
 @property(nonatomic,copy)      NSString   *message;
 
-    // Actions depend on the available properties but include making phone calls,
-    // sending text messages, emails, opening URLs, etc...
+    // Specifies whether buttons appear to let the user perform actions such as sharing the contact,
+    // initiating a FaceTime call, or sending a text message.
 @property(nonatomic)           BOOL        allowsActions;
     // Whether options to create a contact or add to an existing contact should be
     // made available to the user.

@@ -2,14 +2,14 @@
 //  UITextView.h
 //  UIKit
 //
-//  Copyright 2007-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIScrollView.h>
 #import <UIKit/UIStringDrawing.h>
-#import <UIKit/UITextInputTraits.h>
+#import <UIKit/UITextInput.h>
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UIDataDetectors.h>
 
@@ -44,7 +44,7 @@
 @end
 
 
-UIKIT_CLASS_AVAILABLE(2_0) @interface UITextView : UIScrollView <UITextInputTraits> 
+UIKIT_CLASS_AVAILABLE(2_0) @interface UITextView : UIScrollView <UITextInput> 
 {
   @package
     WebFrame           *m_frame;
@@ -58,6 +58,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextView : UIScrollView <UITextInputTrai
     BOOL                m_reentrancyGuard;
     BOOL                m_readyForScroll;
     BOOL                m_hasExplicitTextAlignment;
+    BOOL                m_hasExplicitLineHeight;
     
     // Gesture recognition.
     UITextInteractionAssistant *m_interactionAssistant;
@@ -70,6 +71,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITextView : UIScrollView <UITextInputTrai
     UITextAlignment     m_textAlignment;
     UIView             *m_inputView;
     UIView             *m_inputAccessoryView;
+    float               m_lineHeight;
+    BOOL                m_skipScrollContainingView;
 }
 
 @property(nonatomic,assign) id<UITextViewDelegate> delegate;

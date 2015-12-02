@@ -1,16 +1,11 @@
 /*
     NSAttributeDescription.h
     Core Data
-    Copyright (c) 2004-2009 Apple Inc.
+    Copyright (c) 2004-2010 Apple Inc.
     All rights reserved.
 */
 
-#import <Availability.h>
-
 #import <Foundation/NSObject.h>
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4 || __IPHONE_3_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
-
 #import <CoreData/NSPropertyDescription.h>
 
 @class NSEntityDescription;
@@ -38,7 +33,7 @@
 typedef NSUInteger NSAttributeType;
 
 // Attributes represent individual values like strings, numbers, dates, etc.
-NS_CLASS_AVAILABLE(10_4, 3_0)
+NS_CLASS_AVAILABLE(10_4,3_0)
 @interface NSAttributeDescription : NSPropertyDescription {
 @private
 	Class _attributeValueClass;
@@ -63,19 +58,17 @@ NS_CLASS_AVAILABLE(10_4, 3_0)
 - (id)defaultValue;
 - (void)setDefaultValue:(id)value;    // value is retained and not copied
 
-/* Sets the value class for the attribute (when using transient properties.)
-*/
-- (void)setAttributeValueClassName:(NSString *)className __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
+/* Sets the value class for the attribute (when using transient properties.)*/
+- (void)setAttributeValueClassName:(NSString *)className NS_AVAILABLE(10_5,3_0);
 
-/* Returns the version hash for the attribute.  This value includes the versionHash information from the NSPropertyDescription superclass, and the attribute type.
-*/
-- (NSData *)versionHash __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
+/* Returns the version hash for the attribute.  This value includes the versionHash information from the NSPropertyDescription superclass, and the attribute type.*/
+- (NSData *)versionHash NS_AVAILABLE(10_5,3_0);
 
-/* The name of the transformer used to convert a NSTransformedAttributeType.  The transformer must output NSData from transformValue and allow reverse transformation.  If this value is not set, or set to nil, Core Data will default to using a transformer which uses NSCoding to archive/unarchive the attribute value.
-*/
-- (NSString *)valueTransformerName __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
-- (void)setValueTransformerName:(NSString *)string __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
+/* The name of the transformer used to convert a NSTransformedAttributeType.  The transformer must output NSData from transformValue and allow reverse transformation.  If this value is not set, or set to nil, Core Data will default to using a transformer which uses NSCoding to archive/unarchive the attribute value.*/
+- (NSString *)valueTransformerName NS_AVAILABLE(10_5,3_0);
+- (void)setValueTransformerName:(NSString *)string NS_AVAILABLE(10_5,3_0);
+
+- (BOOL)allowsExternalBinaryDataStorage NS_AVAILABLE(10_7, 5_0);
+- (void)setAllowsExternalBinaryDataStorage:(BOOL)flag NS_AVAILABLE(10_7, 5_0);
 
 @end
-
-#endif

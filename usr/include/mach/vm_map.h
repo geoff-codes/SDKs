@@ -31,6 +31,7 @@ typedef function_table_entry   *function_table_t;
 
 #include <mach/std_types.h>
 #include <mach/mig.h>
+#include <mach/mig.h>
 #include <mach/mach_types.h>
 #include <mach_debug/mach_debug_types.h>
 
@@ -262,7 +263,7 @@ kern_return_t vm_remap
 	vm_address_t *target_address,
 	vm_size_t size,
 	vm_address_t mask,
-	boolean_t anywhere,
+	int flags,
 	vm_map_t src_task,
 	vm_address_t src_address,
 	boolean_t copy,
@@ -695,7 +696,7 @@ __END_DECLS
 		vm_address_t target_address;
 		vm_size_t size;
 		vm_address_t mask;
-		boolean_t anywhere;
+		int flags;
 		vm_address_t src_address;
 		boolean_t copy;
 		vm_inherit_t inheritance;

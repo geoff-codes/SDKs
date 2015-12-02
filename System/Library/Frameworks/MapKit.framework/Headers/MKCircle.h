@@ -2,14 +2,15 @@
 //  MKCircle.h
 //  MapKit
 //
-//  Copyright 2010 Apple, Inc. All rights reserved.
+//  Copyright (c) 2010-2011, Apple Inc. All rights reserved.
 //
 
 #import <MapKit/MKShape.h>
 #import <MapKit/MKOverlay.h>
 #import <MapKit/MKGeometry.h>
+#import <MapKit/MKFoundation.h>
 
-NS_CLASS_AVAILABLE(__MAC_NA, 4_0)
+MK_CLASS_AVAILABLE(NA, 4_0)
 @interface MKCircle : MKShape <MKOverlay> {
 @package
     CLLocationCoordinate2D _coordinate;

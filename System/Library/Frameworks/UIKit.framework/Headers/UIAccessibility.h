@@ -2,15 +2,18 @@
 //  UIAccessibility.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
+
+#import <UIKit/UIAccessibilityAdditions.h>
 #import <UIKit/UIAccessibilityConstants.h>
 #import <UIKit/UIAccessibilityElement.h>
-#import <UIKit/UIAccessibilityAdditions.h>
+#import <UIKit/UIAccessibilityIdentification.h>
+#import <UIKit/UIAccessibilityZoom.h>
 
 /*
  UIAccessibility
@@ -89,6 +92,12 @@
 @property(nonatomic) CGRect accessibilityFrame;
 
 /*
+ Returns the activation point for an accessible element in screen coordinates.
+ default == Mid-point of the accessibilityFrame.
+ */
+@property(nonatomic) CGPoint accessibilityActivationPoint __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+/*
  Returns the language code that the element's label, value and hint should be spoken in. 
  If no language is set, the user's language is used.
  The format for the language code should follow Internet BCP 47 for language tags.
@@ -96,6 +105,19 @@
  default == nil
  */
 @property(nonatomic, retain) NSString *accessibilityLanguage;
+
+/*
+ Marks all the accessible elements contained within as hidden.
+ default == NO
+ */
+@property(nonatomic) BOOL accessibilityElementsHidden __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+/*
+ Informs whether the receiving view should be considered modal by accessibility. If YES, then 
+ elements outside this view will be ignored. Only elements inside this view will be exposed.
+ default == NO
+ */
+@property(nonatomic) BOOL accessibilityViewIsModal __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 @end
 
@@ -120,7 +142,6 @@
 
 /*
  Returns the number of accessibility elements in the container.
- default == 0 
  */
 - (NSInteger)accessibilityElementCount;
 
@@ -183,10 +204,46 @@ typedef enum {
     UIAccessibilityScrollDirectionRight = 1,
     UIAccessibilityScrollDirectionLeft,
     UIAccessibilityScrollDirectionUp,
-    UIAccessibilityScrollDirectionDown
+    UIAccessibilityScrollDirectionDown,
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_5_0
+    UIAccessibilityScrollDirectionNext,
+    UIAccessibilityScrollDirectionPrevious
+#endif    
 } UIAccessibilityScrollDirection;
 
 - (BOOL)accessibilityScroll:(UIAccessibilityScrollDirection)direction __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_2);
+
+/* 
+ Implement accessibilityPerformEscape on an element or containing view to exit a modal or hierarchical interface view.
+ For example, UIPopoverController implements accessibilityPerformEscape on it's root view, so that when
+ called (as a result of a VoiceOver user action), it dismisses the popover.
+ If your implementation successfully dismisses the current UI, return YES, otherwise return NO.
+ default == NO
+ */
+- (BOOL)accessibilityPerformEscape __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+@end
+
+/* 
+ UIAccessibilityReadingContent
+ 
+ Implemented on an element that represents content meant to be read, like a book or periodical. 
+ Use in conjuction with UIAccessibilityTraitCausesPageTurn to provide a continuous reading experience with VoiceOver.
+ */
+@protocol UIAccessibilityReadingContent
+@required
+
+// Returns the line number given a point in the view's coordinate space.
+- (NSInteger)accessibilityLineNumberForPoint:(CGPoint)point __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Returns the content associated with a line number as a string.
+- (NSString *)accessibilityContentForLineNumber:(NSInteger)lineNumber __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Returns the on-screen rectangle for a line number.
+- (CGRect)accessibilityFrameForLineNumber:(NSInteger)lineNumber __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Returns a string representing the text displayed on the current page.
+- (NSString *)accessibilityPageContent __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 @end
 
@@ -209,3 +266,12 @@ UIKIT_EXTERN void UIAccessibilityPostNotification(UIAccessibilityNotifications n
  */
 UIKIT_EXTERN BOOL UIAccessibilityIsVoiceOverRunning() __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 UIKIT_EXTERN NSString *const UIAccessibilityVoiceOverStatusChanged __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0); 
+
+// Returns whether system audio is mixed down from stereo to mono.
+UIKIT_EXTERN BOOL UIAccessibilityIsMonoAudioEnabled() __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+UIKIT_EXTERN NSString *const UIAccessibilityMonoAudioStatusDidChangeNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
+// Returns whether the system preference for closed captioning is enabled.
+UIKIT_EXTERN BOOL UIAccessibilityIsClosedCaptioningEnabled() __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+UIKIT_EXTERN NSString *const UIAccessibilityClosedCaptioningStatusDidChangeNotification __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+

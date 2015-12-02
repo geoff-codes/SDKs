@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>AlternateSDK</key>
-	<string>iphonesimulator4.2</string>
+	<string>iphonesimulator5.1</string>
 	<key>CanonicalName</key>
-	<string>iphoneos4.2</string>
+	<string>iphoneos5.1</string>
 	<key>CustomProperties</key>
 	<dict/>
 	<key>DefaultProperties</key>
@@ -18,34 +18,34 @@
 		<string></string>
 		<key>DEAD_CODE_STRIPPING</key>
 		<string>YES</string>
+		<key>DEFAULT_COMPILER</key>
+		<string>com.apple.compilers.llvm.clang.1_0</string>
 		<key>ENTITLEMENTS_REQUIRED</key>
 		<string>YES</string>
 		<key>GCC_THUMB_SUPPORT</key>
 		<string>YES</string>
-		<key>GCC_VERSION</key>
-		<string>4.2</string>
 		<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-		<string>4.2</string>
+		<string>5.1</string>
 		<key>PLATFORM_NAME</key>
 		<string>iphoneos</string>
 		<key>SUPPORTED_DEVICE_FAMILIES</key>
 		<string>1,2</string>
 	</dict>
 	<key>DisplayName</key>
-	<string>iOS 4.2</string>
+	<string>iOS 5.1</string>
 	<key>DocSetFeedName</key>
-	<string>Apple iPhone OS 4.2</string>
+	<string>Apple iPhone OS 5.1</string>
 	<key>DocSetFeedURL</key>
-	<string>http://developer.apple.com/rss/com.apple.adc.documentation.AppleiPhone4_2.atom</string>
+	<string>http://developer.apple.com/rss/com.apple.adc.documentation.AppleiPhone5_1.atom</string>
 	<key>IsBaseSDK</key>
 	<string>YES</string>
 	<key>MaximumDeploymentTarget</key>
-	<string>4.2.99</string>
+	<string>5.1.99</string>
 	<key>MinimalDisplayName</key>
-	<string>4.2</string>
+	<string>5.1</string>
 	<key>MinimumSupportedToolsVersion</key>
 	<string>3.2.3</string>
 	<key>Version</key>
-	<string>4.2</string>
+	<string>5.1</string>
 </dict>
 </plist>

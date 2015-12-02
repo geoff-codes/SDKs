@@ -1,15 +1,14 @@
 /*	NSPredicate.h
-	Copyright (c) 2004-2010, Apple Inc. All rights reserved.
+	Copyright (c) 2004-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSSet.h>
 
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_3_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
-
 // Predicates wrap some combination of expressions and operators and when evaluated return a BOOL.
 
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSPredicate : NSObject <NSCoding, NSCopying> {
     void *_reserved;
 }
@@ -23,7 +22,7 @@
 
 #if NS_BLOCKS_AVAILABLE
 + (NSPredicate*)predicateWithBlock:(BOOL (^)(id evaluatedObject, NSDictionary *bindings))block NS_AVAILABLE(10_6, 4_0); 
-#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6 */
+#endif
 
 - (NSString *)predicateFormat;    // returns the format string of the predicate
 
@@ -52,4 +51,3 @@
 - (void)filterUsingPredicate:(NSPredicate *)predicate NS_AVAILABLE(10_5, 3_0);    // evaluate a predicate against a set of objects and filter the mutable set directly
 @end
 
-#endif

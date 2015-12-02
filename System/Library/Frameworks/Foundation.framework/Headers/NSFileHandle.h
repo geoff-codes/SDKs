@@ -1,5 +1,5 @@
 /*	NSFileHandle.h
-	Copyright (c) 1995-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1995-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -53,7 +53,7 @@ FOUNDATION_EXPORT NSString * const NSFileHandleDataAvailableNotification;
 
 FOUNDATION_EXPORT NSString * const NSFileHandleNotificationDataItem;
 FOUNDATION_EXPORT NSString * const NSFileHandleNotificationFileHandleItem;
-FOUNDATION_EXPORT NSString * const NSFileHandleNotificationMonitorModes;
+FOUNDATION_EXPORT NSString * const NSFileHandleNotificationMonitorModes NS_DEPRECATED(10_0, 10_7, 2_0, 5_0);
 
 @interface NSFileHandle (NSFileHandleAsynchronousAccess)
 
@@ -68,6 +68,11 @@ FOUNDATION_EXPORT NSString * const NSFileHandleNotificationMonitorModes;
 
 - (void)waitForDataInBackgroundAndNotifyForModes:(NSArray *)modes;
 - (void)waitForDataInBackgroundAndNotify;
+
+#ifdef __BLOCKS__
+@property (copy) void (^readabilityHandler)(NSFileHandle *)  NS_AVAILABLE(10_7, 5_0);
+@property (copy) void (^writeabilityHandler)(NSFileHandle *) NS_AVAILABLE(10_7, 5_0);
+#endif
 
 @end
 

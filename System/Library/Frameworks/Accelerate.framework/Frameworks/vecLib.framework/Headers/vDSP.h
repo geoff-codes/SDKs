@@ -3,9 +3,9 @@
  
      Contains:   AltiVec DSP Interfaces
  
-     Version:    vecLib-311.0
+     Version:    vecLib-348.5
  
-     Copyright:  � 2000-2010 by Apple Computer, Inc., all rights reserved.
+     Copyright:  � 2000-2012 by Apple Computer, Inc., all rights reserved.
  
      Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
@@ -46,8 +46,8 @@ extern "C" {
 	vDSP_Version0 is a major version number.
 	vDSP_Version1 is a minor version number.
 */
-#define	vDSP_Version0	311
-#define	vDSP_Version1	0
+#define	vDSP_Version0	348
+#define	vDSP_Version1	5
 
 
 typedef unsigned long                   vDSP_Length;
@@ -2037,6 +2037,23 @@ vDSP_vssqD(
   vDSP_Stride    __vDSP_strideResult,
   vDSP_Length    __vDSP_size) __OSX_AVAILABLE_STARTING(__MAC_10_2, __IPHONE_4_0);
 
+/* Euclidean distance square, single-precision.*/
+/*
+ *  vDSP_distancesq()
+ *  
+ *  Availability:
+ *    Mac OS X:         in version 10.0 and later in vecLib.framework
+ *    CarbonLib:        not in Carbon, but vecLib is compatible with CarbonLib
+ *    Non-Carbon CFM:   in vecLib 1.0 and later
+ */
+extern void 
+vDSP_distancesq(
+  const float   __vDSP_input1[],
+  vDSP_Stride   __vDSP_stride1,
+  const float   __vDSP_input2[],
+  vDSP_Stride   __vDSP_stride2,
+  float *       __vDSP_result,
+  vDSP_Length   __vDSP_size) __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 /* Dot product, single-precision.*/
 /*
@@ -7661,7 +7678,7 @@ vDSP_DFT_Setup vDSP_DFT_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 		implementation for the requested case.  Currently, the implemented
 		cases are:
 
-			Length = f * 2**n, where f is 3, 5, or 15 and 4 <= n.
+			Length = f * 2**n, where f is 3, 5, or 15 and 3 <= n.
 
 		Additionally, only cases where the array addresses (passed to
 		vDSP_DFT_Execute) are 16-byte aligned are optimized.
@@ -7701,7 +7718,7 @@ vDSP_DFT_Setup vDSP_DFT_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 		Performance is good for these cases:
 
 			All addresses are 16-byte aligned, and the length is f * 2**n,
-			where f is 3, 5, or 15 and 4 <= n.
+			where f is 3, 5, or 15 and 3 <= n.
 
 		Performance is extremely slow for all other cases.
 
@@ -7753,7 +7770,7 @@ vDSP_DFT_Setup vDSP_DFT_zop_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 		implementation for the requested case.  Currently, the implemented
 		cases are:
 
-			Length = f * 2**n, where f is 3, 5, or 15 and 5 <= n.
+			Length = f * 2**n, where f is 3, 5, or 15 and 4 <= n.
 
 		Additionally, only cases where the array addresses (passed to
 		vDSP_DFT_Execute) are 16-byte aligned are optimized.
@@ -7819,7 +7836,7 @@ vDSP_DFT_Setup vDSP_DFT_zop_CreateSetup(vDSP_DFT_Setup __vDSP_Previous,
 		Performance is good for these cases:
 
 			All addresses are 16-byte aligned, and the length is f * 2**n,
-			where f is 3, 5, or 15 and 5 <= n.
+			where f is 3, 5, or 15 and 4 <= n.
 
 		Performance is extremely slow for all other cases.
 
@@ -7909,7 +7926,7 @@ void vDSP_DFT_DestroySetup(vDSP_DFT_Setup __vDSP_Setup)
 		Performance is good for these cases:
 
 			All addresses are 16-byte aligned, all strides are one, and the
-			length is f * 2**n, where f is 3, 5, or 15 and 4 <= n.
+			length is f * 2**n, where f is 3, 5, or 15 and 3 <= n.
 
 		Performance is extremely slow for all other cases.
 

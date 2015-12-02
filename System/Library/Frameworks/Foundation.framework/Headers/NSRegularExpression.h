@@ -1,5 +1,5 @@
 /*	NSRegularExpression.h
-	Copyright (c) 2009-2010, Apple Inc. All rights reserved.
+	Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -22,7 +22,7 @@ enum {
 };
 typedef NSUInteger NSRegularExpressionOptions;
 
-NS_CLASS_AVAILABLE(NA, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface NSRegularExpression : NSObject <NSCopying, NSCoding> {
     @protected   // all instance variables are private
     NSString *_pattern;
@@ -110,7 +110,7 @@ NSRegularExpression is designed to be immutable and threadsafe, so that a single
 
 @end
 
-NS_CLASS_AVAILABLE(NA, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface NSDataDetector : NSRegularExpression {
     @protected   // all instance variables are private
     NSTextCheckingTypes _types;

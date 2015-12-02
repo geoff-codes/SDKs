@@ -27,7 +27,8 @@ typedef int32_t ABPropertyID;
 typedef uint32_t ABRecordType;
 enum {
     kABPersonType = 0,
-    kABGroupType  = 1
+    kABGroupType  = 1,
+    kABSourceType = 2
 };
 
 #define kABMultiValueMask (1 << 8)

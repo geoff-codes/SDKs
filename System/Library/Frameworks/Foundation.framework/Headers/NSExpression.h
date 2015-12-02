@@ -1,10 +1,8 @@
 /*	NSExpression.h
-	Copyright (c) 2004-2010, Apple Inc. All rights reserved.
+	Copyright (c) 2004-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
-
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_3_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @class NSString;
 @class NSArray;
@@ -34,11 +32,16 @@ enum {
 };
 typedef NSUInteger NSExpressionType;
 
+NS_CLASS_AVAILABLE(10_4, 3_0)
 @interface NSExpression : NSObject <NSCoding, NSCopying> {
     @private
     void *_reserved;
     NSExpressionType _expressionType;
 }
+
++ (NSExpression *)expressionWithFormat:(NSString *)expressionFormat argumentArray:(NSArray *)arguments NS_AVAILABLE(10_6,4_0);
++ (NSExpression *)expressionWithFormat:(NSString *)expressionFormat, ...  NS_AVAILABLE(10_6,4_0);
++ (NSExpression *)expressionWithFormat:(NSString *)expressionFormat arguments:(va_list)argList NS_AVAILABLE(10_6,4_0);
 
 + (NSExpression *)expressionForConstantValue:(id)obj;    // Expression that returns a constant value
 + (NSExpression *)expressionForEvaluatedObject;    // Expression that returns the object being evaluated
@@ -111,11 +114,10 @@ typedef NSUInteger NSExpressionType;
 - (NSExpression *)rightExpression NS_AVAILABLE(10_5, 3_0); // expression which represents the right side of a set expression
 
 #if NS_BLOCKS_AVAILABLE
-- (id (^)(id, NSArray *, NSMutableDictionary *))expressionBlock;
+- (id (^)(id, NSArray *, NSMutableDictionary *))expressionBlock NS_AVAILABLE(10_6, 4_0);
 #endif /* NS_BLOCKS_AVAILABLE */
 
 // evaluate the expression using the object and bindings- note that context is mutable here and can be used by expressions to store temporary state for one predicate evaluation
 - (id)expressionValueWithObject:(id)object context:(NSMutableDictionary *)context;
 @end
 
-#endif

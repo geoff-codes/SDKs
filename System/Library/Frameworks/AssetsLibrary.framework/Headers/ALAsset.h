@@ -12,7 +12,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
+#import <AssetsLibrary/ALAssetsLibrary.h>
 #import <CoreGraphics/CoreGraphics.h>
 
 #if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
@@ -53,8 +53,37 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 // support the representation, nil is returned.
 - (ALAssetRepresentation *)representationForUTI:(NSString *)representationUTI;
 
-// Returns a CGImage with the asset's thumbnail.  The size of the thumbnail is the appropriate size for the platform.  The thumbnail will be in the correct orientation.
+// Returns a CGImage with a square thumbnail of the asset.  The size of the thumbnail is the appropriate size for the platform.  The thumbnail will be in the correct orientation.
 - (CGImageRef)thumbnail;
+
+// Returns a CGImage with an aspect ratio thumbnail of the asset.  The size of the thumbnail is the appropriate size for the platform.  The thumbnail will be in the correct orientation.
+- (CGImageRef)aspectRatioThumbnail __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Saves image data to the saved photos album as a new ALAsset that is considered a modified version of the calling ALAsset.
+- (void)writeModifiedImageDataToSavedPhotosAlbum:(NSData *)imageData metadata:(NSDictionary *)metadata completionBlock:(ALAssetsLibraryWriteImageCompletionBlock)completionBlock __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Saves the video at the specified path to the saved photos album as a new ALAsset that is considered a modified version of the calling ALAsset.
+- (void)writeModifiedVideoAtPathToSavedPhotosAlbum:(NSURL *)videoPathURL completionBlock:(ALAssetsLibraryWriteVideoCompletionBlock)completionBlock __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Returns the original asset if the caller was saved as a modified version of an asset.
+// Returns nil if the caller was not saved as a modified version of an asset.
+@property (nonatomic, readonly) ALAsset *originalAsset __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Returns YES if the application is able to edit the asset.  Returns NO if the application is not able to edit the asset.
+// Applications are only allowed to edit assets that they originally wrote.
+@property (nonatomic, readonly, getter=isEditable) BOOL editable __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Replaces the image data in the calling asset with the supplied image data.
+// The caller should check the editable property of the asset to see if it is possible to replace the image data.
+// If the application is able to edit the asset, the completion block will return the same assetURL as the calling asset, since a new asset is not being created.
+// If the application is not able to edit the asset, the completion block will return a nil assetURL and an ALAssetsLibraryWriteFailedError.
+- (void)setImageData:(NSData *)imageData metadata:(NSDictionary *)metadata completionBlock:(ALAssetsLibraryWriteImageCompletionBlock)completionBlock __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Replaces the video data in the calling asset with the video at the specified path.
+// The caller should check the editable property of the asset to see if it is possible to replace the video data.
+// If the application is able to edit the asset, the completion block will return the same assetURL as the calling asset, since a new asset is not being created.
+// If the application is not able to edit the asset (see the editable property on ALAsset), the completion block will return a nil assetURL and an ALAssetsLibraryWriteFailedError.
+- (void)setVideoAtPath:(NSURL *)videoPathURL completionBlock:(ALAssetsLibraryWriteVideoCompletionBlock)completionBlock __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 @end
 

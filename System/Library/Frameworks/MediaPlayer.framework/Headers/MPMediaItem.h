@@ -17,7 +17,16 @@ enum {
     MPMediaTypeMusic        = 1 << 0,
     MPMediaTypePodcast      = 1 << 1,
     MPMediaTypeAudioBook    = 1 << 2,
+    MPMediaTypeAudioITunesU = 1 << 3, // available in iOS 5.0
     MPMediaTypeAnyAudio     = 0x00ff,
+    
+    // video (available in iOS 5.0)
+    MPMediaTypeMovie        = 1 << 8,
+    MPMediaTypeTVShow       = 1 << 9,
+    MPMediaTypeVideoPodcast = 1 << 10,
+    MPMediaTypeMusicVideo   = 1 << 11,
+    MPMediaTypeVideoITunesU = 1 << 12,
+    MPMediaTypeAnyVideo     = 0xff00,
     
     MPMediaTypeAny          = ~0
 };
@@ -32,6 +41,11 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaItem : MPMediaEntity
 //-----------------------------------------------------
 
 MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaItemArtwork : NSObject
+
+// Initializes an MPMediaItemArtwork instance with the given full-size image.
+// The crop rect of the image is assumed to be equal to the bounds of the 
+// image as defined by the image's size in points, i.e. tightly cropped.
+- (id)initWithImage:(UIImage *)image NS_AVAILABLE_IPHONE(5_0);
 
 // Returns the artwork image for an item at a given size (in points).
 - (UIImage *)imageWithSize:(CGSize)size;

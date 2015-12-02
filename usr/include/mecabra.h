@@ -38,13 +38,27 @@ typedef const struct __Mecabra*  MecabraRef;
               Do ambiguous analysis.
     @constant MecabraAnalysisFuzzyPinyinMask
               Analyze with Fuzzy Pinyin.
-*/
+    @constant MecabraAnalysisStructuralPinyinMask
+              Analyze as Structural Pinyin
+    @constant MecabraAutocorrectionMask
+              Autocorrect input (if supported by language/platform)
+    @constant MecabraAnalysisNoLearningMask
+              Analyze with no learning.
+    @constant MecabraAnalysisJapaneseRomajiMask
+              Analyze Japanese romaji string.
+ */
 enum {
     MecabraAnalysisDefault              = 0,
     MecabraAnalysisNoPredictionMask     = 1 << 1,
     MecabraAnalysisSingleWordMask       = 1 << 2,
     MecabraAnalysisAmbiguityMask        = 1 << 3,
-    MecabraAnalysisFuzzyPinyinMask      = 1 << 4
+    MecabraAnalysisFuzzyPinyinMask      = 1 << 4,
+    MecabraAnalysisStructuralPinyinMask = 1 << 5,
+    MecabraAnalysisAutocorrectionMask   = 1 << 6,
+    MecabraAnalysisNoLearningMask       = 1 << 7,
+    MecabraAnalysisJapaneseRomajiMask   = 1 << 8
+
+    // Values above 1 << 23 are reserved for private usage.
 };
 typedef CFOptionFlags MecabraAnalysisOption;
 
@@ -75,6 +89,23 @@ typedef const void*  MecabraCandidateRef;
 extern 
 MecabraRef MecabraCreate(const char* language, CFURLRef learningDictionaryDirectory, Boolean specialSymbolConversion);
 
+enum {
+    MecabraCreationUseSpecialSymbol = 1 << 0
+};
+typedef CFOptionFlags MecabraCreationOptions;
+
+typedef enum {
+    MecabraInputMethodJapanese,
+    MecabraInputMethodSimplifiedChinesePinyin,
+    MecabraInputMethodSimplifiedChineseCompletionOnly,
+    MecabraInputMethodTraditionalChinesePinyin,
+    MecabraInputMethodTraditionalChineseZhuyin,
+    MecabraInputMethodTraditionalChineseCompletionOnly
+} MecabraInputMethodType;
+
+extern
+MecabraRef MecabraCreateWithOptions(MecabraInputMethodType inputMethod, CFURLRef learningDictionaryDirectory, MecabraCreationOptions options);
+
 /*! @function MecabraAnalyzeString
     @abstract Analyze a string.
     @param    mecabra
@@ -87,7 +118,7 @@ MecabraRef MecabraCreate(const char* language, CFURLRef learningDictionaryDirect
     @discussion
               If successful, use MecabraGetNextCandidate to get the candidates.
 */
-extern 
+extern
 Boolean MecabraAnalyzeString(MecabraRef mecabra, CFStringRef string, MecabraAnalysisOption options);
 
 /*! @function MecabraGetNextCandidate
@@ -101,6 +132,16 @@ Boolean MecabraAnalyzeString(MecabraRef mecabra, CFStringRef string, MecabraAnal
 */
 extern 
 MecabraCandidateRef MecabraGetNextCandidate(MecabraRef mecabra);
+
+/*! @function MecabraCancelAnalysis
+    @abstract Cancel ongoing search.
+    @param    mecabra
+              Mecabra object
+    @discussion
+              This function returns immediately. If the cancellation succeeds, on-going or future call to MecabraGetNextCandidate will return NULL.
+ */
+extern
+void MecabraCancelAnalysis(MecabraRef mecabra);
 
 /*! @function MecabraAcceptCandidate
     @abstract Accept a candidate so that mecabra can auto-learn it and also do prediction.
@@ -126,6 +167,17 @@ Boolean MecabraAcceptCandidate(MecabraRef mecabra, MecabraCandidateRef candidate
 */
 extern 
 Boolean MecabraCancelLastAcceptedCandidate(MecabraRef mecabra);
+
+/*! @function MecabraSetMaxPhraseNumber
+    @abstract Set the maximum number of phrase candidates to be generated.
+    @param    mecabra
+              Mecabra object
+    @param    maxNum
+              Desired number of phrase candidates
+*/
+extern 
+void MecabraSetMaxPhraseNumber(MecabraRef mecabra, CFIndex maxNum);
+
 
 /*! @function MecabraCopyLearningDictionaryNames
     @abstract Copy the names(CFString) of learning dictionaries. 
@@ -196,11 +248,101 @@ Boolean MecabraBuildLearningDictionary(MecabraRef mecabra, CFArrayRef readings, 
 extern 
 void MecabraRelease(MecabraRef mecabra);
 
+/*! @enum     MecabraWordCompletionOption
+    @abstract Options for word completion
+    @constant MecabraWordCompletionDefault
+              Default option (words are sorted by length, then by score, in desending order)
+    @constant MecabraWordCompletionSearchForSubstringsMask
+              Consider both the string and its all substrings for potential completion.
+    @constant MecabraWordCompletionSortByScoreOnlyMask
+              Rank candidates purely based on their score, not by length
+    @constant MecabraWordCompletionRescoreWithLanguageModelMask
+              Rescore completion candidates using system language model.
+ */
+enum {
+    MecabraWordCompletionDefault                            = 0,
+    MecabraWordCompletionSearchForSubstringsMask            = 1 << 1,
+    MecabraWordCompletionSortByScoreMask                    = 1 << 2,
+    MecabraWordCompletionRescoreWithLanguageModelMask       = 1 << 3,
+    MecabraWordCompletionCollapseCommonPrefixMask           = 1 << 4,
+    MecabraWordCompletionNoLearningMask                     = 1 << 5
+};
+typedef CFOptionFlags MecabraWordCompletionOption;
+
+/*! @function MecabraWordCompletionAnalyzeString
+    @abstract Analyze a character string to find word completion candidates.
+    @param    mecabra
+              Mecabra object
+    @param    prefix
+              String to be analyzed
+    @param    maxNumberOfCandidates
+              Maximum number of completion candidats to be returned. If it's 0, all available candidates are returned.
+    @param    options
+              Options for word completion.
+    @result   Return true if the specified mecabra object supports word completion and the analysis is successful.
+    @discussion
+              If successful, use MecabraWordCompletionGetNextCandidate to get the candidates.
+ */
+extern
+Boolean MecabraWordCompletionAnalyzeString(MecabraRef mecabra, CFStringRef prefix, CFIndex maxNumberOfCandidates, MecabraWordCompletionOption option);
+
+extern
+Boolean MecabraWordCompletionAnalyzeConversionCandidate(MecabraRef mecabra, MecabraCandidateRef candidate, CFIndex maxNumberOfCandidates, MecabraWordCompletionOption option);
+
+extern
+void MecabraWordCompletionAcceptCandidate(MecabraRef mecabra, MecabraCandidateRef candidate);
+
+/*! @function MecabraWordCompletionGetNextCandidate
+    @abstract Enumerate to get next candidate.
+    @param    mecabra
+              Mecabra object
+    @result   Return the next candidate being enumerated, or NULL when all
+              the candidates have been enumerated.
+    @discussion
+              The returned candidates have been sorted by their priority.
+*/
+extern
+MecabraCandidateRef MecabraWordCompletionGetNextCandidate(MecabraRef mecabra);
+
 /*
 ===============================================================================
     Mecabra Candidate
 ===============================================================================
 */
+
+/*! @enum     MecabraCandidateType
+    @abstract Underlying type of MecabraCandidate object.
+    @constant MecabraCandidateTypeUndefined
+    @constant MecabraCandidateTypeConversion
+              Type of candidate returned by MecabraGetNextCandidate() and MecabraCandidateCreate().
+    @constant MecabraCandidateTypeCompletion
+              Type of candidate returned by MecabraWordCompletionGetNextCandidate().
+ */
+enum {
+    MecabraCandidateTypeUndefined                           = 0,
+    MecabraCandidateTypeConversion                          = 1,
+    MecabraCandidateTypeCompletion                          = 2,
+};
+typedef int MecabraCandidateType;
+
+/*! @function MecabraCandidateCopy
+    @abstract Create MecabraCandidate object by copying an existing object.
+    @param    candidate
+              Object to be copied.
+    @result   A new object that contains the same value as candidate, or NULL if candidate is NULL.
+ */
+extern
+MecabraCandidateRef MecabraCandidateCopy(MecabraCandidateRef candidate);
+
+/*! @function MecabraCandidateGetType
+    @abstract Query the underlying type of a MecabraCandidate object.
+    @param    candidate
+              Candidate object to query.
+    @discussion
+              Some functions declared in this header support only certain type of candidate.
+ */
+extern
+MecabraCandidateType MecabraCandidateGetType(MecabraCandidateRef candidate);
 
 /*! @function MecabraCandidateCreate
     @abstract Create a candidate object. 
@@ -210,6 +352,13 @@ void MecabraRelease(MecabraRef mecabra);
               Reading string of candidate
     @result   Return a candidate object.
     @discussion
+              This function is DEPRECATED. If you frequently use MecabraCandidateCreate() and MecabraCandidateReplace()
+              together to copy a MecabraCandidate object, you are encouraged to use MecabraCandidateCopy(). If you must
+              create a MecabraCandidate object, please use MecabraConversionCandidateCreate() instead.
+              
+              This function returns a MecabraCandidate object whose candidate type is MecabraCandidateTypeConversion.
+              Creating MecabraCandidateTypeCompletion type of MecabraCandidate object is not supported.
+
               Either surface or reading can be NULL.
 */
 extern 
@@ -221,6 +370,12 @@ MecabraCandidateRef MecabraCandidateCreate(CFStringRef surface, CFStringRef read
               Candidate object to modify
     @param    replacement
               Candidate whose content to be put into candidate
+    @discussion
+              This function is DEPRECATED. If you frequently use MecabraCandidateCreate() and MecabraCandidateReplace()
+              together to copy a MecabraCandidate object, you are encouraged to use MecabraCandidateCopy().
+ 
+              Both candidate and replacement must be of MecabraCandidateTypeConversion type. Otherwise, this function is
+              no-op. Replacing a MecabraCandidate object of MecabraCandidate object is not supported.
 */
 extern 
 void MecabraCandidateReplace(MecabraCandidateRef candidate, MecabraCandidateRef replacement);
@@ -247,7 +402,8 @@ CFStringRef MecabraCandidateGetReading(MecabraCandidateRef candidate);
     @abstract Get the count of containing words.
     @param    candidate
               Candidate object
-    @result   Return the count of containing words.
+    @result   Return the count of containing words if candidate is of MecabraCandidateTypeConversion type.
+              Return 0 otherwise.
     @discussion 
               Each candidate consists of one or more words. 
 */        
@@ -260,7 +416,8 @@ int MecabraCandidateGetWordCount(MecabraCandidateRef candidate);
               Candidate object
     @param    index
               Index of the word
-    @result   Return the word length at index.
+    @result   Return the word length at index if candidate is of MecabraCandidateTypeConversion type.
+              Return 0 otherwise.
 */        
 extern
 unsigned short MecabraCandidateGetWordLengthAtIndex(MecabraCandidateRef candidate, CFIndex index);
@@ -271,11 +428,19 @@ unsigned short MecabraCandidateGetWordLengthAtIndex(MecabraCandidateRef candidat
               Candidate object
     @param    index
               Index of the word
-    @result   Return the word reading length at index.
+    @result   Return the word reading length at index  if candidate is of MecabraCandidateTypeConversion type.
+              Return 0 otherwise.
 */        
 extern
 unsigned short MecabraCandidateGetWordReadingLengthAtIndex(MecabraCandidateRef candidate, CFIndex index);
 
+    
+extern
+Boolean MecabraCandidateIsExtensionCandidate(MecabraCandidateRef candidate);
+    
+extern
+Boolean MecabraCandidateIsUserWordCandidate(MecabraCandidateRef candidate);
+    
 /*! @function MecabraCandidateRelease
     @abstract Release mecabra candidate object. 
     @param    candidate
@@ -284,11 +449,32 @@ unsigned short MecabraCandidateGetWordReadingLengthAtIndex(MecabraCandidateRef c
 extern 
 void MecabraCandidateRelease(MecabraCandidateRef candidate);
 
+/*! @function MecabraConversionCandidateCreate
+    @abstract Create a candidate object. 
+    @param    surface
+              Surface string of candidate
+    @param    reading
+              Reading string of candidate
+    @result   Return a conversion candidate object.
+    @discussion
+              This function returns a MecabraCandidate object whose candidate type is MecabraCandidateTypeConversion.
+              Creating MecabraCandidateTypeCompletion type of MecabraCandidate object is not supported.
+
+              Either surface or reading can be NULL.
+*/
+extern 
+MecabraCandidateRef MecabraConversionCandidateCreate(CFStringRef surface, CFStringRef reading);
+
 /*
 ===============================================================================
     Extra API for Ruby Tools
 ===============================================================================
 */
+    
+/*
+ * Functions in this section only support MecabraCandiate object of MecabraCandidateTypeConversion type.
+ * For other type of candiate object, the behavior is undefined.
+ */
 extern
 unsigned short MecabraCandidateGetLcAttrAtIndex(MecabraCandidateRef candidate, CFIndex index);
 
@@ -312,6 +498,37 @@ unsigned short MecabraCandidateGetKindIndex(MecabraCandidateRef candidate);
 
 extern 
 void MecabraCandidateSetTypeAsSingleWord(MecabraCandidateRef candidate, uint8_t kind, uint8_t kindIndex);
+
+/*
+===============================================================================
+    SPI
+===============================================================================
+*/
+
+struct MecabraGeometryModelKeyAndLoglikelihood {
+    uint16_t    keychar;
+    float       loglikelihood;
+};
+typedef struct MecabraGeometryModelKeyAndLoglikelihood MecabraGeometryModelKeyAndLoglikelihood;
+
+extern
+Boolean MecabraAnalyzeStringWithGeometryModel(MecabraRef mecabra, CFStringRef string, MecabraAnalysisOption options, void* geometryModel, CFArrayRef geometryModelData);
+
+/* 
+ * Return an array of CFNumber if candidate is of MecabraCandidateTypeConversion type.
+ * Return NULL otherwise.
+ */
+extern
+CFArrayRef MecabraCandidateCopySyllableLengthArray(MecabraCandidateRef candidate);
+
+extern
+void MecabraSetCandidateOrderAdjustment(MecabraRef mecabra, Boolean adjustOrder);
+
+/* 
+ * Specially used by Chinese
+*/
+extern
+Boolean MecabraDeleteEntryFromLearningDictionary(MecabraRef mecabra, CFStringRef reading, CFStringRef surface);
 
 #ifdef __cplusplus
 }

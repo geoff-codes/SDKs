@@ -20,4 +20,8 @@
 #include <CoreMIDI/MIDIThruConnection.h>
 #include <CoreMIDI/MIDIDriver.h>
 
+#ifdef __OBJC__
+#import <CoreMIDI/MIDINetworkSession.h>
+#endif
+
 #endif

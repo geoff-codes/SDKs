@@ -8,7 +8,6 @@
 #import <UIKit/UIViewController.h>
 #import <AddressBook/AddressBook.h>
 
-@class UITableViewCell;
 @protocol ABPersonViewControllerDelegate;
 
 NS_CLASS_AVAILABLE(NA, 2_0)
@@ -17,9 +16,9 @@ NS_CLASS_AVAILABLE(NA, 2_0)
     @private
         id<ABPersonViewControllerDelegate> _personViewDelegate;
         
-        CFArrayRef                         _displayedProperties;
-        
         id                                 _helper;
+        id                                 _internal;
+        BOOL                               _internal2;
 }
 
 @property(nonatomic,assign)    id<ABPersonViewControllerDelegate> personViewDelegate;
@@ -40,6 +39,10 @@ NS_CLASS_AVAILABLE(NA, 2_0)
 
     // Indicates whether an edit/save button should be shown.
 @property(nonatomic)           BOOL                               allowsEditing;
+
+    // Specifies whether buttons appear to let the user perform actions such as sharing the contact,
+    // initiating a FaceTime call, or sending a text message.
+@property(nonatomic)           BOOL                               allowsActions __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
     // Indicates whether to show data from people linked to the displayedPerson, defaults to NO
 @property(nonatomic)           BOOL                               shouldShowLinkedPeople __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);

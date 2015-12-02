@@ -1,7 +1,9 @@
 /*
  *  Block.h
  *
- *  Copyright 2008 Apple. All rights reserved.
+ * Copyright (c) 2008-2010 Apple Inc. All rights reserved.
+ *
+ * @APPLE_LLVM_LICENSE_HEADER@
  *
  */
 

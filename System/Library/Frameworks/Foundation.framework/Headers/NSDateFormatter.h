@@ -1,5 +1,5 @@
 /*	NSDateFormatter.h
-	Copyright (c) 1995-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1995-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSFormatter.h>
@@ -18,15 +18,13 @@
 
 // Report the used range of the string and an NSError, in addition to the usual stuff from NSFormatter
 
-- (BOOL)getObjectValue:(out id *)obj forString:(NSString *)string range:(inout NSRange *)rangep error:(out NSError **)error NS_AVAILABLE(10_4, 2_0);
+- (BOOL)getObjectValue:(out id *)obj forString:(NSString *)string range:(inout NSRange *)rangep error:(out NSError **)error;
 
 // Even though NSDateFormatter responds to the usual NSFormatter methods,
 //   here are some convenience methods which are a little more obvious.
 
-- (NSString *)stringFromDate:(NSDate *)date NS_AVAILABLE(10_4, 2_0);
-- (NSDate *)dateFromString:(NSString *)string NS_AVAILABLE(10_4, 2_0);
-
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+- (NSString *)stringFromDate:(NSDate *)date;
+- (NSDate *)dateFromString:(NSString *)string;
 
 enum {    // date and time format styles
     NSDateFormatterNoStyle = kCFDateFormatterNoStyle,
@@ -46,7 +44,6 @@ enum {
 };
 typedef NSUInteger NSDateFormatterBehavior;
 
-#endif
 
 + (NSString *)localizedStringFromDate:(NSDate *)date dateStyle:(NSDateFormatterStyle)dstyle timeStyle:(NSDateFormatterStyle)tstyle NS_AVAILABLE(10_6, 4_0);
 
@@ -57,61 +54,61 @@ typedef NSUInteger NSDateFormatterBehavior;
 
 - (NSString *)dateFormat;
 
-- (NSDateFormatterStyle)dateStyle NS_AVAILABLE(10_4, 2_0);
-- (void)setDateStyle:(NSDateFormatterStyle)style NS_AVAILABLE(10_4, 2_0);
+- (NSDateFormatterStyle)dateStyle;
+- (void)setDateStyle:(NSDateFormatterStyle)style;
 
-- (NSDateFormatterStyle)timeStyle NS_AVAILABLE(10_4, 2_0);
-- (void)setTimeStyle:(NSDateFormatterStyle)style NS_AVAILABLE(10_4, 2_0);
+- (NSDateFormatterStyle)timeStyle;
+- (void)setTimeStyle:(NSDateFormatterStyle)style;
 
-- (NSLocale *)locale NS_AVAILABLE(10_4, 2_0);
-- (void)setLocale:(NSLocale *)locale NS_AVAILABLE(10_4, 2_0);
+- (NSLocale *)locale;
+- (void)setLocale:(NSLocale *)locale;
 
-- (BOOL)generatesCalendarDates NS_AVAILABLE(10_4, 2_0);
-- (void)setGeneratesCalendarDates:(BOOL)b NS_AVAILABLE(10_4, 2_0);
+- (BOOL)generatesCalendarDates;
+- (void)setGeneratesCalendarDates:(BOOL)b;
 
-- (NSDateFormatterBehavior)formatterBehavior NS_AVAILABLE(10_4, 2_0);
-- (void)setFormatterBehavior:(NSDateFormatterBehavior)behavior NS_AVAILABLE(10_4, 2_0);
+- (NSDateFormatterBehavior)formatterBehavior;
+- (void)setFormatterBehavior:(NSDateFormatterBehavior)behavior;
 
-+ (NSDateFormatterBehavior)defaultFormatterBehavior NS_AVAILABLE(10_4, 2_0);
-+ (void)setDefaultFormatterBehavior:(NSDateFormatterBehavior)behavior NS_AVAILABLE(10_4, 2_0);
++ (NSDateFormatterBehavior)defaultFormatterBehavior;
++ (void)setDefaultFormatterBehavior:(NSDateFormatterBehavior)behavior;
 
-- (void)setDateFormat:(NSString *)string NS_AVAILABLE(10_4, 2_0);
+- (void)setDateFormat:(NSString *)string;
 
-- (NSTimeZone *)timeZone NS_AVAILABLE(10_4, 2_0);
-- (void)setTimeZone:(NSTimeZone *)tz NS_AVAILABLE(10_4, 2_0);
+- (NSTimeZone *)timeZone;
+- (void)setTimeZone:(NSTimeZone *)tz;
 
-- (NSCalendar *)calendar NS_AVAILABLE(10_4, 2_0);
-- (void)setCalendar:(NSCalendar *)calendar NS_AVAILABLE(10_4, 2_0);
+- (NSCalendar *)calendar;
+- (void)setCalendar:(NSCalendar *)calendar;
 
-- (BOOL)isLenient NS_AVAILABLE(10_4, 2_0);
-- (void)setLenient:(BOOL)b NS_AVAILABLE(10_4, 2_0);
+- (BOOL)isLenient;
+- (void)setLenient:(BOOL)b;
 
-- (NSDate *)twoDigitStartDate NS_AVAILABLE(10_4, 2_0);
-- (void)setTwoDigitStartDate:(NSDate *)date NS_AVAILABLE(10_4, 2_0);
+- (NSDate *)twoDigitStartDate;
+- (void)setTwoDigitStartDate:(NSDate *)date;
 
-- (NSDate *)defaultDate NS_AVAILABLE(10_4, 2_0);
-- (void)setDefaultDate:(NSDate *)date NS_AVAILABLE(10_4, 2_0);
+- (NSDate *)defaultDate;
+- (void)setDefaultDate:(NSDate *)date;
 
-- (NSArray *)eraSymbols NS_AVAILABLE(10_4, 2_0);
-- (void)setEraSymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+- (NSArray *)eraSymbols;
+- (void)setEraSymbols:(NSArray *)array;
 
-- (NSArray *)monthSymbols NS_AVAILABLE(10_4, 2_0);
-- (void)setMonthSymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+- (NSArray *)monthSymbols;
+- (void)setMonthSymbols:(NSArray *)array;
 
-- (NSArray *)shortMonthSymbols NS_AVAILABLE(10_4, 2_0);
-- (void)setShortMonthSymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+- (NSArray *)shortMonthSymbols;
+- (void)setShortMonthSymbols:(NSArray *)array;
 
-- (NSArray *)weekdaySymbols NS_AVAILABLE(10_4, 2_0);
-- (void)setWeekdaySymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+- (NSArray *)weekdaySymbols;
+- (void)setWeekdaySymbols:(NSArray *)array;
 
-- (NSArray *)shortWeekdaySymbols NS_AVAILABLE(10_4, 2_0);
-- (void)setShortWeekdaySymbols:(NSArray *)array NS_AVAILABLE(10_4, 2_0);
+- (NSArray *)shortWeekdaySymbols;
+- (void)setShortWeekdaySymbols:(NSArray *)array;
 
-- (NSString *)AMSymbol NS_AVAILABLE(10_4, 2_0);
-- (void)setAMSymbol:(NSString *)string NS_AVAILABLE(10_4, 2_0);
+- (NSString *)AMSymbol;
+- (void)setAMSymbol:(NSString *)string;
 
-- (NSString *)PMSymbol NS_AVAILABLE(10_4, 2_0);
-- (void)setPMSymbol:(NSString *)string NS_AVAILABLE(10_4, 2_0);
+- (NSString *)PMSymbol;
+- (void)setPMSymbol:(NSString *)string;
 
 - (NSArray *)longEraSymbols NS_AVAILABLE(10_5, 2_0);
 - (void)setLongEraSymbols:(NSArray *)array NS_AVAILABLE(10_5, 2_0);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 Apple Inc. All rights reserved.
+ * Copyright (c) 2008-2010 Apple Inc. All rights reserved.
  *
  * @APPLE_APACHE_LICENSE_HEADER_START@
  * 
@@ -34,6 +34,13 @@ __BEGIN_DECLS
  * @abstract
  * Programmatically log debug information about a dispatch object.
  *
+ * @discussion
+ * Programmatically log debug information about a dispatch object. By default,
+ * the log output is sent to syslog at notice level. In the debug version of
+ * the library, the log output is sent to a file in /var/tmp.
+ * The log output destination can be configured via the LIBDISPATCH_LOG
+ * environment variable, valid values are: YES, NO, syslog, stderr, file.
+ *
  * @param object
  * The object to introspect.
  *
@@ -41,12 +48,12 @@ __BEGIN_DECLS
  * The message to log above and beyond the introspection.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
-DISPATCH_NONNULL2 DISPATCH_NOTHROW __attribute__((__format__(printf,2,3)))
+DISPATCH_EXPORT DISPATCH_NONNULL2 DISPATCH_NOTHROW __attribute__((__format__(printf,2,3)))
 void
 dispatch_debug(dispatch_object_t object, const char *message, ...);
 
 __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
-DISPATCH_NONNULL2 DISPATCH_NOTHROW __attribute__((__format__(printf,2,0)))
+DISPATCH_EXPORT DISPATCH_NONNULL2 DISPATCH_NOTHROW __attribute__((__format__(printf,2,0)))
 void
 dispatch_debugv(dispatch_object_t object, const char *message, va_list ap);
 
@@ -65,7 +72,7 @@ dispatch_debugv(dispatch_object_t object, const char *message, va_list ap);
  * The result of passing NULL in this parameter is undefined.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
-DISPATCH_NONNULL_ALL DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL_ALL DISPATCH_NOTHROW
 void
 dispatch_retain(dispatch_object_t object);
 
@@ -86,7 +93,7 @@ dispatch_retain(dispatch_object_t object);
  * The result of passing NULL in this parameter is undefined.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
-DISPATCH_NONNULL_ALL DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL_ALL DISPATCH_NOTHROW
 void
 dispatch_release(dispatch_object_t object);
 
@@ -103,7 +110,7 @@ dispatch_release(dispatch_object_t object);
  * The context of the object; may be NULL.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
-DISPATCH_NONNULL_ALL DISPATCH_PURE DISPATCH_WARN_RESULT DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL_ALL DISPATCH_PURE DISPATCH_WARN_RESULT DISPATCH_NOTHROW
 void *
 dispatch_get_context(dispatch_object_t object);
 
@@ -121,7 +128,7 @@ dispatch_get_context(dispatch_object_t object);
  *
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
-DISPATCH_NOTHROW //DISPATCH_NONNULL1
+DISPATCH_EXPORT DISPATCH_NOTHROW //DISPATCH_NONNULL1
 void
 dispatch_set_context(dispatch_object_t object, void *context);
 
@@ -147,7 +154,7 @@ dispatch_set_context(dispatch_object_t object, void *context);
  * context of the dispatch object at the time the finalizer call is made.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
-DISPATCH_NOTHROW //DISPATCH_NONNULL1
+DISPATCH_EXPORT DISPATCH_NOTHROW //DISPATCH_NONNULL1
 void
 dispatch_set_finalizer_f(dispatch_object_t object,
 	dispatch_function_t finalizer);
@@ -171,7 +178,7 @@ dispatch_set_finalizer_f(dispatch_object_t object,
  * The result of passing NULL in this parameter is undefined.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
-DISPATCH_NONNULL_ALL DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL_ALL DISPATCH_NOTHROW
 void
 dispatch_suspend(dispatch_object_t object);
 
@@ -186,7 +193,7 @@ dispatch_suspend(dispatch_object_t object);
  * The result of passing NULL in this parameter is undefined.
  */
 __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
-DISPATCH_NONNULL_ALL DISPATCH_NOTHROW
+DISPATCH_EXPORT DISPATCH_NONNULL_ALL DISPATCH_NOTHROW
 void
 dispatch_resume(dispatch_object_t object);
 

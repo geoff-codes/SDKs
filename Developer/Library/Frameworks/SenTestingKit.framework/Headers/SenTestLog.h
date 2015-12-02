@@ -34,4 +34,9 @@
 @interface SenTestLog : SenTestObserver
 {
 }
+
+/*"Logging test results"*/
++ (void) testLogWithFormat:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
++ (void) testLogWithFormat:(NSString *)format arguments:(va_list)arguments NS_FORMAT_FUNCTION(1,0);
+
 @end

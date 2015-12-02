@@ -2,7 +2,7 @@
 //  UITableViewController.h
 //  UIKit
 //
-//  Copyright 2008-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2011, Apple Inc. All rights reserved.
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIViewController.h>
@@ -18,6 +18,7 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UITableViewController : UIViewController <
   @private
     UITableViewStyle _tableViewStyle;
     id               _keyboardSupport;
+    id               _staticDataSource;
     struct {
         int clearsSelectionOnViewWillAppear:1;
     } _tableViewControllerFlags;

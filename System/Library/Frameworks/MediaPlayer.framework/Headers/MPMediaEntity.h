@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <MediaPlayer/MediaPlayerDefines.h>
 
+@class MPMediaLibrary;
+
 // An MPMediaEntity represents an abstract member of an MPMediaLibrary.
 // Concrete subclasses are MPMediaItem and MPMediaItemCollection.
 

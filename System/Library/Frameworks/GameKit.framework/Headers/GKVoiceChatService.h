@@ -10,6 +10,8 @@
  2) Or, you already have a peer-to-peer application that you want to add voice chat to.  
 	For instance, most networked games are peer-to-peer.  You could add voice chat to your game using this class.
  
+ This a not a Game Center feature. To support voice chat as part of Game Center online play, see GKVoiceChat.
+ 
  Implementation example for an application that has a peer-to-peer channel established already.
  
  PeerToPeerHockeyClient<VoiceChatClient, VoiceChatPeerToPeerChannel> hockeyClientA;
@@ -94,6 +96,7 @@
 #import <GameKit/GKDefines.h>
 #import <GameKit/GKPublicProtocols.h>
 
+// This a not a Game Center feature. To support voice chat as part of Game Center online play, see GKVoiceChat.
 @class GKVoiceChatService;
 
 // GKVoiceChatService provides voice chat capabilities depending on your networking situation.
@@ -145,5 +148,5 @@ GK_EXTERN_CLASS @interface GKVoiceChatService : NSObject {
 
 @end
 
-GK_EXTERN	NSString *  const GKVoiceChatServiceErrorDomain;
+GK_EXTERN_WEAK	NSString *  const GKVoiceChatServiceErrorDomain;
 

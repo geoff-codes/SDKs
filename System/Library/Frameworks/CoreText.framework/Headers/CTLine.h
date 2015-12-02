@@ -2,7 +2,7 @@
  *	CTLine.h
  *	CoreText
  *
- *	Copyright (c) 2003-2010 Apple Inc. All rights reserved.
+ *	Copyright (c) 2003-2011 Apple Inc. All rights reserved.
  *
  */
 
@@ -268,28 +268,6 @@ void CTLineDraw(
 /* --------------------------------------------------------------------------- */
 
 /*!
-	@function	CTLineGetImageBounds
-	@abstract	Calculates the image bounds for a line.
-
-	@param		line
-				The line that you want to calculate the image bounds for.
-
-	@param		context
-				The context which the image bounds will be calculated for. This
-				is required because the context could have settings in it that
-				can cause changes in the image bounds.
-
-	@result		A rectangle that tightly encloses the paths of the line's glyphs,
-				which will be translated by the supplied context's text position.
-				If the line or context is invalid, CGRectNull will be returned.
-*/
-
-CGRect CTLineGetImageBounds(
-	CTLineRef line,
-	CGContextRef context ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
-
-
-/*!
 	@function	CTLineGetTypographicBounds
 	@abstract	Calculates the typographic bounds for a line.
 
@@ -337,6 +315,38 @@ double CTLineGetTypographicBounds(
 
 double CTLineGetTrailingWhitespaceWidth(
 	CTLineRef line ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+
+
+/*!
+	@function	CTLineGetImageBounds
+	@abstract	Calculates the image bounds for a line.
+
+	@discussion The image bounds for a line is the union of all non-empty glyph
+				bounding rects, each positioned as it would be if drawn using
+				CTLineDraw using the current context. Note that the result is
+				ideal and does not account for raster coverage due to rendering.
+				This function is purely a convenience for using glyphs as an
+				image and should not be used for typographic purposes.
+
+	@param		line
+				The line that you want to calculate the image bounds for.
+
+	@param		context
+				The context which the image bounds will be calculated for. This
+				is required because the context could have settings in it that
+				can cause changes in the image bounds.
+
+	@result		A rectangle that tightly encloses the paths of the line's glyphs,
+				which will be translated by the supplied context's text position.
+				If the line or context is invalid, CGRectNull will be returned.
+
+	@seealso	CTLineGetTypographicBounds
+	@seealso	CTLineGetPenOffsetForFlush
+*/
+
+CGRect CTLineGetImageBounds(
+	CTLineRef line,
+	CGContextRef context ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
 
 
 /* --------------------------------------------------------------------------- */

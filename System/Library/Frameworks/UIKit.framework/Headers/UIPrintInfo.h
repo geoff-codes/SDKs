@@ -12,7 +12,7 @@
 typedef enum {
     UIPrintInfoOutputGeneral,     // B&W or color, normal quality output for mixed text, graphics, and images
     UIPrintInfoOutputPhoto,       // B&W or color, best quality output for images
-    UIPrintInfoOutputGrayscale,   // B&W, fast/draft quality output
+    UIPrintInfoOutputGrayscale,   // B&W content only
 } UIPrintInfoOutputType;
 
 typedef enum {

@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 
 */
 
@@ -36,19 +36,19 @@
 	@constant		AVAssetImageGeneratorApertureModeCleanAperture
 	@abstract		Both pixel aspect ratio and clean aperture will be applied.
 */
-extern NSString *const AVAssetImageGeneratorApertureModeCleanAperture __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+AVF_EXPORT NSString *const AVAssetImageGeneratorApertureModeCleanAperture NS_AVAILABLE(10_7, 4_0);
 
 /*!
 	@constant		AVAssetImageGeneratorApertureModeProductionAperture
 	@abstract		Only pixel aspect ratio will be applied.
 */
-extern NSString *const AVAssetImageGeneratorApertureModeProductionAperture __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+AVF_EXPORT NSString *const AVAssetImageGeneratorApertureModeProductionAperture NS_AVAILABLE(10_7, 4_0);
 
 /*!
 	@constant		AVAssetImageGeneratorApertureModeEncodedPixels
 	@abstract		Neither pixel aspect ratio nor clean aperture will be applied.
 */
-extern NSString *const AVAssetImageGeneratorApertureModeEncodedPixels __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+AVF_EXPORT NSString *const AVAssetImageGeneratorApertureModeEncodedPixels NS_AVAILABLE(10_7, 4_0);
 
 enum
 {
@@ -58,6 +58,7 @@ enum
 };
 typedef NSInteger AVAssetImageGeneratorResult;
 
+NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVAssetImageGenerator : NSObject
 {
 @private
@@ -80,6 +81,12 @@ typedef NSInteger AVAssetImageGeneratorResult;
    If no videoComposition is specified, only the first enabled video track will be used.
    If a videoComposition is specified, the value of appliesPreferredTrackTransform is ignored. */
 @property (nonatomic, copy) AVVideoComposition *videoComposition;
+
+/* The actual time of the generated images will be within the range [requestedTime-toleranceBefore, requestedTime+toleranceAfter] and may differ from the requested time for efficiency.
+   Pass kCMTimeZero for both toleranceBefore and toleranceAfter to request frame-accurate image generation; this may incur additional decoding delay.
+   Default is kCMTimePositiveInfinity. */
+@property (nonatomic) CMTime requestedTimeToleranceBefore NS_AVAILABLE(10_7, 5_0);
+@property (nonatomic) CMTime requestedTimeToleranceAfter NS_AVAILABLE(10_7, 5_0);
 
 /*!
 	@method			assetImageGeneratorWithAsset:

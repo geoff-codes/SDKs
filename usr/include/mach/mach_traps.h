@@ -83,6 +83,102 @@ __BEGIN_DECLS
 
 
 
+extern kern_return_t clock_sleep_trap(
+				mach_port_name_t clock_name,
+				sleep_type_t sleep_type,
+				int sleep_sec,
+				int sleep_nsec,
+				mach_timespec_t	*wakeup_time);
+
+extern kern_return_t _kernelrpc_mach_vm_allocate_trap(
+				mach_port_name_t target,
+				mach_vm_offset_t *addr,
+				mach_vm_size_t size,
+				int flags);
+
+extern kern_return_t _kernelrpc_vm_allocate_trap(
+				mach_port_name_t target,
+				vm_offset_t *addr,
+				vm_size_t size,
+				int flags);
+
+extern kern_return_t _kernelrpc_vm_deallocate_trap(
+				mach_port_name_t target,
+				vm_address_t address,
+				vm_size_t size
+);
+
+extern kern_return_t _kernelrpc_mach_vm_deallocate_trap(
+				mach_port_name_t target,
+				mach_vm_address_t address,
+				mach_vm_size_t size
+);
+
+extern kern_return_t _kernelrpc_vm_protect_trap(
+				mach_port_name_t target,
+				vm_address_t address,
+				vm_size_t size,
+				boolean_t set_maximum,
+				vm_prot_t new_protection
+);
+
+extern kern_return_t _kernelrpc_mach_vm_protect_trap(
+				mach_port_name_t target,
+				mach_vm_address_t address,
+				mach_vm_size_t size,
+				boolean_t set_maximum,
+				vm_prot_t new_protection
+);
+
+extern kern_return_t _kernelrpc_mach_port_allocate_trap(
+				mach_port_name_t target,
+				mach_port_right_t right,
+				mach_port_name_t *name
+);
+
+
+extern kern_return_t _kernelrpc_mach_port_destroy_trap(
+				mach_port_name_t target,
+				mach_port_name_t name
+);
+
+extern kern_return_t _kernelrpc_mach_port_deallocate_trap(
+				mach_port_name_t target,
+				mach_port_name_t name
+);
+
+extern kern_return_t _kernelrpc_mach_port_mod_refs_trap(
+				mach_port_name_t target,
+				mach_port_name_t name,
+				mach_port_right_t right,
+				mach_port_delta_t delta
+);
+
+extern kern_return_t _kernelrpc_mach_port_move_member_trap(
+				mach_port_name_t target,
+				mach_port_name_t member,
+				mach_port_name_t after
+);
+
+extern kern_return_t _kernelrpc_mach_port_insert_right_trap(
+				mach_port_name_t target,
+				mach_port_name_t name,
+				mach_port_name_t poly,
+				mach_msg_type_name_t polyPoly
+);
+
+extern kern_return_t _kernelrpc_mach_port_insert_member_trap(
+				mach_port_name_t target,
+				mach_port_name_t name,
+				mach_port_name_t pset
+);
+
+extern kern_return_t _kernelrpc_mach_port_extract_member_trap(
+				mach_port_name_t target,
+				mach_port_name_t name,
+				mach_port_name_t pset
+);
+
 extern kern_return_t macx_swapon(
 				uint64_t filename,
 				int flags,
@@ -134,7 +230,7 @@ extern kern_return_t pid_for_task(
 				mach_port_name_t t,
 				int *x);
 
-#if		!defined(__LP64__) || !defined(__arm__)
+#if		!defined(__LP64__) && !defined(__arm__)
 /* these should go away altogether - so no 64 legacy please */
 
 extern kern_return_t map_fd(
@@ -144,7 +240,7 @@ extern kern_return_t map_fd(
 				boolean_t findspace,
 				vm_size_t size);
 
-#endif	/* !defined(__LP64__) || !defined(__arm__) */
+#endif	/* !defined(__LP64__) && !defined(__arm__) */
 
 
 __END_DECLS

@@ -9,6 +9,8 @@
 #import <MediaPlayer/MPMediaPlayback.h>
 #import <UIKit/UIKit.h>
 
+@class MPMovieAccessLog, MPMovieErrorLog;
+
 // -----------------------------------------------------------------------------
 // Types
 
@@ -84,14 +86,12 @@ typedef NSInteger MPMovieSourceType;
 
 MP_EXTERN_CLASS_AVAILABLE(2_0) @interface MPMoviePlayerController : NSObject <MPMediaPlayback> {
 @private
-    id _internal;
+    void *_internal;
 }
 
 - (id)initWithContentURL:(NSURL *)url;
 
-- (NSURL *)contentURL;
-
-- (void)setContentURL:(NSURL *)contentURL;
+@property(nonatomic, copy) NSURL *contentURL;
 
 // The view in which the media and playback controls are displayed.
 @property(nonatomic, readonly) UIView *view;
@@ -155,6 +155,12 @@ MP_EXTERN_CLASS_AVAILABLE(2_0) @interface MPMoviePlayerController : NSObject <MP
 // The end time of movie playback. Defaults to NaN, which indicates natural end time of the movie.
 @property(nonatomic) NSTimeInterval endPlaybackTime;
 
+// Indicates whether the movie player allows AirPlay video playback. Defaults to YES on iOS 5.0 and later.
+@property(nonatomic) BOOL allowsAirPlay NS_AVAILABLE_IPHONE(4_3);
+
+// Indicates whether the movie player is currently playing video via AirPlay.
+@property(nonatomic, readonly, getter=isAirPlayVideoActive) BOOL airPlayVideoActive NS_AVAILABLE_IPHONE(5_0);
+
 @end
 
 // -----------------------------------------------------------------------------
@@ -184,6 +190,9 @@ MP_EXTERN NSString *const MPMoviePlayerWillExitFullscreenNotification NS_AVAILAB
 MP_EXTERN NSString *const MPMoviePlayerDidExitFullscreenNotification NS_AVAILABLE_IPHONE(3_2);
 MP_EXTERN NSString *const MPMoviePlayerFullscreenAnimationDurationUserInfoKey NS_AVAILABLE_IPHONE(3_2); // NSNumber of double (NSTimeInterval)
 MP_EXTERN NSString *const MPMoviePlayerFullscreenAnimationCurveUserInfoKey NS_AVAILABLE_IPHONE(3_2);     // NSNumber of NSUInteger (UIViewAnimationCurve)
+
+// Posted when the movie player begins or ends playing video via AirPlay.
+MP_EXTERN NSString *const MPMoviePlayerIsAirPlayVideoActiveDidChangeNotification NS_AVAILABLE_IPHONE(5_0);
 
 // -----------------------------------------------------------------------------
 // Movie Property Notifications
@@ -237,7 +246,7 @@ MP_EXTERN NSString *const MPMoviePlayerThumbnailErrorKey NS_AVAILABLE_IPHONE(3_2
 
 MP_EXTERN_CLASS_AVAILABLE(4_0) @interface MPTimedMetadata : NSObject {
 @private
-    id _internal;
+    void *_internal;
 }
 
 // A key which identifies a piece of timed metadata.
@@ -267,6 +276,130 @@ MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyInfo NS_AVAILABLE_IPHONE(
 MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyMIMEType NS_AVAILABLE_IPHONE(4_0);       // NSString
 MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyDataType NS_AVAILABLE_IPHONE(4_0);       // NSString
 MP_EXTERN NSString *const MPMoviePlayerTimedMetadataKeyLanguageCode NS_AVAILABLE_IPHONE(4_0);   // NSString (ISO 639-2)
+
+// -----------------------------------------------------------------------------
+
+@interface MPMoviePlayerController (MPMovieLogging)
+
+// Returns an object that represents a snapshot of the network access log. Can be nil.
+@property (nonatomic, readonly) MPMovieAccessLog *accessLog NS_AVAILABLE_IPHONE(4_3);
+
+// Returns an object that represents a snapshot of the error log. Can be nil.
+@property (nonatomic, readonly) MPMovieErrorLog *errorLog NS_AVAILABLE_IPHONE(4_3);
+
+@end
+
+// -----------------------------------------------------------------------------
+// An MPMovieAccessLog accumulates key metrics about network playback and presents them as a collection of MPMovieAccessLogEvent instances.
+// Each MPMovieAccessLogEvent instance collates the data that relates to each uninterrupted period of playback.
+
+MP_EXTERN_CLASS_AVAILABLE(4_3) @interface MPMovieAccessLog : NSObject <NSCopying>
+
+// Returns the webserver access log into a textual format that conforms to the W3C Extended Log File Format for web server log files.
+// For more information see: http://www.w3.org/pub/WWW/TR/WD-logfile.html
+@property (nonatomic, readonly) NSData *extendedLogData;
+
+// Returns the string encoding of the extendedLogData property.
+@property (nonatomic, readonly) NSStringEncoding extendedLogDataStringEncoding;
+
+// An ordered collection of MPMovieAccessLogEvent instances that represent the chronological sequence of events contained in the access log.
+@property (nonatomic, readonly) NSArray *events;
+
+@end
+
+// -----------------------------------------------------------------------------
+// An MPMovieErrorLog provides data to identify if, and when, network resource playback failures occured.
+
+MP_EXTERN_CLASS_AVAILABLE(4_3) @interface MPMovieErrorLog : NSObject <NSCopying>
+
+// Returns the webserver error log into a textual format that conforms to the W3C Extended Log File Format for web server log files.
+// For more information see: http://www.w3.org/pub/WWW/TR/WD-logfile.html
+@property (nonatomic, readonly) NSData *extendedLogData;
+
+// Returns the string encoding of the extendedLogData property.
+@property (nonatomic, readonly) NSStringEncoding extendedLogDataStringEncoding;
+
+// An ordered collection of MPMovieErrorLogEvent instances that represent the chronological sequence of events contained in the error log.
+@property (nonatomic, readonly) NSArray *events;
+
+@end
+
+// -----------------------------------------------------------------------------
+// An MPMovieAccessLogEvent repesents a single access log entry.
+
+MP_EXTERN_CLASS_AVAILABLE(4_3) @interface MPMovieAccessLogEvent : NSObject <NSCopying>
+
+// A count of media segments downloaded from the server to this client.
+@property (nonatomic, readonly) NSUInteger numberOfSegmentsDownloaded;
+
+// The date/time at which playback began for this event.
+@property (nonatomic, readonly) NSDate *playbackStartDate;
+
+// The URI of the playback item.
+@property (nonatomic, readonly) NSString *URI;
+
+// The IP address of the server that was the source of the last delivered media segment. Can be either an IPv4 or IPv6 address.
+@property (nonatomic, readonly) NSString *serverAddress;
+
+// A count of changes to the serverAddress property over the last uninterrupted period of playback.
+@property (nonatomic, readonly) NSUInteger numberOfServerAddressChanges;
+
+// A GUID that identifies the playback session. This value is used in HTTP requests.
+@property (nonatomic, readonly) NSString *playbackSessionID;
+
+// An offset into the playlist where the last uninterrupted period of playback began, in seconds. The value is negative if unknown.
+@property (nonatomic, readonly) NSTimeInterval playbackStartOffset;
+
+// The accumulated duration of the media downloaded, in seconds. The value is negative if unknown.
+@property (nonatomic, readonly) NSTimeInterval segmentsDownloadedDuration;
+
+// The accumulated duration of the media played, in seconds.
+@property (nonatomic, readonly) NSTimeInterval durationWatched;
+
+// The total number of playback stalls encountered. The value is negative if unknown.
+@property (nonatomic, readonly) NSInteger numberOfStalls;
+
+// The accumulated number of bytes transferred. The value is negative if unknown.
+@property (nonatomic, readonly) int64_t numberOfBytesTransferred;
+
+// The empirical throughput across all media downloaded, in bits per second.
+@property (nonatomic, readonly) double observedBitrate;
+
+// The throughput required to play the stream, as advertised by the server, in bits per second.
+@property (nonatomic, readonly) double indicatedBitrate;
+
+// The total number of dropped video frames.
+@property (nonatomic, readonly) NSInteger numberOfDroppedVideoFrames;
+
+@end
+
+// -----------------------------------------------------------------------------
+// An MPMovieErrorLogEvent repesents a single error log entry.
+
+MP_EXTERN_CLASS_AVAILABLE(4_3) @interface MPMovieErrorLogEvent : NSObject <NSCopying>
+
+// The date and time when the error occured.
+@property (nonatomic, readonly) NSDate *date;
+
+// The URI of the playback item.
+@property (nonatomic, readonly) NSString *URI;
+
+// The IP address of the server that was the source of the error.
+@property (nonatomic, readonly) NSString *serverAddress;
+
+// A GUID that identifies the playback session. This value is used in HTTP requests.
+@property (nonatomic, readonly) NSString *playbackSessionID;
+
+// A unique error code identifier. The value is negative if unknown.
+@property (nonatomic, readonly) NSInteger errorStatusCode;
+
+// The domain of the error.
+@property (nonatomic, readonly) NSString *errorDomain;
+
+// A description of the error encountered.
+@property (nonatomic, readonly) NSString *errorComment;
+
+@end
 
 // -----------------------------------------------------------------------------
 // Deprecated methods and properties

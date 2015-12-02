@@ -5,7 +5,10 @@
 //  Copyright 2009-2010 Apple Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <EventKit/EventKitDefines.h>
+#import <EventKit/EKObject.h>
+
+@class EKCalendarItem;
 
 /*!
     @class          EKAlarm
@@ -13,27 +16,22 @@
     @discussion     The EKAlarm class represents alarms on an event. An alarm can be relative (e.g. 15 mins before) 
                     or absolute (specific time).
 */
-NS_CLASS_AVAILABLE(NA, 4_0)
-@interface EKAlarm : NSObject <NSCopying> {
-@private
-    NSDate             *_absoluteDate;
-    NSTimeInterval      _relativeOffset;
-    BOOL                _dirtyFlag;
+EVENTKIT_CLASS_AVAILABLE(4_0)
+@interface EKAlarm : EKObject <NSCopying> {
 }
 
 /*!
-    @method     alarmWithTriggerDate:
+    @method     alarmWithAbsoluteDate:
     @abstract   Creates a new autoreleased alarm with an absolute trigger time.
     @param      date    The date the alarm should fire.
 */
 + (EKAlarm *)alarmWithAbsoluteDate:(NSDate *)date;
 
 /*!
-    @method     alarmWithTriggerInterval:
+    @method     alarmWithRelativeOffset:
     @abstract   Creates a new autoreleased alarm with a relative trigger time.
     @discussion Creates a new autoreleased alarm with a relative trigger time. This offset
-                is added to the start date of the event, and should be expressed as a negative
-                number. If you pass an interval > 0 it will be pinned to zero.
+                is added to the start date of the event.
 
     @param      offset    The offset from the event start that the alarm should fire.
 */
@@ -49,7 +47,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 @property(nonatomic) NSTimeInterval relativeOffset;
 
 /*!
-    @property   alarmDate
+    @property   absoluteDate
     @abstract   Represents an alarm that fires at a specific date.
     @discussion Set this property to a date to establish an absolute alarm trigger. Setting this
                 clears any relative interval trigger.

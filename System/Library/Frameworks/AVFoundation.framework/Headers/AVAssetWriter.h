@@ -3,11 +3,9 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010 Apple Inc. All rights reserved.
+	Copyright 2010-2012 Apple Inc. All rights reserved.
 
 */
-
-#if ! TARGET_OS_IPHONE || 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 #import <AVFoundation/AVBase.h>
 #import <Foundation/Foundation.h>
@@ -64,6 +62,7 @@ typedef NSInteger AVAssetWriterStatus;
 	A single instance of AVAssetWriter can be used once to write to a single file. Clients that wish to write to files
 	multiple times must use a new instance of AVAssetWriter each time.
  */
+NS_CLASS_AVAILABLE(10_7, 4_1)
 @interface AVAssetWriter : NSObject
 {
 @private
@@ -162,19 +161,17 @@ typedef NSInteger AVAssetWriterStatus;
 @property (readonly) NSError *error;
 
 /*!
- @property movieFragmentInterval
+ @property metadata
  @abstract
-	For the QuickTime movie file type, specifies the frequency with which movie fragments should be written.
- 
- @discussion
-	When movie fragments are used, a partially written QuickTime movie file whose writing is unexpectedly interrupted can
-	be successfully opened and played up to multiples of the specified time interval. The default value of this property
-	is kCMTimeInvalid, which indicates that movie fragments should not be used, but that only a movie atom describing all
-	of the media in the file should be written.
+	A collection of metadata to be written to the receiver's output file.
 
+ @discussion
+	The value of this property is an array of AVMetadataItem objects representing the collection of top-level metadata to
+	be written in the output file.
+	
 	This property cannot be set after writing has started.
  */
-@property (nonatomic) CMTime movieFragmentInterval;
+@property (nonatomic, copy) NSArray *metadata;
 
 /*!
  @property shouldOptimizeForNetworkUse
@@ -216,7 +213,7 @@ typedef NSInteger AVAssetWriterStatus;
 	format. For example, video compression settings that specify H.264 compression are not compatible with file formats
 	that cannot contain H.264-compressed video.
  
-	Attempting to add an output with output settings and a media type for which this method returns NO will cause an
+	Attempting to add an input with output settings and a media type for which this method returns NO will cause an
 	exception to be thrown.
 */
 - (BOOL)canApplyOutputSettings:(NSDictionary *)outputSettings forMediaType:(NSString *)mediaType;
@@ -254,19 +251,6 @@ typedef NSInteger AVAssetWriterStatus;
 - (void)addInput:(AVAssetWriterInput *)input;
 
 /*!
- @property metadata
- @abstract
-	A collection of metadata to be written to the receiver's output file.
-
- @discussion
-	The value of this property is an array of AVMetadataItem objects representing the collection of top-level metadata to
-	be written in the output file.
-	
-	This property cannot be set after writing has started.
- */
-@property (nonatomic, copy) NSArray *metadata;
-
-/*!
  @method startWriting
  @abstract
 	Prepares the receiver for accepting input and for writing its output to its output file.
@@ -275,12 +259,18 @@ typedef NSInteger AVAssetWriterStatus;
 	A BOOL indicating whether writing successfully started.
  
  @discussion
-	This method must be called after all inputs have added and other configuration properties have been set in order to
-	tell the receiver to prepare for writing. After this method is called, clients can start writing sessions using
+	This method must be called after all inputs have been added and other configuration properties have been set in order
+	to tell the receiver to prepare for writing. After this method is called, clients can start writing sessions using
 	startSessionAtSourceTime: and can write media samples using the methods provided by each of the receiver's inputs.
  
 	If writing cannot be started, this method returns NO. Clients can check the values of the status and error properties
 	for more information on why writing could not be started.
+ 
+	On iOS, if the status of an AVAssetWriter is AVAssetWriterStatusWriting when the client app goes into the background,
+	its status will change to AVAssetWriterStatusFailed and appending to any of its inputs will fail.  You may want to
+	use -[UIApplication beginBackgroundTaskWithExpirationHandler:] to avoid being interrupted in the middle of a writing
+	session and to finish writing the data that has already been appended.  For more information about executing code in
+	the background, see the iOS Application Programming Guide.
  */
 - (BOOL)startWriting;
 
@@ -377,4 +367,34 @@ typedef NSInteger AVAssetWriterStatus;
 
 @end
 
-#endif // ! TARGET_OS_IPHONE || 40100 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+
+@interface AVAssetWriter (AVAssetWriterFileTypeSpecificProperties)
+
+/*!
+ @property movieFragmentInterval
+ @abstract
+	For file types that support movie fragments, specifies the frequency at which movie fragments should be written.
+ 
+ @discussion
+	When movie fragments are used, a partially written asset whose writing is unexpectedly interrupted can be
+	successfully opened and played up to multiples of the specified time interval. The default value of this property is
+	kCMTimeInvalid, which indicates that movie fragments should not be used.
+
+	This property cannot be set after writing has started.
+ */
+@property (nonatomic) CMTime movieFragmentInterval;
+
+/*!
+ @property movieTimeScale
+ @abstract
+	For file types that contain a 'moov' atom, such as QuickTime Movie files, specifies the asset-level time scale to be
+	used. 
+
+ @discussion
+	The default value is 0, which indicates that the receiver should choose a convenient value, if applicable.
+ 
+	This property cannot be set after writing has started.
+ */
+@property (nonatomic) CMTimeScale movieTimeScale NS_AVAILABLE(10_7, 4_3);
+
+@end

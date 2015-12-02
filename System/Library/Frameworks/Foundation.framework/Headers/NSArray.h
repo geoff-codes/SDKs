@@ -1,5 +1,5 @@
 /*	NSArray.h
-	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -28,7 +28,7 @@
 - (NSString *)descriptionWithLocale:(id)locale;
 - (NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level;
 - (id)firstObjectCommonWithArray:(NSArray *)otherArray;
-- (void)getObjects:(id *)objects range:(NSRange)range;
+- (void)getObjects:(id __unsafe_unretained [])objects range:(NSRange)range;
 - (NSUInteger)indexOfObject:(id)anObject;
 - (NSUInteger)indexOfObject:(id)anObject inRange:(NSRange)range;
 - (NSUInteger)indexOfObjectIdenticalTo:(id)anObject;
@@ -48,7 +48,7 @@
 - (void)makeObjectsPerformSelector:(SEL)aSelector;
 - (void)makeObjectsPerformSelector:(SEL)aSelector withObject:(id)argument;
 
-- (NSArray *)objectsAtIndexes:(NSIndexSet *)indexes NS_AVAILABLE(10_4, 2_0);
+- (NSArray *)objectsAtIndexes:(NSIndexSet *)indexes;
 
 #if NS_BLOCKS_AVAILABLE
 - (void)enumerateObjectsUsingBlock:(void (^)(id obj, NSUInteger idx, BOOL *stop))block NS_AVAILABLE(10_6, 4_0);
@@ -83,14 +83,14 @@ typedef NSUInteger NSBinarySearchingOptions;
 
 + (id)array;
 + (id)arrayWithObject:(id)anObject;
-+ (id)arrayWithObjects:(const id *)objects count:(NSUInteger)cnt;
++ (id)arrayWithObjects:(const id [])objects count:(NSUInteger)cnt;
 + (id)arrayWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
 + (id)arrayWithArray:(NSArray *)array;
 
-- (id)initWithObjects:(const id *)objects count:(NSUInteger)cnt;
+- (id)initWithObjects:(const id [])objects count:(NSUInteger)cnt;
 - (id)initWithObjects:(id)firstObj, ... NS_REQUIRES_NIL_TERMINATION;
 - (id)initWithArray:(NSArray *)array;
-- (id)initWithArray:(NSArray *)array copyItems:(BOOL)flag NS_AVAILABLE(10_2, 2_0);
+- (id)initWithArray:(NSArray *)array copyItems:(BOOL)flag;
 
 + (id)arrayWithContentsOfFile:(NSString *)path;
 + (id)arrayWithContentsOfURL:(NSURL *)url;
@@ -103,7 +103,7 @@ typedef NSUInteger NSBinarySearchingOptions;
 
 /* This method is unsafe because it could potentially cause buffer overruns. You should use -getObjects:range: instead.
 */
-- (void)getObjects:(id *)objects;
+- (void)getObjects:(id __unsafe_unretained [])objects;
 
 @end
 
@@ -137,9 +137,9 @@ typedef NSUInteger NSBinarySearchingOptions;
 - (void)sortUsingFunction:(NSInteger (*)(id, id, void *))compare context:(void *)context;
 - (void)sortUsingSelector:(SEL)comparator;
 
-- (void)insertObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes NS_AVAILABLE(10_4, 2_0);
-- (void)removeObjectsAtIndexes:(NSIndexSet *)indexes NS_AVAILABLE(10_4, 2_0);
-- (void)replaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects NS_AVAILABLE(10_4, 2_0);
+- (void)insertObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes;
+- (void)removeObjectsAtIndexes:(NSIndexSet *)indexes;
+- (void)replaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects;
 
 #if NS_BLOCKS_AVAILABLE
 - (void)sortUsingComparator:(NSComparator)cmptr NS_AVAILABLE(10_6, 4_0);

@@ -42,6 +42,17 @@ extern "C" {
 /*!
 	@typedef SecTrustResultType
 	@abstract Specifies the trust result type.
+    @discussion SecTrustResultType results have two dimensions.  They specify
+    both whether evaluation suceeded and whether this is because of a user
+    decision.  In practice the commonly expected result is kSecTrustResultUnspecified, 
+    which indicates a positive result that wasn't decided by the user.  The
+    common failure is kSecTrustResultRecoverableTrustFailure, which means a
+    negative result.  kSecTrustResultProceed and kSecTrustResultDeny are the
+    positive and negative result respectively when decided by the user.  User
+    decisions are persisted through the use of SecTrustCopyExceptions() and
+    SecTrustSetExceptions().  Finally kSecTrustResultFatalTrustFailure is a
+    negative result that should not be circumvented.  In fact only in the case
+    of kSecTrustResultRecoverableTrustFailure should a user ever be asked.
 	@constant kSecTrustResultInvalid Indicates an invalid setting or result.
 	@constant kSecTrustResultProceed Indicates you may proceed.  This value
     may be returned by the SecTrustEvaluate function or stored as part of
@@ -239,10 +250,9 @@ CFDataRef SecTrustCopyExceptions(SecTrustRef trust)
     kSecTrustResultRecoverableTrustFailure, kSecTrustResultProceed will be returned
     (if the certificate for which exceptions was created matches the current leaf
     certificate).
-    @discussion Clients of this interface will want to call
-    SecCertificateGetSHA1Digest(SecTrustGetCertificateAtIndex(trust, 0))
-    and use the result as one of the keys for deciding which exceptions cookie to use.
-    Examples of other keys to match on would be the server we are connecting to, the
+    @discussion Clients of this interface will need to establish the context of this
+    exception to later decide when this exception cookie is to be used.
+    Examples of elements of this context would be the server we are connecting to, the
     ssid of the network this cert is for the account for which this cert should be
     considered valid, etc.
     @result true if the exceptions cookies was valid and matches the current leaf

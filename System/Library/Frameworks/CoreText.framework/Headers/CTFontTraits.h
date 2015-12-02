@@ -2,7 +2,7 @@
  *  CTFontTraits.h
  *  CoreText
  *
- *  Copyright (c) 2006-2010 Apple Inc. All rights reserved.
+ *  Copyright (c) 2006-2011 Apple Inc. All rights reserved.
  *
  */
 
@@ -67,6 +67,7 @@ enum {
     kCTFontMonoSpaceTrait           = (1 << 10),    // Use fixed-pitch glyphs if available. May have multiple glyph advances (most CJK glyphs may contain two spaces)
     kCTFontVerticalTrait            = (1 << 11),    // Use vertical glyph variants and metrics
     kCTFontUIOptimizedTrait         = (1 << 12),    // Synthesize appropriate attributes for UI rendering such as control titles if necessary
+    kCTFontColorGlyphsTrait         = (1 << 13),    // Color bitmap glyphs are available. 
 
     kCTFontClassMaskTrait           = (15 << kCTFontClassMaskShift) // Mask for the font class
 };

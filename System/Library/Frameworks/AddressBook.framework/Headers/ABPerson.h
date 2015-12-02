@@ -77,6 +77,13 @@ extern CFArrayRef ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(ABAd
 
 extern CFArrayRef ABAddressBookCopyPeopleWithName(ABAddressBookRef addressBook, CFStringRef name);
 
+// VCard
+    // Creates an array of people from a vcard representation. Source is optional. The people
+    // will be created in the source given as the first argument, or the default source if NULL.
+extern CFArrayRef ABPersonCreatePeopleInSourceWithVCardRepresentation(ABRecordRef source, CFDataRef vCardData) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+    // Creates a vCard representation of the people passed in.
+extern CFDataRef ABPersonCreateVCardRepresentationWithPeople(CFArrayRef people) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
 // Generic labels
 extern const CFStringRef kABWorkLabel;
 extern const CFStringRef kABHomeLabel;
@@ -111,68 +118,12 @@ extern const CFStringRef kABPersonAddressCountryKey;
 extern const CFStringRef kABPersonAddressCountryCodeKey;
 
 /*
- * kABPersonAddressCountryCodeKey code must be one of the following:
- * iso country codes
+ * kABPersonAddressCountryCodeKey code must be in the form of 2 character iso 3166 country codes
  *
- *    ar = Argentina
- *    at = Austria
- *    au = Australia
- *    ba = Bosnia and Herzegovina
- *    be = Belgium
- *    bg = Bulgaria
- *    bh = Bahrain
- *    br = Brazil
- *    ca = Canada
- *    ch = Switzerland
- *    cn = China
- *    cz = Czech
- *    de = Germany
- *    dk = Denmark
- *    eg = Egypt
- *    es = Spain
- *    fi = Finland
+ * eg:
  *    fr = France
- *    gr = Greece
- *    gl = Greenland
- *    hk = Hong Kong
- *    hr = Croatia
- *    hu = Hungary
- *    ie = Ireland
- *    il = Israel
- *    id = Indonesia
- *    in = India
- *    is = Iceland
- *    it = Italy
- *    jp = Japan
- *    jo = Jordan
- *    kr = South Korea
- *    kw = Kuwait
- *    lb = Lebanon
- *    lu = Luxembourg
- *    mk = Macedonia
- *    mx = Mexico
- *    nl = Netherlands
- *    no = Norway
- *    nz = New Zealand
- *    om = Oman
- *    pl = Poland
- *    pt = Portugal
- *    qa = Qatar
- *    ro = Romania
- *    ru = Russian Federation
- *    sa = Saudi Arabia
- *    se = Sweden
- *    sg = Singapore
- *    si = Slovenia
- *    sk = Slovakia
- *    sy = Syrian Arab Republic
- *    tw = Taiwan
- *    tr = Turkey
- *    ua = Ukraine
- *    uk = United Kingdom
  *    us = United States
- *    ye = Yemen
- *    za = South Africa
+ * etc.
  *
  */
 
@@ -192,6 +143,7 @@ extern const CFStringRef kABPersonPhoneIPhoneLabel __OSX_AVAILABLE_STARTING(__MA
 extern const CFStringRef kABPersonPhoneMainLabel;
 extern const CFStringRef kABPersonPhoneHomeFAXLabel;
 extern const CFStringRef kABPersonPhoneWorkFAXLabel;
+extern const CFStringRef kABPersonPhoneOtherFAXLabel __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 extern const CFStringRef kABPersonPhonePagerLabel;
 
 // IM
@@ -202,6 +154,12 @@ extern const CFStringRef kABPersonInstantMessageServiceJabber;
 extern const CFStringRef kABPersonInstantMessageServiceMSN;
 extern const CFStringRef kABPersonInstantMessageServiceICQ;
 extern const CFStringRef kABPersonInstantMessageServiceAIM;
+extern const CFStringRef kABPersonInstantMessageServiceQQ __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kABPersonInstantMessageServiceGoogleTalk __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kABPersonInstantMessageServiceSkype __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kABPersonInstantMessageServiceFacebook __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kABPersonInstantMessageServiceGaduGadu __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
 extern const CFStringRef kABPersonInstantMessageUsernameKey;    // Username
 
 // URLs
@@ -222,6 +180,21 @@ extern const CFStringRef kABPersonPartnerLabel;   // Partner
 extern const CFStringRef kABPersonAssistantLabel; // Assistant
 extern const CFStringRef kABPersonManagerLabel;   // Manager
     
+// Social Profile
+extern const ABPropertyID kABPersonSocialProfileProperty __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);		// kABMultiDictionaryPropertyType
+extern const CFStringRef kABPersonSocialProfileURLKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);			// string representation of a url for the social profile
+    // the following properties are optional
+    extern const CFStringRef kABPersonSocialProfileServiceKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);			// string representing the name of the service (Twitter, Facebook, LinkedIn, etc.)
+    extern const CFStringRef kABPersonSocialProfileUsernameKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);			// string representing the user visible name
+    extern const CFStringRef kABPersonSocialProfileUserIdentifierKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);	// string representing the service specific identifier (optional)
+
+extern const CFStringRef kABPersonSocialProfileServiceTwitter __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kABPersonSocialProfileServiceGameCenter __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kABPersonSocialProfileServiceFacebook __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kABPersonSocialProfileServiceMyspace __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kABPersonSocialProfileServiceLinkedIn __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+extern const CFStringRef kABPersonSocialProfileServiceFlickr __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+
 #if defined(__cplusplus)
 }
 #endif

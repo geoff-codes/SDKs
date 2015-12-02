@@ -35,4 +35,10 @@
 #import <CoreData/NSPropertyMapping.h>
 #import <CoreData/NSMigrationManager.h>
 
+#import <CoreData/NSIncrementalStore.h>
+#import <CoreData/NSIncrementalStoreNode.h>
+#import <CoreData/NSPersistentStoreRequest.h>
+#import <CoreData/NSSaveChangesRequest.h>
+#import <CoreData/NSMergePolicy.h>
+
 #import <CoreData/NSFetchedResultsController.h>

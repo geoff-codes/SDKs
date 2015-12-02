@@ -2,7 +2,7 @@
 //  UIWebView.h
 //  UIKit
 //
-//  Copyright 2007-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2011, Apple Inc. All rights reserved.
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIView.h>
@@ -10,15 +10,14 @@
 #import <UIKit/UIDataDetectors.h>
 #import <UIKit/UIScrollView.h>
 
-enum {
+typedef enum {
     UIWebViewNavigationTypeLinkClicked,
     UIWebViewNavigationTypeFormSubmitted,
     UIWebViewNavigationTypeBackForward,
     UIWebViewNavigationTypeReload,
     UIWebViewNavigationTypeFormResubmitted,
     UIWebViewNavigationTypeOther
-};
-typedef NSUInteger UIWebViewNavigationType;
+} UIWebViewNavigationType;
 
 @class UIWebViewInternal;
 @protocol UIWebViewDelegate;
@@ -29,6 +28,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIWebView : UIView <NSCoding, UIScrollView
 }
 
 @property(nonatomic,assign) id<UIWebViewDelegate> delegate;
+
+@property(nonatomic,readonly,retain) UIScrollView *scrollView __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 - (void)loadRequest:(NSURLRequest *)request;
 - (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL;
@@ -55,6 +56,8 @@ UIKIT_CLASS_AVAILABLE(2_0) @interface UIWebView : UIView <NSCoding, UIScrollView
 
 @property (nonatomic) BOOL allowsInlineMediaPlayback __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0); // iPhone Safari defaults to NO. iPad Safari defaults to YES
 @property (nonatomic) BOOL mediaPlaybackRequiresUserAction __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_4_0); // iPhone and iPad Safari both default to YES
+
+@property (nonatomic) BOOL mediaPlaybackAllowsAirPlay __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0); // iPhone and iPad Safari both default to YES
 
 @end
 

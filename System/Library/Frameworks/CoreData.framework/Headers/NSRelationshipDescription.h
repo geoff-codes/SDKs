@@ -1,16 +1,11 @@
 /*
     NSRelationshipDescription.h
     Core Data
-    Copyright (c) 2004-2009 Apple Inc.
+    Copyright (c) 2004-2010 Apple Inc.
     All rights reserved.
 */
 
-#import <Availability.h>
-
 #import <Foundation/NSObject.h>
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4 || __IPHONE_3_0 <=  __IPHONE_OS_VERSION_MAX_ALLOWED
-
 #import <CoreData/NSPropertyDescription.h>
 
 @class NSEntityDescription;
@@ -25,7 +20,7 @@
 typedef NSUInteger NSDeleteRule;
 
 // Relationships represent references to other objects. They usually come in pairs, where the reference back is called the "inverse".
-NS_CLASS_AVAILABLE(10_4, 3_0)
+NS_CLASS_AVAILABLE(10_4,3_0)
 @interface NSRelationshipDescription : NSPropertyDescription {
 @private
 	void *_reserved5;
@@ -55,11 +50,10 @@ NS_CLASS_AVAILABLE(10_4, 3_0)
 
 - (BOOL)isToMany;    // convenience method to test whether the relationship is to-one or to-many
 
-/* Returns the version hash for the relationship.  This value includes the versionHash information from the NSPropertyDescription superclass, the name of the destination entity and the inverse relationship, and the min and max count.
-*/
-- (NSData *)versionHash __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_3_0);
+// Returns the version hash for the relationship.  This value includes the versionHash information from the NSPropertyDescription superclass, the name of the destination entity and the inverse relationship, and the min and max count.
+- (NSData *)versionHash NS_AVAILABLE(10_5,3_0);
 
+- (void)setOrdered:(BOOL)flag NS_AVAILABLE(10_7,  5_0); 
+- (BOOL)isOrdered NS_AVAILABLE(10_7,  5_0);
 
 @end
-
-#endif

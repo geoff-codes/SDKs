@@ -20,7 +20,6 @@ enum {
 };
 typedef NSInteger GKLeaderboardPlayerScope;
 
-
 @class GKScore;
 
 // GKLeaderboard represents the set of high scores for the current game, always including the local player's best score.
@@ -60,5 +59,12 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 // 2. Unauthenticated player
 // 3. Leaderboard not present
 + (void)loadCategoriesWithCompletionHandler:(void(^)(NSArray *categories, NSArray *titles, NSError *error))completionHandler;
+
+// Set the default leaderboard for the local player per game
+// Possible reasons for error:
+// 1. Communications problem
+// 2. Unauthenticated player
+// 3. Leaderboard not present
++ (void)setDefaultLeaderboard:(NSString *)categoryID withCompletionHandler:(void(^)(NSError *error))completionHandler __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 @end

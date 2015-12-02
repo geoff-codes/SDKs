@@ -33,8 +33,9 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 @property(nonatomic, retain) NSString *identifier;                  // Achievement identifier
 @property(nonatomic, assign) double percentComplete;                // Required, Percentage of achievement complete.
 @property(nonatomic, readonly, getter=isCompleted) BOOL completed;  // Set to NO until percentComplete = 100.
-@property(nonatomic, assign, getter=isHidden, readonly) BOOL hidden;                         // Set to NO when a report for that achievement is made. Note: to only unhide an achievement, report it with percentComplete = 0
-@property(nonatomic, retain, readonly) NSDate *lastReportedDate;            // Date the achievement was last reported. ReadOnly. Created at initialization
+@property(nonatomic, assign, getter=isHidden, readonly) BOOL hidden;    // Set to NO when a report for that achievement is made. Note: to only unhide an achievement, report it with percentComplete = 0
+@property(nonatomic, retain, readonly) NSDate *lastReportedDate;    // Date the achievement was last reported. ReadOnly. Created at initialization
 
+@property(nonatomic, assign) BOOL showsCompletionBanner __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);             // A banner will be momentarily displayed after reporting a completed achievement
 
 @end

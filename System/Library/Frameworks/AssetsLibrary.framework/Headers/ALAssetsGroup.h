@@ -7,9 +7,8 @@
 /*
  *
  * An ALAssetsGroup is a ordered set of assets. The order of its elements is the order that the user sees in the Photos application. 
- * Groups are synced via iTunes, created to hold the users saved photos, or created during camera import. 
- * None of the groups can be directly modified using this API. Only the saved photos group can be indirectly modified
- * by saving images or videos using the ALAssetsLibrary class.
+ * Groups are synced via iTunes, created on the device, created to hold the users saved photos, or created during camera import. 
+ * Synced groups cannot be directly modified using this API. Only user-created groups and the saved photos group can have assets added.
  */
 
 #import <Foundation/Foundation.h>
@@ -33,6 +32,7 @@ typedef void (^ALAssetsGroupEnumerationResultsBlock)(ALAsset *result, NSUInteger
 extern NSString *const ALAssetsGroupPropertyName __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);              // An NSString with the name of the group
 extern NSString *const ALAssetsGroupPropertyType __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);              // An ALAssetsGroupType wrapped in an NSNumber
 extern NSString *const ALAssetsGroupPropertyPersistentID __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);      // An NSString with the group's persistent ID. 
+extern NSString *const ALAssetsGroupPropertyURL __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);              // An NSURL that uniquely identifies the group
 
 NS_CLASS_AVAILABLE(NA, 4_0)
 @interface ALAssetsGroup : NSObject {
@@ -64,6 +64,14 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 - (void)enumerateAssetsUsingBlock:(ALAssetsGroupEnumerationResultsBlock)enumerationBlock;
 - (void)enumerateAssetsWithOptions:(NSEnumerationOptions)options usingBlock:(ALAssetsGroupEnumerationResultsBlock)enumerationBlock;
 - (void)enumerateAssetsAtIndexes:(NSIndexSet *)indexSet options:(NSEnumerationOptions)options usingBlock:(ALAssetsGroupEnumerationResultsBlock)enumerationBlock;
+
+// Returns YES if the application is able to edit the group.  Returns NO if the application is not able to edit the group.
+@property (nonatomic, readonly, getter=isEditable) BOOL editable __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
+
+// Add an existing ALAsset to the group.  An asset can belong to multiple ALAssetsGroups.
+// The caller should check the editable property of the group to see if it is possible to add an asset to the group.
+// Returns YES if the asset was added successfully.  Returns NO if the group is not editable, or if the asset was not able to be added to the group.
+- (BOOL)addAsset:(ALAsset *)asset __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_5_0);
 
 @end
 

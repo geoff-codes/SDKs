@@ -1,5 +1,5 @@
 /*	NSFileManager.h
-	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -9,6 +9,7 @@
 #import <CoreFoundation/CFBase.h>
 
 @class NSArray, NSData, NSDate, NSDirectoryEnumerator, NSError, NSNumber;
+@protocol NSFileManagerDelegate;
 
 /* Version number where NSFileManager can copy/move/enumerate resources forks correctly. 
 */
@@ -69,7 +70,7 @@ typedef NSUInteger NSFileManagerItemReplacementOptions;
 
 /* -contentsOfDirectoryAtURL:includingPropertiesForKeys:options:error: returns an NSArray of NSURLs identifying the the directory entries. If this method returns nil, an NSError will be returned by reference in the 'error' parameter. If the directory contains no entries, this method will return the empty array. When an array is specified for the 'keys' parameter, the specified property values will be pre-fetched and cached with each enumerated URL.
  
-    This method always does a shallow enumeration of the specified directory (i.e. it always acts as if NSDirectoryEnumerationSkipsSubdirectoryDescendants has been specified). If you need to perform a deep enumeration, use +[NSFileManager enumeratorAtURL:includingPropertiesForKeys:options:errorHandler:].
+    This method always does a shallow enumeration of the specified directory (i.e. it always acts as if NSDirectoryEnumerationSkipsSubdirectoryDescendants has been specified). If you need to perform a deep enumeration, use -[NSFileManager enumeratorAtURL:includingPropertiesForKeys:options:errorHandler:].
  
     If you wish to only receive the URLs and no other attributes, then pass '0' for 'options' and an empty NSArray ('[NSArray array]') for 'keys'. If you wish to have the property caches of the vended URLs pre-populated with a default set of attributes, then pass '0' for 'options' and 'nil' for 'keys'.
  */
@@ -86,69 +87,74 @@ typedef NSUInteger NSFileManagerItemReplacementOptions;
  */
 - (NSURL *)URLForDirectory:(NSSearchPathDirectory)directory inDomain:(NSSearchPathDomainMask)domain appropriateForURL:(NSURL *)url create:(BOOL)shouldCreate error:(NSError **)error NS_AVAILABLE(10_6, 4_0);
 
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+/* createDirectoryAtURL:withIntermediateDirectories:attributes:error: creates a directory at the specified URL. If you pass 'NO' for withIntermediateDirectories, the directory must not exist at the time this call is made. Passing 'YES' for withIntermediateDirectories will create any necessary intermediate directories. This method returns YES if all directories specified in 'url' were created and attributes were set. Directories are created with attributes specified by the dictionary passed to 'attributes'. If no dictionary is supplied, directories are created according to the umask of the process. This method returns NO if a failure occurs at any stage of the operation. If an error parameter was provided, a presentable NSError will be returned by reference.
+ */
+- (BOOL)createDirectoryAtURL:(NSURL *)url withIntermediateDirectories:(BOOL)createIntermediates attributes:(NSDictionary *)attributes error:(NSError **)error NS_AVAILABLE(10_7, 5_0);
+
+/* createSymbolicLinkAtURL:withDestinationURL:error: returns YES if the symbolic link that point at 'destURL' was able to be created at the location specified by 'url'. 'destURL' is always resolved against its base URL, if it has one. If 'destURL' has no base URL and it's 'relativePath' is indeed a relative path, then a relative symlink will be created. If this method returns NO, the link was unable to be created and an NSError will be returned by reference in the 'error' parameter. This method does not traverse a terminal symlink.
+ */
+- (BOOL)createSymbolicLinkAtURL:(NSURL *)url withDestinationURL:(NSURL *)destURL error:(NSError **)error NS_AVAILABLE(10_7, 5_0);
 
 /* Instances of NSFileManager may now have delegates. Each instance has one delegate, and the delegate is not retained. In versions of Mac OS X prior to 10.5, the behavior of calling [[NSFileManager alloc] init] was undefined. In Mac OS X 10.5 "Leopard" and later, calling [[NSFileManager alloc] init] returns a new instance of an NSFileManager.
  */
-- (void)setDelegate:(id)delegate;
-- (id)delegate;
+- (void)setDelegate:(id)delegate NS_AVAILABLE(10_5, 2_0);
+- (id)delegate NS_AVAILABLE(10_5, 2_0);
 
 /* setAttributes:ofItemAtPath:error: returns YES when the attributes specified in the 'attributes' dictionary are set successfully on the item specified by 'path'. If this method returns NO, a presentable NSError will be provided by-reference in the 'error' parameter. If no error is required, you may pass 'nil' for the error.
  
     This method replaces changeFileAttributes:atPath:.
  */
-- (BOOL)setAttributes:(NSDictionary *)attributes ofItemAtPath:(NSString *)path error:(NSError **)error;
+- (BOOL)setAttributes:(NSDictionary *)attributes ofItemAtPath:(NSString *)path error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 
 /* createDirectoryAtPath:withIntermediateDirectories:attributes:error: creates a directory at the specified path. If you pass 'NO' for createIntermediates, the directory must not exist at the time this call is made. Passing 'YES' for 'createIntermediates' will create any necessary intermediate directories. This method returns YES if all directories specified in 'path' were created and attributes were set. Directories are created with attributes specified by the dictionary passed to 'attributes'. If no dictionary is supplied, directories are created according to the umask of the process. This method returns NO if a failure occurs at any stage of the operation. If an error parameter was provided, a presentable NSError will be returned by reference.
  
     This method replaces createDirectoryAtPath:attributes:
  */
-- (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates attributes:(NSDictionary *)attributes error:(NSError **)error;
+- (BOOL)createDirectoryAtPath:(NSString *)path withIntermediateDirectories:(BOOL)createIntermediates attributes:(NSDictionary *)attributes error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 
 /* contentsOfDirectoryAtPath:error: returns an NSArray of NSStrings representing the filenames of the items in the directory. If this method returns 'nil', an NSError will be returned by reference in the 'error' parameter. If the directory contains no items, this method will return the empty array.
  
     This method replaces directoryContentsAtPath:
  */
-- (NSArray *)contentsOfDirectoryAtPath:(NSString *)path error:(NSError **)error;
+- (NSArray *)contentsOfDirectoryAtPath:(NSString *)path error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 
 /* subpathsOfDirectoryAtPath:error: returns an NSArray of NSStrings represeting the filenames of the items in the specified directory and all its subdirectories recursively. If this method returns 'nil', an NSError will be returned by reference in the 'error' parameter. If the directory contains no items, this method will return the empty array.
  
     This method replaces subpathsAtPath:
  */
-- (NSArray *)subpathsOfDirectoryAtPath:(NSString *)path error:(NSError **)error;
+- (NSArray *)subpathsOfDirectoryAtPath:(NSString *)path error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 
 /* attributesOfItemAtPath:error: returns an NSDictionary of key/value pairs containing the attributes of the item (file, directory, symlink, etc.) at the path in question. If this method returns 'nil', an NSError will be returned by reference in the 'error' parameter. This method does not traverse a terminal symlink.
  
     This method replaces fileAttributesAtPath:traverseLink:.
  */
-- (NSDictionary *)attributesOfItemAtPath:(NSString *)path error:(NSError **)error;
+- (NSDictionary *)attributesOfItemAtPath:(NSString *)path error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 
 /* attributesOfFileSystemForPath:error: returns an NSDictionary of key/value pairs containing the attributes of the filesystem containing the provided path. If this method returns 'nil', an NSError will be returned by reference in the 'error' parameter. This method does not traverse a terminal symlink.
  
     This method replaces fileSystemAttributesAtPath:.
  */
-- (NSDictionary *)attributesOfFileSystemForPath:(NSString *)path error:(NSError **)error;
+- (NSDictionary *)attributesOfFileSystemForPath:(NSString *)path error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 
 /* createSymbolicLinkAtPath:withDestination:error: returns YES if the symbolic link that point at 'destPath' was able to be created at the location specified by 'path'. If this method returns NO, the link was unable to be created and an NSError will be returned by reference in the 'error' parameter. This method does not traverse a terminal symlink.
  
     This method replaces createSymbolicLinkAtPath:pathContent:
  */
-- (BOOL)createSymbolicLinkAtPath:(NSString *)path withDestinationPath:(NSString *)destPath error:(NSError **)error;
+- (BOOL)createSymbolicLinkAtPath:(NSString *)path withDestinationPath:(NSString *)destPath error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 
 /* destinationOfSymbolicLinkAtPath:error: returns an NSString containing the path of the item pointed at by the symlink specified by 'path'. If this method returns 'nil', an NSError will be returned by reference in the 'error' parameter.
  
     This method replaces pathContentOfSymbolicLinkAtPath:
  */
-- (NSString *)destinationOfSymbolicLinkAtPath:(NSString *)path error:(NSError **)error;
+- (NSString *)destinationOfSymbolicLinkAtPath:(NSString *)path error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 
 /* These methods replace their non-error returning counterparts below. See the NSFileManagerFileOperationAdditions category below for methods that are dispatched to the NSFileManager instance's delegate.
  */
-- (BOOL)copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError **)error;
-- (BOOL)moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError **)error;
-- (BOOL)linkItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError **)error;
-- (BOOL)removeItemAtPath:(NSString *)path error:(NSError **)error;
+- (BOOL)copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
+- (BOOL)moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
+- (BOOL)linkItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
+- (BOOL)removeItemAtPath:(NSString *)path error:(NSError **)error NS_AVAILABLE(10_5, 2_0);
 
-#endif
 
 /* These methods are URL-taking equivalents of the four methods above. Their delegate methods are defined in the NSFileManagerFileOperationAdditions category below.
  */
@@ -196,11 +202,9 @@ typedef NSUInteger NSFileManagerItemReplacementOptions;
  */
 - (NSString *)displayNameAtPath:(NSString *)path;
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 /* componentsToDisplayForPath: returns an NSArray of display names for the path provided. Localization will occur as in displayNameAtPath: above. This array cannot and should not be reassembled into an usable filesystem path for any kind of access.
  */
 - (NSArray *)componentsToDisplayForPath:(NSString *)path;
-#endif
 
 /* enumeratorAtPath: returns an NSDirectoryEnumerator rooted at the provided path. If the enumerator cannot be created, this returns NULL. Because NSDirectoryEnumerator is a subclass of NSEnumerator, the returned object can be used in the for...in construct.
  */
@@ -240,6 +244,31 @@ typedef NSUInteger NSFileManagerItemReplacementOptions;
  */
 - (BOOL)replaceItemAtURL:(NSURL *)originalItemURL withItemAtURL:(NSURL *)newItemURL backupItemName:(NSString *)backupItemName options:(NSFileManagerItemReplacementOptions)options resultingItemURL:(NSURL **)resultingURL error:(NSError **)error NS_AVAILABLE(10_6, 4_0);
 
+
+/* Changes whether the item for the specified URL is ubiquitous and moves the item to the destination URL. When making an item ubiquitous, the destination URL must be prefixed with a URL from -URLForUbiquityContainerIdentifier:. Returns YES if the change is successful, NO otherwise.
+ */
+- (BOOL)setUbiquitous:(BOOL)flag itemAtURL:(NSURL *)url destinationURL:(NSURL *)destinationURL error:(NSError **)error NS_AVAILABLE(10_7, 5_0);
+
+/* Returns YES if the item for the specified URL is ubiquitous, NO otherwise.
+ */
+- (BOOL)isUbiquitousItemAtURL:(NSURL *)url NS_AVAILABLE(10_7, 5_0);
+
+/* Start downloading a local instance of the specified ubiquitous item, if necessary. Returns YES if the download started successfully or wasn't necessary, NO otherwise.
+ */
+- (BOOL)startDownloadingUbiquitousItemAtURL:(NSURL *)url error:(NSError **)error NS_AVAILABLE(10_7, 5_0);
+
+/* Removes the local instance of the ubiquitous item at the given URL. Returns YES if removal was successful, NO otherwise.
+ */
+- (BOOL)evictUbiquitousItemAtURL:(NSURL *)url error:(NSError **)error NS_AVAILABLE(10_7, 5_0);
+
+/* Returns a file URL for the root of the ubiquity container directory corresponding to the supplied container ID. Returns nil if the mobile container does not exist or could not be determined.
+ */
+- (NSURL *)URLForUbiquityContainerIdentifier:(NSString *)containerIdentifier NS_AVAILABLE(10_7, 5_0);
+
+/* Returns a URL that can be shared with other users to allow them download a copy of the specified ubiquitous item. Also returns the date after which the item will no longer be accessible at the returned URL. The URL must be prefixed with a URL from -URLForUbiquityContainerIdentifier:.
+ */
+- (NSURL *)URLForPublishingUbiquitousItemAtURL:(NSURL *)url expirationDate:(NSDate **)outDate error:(NSError **)error NS_AVAILABLE(10_7, 5_0);
+
 @end
 
 /* These delegate methods are for the use of the deprecated handler-taking methods on NSFileManager for copying, moving, linking or deleting files.
@@ -249,9 +278,11 @@ typedef NSUInteger NSFileManagerItemReplacementOptions;
 - (void)fileManager:(NSFileManager *)fm willProcessPath:(NSString *)path NS_DEPRECATED(10_0, 10_5, 2_0, 2_0);
 @end
 
+
+@protocol NSFileManagerDelegate <NSObject>
 #if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
-@interface NSObject (NSFileManagerFileOperationAdditions)
+@optional
 
 /* fileManager:shouldCopyItemAtPath:toPath: gives the delegate an opportunity to filter the resulting copy. Returning YES from this method will allow the copy to happen. Returning NO from this method causes the item in question to be skipped. If the item skipped was a directory, no children of that directory will be copied, nor will the delegate be notified of those children.
 
@@ -309,9 +340,9 @@ typedef NSUInteger NSFileManagerItemReplacementOptions;
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtPath:(NSString *)path;
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtURL:(NSURL *)URL NS_AVAILABLE(10_6, 4_0);
 
+#endif
 @end
 
-#endif
 
 @interface NSDirectoryEnumerator : NSEnumerator
 
@@ -333,13 +364,13 @@ typedef NSUInteger NSFileManagerItemReplacementOptions;
 @end
 
 FOUNDATION_EXPORT NSString * const NSFileType;
-FOUNDATION_EXPORT NSString 	* const NSFileTypeDirectory;
-FOUNDATION_EXPORT NSString 	* const NSFileTypeRegular;
-FOUNDATION_EXPORT NSString 	* const NSFileTypeSymbolicLink;
-FOUNDATION_EXPORT NSString 	* const NSFileTypeSocket;
-FOUNDATION_EXPORT NSString 	* const NSFileTypeCharacterSpecial;
-FOUNDATION_EXPORT NSString 	* const NSFileTypeBlockSpecial;
-FOUNDATION_EXPORT NSString 	* const NSFileTypeUnknown;
+FOUNDATION_EXPORT NSString * const NSFileTypeDirectory;
+FOUNDATION_EXPORT NSString * const NSFileTypeRegular;
+FOUNDATION_EXPORT NSString * const NSFileTypeSymbolicLink;
+FOUNDATION_EXPORT NSString * const NSFileTypeSocket;
+FOUNDATION_EXPORT NSString * const NSFileTypeCharacterSpecial;
+FOUNDATION_EXPORT NSString * const NSFileTypeBlockSpecial;
+FOUNDATION_EXPORT NSString * const NSFileTypeUnknown;
 FOUNDATION_EXPORT NSString * const NSFileSize;
 FOUNDATION_EXPORT NSString * const NSFileModificationDate;
 FOUNDATION_EXPORT NSString * const NSFileReferenceCount;
@@ -352,21 +383,17 @@ FOUNDATION_EXPORT NSString * const NSFileSystemFileNumber;
 FOUNDATION_EXPORT NSString * const NSFileExtensionHidden;
 FOUNDATION_EXPORT NSString * const NSFileHFSCreatorCode;
 FOUNDATION_EXPORT NSString * const NSFileHFSTypeCode;
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 FOUNDATION_EXPORT NSString * const NSFileImmutable;
 FOUNDATION_EXPORT NSString * const NSFileAppendOnly;
 FOUNDATION_EXPORT NSString * const NSFileCreationDate;
 FOUNDATION_EXPORT NSString * const NSFileOwnerAccountID;
 FOUNDATION_EXPORT NSString * const NSFileGroupOwnerAccountID;
-#endif
-#if MAC_OS_X_VERSION_10_4 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 FOUNDATION_EXPORT NSString * const NSFileBusy;
-#endif
-#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-FOUNDATION_EXPORT NSString * const NSFileProtectionKey NS_AVAILABLE(NA, 4_0);
-FOUNDATION_EXPORT NSString 	* const NSFileProtectionNone NS_AVAILABLE(NA, 4_0);
-FOUNDATION_EXPORT NSString 	* const NSFileProtectionComplete NS_AVAILABLE(NA, 4_0);
-#endif
+FOUNDATION_EXPORT NSString * const NSFileProtectionKey NS_AVAILABLE_IOS(4_0);
+FOUNDATION_EXPORT NSString * const NSFileProtectionNone NS_AVAILABLE_IOS(4_0);
+FOUNDATION_EXPORT NSString * const NSFileProtectionComplete NS_AVAILABLE_IOS(4_0);
+FOUNDATION_EXPORT NSString * const NSFileProtectionCompleteUnlessOpen NS_AVAILABLE_IOS(5_0);
+FOUNDATION_EXPORT NSString * const NSFileProtectionCompleteUntilFirstUserAuthentication NS_AVAILABLE_IOS(5_0);
 
 FOUNDATION_EXPORT NSString * const NSFileSystemSize;
 FOUNDATION_EXPORT NSString * const NSFileSystemFreeSize;
@@ -386,12 +413,10 @@ FOUNDATION_EXPORT NSString * const NSFileSystemFreeNodes;
 - (BOOL)fileExtensionHidden;
 - (OSType)fileHFSCreatorCode;
 - (OSType)fileHFSTypeCode;
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (BOOL)fileIsImmutable;
 - (BOOL)fileIsAppendOnly;
 - (NSDate *)fileCreationDate;
 - (NSNumber *)fileOwnerAccountID;
 - (NSNumber *)fileGroupOwnerAccountID;
-#endif
 @end
 

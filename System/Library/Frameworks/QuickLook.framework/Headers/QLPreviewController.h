@@ -64,7 +64,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  * @abstract The Preview Controller delegate.
  * @discussion Should implement the <QLPreviewControllerDelegate> protocol
  */
-@property(assign) id delegate;
+@property(assign) id <QLPreviewControllerDelegate> delegate;
 
 @end
 
@@ -120,7 +120,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  * @abstract Invoked when the preview controller is about to be presented full screen or dismissed from full screen, to provide a zoom effect.
  * @discussion Return the origin of the zoom. It should be relative to view, or screen based if view is not set. The controller will fade in/out if the rect is CGRectZero.
  */
-- (CGRect)previewController:(QLPreviewController *)controller frameForPreviewItem:(id <QLPreviewItem>)item inSourceView:(UIView **)view ;
+- (CGRect)previewController:(QLPreviewController *)controller frameForPreviewItem:(id <QLPreviewItem>)item inSourceView:(UIView **)view;
 
 /*!
  * @abstract Invoked when the preview controller is about to be presented full screen or dismissed from full screen, to provide a smooth transition when zooming.

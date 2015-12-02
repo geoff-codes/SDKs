@@ -2,14 +2,12 @@
 //  MKOverlay.h
 //  MapKit
 //
-//  Copyright 2010 Apple, Inc. All rights reserved.
+//  Copyright (c) 2010-2011, Apple Inc. All rights reserved.
 //
 
 #import <MapKit/MKAnnotation.h>
 #import <MapKit/MKTypes.h>
 #import <MapKit/MKGeometry.h>
-
-#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
 @protocol MKOverlay <MKAnnotation>
 @required
@@ -27,5 +25,3 @@
 - (BOOL)intersectsMapRect:(MKMapRect)mapRect;
 
 @end
-
-#endif

@@ -35,3 +35,7 @@
 {
 }
 @end
+
+
+/*"Set the SenTestNotificationIdentifier user default to the name of the distributed notification OCUnit will post if you're using the SenTestDistributedNotifier class as one of your SenTestObservers."*/
+SENTEST_EXPORT NSString * const SenTestNotificationIdentifierKey;

@@ -7,7 +7,9 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <CoreTelephony/CoreTelephonyDefines.h>
 
+CORETELEPHONY_CLASS_AVAILABLE(4_0)
 @interface CTCarrier : NSObject
 {
     NSString *_carrierName;

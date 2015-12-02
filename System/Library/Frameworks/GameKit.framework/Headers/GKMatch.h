@@ -61,4 +61,7 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 // The match was unable to be established with any players due to an error.
 - (void)match:(GKMatch *)match didFailWithError:(NSError *)error;
 
+// This method is called when the match is interrupted; if it returns YES, a new invite will be sent to attempt reconnection. This is supported only for 1v1 games
+- (BOOL)match:(GKMatch *)match shouldReinvitePlayer:(NSString *)playerID;
+
 @end

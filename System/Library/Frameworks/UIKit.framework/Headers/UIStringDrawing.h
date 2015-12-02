@@ -2,13 +2,25 @@
 //  UIStringDrawing.h
 //  UIKit
 //
-//  Copyright 2005-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2011, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKitDefines.h>
 #if (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR)
 #import <CoreGraphics/CoreGraphics.h>
 #endif
+
+/* Keys for text attributes dictionaries.
+ */
+// Key to the font in the text attributes dictionary. A UIFont instance is expected. Use a font with size 0.0 to get the default font size for the situation.
+UIKIT_EXTERN NSString *const UITextAttributeFont __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); 
+// Key to the text color in the text attributes dictionary. A UIColor instance is expected.
+UIKIT_EXTERN NSString *const UITextAttributeTextColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+// Key to the text shadow color in the text attributes dictionary.  A UIColor instance is expected.
+UIKIT_EXTERN NSString *const UITextAttributeTextShadowColor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); 
+// Key to the offset used for the text shadow in the text attributes dictionary. An NSValue instance wrapping a UIOffset struct is expected.
+UIKIT_EXTERN NSString *const UITextAttributeTextShadowOffset __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); 
 
 typedef enum {		
     UILineBreakModeWordWrap = 0,            // Wrap at word boundaries

@@ -2,7 +2,7 @@
 //  UIRotationGestureRecognizer.h
 //  UIKit
 //
-//  Copyright 2009-2010 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -22,10 +22,11 @@ UIKIT_CLASS_AVAILABLE(3_2) @interface UIRotationGestureRecognizer : UIGestureRec
     CGFloat           _velocity;
     CGFloat           _previousVelocity;
     CGPoint           _anchorPoint;
+    id                _transformAnalyzer;
     UITouch          *_touches[2];
 }
 
-@property (nonatomic)          CGFloat rotation;            // rotation in radians. setting the rotation resets the velocity
+@property (nonatomic)          CGFloat rotation;            // rotation in radians
 @property (nonatomic,readonly) CGFloat velocity;            // velocity of the pinch in radians/second
 
 @end

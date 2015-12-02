@@ -2,11 +2,11 @@
 //  MKTypes.h
 //  MapKit
 //
-//  Copyright 2009 Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2011, Apple Inc. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
+#import <Foundation/Foundation.h>
+#import <MapKit/MKFoundation.h>
 
 enum {
     MKMapTypeStandard = 0,
@@ -16,7 +16,7 @@ enum {
 typedef NSUInteger MKMapType;
 
 
-UIKIT_EXTERN NSString *MKErrorDomain;
+MK_EXTERN NSString *MKErrorDomain;
 
 enum MKErrorCode {
     MKErrorUnknown = 1,

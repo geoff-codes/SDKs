@@ -1,5 +1,5 @@
 /*	NSCoder.h
-	Copyright (c) 1993-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1993-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -37,12 +37,11 @@
 - (id)decodePropertyList;
 #endif
 
-- (void)setObjectZone:(NSZone *)zone;
-- (NSZone *)objectZone;
+- (void)setObjectZone:(NSZone *)zone NS_AUTOMATED_REFCOUNT_UNAVAILABLE;
+- (NSZone *)objectZone NS_AUTOMATED_REFCOUNT_UNAVAILABLE;
 
 - (unsigned)systemVersion;
 
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 - (BOOL)allowsKeyedCoding;
 
 - (void)encodeObject:(id)objv forKey:(NSString *)key;
@@ -64,12 +63,9 @@
 - (float)decodeFloatForKey:(NSString *)key;
 - (double)decodeDoubleForKey:(NSString *)key;
 - (const uint8_t *)decodeBytesForKey:(NSString *)key returnedLength:(NSUInteger *)lengthp;   // returned bytes immutable!
-#endif
 
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-- (void)encodeInteger:(NSInteger)intv forKey:(NSString *)key;
-- (NSInteger)decodeIntegerForKey:(NSString *)key;
-#endif
+- (void)encodeInteger:(NSInteger)intv forKey:(NSString *)key NS_AVAILABLE(10_5, 2_0);
+- (NSInteger)decodeIntegerForKey:(NSString *)key NS_AVAILABLE(10_5, 2_0);
 
 @end
 

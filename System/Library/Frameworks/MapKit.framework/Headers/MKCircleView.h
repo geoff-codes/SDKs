@@ -2,15 +2,15 @@
 //  MKCircleView.h
 //  MapKit
 //
-//  Copyright 2010 Apple, Inc. All rights reserved.
+//  Copyright (c) 2010-2011, Apple Inc. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
+#import <Foundation/Foundation.h>
 #import <MapKit/MKCircle.h>
+#import <MapKit/MKFoundation.h>
 #import <MapKit/MKOverlayPathView.h>
 
-NS_CLASS_AVAILABLE(__MAC_NA, 4_0)
+MK_CLASS_AVAILABLE(NA, 4_0)
 @interface MKCircleView : MKOverlayPathView
 
 - (id)initWithCircle:(MKCircle *)circle;

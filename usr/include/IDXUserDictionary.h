@@ -15,8 +15,20 @@ struct IDXUserDictionaryEntry {
 	CFIndex       readingLength;
 	UniChar       *surface;
 	CFIndex       surfaceLength;
+	UniChar       *keyExtraInfo;
+	CFIndex       keyExtraInfoLength;
 	UInt32        seed;
 };
+
+enum {
+    IDXUserDictionaryDefault                       = 0,
+    IDXUserDictionaryPrefix                        = 1 << 1,
+    IDXUserDictionaryCommonPrefix                  = 1 << 2,
+    IDXUserDictionaryWildcard                      = 1 << 3,
+    IDXUserDictionaryJapaneseAmbiguousVoiceSound   = 1 << 4,
+    IDXUserDictionaryJapaneseAmbiguousSmallKana    = 1 << 5
+};
+typedef unsigned IDXUserDictionaryMatchType;
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,18 +44,25 @@ typedef void (*IDXUserDictionarySearchCallBack)( IDXUserDictionaryEntry *entry, 
 extern
 IDXUserDictionaryRef IDXUserDictionaryOpen( CFURLRef dictionaryURL, Boolean	keyIsReading );
 
-/* Add a word to dictionary. */
+/* Add an entry into dictionary. */
 extern
-Boolean IDXUserDictionaryAddWord(IDXUserDictionaryRef dictionary, CFStringRef key, CFStringRef reading, CFStringRef surface);
+Boolean IDXUserDictionaryAddEntry(IDXUserDictionaryRef dictionary, CFStringRef key, CFStringRef reading, CFStringRef surface, CFStringRef keyExtraInfo, Boolean updateExistingEntry);
 
+/* Delete an entry from dictionary */
+extern
+Boolean IDXUserDictionaryDeleteEntry(IDXUserDictionaryRef dictionary, CFStringRef key, CFStringRef reading, CFStringRef surface);
+    
 /* Build dictionary */
 extern
 Boolean IDXUserDictionaryBuild(IDXUserDictionaryRef dictionary, CFArrayRef keyArray, CFArrayRef readingArray, CFArrayRef surfaceArray);    
     
 /* Search the user dictionary. */
 extern
-void IDXUserDictionarySearch(IDXUserDictionaryRef dictionary, UniChar *keyBuffer, CFIndex keyLength, int voiceAmbi, int smallAmbi,
-                             Boolean prefixSearch, Boolean wildcardSearch, IDXUserDictionarySearchCallBack callback, void *userInfo );
+void IDXUserDictionarySearch(IDXUserDictionaryRef dictionary, UniChar *keyBuffer, CFIndex keyLength, IDXUserDictionaryMatchType matchType, IDXUserDictionarySearchCallBack callback, void *userInfo);
+
+/* Enumerate all entries in user dictionary */
+extern
+void IDXUserDictionaryEnumerateUsingBlock(IDXUserDictionaryRef dictionary, void(^block)(IDXUserDictionaryEntry *entry, bool *stop));
 
 /* Save user dictionary */
 extern

@@ -1,5 +1,5 @@
 /*	NSInvocation.h
-	Copyright (c) 1994-2010, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2011, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -9,7 +9,7 @@
 
 @interface NSInvocation : NSObject {
 @private
-    void *_frame;
+    __strong void *_frame;
     __strong void *_retdata;
     id _signature;
     id _container;
@@ -54,9 +54,7 @@ enum _NSObjCValueType {
     NSObjCLonglongType = 'q',
     NSObjCFloatType = 'f',
     NSObjCDoubleType = 'd',
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
     NSObjCBoolType = 'B',
-#endif
     NSObjCSelectorType = ':',
     NSObjCObjectType = '@',
     NSObjCStructType = '{',
@@ -76,9 +74,7 @@ typedef struct {
 	long long longlongValue;
 	float floatValue;
 	double doubleValue;
-#if MAC_OS_X_VERSION_10_2 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 	bool boolValue;
-#endif
 	SEL selectorValue;
 	id objectValue;
 	void *pointerValue;

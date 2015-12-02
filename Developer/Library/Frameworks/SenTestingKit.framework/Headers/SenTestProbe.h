@@ -31,18 +31,21 @@
 #import <Foundation/Foundation.h>
 #import <SenTestingKit/SenTestDefines.h>
 
-// If you are implementing your own test tool, call this function from your tool's main() function.
+/*"If you are implementing your own test tool, call this function from your tool's main() function."*/
 SENTEST_EXPORT int SenSelfTestMain(void);
 
 @interface SenTestProbe : NSObject
 + (BOOL) isTesting;
 @end
 
-SENTEST_EXPORT NSString *SenTestedUnitPath;
-SENTEST_EXPORT NSString *SenTestScopeKey;
-SENTEST_EXPORT NSString *SenTestScopeAll;
-SENTEST_EXPORT NSString *SenTestScopeNone;
-SENTEST_EXPORT NSString *SenTestScopeSelf;
+/*"The SenTestedUnit user default specifies the path of bundle being tested."*/
+SENTEST_EXPORT NSString * const SenTestedUnitPath;
 
-// Setting the SenTestTool default to YES indicates to OCUnit that it's running in the context of a test rig equivalent to otest, rather than in the context of an applciation that has either loaded or been injected with a test bundle.
-SENTEST_EXPORT NSString *SenTestToolKey;
+/*"The SenTest user default represented by SenTestScopeKey specifies the tests to run.  It can be either one of the special keys All, None or Self, or a comma-separated list of test suite or test case names with optional test method names."*/
+SENTEST_EXPORT NSString * const SenTestScopeKey;
+SENTEST_EXPORT NSString * const SenTestScopeAll;
+SENTEST_EXPORT NSString * const SenTestScopeNone;
+SENTEST_EXPORT NSString * const SenTestScopeSelf;
+
+/*"Setting the SenTestTool user default to YES indicates to OCUnit that it's running in the context of a test rig equivalent to otest, rather than in the context of an applciation that has either loaded or been injected with a test bundle."*/
+SENTEST_EXPORT NSString * const SenTestToolKey;
