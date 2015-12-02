@@ -12,7 +12,7 @@ class Gem::Commands::UnpackCommand < Gem::Command
           :version => Gem::Requirement.default,
           :target  => Dir.pwd
 
-    add_option('--target', 'target directory for unpacking') do |value, options|
+    add_option('--target=DIR', 'target directory for unpacking') do |value, options|
       options[:target] = value
     end
 
@@ -35,17 +35,20 @@ class Gem::Commands::UnpackCommand < Gem::Command
   # TODO: allow, e.g., 'gem unpack rake-0.3.1'.  Find a general solution for
   # this, so that it works for uninstall as well.  (And check other commands
   # at the same time.)
+
   def execute
-    gemname = get_one_gem_name
-    path = get_path(gemname, options[:version])
-    if path then
-      basename = File.basename(path).sub(/\.gem$/, '')
-      target_dir = File.expand_path File.join(options[:target], basename)
-      FileUtils.mkdir_p target_dir
-      Gem::Installer.new(path).unpack target_dir
-      say "Unpacked gem: '#{target_dir}'"
-    else
-      alert_error "Gem '#{gemname}' not installed."
+    get_all_gem_names.each do |name|
+      path = get_path name, options[:version]
+
+      if path then
+        basename = File.basename(path).sub(/\.gem$/, '')
+        target_dir = File.expand_path File.join(options[:target], basename)
+        FileUtils.mkdir_p target_dir
+        Gem::Installer.new(path, :unpack => true).unpack target_dir
+        say "Unpacked gem: '#{target_dir}'"
+      else
+        alert_error "Gem '#{name}' not installed."
+      end
     end
   end
 
@@ -66,16 +69,27 @@ class Gem::Commands::UnpackCommand < Gem::Command
   # source directories?
   def get_path(gemname, version_req)
     return gemname if gemname =~ /\.gem$/i
-    specs = Gem::SourceIndex.from_installed_gems.search(/\A#{gemname}\z/, version_req)
+
+    specs = Gem::source_index.find_name gemname, version_req
+
     selected = specs.sort_by { |s| s.version }.last
+
     return nil if selected.nil?
+
     # We expect to find (basename).gem in the 'cache' directory.
     # Furthermore, the name match must be exact (ignoring case).
     if gemname =~ /^#{selected.name}$/i
       filename = selected.full_name + '.gem'
-      return File.join(Gem.dir, 'cache', filename)
+      path = nil
+
+      Gem.path.find do |gem_dir|
+        path = File.join gem_dir, 'cache', filename
+        File.exist? path
+      end
+
+      path
     else
-      return nil
+      nil
     end
   end
 
