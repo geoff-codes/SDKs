@@ -465,6 +465,17 @@ typedef unsigned long etag_components_t;
 /* This is the default value used */
 #define ETAG_BACKWARD (ETAG_MTIME | ETAG_SIZE)
 
+/* Generic ON/OFF/UNSET for unsigned int foo :2 */
+#define AP_CORE_CONFIG_OFF   (0)
+#define AP_CORE_CONFIG_ON    (1)
+#define AP_CORE_CONFIG_UNSET (2)
+
+/* Generic merge of flag */
+#define AP_CORE_MERGE_FLAG(field, to, base, over) to->field = \
+               over->field != AP_CORE_CONFIG_UNSET            \
+               ? over->field                                  \
+               : base->field                                   
+
 /**
  * @brief Server Signature Enumeration
  */
@@ -497,12 +508,7 @@ typedef struct {
     overrides_t override;
     allow_options_t override_opts;
 
-    /* Custom response config. These can contain text or a URL to redirect to.
-     * if response_code_strings is NULL then there are none in the config,
-     * if it's not null then it's allocated to sizeof(char*)*RESPONSE_CODES.
-     * This lets us do quick merges in merge_core_dir_configs().
-     */
-
+    /* Used to be the custom response config. No longer used. */
     char **response_code_strings; /* from ErrorDocument, not from
                                    * ap_custom_response() */
 
@@ -617,9 +623,25 @@ typedef struct {
     /** Max number of Range reversals (eg: 200-300, 100-125) allowed **/
     int max_reversals;
 
-
     /** Named back references */
     apr_array_header_t *refs;
+
+    /** Custom response config with expression support. The hash table
+     * contains compiled expressions keyed against the custom response
+     * code.
+     */
+    apr_hash_t *response_code_exprs;
+
+#define AP_CGI_PASS_AUTH_OFF     (0)
+#define AP_CGI_PASS_AUTH_ON      (1)
+#define AP_CGI_PASS_AUTH_UNSET   (2)
+    /** CGIPassAuth: Whether HTTP authorization headers will be passed to
+     * scripts as CGI variables; affects all modules calling
+     * ap_add_common_vars(), as well as any others using this field as 
+     * advice
+     */
+    unsigned int cgi_pass_auth : 2;
+    unsigned int qualify_redirect_url :2;
 
 } core_dir_config;
 
@@ -667,7 +689,15 @@ typedef struct {
 #define AP_TRACE_ENABLE    1
 #define AP_TRACE_EXTENDED  2
     int trace_enable;
+#define AP_MERGE_TRAILERS_UNSET    0
+#define AP_MERGE_TRAILERS_ENABLE   1
+#define AP_MERGE_TRAILERS_DISABLE  2
+    int merge_trailers;
 
+
+
+    apr_array_header_t *protocols;
+    int protocols_honor_order;
 } core_server_config;
 
 /* for AddOutputFiltersByType in core.c */

@@ -31,6 +31,12 @@
 #ifndef _USBSPEC_H
 #define _USBSPEC_H
 
+#if KERNEL
+#ifndef __IOUSBFAMILY__
+#warning "Deprecated header file.  See IOUSBHostFamily for USB-Host KPI."
+#endif
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -510,6 +516,7 @@ enum {
 #define kUSBDeviceSubClass          "bDeviceSubClass"
 #define kUSBDeviceProtocol          "bDeviceProtocol"
 #define kUSBDeviceMaxPacketSize     "bMaxPacketSize0"
+#define kUSBCompatibilityMatch      "USBCompatibilityMatch"
 #define kUSBVendorID                "idVendor"          // good name
 #define kUSBVendorName              kUSBVendorID        // bad name - keep for backward compatibility
 #define kUSBProductID               "idProduct"         // good name

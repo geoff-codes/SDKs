@@ -607,17 +607,17 @@ public:
 
 /*! @function init
     @abstract Initializes generic IOService data structures (expansion data, etc). */
-    virtual bool init( OSDictionary * dictionary = 0 );
+    virtual bool init( OSDictionary * dictionary = 0 ) APPLE_KEXT_OVERRIDE;
 
 /*! @function init
     @abstract Initializes generic IOService data structures (expansion data, etc). */
     virtual bool init( IORegistryEntry * from,
-                       const IORegistryPlane * inPlane );
+                       const IORegistryPlane * inPlane ) APPLE_KEXT_OVERRIDE;
 
 /*! @function free
     @abstract Frees data structures that were allocated when power management was initialized on this service. */
     
-    virtual void free( void );
+    virtual void free( void ) APPLE_KEXT_OVERRIDE;
 
 /*! @function lockForArbitration
     @abstract Locks an IOService object against changes in state or ownership.
@@ -1258,7 +1258,7 @@ public:
     IOInterruptSource *_interruptSources;
 
     /* overrides */
-    virtual bool serializeProperties( OSSerialize * s ) const;
+    virtual bool serializeProperties( OSSerialize * s ) const APPLE_KEXT_OVERRIDE;
 
     void   requireMaxBusStall(UInt32 ns);
     void   requireMaxInterruptDelay(uint32_t ns);
@@ -1339,7 +1339,6 @@ private:
     bool terminatePhase1( IOOptionBits options = 0 );
     void scheduleTerminatePhase2( IOOptionBits options = 0 );
     void scheduleStop( IOService * provider );
-    void scheduleFinalize( void );
     static void terminateThread( void * arg, wait_result_t unused );
     static void terminateWorker( IOOptionBits options );
     static void actionWillTerminate( IOService * victim, IOOptionBits options, 

@@ -150,6 +150,7 @@ void	bsd_timeout(void (*)(void *), void *arg, struct timespec * ts);
 void	bsd_untimeout(void (*)(void *), void *arg);
 void	set_fsblocksize(struct vnode *);
 uint64_t tvtoabstime(struct timeval *);
+uint64_t tstoabstime(struct timespec *);
 void	*throttle_info_create(void);
 void	throttle_info_mount_ref(mount_t mp, void * throttle_info);
 void	throttle_info_mount_rel(mount_t mp);
@@ -162,7 +163,7 @@ typedef struct __throttle_info_handle *throttle_info_handle_t;
 int	throttle_info_ref_by_mask(uint64_t throttle_mask, throttle_info_handle_t *throttle_info_handle);
 void	throttle_info_rel_by_mask(throttle_info_handle_t throttle_info_handle);
 void	throttle_info_update_by_mask(void *throttle_info_handle, int flags);
-void 	throttle_info_disable_throttle(int devno);
+void 	throttle_info_disable_throttle(int devno, boolean_t isfusion);
 /*
  * 'throttle_info_handle' acquired via 'throttle_info_ref_by_mask'
  * 'policy' should be specified as either IOPOL_UTILITY or IPOL_THROTTLE,

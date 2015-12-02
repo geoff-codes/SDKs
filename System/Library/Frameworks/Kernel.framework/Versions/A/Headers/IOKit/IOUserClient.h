@@ -203,8 +203,15 @@ protected:
 private:
     OSSet * mappings;
     UInt8   sharedInstance;
-    UInt8   __reservedA[3];
+    UInt8   closed;
+    UInt8   __ipcFinal;
+    UInt8   __reservedA[1];
+    volatile SInt32 __ipc;
+#if __LP64__
     void  * __reserved[7];
+#else
+    void  * __reserved[6];
+#endif
 
 public:
    virtual IOReturn externalMethod( uint32_t selector, IOExternalMethodArguments * arguments,
@@ -295,8 +302,8 @@ public:
     */
     static IOReturn releaseNotificationPort(mach_port_t port);
 
-    virtual bool init();
-    virtual bool init( OSDictionary * dictionary );
+    virtual bool init() APPLE_KEXT_OVERRIDE;
+    virtual bool init( OSDictionary * dictionary ) APPLE_KEXT_OVERRIDE;
     // Currently ignores the all args, just passes up to IOService::init()
     virtual bool initWithTask(
                     task_t owningTask, void * securityToken, UInt32 type,
@@ -305,7 +312,7 @@ public:
     virtual bool initWithTask(
                     task_t owningTask, void * securityToken, UInt32 type);
 
-    virtual void free();
+    virtual void free() APPLE_KEXT_OVERRIDE;
 
     virtual IOReturn clientClose( void );
     virtual IOReturn clientDied( void );

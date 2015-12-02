@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <CloudKit/CKDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class CKDatabase, CKOperation, CKRecordID, CKDiscoveredUserInfo;
 
 // This constant represents the current user's ID for zone ID
@@ -29,7 +31,7 @@ NS_CLASS_AVAILABLE(10_10, 8_0)
 + (CKContainer *)defaultContainer;
 + (CKContainer *)containerWithIdentifier:(NSString *)containerIdentifier;
 
-@property (nonatomic, readonly) NSString *containerIdentifier;
+@property (nonatomic, readonly, nullable) NSString *containerIdentifier;
 
 - (void)addOperation:(CKOperation *)operation;
 
@@ -64,9 +66,15 @@ typedef NS_ENUM(NSInteger, CKAccountStatus) {
     CKAccountStatusNoAccount                           = 3,
 } NS_ENUM_AVAILABLE(10_10, 8_0);
 
+/* This local notification is posted when there has been any change to the logged in 
+   iCloud account. On receipt, an updated account status should be obtained by calling
+   accountStatusWithCompletionHandler:
+ */
+CK_EXTERN NSString * const CKAccountChangedNotification NS_AVAILABLE(10_11, 9_0);
+
 @interface CKContainer (AccountStatus)
 
-- (void)accountStatusWithCompletionHandler:(void (^)(CKAccountStatus accountStatus, NSError *error))completionHandler;
+- (void)accountStatusWithCompletionHandler:(void (^)(CKAccountStatus accountStatus, NSError * __nullable error))completionHandler;
 
 @end
 
@@ -86,7 +94,7 @@ typedef NS_ENUM(NSInteger, CKApplicationPermissionStatus) {
     CKApplicationPermissionStatusGranted               = 3,
 } NS_ENUM_AVAILABLE(10_10, 8_0);
 
-typedef void(^CKApplicationPermissionBlock)(CKApplicationPermissionStatus applicationPermissionStatus, NSError *error);
+typedef void(^CKApplicationPermissionBlock)(CKApplicationPermissionStatus applicationPermissionStatus, NSError * __nullable error);
 
 @interface CKContainer (ApplicationPermission)
 
@@ -97,12 +105,29 @@ typedef void(^CKApplicationPermissionBlock)(CKApplicationPermissionStatus applic
 
 @interface CKContainer (UserRecords)
 
-/* If there is no iCloud account configured, or if access is restricted, a CKErrorNotAuthenticated error will be returned. */
-- (void)fetchUserRecordIDWithCompletionHandler:(void (^)(CKRecordID *recordID, NSError *error))completionHandler;
+/* If there is no iCloud account configured, or if access is restricted, a CKErrorNotAuthenticated error will be returned. 
+   This work is treated as having NSQualityOfServiceUserInitiated quality of service.
+ */
+- (void)fetchUserRecordIDWithCompletionHandler:(void (^)(CKRecordID * __nullable recordID, NSError * __nullable error))completionHandler;
 
-/* This fetches all user records that match an entry in the user's address book. */
-- (void)discoverAllContactUserInfosWithCompletionHandler:(void (^)(NSArray /* CKDiscoveredUserInfo */ *userInfos, NSError *error))completionHandler;
-- (void)discoverUserInfoWithEmailAddress:(NSString *)email completionHandler:(void (^)(CKDiscoveredUserInfo *userInfo, NSError *error))completionHandler;
-- (void)discoverUserInfoWithUserRecordID:(CKRecordID *)userRecordID completionHandler:(void (^)(CKDiscoveredUserInfo *userInfo, NSError *error))completionHandler;
+/* This fetches all user records that match an entry in the user's address book.
+ CKDiscoverAllContactsOperation and CKDiscoverUserInfosOperation are the more configurable,
+ CKOperation-based alternatives to these methods */
+- (void)discoverAllContactUserInfosWithCompletionHandler:(void (^)(NSArray <CKDiscoveredUserInfo *> * __nullable userInfos, NSError * __nullable error))completionHandler __TVOS_UNAVAILABLE;
+- (void)discoverUserInfoWithEmailAddress:(NSString *)email completionHandler:(void (^)(CKDiscoveredUserInfo * __nullable userInfo, NSError * __nullable error))completionHandler;
+- (void)discoverUserInfoWithUserRecordID:(CKRecordID *)userRecordID completionHandler:(void (^)(CKDiscoveredUserInfo * __nullable userInfo, NSError * __nullable error))completionHandler;
 
 @end
+
+@interface CKContainer (CKLongLivedOperations)
+/* 
+ Long lived CKOperations returned by this call must be started on an operation queue.
+ Remember to set the callback blocks before starting the operation.
+ If an operation has already completed against the server, and is subsequently resumed, that operation will replay all of
+  its callbacks from the start of the operation, but the request will not be re-sent to the server.
+ If a long lived operation is cancelled or finishes completely it is no longer returned by these calls.
+ */
+- (void)fetchAllLongLivedOperationIDsWithCompletionHandler:(void (^)(NSArray <NSString *> * __nullable outstandingOperationIDs, NSError * __nullable error))completionHandler NS_AVAILABLE(10_12, 9_3);
+- (void)fetchLongLivedOperationWithID:(NSString *)operationID completionHandler:(void (^)(CKOperation * __nullable outstandingOperation, NSError * __nullable error))completionHandler NS_AVAILABLE(10_12, 9_3);
+@end
+NS_ASSUME_NONNULL_END

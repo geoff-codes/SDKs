@@ -81,6 +81,7 @@
 #include <mach/boolean.h>
 
 
+
 __BEGIN_DECLS
 
 extern proc_t kernproc;
@@ -97,6 +98,8 @@ extern void wakeup_one(caddr_t chan);
 extern int proc_selfpid(void);
 /* this routine returns the pid of the parent of the current process */
 extern int proc_selfppid(void);
+/* this routine returns the csflags of the current process */
+extern int proc_selfcsflags(void);
 /* this routine returns sends a signal signum to the process identified by the pid */
 extern void proc_signal(int pid, int signum);
 /* this routine checks whether any signal identified by the mask are pending in the  process identified by the pid. The check is  on all threads of the process. */
@@ -125,6 +128,8 @@ extern int proc_ppid(proc_t);
 extern int proc_noremotehang(proc_t);
 /* returns 1 if the process is marked for force quota */
 extern int proc_forcequota(proc_t);
+/* returns 1 if the process is chrooted */
+extern int proc_chrooted(proc_t);
 
 /* this routine returns 1 if the process is running with 64bit address space, else 0 */
 extern int proc_is64bit(proc_t);

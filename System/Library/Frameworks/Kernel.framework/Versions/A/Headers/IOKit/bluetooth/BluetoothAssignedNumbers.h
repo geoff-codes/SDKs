@@ -380,6 +380,7 @@ enum
     kBluetoothL2CAPPSMHIDInterrupt				= 0x0013,	// HID profile - interrupt interface
     kBluetoothL2CAPPSMAVCTP						= 0x0017,	// Audio/Video Control Transport Protocol
     kBluetoothL2CAPPSMAVDTP						= 0x0019,	// Audio/Video Distribution Transport Protocol
+    kBluetoothL2CAPPSMAVCTP_Browsing			= 0x001B,	// AVTCP (AVRCP) Browsing
     kBluetoothL2CAPPSMUID_C_Plane				= 0x001D,	// Unrestricted Digital Information Profile (UDI)
     kBluetoothL2CAPPSMATT						= 0x001F,	// Attribute Protocol
 	
@@ -651,7 +652,8 @@ enum BluetoothHCIVersions
 	kBluetoothHCIVersionCoreSpecification2_1EDR												=	0x04,
 	kBluetoothHCIVersionCoreSpecification3_0HS												=	0x05,
 	kBluetoothHCIVersionCoreSpecification4_0												=	0x06,
-	kBluetoothHCIVersionCoreSpecification4_1												=	0x07
+    kBluetoothHCIVersionCoreSpecification4_1												=	0x07,
+    kBluetoothHCIVersionCoreSpecification4_2												=	0x08
 };
 
 
@@ -666,7 +668,8 @@ enum BluetoothLMPVersions
 	kBluetoothLMPVersionCoreSpecification2_1EDR												=	0x04,
 	kBluetoothLMPVersionCoreSpecification3_0HS												=	0x05,
 	kBluetoothLMPVersionCoreSpecification4_0												=	0x06,
-	kBluetoothLMPVersionCoreSpecification4_1												=	0x07
+	kBluetoothLMPVersionCoreSpecification4_1												=	0x07,
+    kBluetoothLMPVersionCoreSpecification4_2												=	0x08
 };
 
 #ifdef	__cplusplus

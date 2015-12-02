@@ -278,6 +278,8 @@ mig_external
 #else
 extern
 #endif	/* mig_external */
+__WATCHOS_PROHIBITED
+__TVOS_PROHIBITED
 kern_return_t task_wire
 (
 	vm_map_t target_task,
@@ -484,7 +486,7 @@ __END_DECLS
 		vm_address_t address;
 		vm_region_flavor_t flavor;
 		mach_msg_type_number_t infoCnt;
-	} __Request__vm_region_t;
+	} __Request__vm_region_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -498,7 +500,7 @@ __END_DECLS
 		vm_address_t address;
 		vm_size_t size;
 		int flags;
-	} __Request__vm_allocate_t;
+	} __Request__vm_allocate_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -511,7 +513,7 @@ __END_DECLS
 		NDR_record_t NDR;
 		vm_address_t address;
 		vm_size_t size;
-	} __Request__vm_deallocate_t;
+	} __Request__vm_deallocate_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -526,7 +528,7 @@ __END_DECLS
 		vm_size_t size;
 		boolean_t set_maximum;
 		vm_prot_t new_protection;
-	} __Request__vm_protect_t;
+	} __Request__vm_protect_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -540,7 +542,7 @@ __END_DECLS
 		vm_address_t address;
 		vm_size_t size;
 		vm_inherit_t new_inheritance;
-	} __Request__vm_inherit_t;
+	} __Request__vm_inherit_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -553,7 +555,7 @@ __END_DECLS
 		NDR_record_t NDR;
 		vm_address_t address;
 		vm_size_t size;
-	} __Request__vm_read_t;
+	} __Request__vm_read_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -566,7 +568,7 @@ __END_DECLS
 		NDR_record_t NDR;
 		vm_read_entry_t data_list;
 		natural_t count;
-	} __Request__vm_read_list_t;
+	} __Request__vm_read_list_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -583,7 +585,7 @@ __END_DECLS
 		NDR_record_t NDR;
 		vm_address_t address;
 		mach_msg_type_number_t dataCnt;
-	} __Request__vm_write_t;
+	} __Request__vm_write_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -597,7 +599,7 @@ __END_DECLS
 		vm_address_t source_address;
 		vm_size_t size;
 		vm_address_t dest_address;
-	} __Request__vm_copy_t;
+	} __Request__vm_copy_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -611,7 +613,7 @@ __END_DECLS
 		vm_address_t address;
 		vm_size_t size;
 		vm_address_t data;
-	} __Request__vm_read_overwrite_t;
+	} __Request__vm_read_overwrite_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -625,7 +627,7 @@ __END_DECLS
 		vm_address_t address;
 		vm_size_t size;
 		vm_sync_t sync_flags;
-	} __Request__vm_msync_t;
+	} __Request__vm_msync_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -639,7 +641,7 @@ __END_DECLS
 		vm_address_t address;
 		vm_size_t size;
 		vm_behavior_t new_behavior;
-	} __Request__vm_behavior_set_t;
+	} __Request__vm_behavior_set_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -663,7 +665,7 @@ __END_DECLS
 		vm_prot_t cur_protection;
 		vm_prot_t max_protection;
 		vm_inherit_t inheritance;
-	} __Request__vm_map_t;
+	} __Request__vm_map_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -678,7 +680,7 @@ __END_DECLS
 		vm_size_t size;
 		vm_machine_attribute_t attribute;
 		vm_machine_attribute_val_t value;
-	} __Request__vm_machine_attribute_t;
+	} __Request__vm_machine_attribute_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -700,7 +702,7 @@ __END_DECLS
 		vm_address_t src_address;
 		boolean_t copy;
 		vm_inherit_t inheritance;
-	} __Request__vm_remap_t;
+	} __Request__vm_remap_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -712,7 +714,7 @@ __END_DECLS
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		boolean_t must_wire;
-	} __Request__task_wire_t;
+	} __Request__task_wire_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -730,7 +732,7 @@ __END_DECLS
 		vm_size_t size;
 		vm_offset_t offset;
 		vm_prot_t permission;
-	} __Request__mach_make_memory_entry_t;
+	} __Request__mach_make_memory_entry_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -742,7 +744,7 @@ __END_DECLS
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		vm_offset_t offset;
-	} __Request__vm_map_page_query_t;
+	} __Request__vm_map_page_query_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -754,7 +756,7 @@ __END_DECLS
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		vm_address_t address;
-	} __Request__mach_vm_region_info_t;
+	} __Request__mach_vm_region_info_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -764,21 +766,7 @@ __END_DECLS
 #endif
 	typedef struct {
 		mach_msg_header_t Head;
-	} __Request__vm_mapped_pages_info_t;
-#ifdef  __MigPackStructs
-#pragma pack()
-#endif
-
-#ifdef  __MigPackStructs
-#pragma pack(4)
-#endif
-	typedef struct {
-		mach_msg_header_t Head;
-		NDR_record_t NDR;
-		vm_address_t address;
-		natural_t nesting_depth;
-		mach_msg_type_number_t infoCnt;
-	} __Request__vm_region_recurse_t;
+	} __Request__vm_mapped_pages_info_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -792,7 +780,7 @@ __END_DECLS
 		vm_address_t address;
 		natural_t nesting_depth;
 		mach_msg_type_number_t infoCnt;
-	} __Request__vm_region_recurse_64_t;
+	} __Request__vm_region_recurse_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -804,7 +792,21 @@ __END_DECLS
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		vm_address_t address;
-	} __Request__mach_vm_region_info_64_t;
+		natural_t nesting_depth;
+		mach_msg_type_number_t infoCnt;
+	} __Request__vm_region_recurse_64_t __attribute__((unused));
+#ifdef  __MigPackStructs
+#pragma pack()
+#endif
+
+#ifdef  __MigPackStructs
+#pragma pack(4)
+#endif
+	typedef struct {
+		mach_msg_header_t Head;
+		NDR_record_t NDR;
+		vm_address_t address;
+	} __Request__mach_vm_region_info_64_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -818,7 +820,7 @@ __END_DECLS
 		vm_address_t address;
 		vm_region_flavor_t flavor;
 		mach_msg_type_number_t infoCnt;
-	} __Request__vm_region_64_t;
+	} __Request__vm_region_64_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -836,7 +838,7 @@ __END_DECLS
 		memory_object_size_t size;
 		memory_object_offset_t offset;
 		vm_prot_t permission;
-	} __Request__mach_make_memory_entry_64_t;
+	} __Request__mach_make_memory_entry_64_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -860,7 +862,7 @@ __END_DECLS
 		vm_prot_t cur_protection;
 		vm_prot_t max_protection;
 		vm_inherit_t inheritance;
-	} __Request__vm_map_64_t;
+	} __Request__vm_map_64_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -874,7 +876,7 @@ __END_DECLS
 		vm_address_t address;
 		vm_purgable_t control;
 		int state;
-	} __Request__vm_purgable_control_t;
+	} __Request__vm_purgable_control_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -933,7 +935,7 @@ union __RequestUnion__vm_map_subsystem {
 		vm_size_t size;
 		mach_msg_type_number_t infoCnt;
 		int info[10];
-	} __Reply__vm_region_t;
+	} __Reply__vm_region_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -946,7 +948,7 @@ union __RequestUnion__vm_map_subsystem {
 		NDR_record_t NDR;
 		kern_return_t RetCode;
 		vm_address_t address;
-	} __Reply__vm_allocate_t;
+	} __Reply__vm_allocate_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -958,7 +960,7 @@ union __RequestUnion__vm_map_subsystem {
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		kern_return_t RetCode;
-	} __Reply__vm_deallocate_t;
+	} __Reply__vm_deallocate_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -970,7 +972,7 @@ union __RequestUnion__vm_map_subsystem {
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		kern_return_t RetCode;
-	} __Reply__vm_protect_t;
+	} __Reply__vm_protect_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -982,7 +984,7 @@ union __RequestUnion__vm_map_subsystem {
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		kern_return_t RetCode;
-	} __Reply__vm_inherit_t;
+	} __Reply__vm_inherit_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -998,7 +1000,7 @@ union __RequestUnion__vm_map_subsystem {
 		/* end of the kernel processed data */
 		NDR_record_t NDR;
 		mach_msg_type_number_t dataCnt;
-	} __Reply__vm_read_t;
+	} __Reply__vm_read_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1011,7 +1013,7 @@ union __RequestUnion__vm_map_subsystem {
 		NDR_record_t NDR;
 		kern_return_t RetCode;
 		vm_read_entry_t data_list;
-	} __Reply__vm_read_list_t;
+	} __Reply__vm_read_list_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1023,7 +1025,7 @@ union __RequestUnion__vm_map_subsystem {
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		kern_return_t RetCode;
-	} __Reply__vm_write_t;
+	} __Reply__vm_write_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1035,7 +1037,7 @@ union __RequestUnion__vm_map_subsystem {
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		kern_return_t RetCode;
-	} __Reply__vm_copy_t;
+	} __Reply__vm_copy_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1048,7 +1050,7 @@ union __RequestUnion__vm_map_subsystem {
 		NDR_record_t NDR;
 		kern_return_t RetCode;
 		vm_size_t outsize;
-	} __Reply__vm_read_overwrite_t;
+	} __Reply__vm_read_overwrite_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1060,7 +1062,7 @@ union __RequestUnion__vm_map_subsystem {
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		kern_return_t RetCode;
-	} __Reply__vm_msync_t;
+	} __Reply__vm_msync_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1072,7 +1074,7 @@ union __RequestUnion__vm_map_subsystem {
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		kern_return_t RetCode;
-	} __Reply__vm_behavior_set_t;
+	} __Reply__vm_behavior_set_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1085,7 +1087,7 @@ union __RequestUnion__vm_map_subsystem {
 		NDR_record_t NDR;
 		kern_return_t RetCode;
 		vm_address_t address;
-	} __Reply__vm_map_t;
+	} __Reply__vm_map_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1098,7 +1100,7 @@ union __RequestUnion__vm_map_subsystem {
 		NDR_record_t NDR;
 		kern_return_t RetCode;
 		vm_machine_attribute_val_t value;
-	} __Reply__vm_machine_attribute_t;
+	} __Reply__vm_machine_attribute_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1113,7 +1115,7 @@ union __RequestUnion__vm_map_subsystem {
 		vm_address_t target_address;
 		vm_prot_t cur_protection;
 		vm_prot_t max_protection;
-	} __Reply__vm_remap_t;
+	} __Reply__vm_remap_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1125,7 +1127,7 @@ union __RequestUnion__vm_map_subsystem {
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		kern_return_t RetCode;
-	} __Reply__task_wire_t;
+	} __Reply__task_wire_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1141,7 +1143,7 @@ union __RequestUnion__vm_map_subsystem {
 		/* end of the kernel processed data */
 		NDR_record_t NDR;
 		vm_size_t size;
-	} __Reply__mach_make_memory_entry_t;
+	} __Reply__mach_make_memory_entry_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1155,7 +1157,7 @@ union __RequestUnion__vm_map_subsystem {
 		kern_return_t RetCode;
 		integer_t disposition;
 		integer_t ref_count;
-	} __Reply__vm_map_page_query_t;
+	} __Reply__vm_map_page_query_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1172,7 +1174,7 @@ union __RequestUnion__vm_map_subsystem {
 		NDR_record_t NDR;
 		vm_info_region_t region;
 		mach_msg_type_number_t objectsCnt;
-	} __Reply__mach_vm_region_info_t;
+	} __Reply__mach_vm_region_info_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1188,7 +1190,7 @@ union __RequestUnion__vm_map_subsystem {
 		/* end of the kernel processed data */
 		NDR_record_t NDR;
 		mach_msg_type_number_t pagesCnt;
-	} __Reply__vm_mapped_pages_info_t;
+	} __Reply__vm_mapped_pages_info_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1205,7 +1207,7 @@ union __RequestUnion__vm_map_subsystem {
 		natural_t nesting_depth;
 		mach_msg_type_number_t infoCnt;
 		int info[19];
-	} __Reply__vm_region_recurse_t;
+	} __Reply__vm_region_recurse_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1222,7 +1224,7 @@ union __RequestUnion__vm_map_subsystem {
 		natural_t nesting_depth;
 		mach_msg_type_number_t infoCnt;
 		int info[19];
-	} __Reply__vm_region_recurse_64_t;
+	} __Reply__vm_region_recurse_64_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1239,7 +1241,7 @@ union __RequestUnion__vm_map_subsystem {
 		NDR_record_t NDR;
 		vm_info_region_64_t region;
 		mach_msg_type_number_t objectsCnt;
-	} __Reply__mach_vm_region_info_64_t;
+	} __Reply__mach_vm_region_info_64_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1258,7 +1260,7 @@ union __RequestUnion__vm_map_subsystem {
 		vm_size_t size;
 		mach_msg_type_number_t infoCnt;
 		int info[10];
-	} __Reply__vm_region_64_t;
+	} __Reply__vm_region_64_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1274,7 +1276,7 @@ union __RequestUnion__vm_map_subsystem {
 		/* end of the kernel processed data */
 		NDR_record_t NDR;
 		memory_object_size_t size;
-	} __Reply__mach_make_memory_entry_64_t;
+	} __Reply__mach_make_memory_entry_64_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1287,7 +1289,7 @@ union __RequestUnion__vm_map_subsystem {
 		NDR_record_t NDR;
 		kern_return_t RetCode;
 		vm_address_t address;
-	} __Reply__vm_map_64_t;
+	} __Reply__vm_map_64_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
@@ -1300,7 +1302,7 @@ union __RequestUnion__vm_map_subsystem {
 		NDR_record_t NDR;
 		kern_return_t RetCode;
 		int state;
-	} __Reply__vm_purgable_control_t;
+	} __Reply__vm_purgable_control_t __attribute__((unused));
 #ifdef  __MigPackStructs
 #pragma pack()
 #endif
