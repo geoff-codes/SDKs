@@ -1,5 +1,5 @@
-/*  vfp.h (from vecLib-459.0)
- *  Copyright 1999-2014 Apple Inc.  All rights reserved.
+/*  vfp.h (from vecLib-563.2)
+ *  Copyright (c) 1999-2015 by Apple Inc. All rights reserved.
  *
  *  Overview:
  *  vfp.h provides math library operations for SIMD vectors.  These functions
@@ -21,6 +21,7 @@
 
 #ifndef __VFP__
 #define __VFP__
+#if defined __SSE2__ || defined __ARM_NEON__
 
 #include "vecLibTypes.h"
 #include <stdint.h>
@@ -62,6 +63,18 @@ extern vFloat  vnintf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_6_0)
 /*  The legacy name vintf is not available on iOS.  Use vtruncf instead.      */
 extern vFloat   vintf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
 #endif
+
+
+#if !defined __has_feature
+    #define __has_feature(f)    0
+#endif
+#if __has_feature(assume_nonnull)
+    _Pragma("clang assume_nonnull begin")
+#else
+    #define __nullable
+    #define __nonnull
+#endif
+
 
 /*  Exponential and Logarithmic Functions
  *
@@ -247,7 +260,12 @@ extern vFloat        vfabf(vFloat)         __OSX_AVAILABLE_STARTING(__MAC_10_0, 
 
 extern vUInt32 vtablelookup(vSInt32, uint32_t *) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
 
+#if __has_feature(assume_nonnull)
+    _Pragma("clang assume_nonnull end")
+#endif
+
 #ifdef __cplusplus
 }
 #endif
+#endif /* defined __SSE2__ || defined __ARM_NEON__ */
 #endif /* __VFP__ */

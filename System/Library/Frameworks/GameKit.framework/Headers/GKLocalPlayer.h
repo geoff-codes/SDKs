@@ -1,8 +1,8 @@
 //
 //  GKLocalPlayer.h
-//  GameKit
+//  Game Center
 //
-//  Copyright 2010 Apple Inc. All rights reserved.
+//  Copyright 2010-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,6 +11,7 @@
 #import <GameKit/GKEventListener.h>
 #import <GameKit/GKTurnBasedMatch.h>
 #import <GameKit/GKMatchmaker.h>
+#import <GameKit/GKSavedGameListener.h>
 
 #if TARGET_OS_IPHONE
 @class UIViewController;
@@ -18,13 +19,15 @@
 @class NSViewController;
 #endif
 
-NS_CLASS_AVAILABLE(10_8, 4_1)
-GK_EXTERN_CLASS @interface GKLocalPlayer : GKPlayer
 
-// Obtain the GKLocalPlayer object.
+NS_ASSUME_NONNULL_BEGIN
+NS_CLASS_AVAILABLE(10_8, 4_1)
+@interface GKLocalPlayer : GKPlayer
+
+// Obtain the primary GKLocalPlayer object.
 // The player is only available for offline play until logged in.
 // A temporary player is created if no account is set up.
-+ (GKLocalPlayer *)localPlayer;
++ (GKLocalPlayer *)localPlayer NS_SWIFT_NAME(localPlayer());
 
 @property(readonly, getter=isAuthenticated, NS_NONATOMIC_IOSONLY)  BOOL authenticated; // Authentication state
 @property(readonly, getter=isUnderage, NS_NONATOMIC_IOSONLY)       BOOL underage;      // Underage state
@@ -35,25 +38,24 @@ GK_EXTERN_CLASS @interface GKLocalPlayer : GKPlayer
 // 1. Communications problem
 // 2. User credentials invalid
 // 3. User cancelled
-@property(nonatomic, copy) void(^authenticateHandler)(UIViewController *viewController, NSError *error) __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0);
+#if TARGET_OS_IPHONE
+@property(nonatomic, nullable, copy) void(^authenticateHandler)(UIViewController * __nullable viewController, NSError * __nullable error) NS_AVAILABLE_IOS(6_0);
+#else
+@property(atomic, nullable, copy) void(^authenticateHandler)(NSViewController * __nullable viewController, NSError * __nullable error) NS_AVAILABLE_MAC(10_9);
+#endif
 
-@property(nonatomic, readonly, retain) NSArray *friends;  // Array of player identifiers of friends for the local player. Not valid until loadFriendsWithCompletionHandler: has completed.
-
-// Asynchronously load the friends list as an array of player identifiers. Calls completionHandler when finished. Error will be nil on success.
+// Asynchronously load the friends list as an array of GKPlayer. Calls completionHandler when finished. Error will be nil on success.
 // Possible reasons for error:
 // 1. Communications problem
 // 2. Unauthenticated player
-- (void)loadFriendsWithCompletionHandler:(void(^)(NSArray *friendIDs, NSError *error))completionHandler;
-
+- (void)loadFriendPlayersWithCompletionHandler:(void(^__nullable)(NSArray<GKPlayer *> * __nullable friendPlayers, NSError * __nullable error))completionHandler NS_AVAILABLE(10_10, 8_0);
+;
 // Set the default leaderboard for the current game
 // Possible reasons for error:
 // 1. Communications problem
 // 2. Unauthenticated player
 // 3. Leaderboard not present
-- (void)setDefaultLeaderboardIdentifier:(NSString *)leaderboardIdentifier completionHandler:(void(^)(NSError *error))completionHandler __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_7_0);
-
-//old terminology, please use -setDefaultLeaderboardIdentifier:completionHandler: instead
-- (void)setDefaultLeaderboardCategoryID:(NSString *)catogoryID completionHandler:(void(^)(NSError *error))completionHandler __OSX_AVAILABLE_BUT_DEPRECATED_MSG(__MAC_10_8,__MAC_NA,__IPHONE_6_0,__IPHONE_7_0,"Use setDefaultLeaderboardIdentifier:completionHandler: instead");
+- (void)setDefaultLeaderboardIdentifier:(NSString *)leaderboardIdentifier completionHandler:(void(^__nullable)(NSError * __nullable error))completionHandler NS_AVAILABLE(10_10, 7_0);
 
 
 // Load the default leaderboard identifier for the local player
@@ -61,37 +63,42 @@ GK_EXTERN_CLASS @interface GKLocalPlayer : GKPlayer
 // 1. Communications problem
 // 2. Unauthenticated player
 // 3. Leaderboard not present
-- (void)loadDefaultLeaderboardIdentifierWithCompletionHandler:(void(^)(NSString *leaderboardIdentifier, NSError *error))completionHandler __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_7_0);
-
-//old terminology, please use -loadDefaultLeaderboardIdentifierWithCompletionHandler: instead
-- (void)loadDefaultLeaderboardCategoryIDWithCompletionHandler:(void(^)(NSString *categoryID, NSError *error))completionHandler __OSX_AVAILABLE_BUT_DEPRECATED_MSG(__MAC_10_8,__MAC_NA,__IPHONE_6_0,__IPHONE_7_0,"Use loadDefaultLeaderboardIdentifierWithCompletionHandler: instead");
+- (void)loadDefaultLeaderboardIdentifierWithCompletionHandler:(void(^__nullable)(NSString * __nullable leaderboardIdentifier, NSError * __nullable error))completionHandler NS_AVAILABLE(10_10, 7_0);
 
 
 // Generates a signature allowing 3rd party server to authenticate the GKLocalPlayer
 //Possible reasons for error:
 // 1. Communications problem
 // 2. Unauthenticated player
-- (void)generateIdentityVerificationSignatureWithCompletionHandler:(void (^)(NSURL *publicKeyUrl, NSData *signature, NSData *salt, uint64_t timestamp, NSError *error))completionHandler __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_7_0);
-
-// Deprecated, set the authenticateHandler instead. Authentication happens automatically when the handler is set and when the app returns to foreground.
-- (void)authenticateWithCompletionHandler:(void(^)(NSError *error))completionHandler __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_8, __MAC_10_8, __IPHONE_4_1, __IPHONE_6_0);
+- (void)generateIdentityVerificationSignatureWithCompletionHandler:(void (^__nullable)(NSURL * __nullable publicKeyUrl, NSData * __nullable signature, NSData * __nullable salt, uint64_t timestamp, NSError * __nullable error))completionHandler NS_AVAILABLE(10_10, 7_0);
 
 @end
 
-@protocol GKLocalPlayerListener <GKChallengeListener, GKInviteEventListener, GKTurnBasedEventListener>
+@protocol GKLocalPlayerListener <GKChallengeListener, GKInviteEventListener, GKTurnBasedEventListener, GKSavedGameListener>
 @end
 
 @interface GKLocalPlayer (GKLocalPlayerEvents)
 
 // A single listener may be registered once. Registering multiple times results in undefined behavior. The registered listener will receive callbacks for any selector it responds to.
-- (void)registerListener:(id<GKLocalPlayerListener>)listener __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_7_0);
+- (void)registerListener:(id<GKLocalPlayerListener>)listener NS_AVAILABLE(10_10, 7_0);
 
-- (void)unregisterListener:(id<GKLocalPlayerListener>)listener __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_7_0);
+- (void)unregisterListener:(id<GKLocalPlayerListener>)listener NS_AVAILABLE(10_10, 7_0);
 
-- (void)unregisterAllListeners __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_7_0);
+- (void)unregisterAllListeners NS_AVAILABLE(10_10, 7_0);
 
 @end
 
 // Notification will be posted whenever authentication status changes.
-GK_EXTERN NSString *GKPlayerAuthenticationDidChangeNotificationName __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_4_1);
+GK_EXTERN NSString *GKPlayerAuthenticationDidChangeNotificationName NS_AVAILABLE(10_8, 4_1);
 
+@interface GKLocalPlayer (Deprecated)
+
+- (void)setDefaultLeaderboardCategoryID:(nullable NSString *)categoryID completionHandler:(void(^__nullable)(NSError * __nullable error))completionHandler NS_DEPRECATED(10_8, 10_10, 6_0, 7_0,"Use setDefaultLeaderboardIdentifier:completionHandler: instead") ;
+- (void)loadDefaultLeaderboardCategoryIDWithCompletionHandler:(void(^__nullable)(NSString * __nullable categoryID, NSError * __nullable error))completionHandler NS_DEPRECATED(10_8, 10_10, 6_0, 7_0,"Use loadDefaultLeaderboardIdentifierWithCompletionHandler: instead") ;
+- (void)loadFriendsWithCompletionHandler:(void(^__nullable)(NSArray<NSString *> * __nullable friendIDs, NSError * __nullable error))completionHandler NS_DEPRECATED(10_8, 10_10, 4_1, 8_0, "use loadFriendPlayersWithCompletionHandler: instead") ;
+- (void)authenticateWithCompletionHandler:(void(^__nullable)(NSError * __nullable error))completionHandler NS_DEPRECATED(10_8, 10_8, 4_1, 6_0, "Set the authenticateHandler instead") ;
+
+@property(nonatomic, readonly, nullable, retain) NSArray<NSString *> *friends NS_DEPRECATED(10_8, 10_10, 4_1, 8_0, "use loadFriendPlayersWithCompletionHandler: instead") ; // Array of player identifiers of friends for the local player. Not valid until loadFriendsWithCompletionHandler: has completed.
+
+@end
+NS_ASSUME_NONNULL_END

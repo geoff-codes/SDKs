@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 NS_CLASS_AVAILABLE(NA,4_0)
 @interface CMLogItem : NSObject <NSSecureCoding, NSCopying>
 {
@@ -25,3 +27,5 @@ NS_CLASS_AVAILABLE(NA,4_0)
 @property(readonly, nonatomic) NSTimeInterval timestamp;
 
 @end
+
+NS_ASSUME_NONNULL_END

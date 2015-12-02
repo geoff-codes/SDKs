@@ -1,12 +1,12 @@
 /*	FoundationErrors.h
-	Copyright (c) 2004-2013, Apple Inc. All rights reserved.
+	Copyright (c) 2004-2015, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 
 /* NSError codes in NSCocoaErrorDomain. Note that other frameworks (such as AppKit and CoreData) also provide additional NSCocoaErrorDomain error codes.
 */
-enum {
+NS_ENUM(NSInteger) {
     // File system and file I/O related errors, with NSFilePathErrorKey or NSURLErrorKey containing path or URL
     NSFileNoSuchFileError = 4,                                              // Attempt to do a file system operation on a non-existent file
     NSFileLockingError = 255,                                               // Couldn't get a lock on file
@@ -27,6 +27,10 @@ enum {
     NSFileWriteUnsupportedSchemeError = 518,                                // Write error (unsupported URL scheme)
     NSFileWriteOutOfSpaceError = 640,                                       // Write error (out of disk space)
     NSFileWriteVolumeReadOnlyError NS_ENUM_AVAILABLE(10_6, 4_0) = 642,      // Write error (readonly volume)
+
+    // NSFileManager unmount errors
+    NSFileManagerUnmountUnknownError NS_ENUM_AVAILABLE(10_11, NA) = 768,    // The volume could not be unmounted (reason unknown)
+    NSFileManagerUnmountBusyError NS_ENUM_AVAILABLE(10_11, NA) = 769,       // The volume could not be unmounted because it is in use
 
     // Other errors
     NSKeyValueValidationError = 1024,                                       // KVC validation error
@@ -58,6 +62,7 @@ enum {
     NSPropertyListReadUnknownVersionError NS_ENUM_AVAILABLE(10_6, 4_0) = 3841,  // The version number in the property list is unknown
     NSPropertyListReadStreamError NS_ENUM_AVAILABLE(10_6, 4_0) = 3842,          // Stream error reading a property list
     NSPropertyListWriteStreamError NS_ENUM_AVAILABLE(10_6, 4_0) = 3851,         // Stream error writing a property list
+    NSPropertyListWriteInvalidError NS_ENUM_AVAILABLE(10_10, 8_0) = 3852,       // Invalid property list object or invalid property list type specified when writing
 
     NSPropertyListErrorMinimum NS_ENUM_AVAILABLE(10_6, 4_0) = 3840,
     NSPropertyListErrorMaximum NS_ENUM_AVAILABLE(10_6, 4_0) = 4095,
@@ -74,6 +79,26 @@ enum {
     NSUbiquitousFileUbiquityServerNotAvailable NS_ENUM_AVAILABLE(10_9, 7_0) = 4355, // NSURLUbiquitousItemDownloadingErrorKey and NSURLUbiquitousItemUploadingErrorKey contain an error with this code when connecting to the iCloud servers failed
 
     NSUbiquitousFileErrorMinimum NS_ENUM_AVAILABLE(10_9, 7_0) = 4352,
-    NSUbiquitousFileErrorMaximum NS_ENUM_AVAILABLE(10_9, 7_0) = 4607
+    NSUbiquitousFileErrorMaximum NS_ENUM_AVAILABLE(10_9, 7_0) = 4607,
+
+    NSUserActivityHandoffFailedError NS_ENUM_AVAILABLE(10_10, 8_0) = 4608,	// The data for the user activity was not available (e.g. if the remote device became unavailable.)
+    NSUserActivityConnectionUnavailableError NS_ENUM_AVAILABLE(10_10, 8_0) = 4609,  // The user activity could not be continued because a required connection was not available
+    NSUserActivityRemoteApplicationTimedOutError NS_ENUM_AVAILABLE(10_10, 8_0) = 4610, // The remote application failed to send data in time
+    NSUserActivityHandoffUserInfoTooLargeError NS_ENUM_AVAILABLE(10_10, 8_0) = 4611, // The NSUserActivity userInfo dictionary was too large to receive
+
+    NSUserActivityErrorMinimum NS_ENUM_AVAILABLE(10_10, 8_0) = 4608,
+    NSUserActivityErrorMaximum NS_ENUM_AVAILABLE(10_10, 8_0) = 4863,
+    
+    NSCoderReadCorruptError NS_ENUM_AVAILABLE(10_11, 9_0) = 4864, // Error parsing data during decode
+    NSCoderValueNotFoundError NS_ENUM_AVAILABLE(10_11, 9_0) = 4865, // Data requested was not found
+    NSCoderErrorMinimum NS_ENUM_AVAILABLE(10_11, 9_0) = 4864,
+    NSCoderErrorMaximum NS_ENUM_AVAILABLE(10_11, 9_0) = 4991,
+    
+    NSBundleErrorMinimum NS_ENUM_AVAILABLE(10_11, 9_0) = 4992,
+    NSBundleErrorMaximum NS_ENUM_AVAILABLE(10_11, 9_0) = 5119,
+    
+    NSBundleOnDemandResourceOutOfSpaceError NS_ENUM_AVAILABLE(NA, 9_0) = 4992, // There was not enough space available to download the requested On Demand Resources.
+    NSBundleOnDemandResourceExceededMaximumSizeError NS_ENUM_AVAILABLE(NA, 9_0) = 4993, // The application exceeded the amount of On Demand Resources content in use at one time
+    NSBundleOnDemandResourceInvalidTagError NS_ENUM_AVAILABLE(NA, 9_0) = 4994, // The application specified a tag which the system could not find in the application tag manifest
 };
 

@@ -1,44 +1,46 @@
 /*	NSPathUtilities.h
-	Copyright (c) 1994-2013, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2015, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSString.h>
 #import <Foundation/NSArray.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSString (NSStringPathExtensions)
 
-+ (NSString *)pathWithComponents:(NSArray *)components;
-- (NSArray *)pathComponents;
++ (NSString *)pathWithComponents:(NSArray<NSString *> *)components;
+@property (readonly, copy) NSArray<NSString *> *pathComponents;
 
-- (BOOL)isAbsolutePath;
+@property (getter=isAbsolutePath, readonly) BOOL absolutePath;
 
-- (NSString *)lastPathComponent;
-- (NSString *)stringByDeletingLastPathComponent;
+@property (readonly, copy) NSString *lastPathComponent;
+@property (readonly, copy) NSString *stringByDeletingLastPathComponent;
 - (NSString *)stringByAppendingPathComponent:(NSString *)str;
 
-- (NSString *)pathExtension;
-- (NSString *)stringByDeletingPathExtension;
-- (NSString *)stringByAppendingPathExtension:(NSString *)str;
+@property (readonly, copy) NSString *pathExtension;
+@property (readonly, copy) NSString *stringByDeletingPathExtension;
+- (nullable NSString *)stringByAppendingPathExtension:(NSString *)str;
 
-- (NSString *)stringByAbbreviatingWithTildeInPath;
-- (NSString *)stringByExpandingTildeInPath;
+@property (readonly, copy) NSString *stringByAbbreviatingWithTildeInPath;
+@property (readonly, copy) NSString *stringByExpandingTildeInPath;
 
-- (NSString *)stringByStandardizingPath;
+@property (readonly, copy) NSString *stringByStandardizingPath;
 
-- (NSString *)stringByResolvingSymlinksInPath;
+@property (readonly, copy) NSString *stringByResolvingSymlinksInPath;
 
-- (NSArray *)stringsByAppendingPaths:(NSArray *)paths;
+- (NSArray<NSString *> *)stringsByAppendingPaths:(NSArray<NSString *> *)paths;
 
-- (NSUInteger)completePathIntoString:(NSString **)outputName caseSensitive:(BOOL)flag matchesIntoArray:(NSArray **)outputArray filterTypes:(NSArray *)filterTypes;
+- (NSUInteger)completePathIntoString:(NSString * __nonnull * __nullable)outputName caseSensitive:(BOOL)flag matchesIntoArray:(NSArray<NSString *> * __nonnull * __nullable)outputArray filterTypes:(nullable NSArray<NSString *> *)filterTypes;
 
-- (__strong const char *)fileSystemRepresentation NS_RETURNS_INNER_POINTER;
+@property (readonly) __strong const char *fileSystemRepresentation NS_RETURNS_INNER_POINTER;
 - (BOOL)getFileSystemRepresentation:(char *)cname maxLength:(NSUInteger)max;
 
 @end
 
-@interface NSArray (NSArrayPathExtensions)
+@interface NSArray<ObjectType> (NSArrayPathExtensions)
 
-- (NSArray *)pathsMatchingExtensions:(NSArray *)filterTypes;
+- (NSArray<NSString *> *)pathsMatchingExtensions:(NSArray<NSString *> *)filterTypes;
 
 @end
 
@@ -46,7 +48,7 @@ FOUNDATION_EXPORT NSString *NSUserName(void);
 FOUNDATION_EXPORT NSString *NSFullUserName(void);
 
 FOUNDATION_EXPORT NSString *NSHomeDirectory(void);
-FOUNDATION_EXPORT NSString *NSHomeDirectoryForUser(NSString *userName);
+FOUNDATION_EXPORT NSString * __nullable NSHomeDirectoryForUser(NSString * __nullable userName);
 
 FOUNDATION_EXPORT NSString *NSTemporaryDirectory(void);
 
@@ -91,6 +93,6 @@ typedef NS_OPTIONS(NSUInteger, NSSearchPathDomainMask) {
     NSAllDomainsMask = 0x0ffff  // all domains: all of the above and future items
 };
 
-FOUNDATION_EXPORT NSArray *NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, BOOL expandTilde);
+FOUNDATION_EXPORT NSArray<NSString *> *NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, BOOL expandTilde);
 
-
+NS_ASSUME_NONNULL_END

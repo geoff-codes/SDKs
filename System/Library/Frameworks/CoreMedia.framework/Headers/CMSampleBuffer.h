@@ -3,7 +3,7 @@
 	
 	Framework:  CoreMedia
  
-    Copyright 2005-2013 Apple Inc. All rights reserved.
+    Copyright 2005-2015 Apple Inc. All rights reserved.
  
 */
 
@@ -61,6 +61,8 @@ extern "C" {
     
 #pragma pack(push, 4)
 
+CF_IMPLICIT_BRIDGING_ENABLED
+
 /*!
 	@enum CMSampleBuffer Errors
 	@discussion The errors returned from the CMSampleBuffer APIs
@@ -79,8 +81,15 @@ extern "C" {
 	@constant	kCMSampleBufferError_InvalidSampleData Buffer contains bad data. Only returned by CMSampleBuffer functions that inspect its sample data.
     @constant   kCMSampleBufferError_InvalidMediaFormat the format of the given media does not match the given format description (eg. a format description paired with a CVImageBuffer that fails CMVideoFormatDescriptionMatchesImageBuffer).
 	@constant	kCMSampleBufferError_Invalidated the sample buffer was invalidated.
+	@constant	kCMSampleBufferError_DataFailed the sample buffer's data loading operation failed (generic error).
+	@constant	kCMSampleBufferError_DataCanceled the sample buffer's data loading operation was canceled.
 */
-enum {
+#if COREMEDIA_USE_DERIVED_ENUMS_FOR_CONSTANTS
+enum : OSStatus
+#else
+enum
+#endif
+{
 	kCMSampleBufferError_AllocationFailed				= -12730,
 	kCMSampleBufferError_RequiredParameterMissing		= -12731,
 	kCMSampleBufferError_AlreadyHasDataBuffer			= -12732,
@@ -96,6 +105,8 @@ enum {
 	kCMSampleBufferError_InvalidSampleData				= -12742,
     kCMSampleBufferError_InvalidMediaFormat				= -12743,
 	kCMSampleBufferError_Invalidated					= -12744,
+	kCMSampleBufferError_DataFailed						= -16750,
+	kCMSampleBufferError_DataCanceled					= -16751,
 };
 
 /*!
@@ -103,7 +114,12 @@ enum {
 	@discussion Flags passed to various CMSampleBuffer APIs
 	@constant	kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment Make sure memory involved in audio buffer lists is 16-byte aligned
 */
-enum {
+#if COREMEDIA_USE_DERIVED_ENUMS_FOR_CONSTANTS
+enum : uint32_t
+#else
+enum
+#endif
+{
 	kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment		= (1L<<0)
 };
 
@@ -113,7 +129,7 @@ enum {
 				samples of a particular media type (audio, video, muxed, etc).
 		
 */
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef struct CM_BRIDGED_TYPE(id) opaqueCMSampleBuffer *CMSampleBufferRef;
 
 /*!
 	@typedef	CMSampleTimingInfo
@@ -148,12 +164,14 @@ CM_EXPORT const CMSampleTimingInfo kCMTimingInfoInvalid		/*! @constant kCMTiming
 				succeeds and returns 0, the CMSampleBuffer will then be marked as "data ready".
 */
 typedef OSStatus (*CMSampleBufferMakeDataReadyCallback)
-	(CMSampleBufferRef sbuf,	/*! @param sbuf
-									The CMSampleBuffer to make ready. */
-	void *makeDataReadyRefcon);	/*! @param makeDataReadyRefcon
-									Client refcon provided to CMSampleBufferCreate.
-									For example, it could point at info about the
-									scheduled read that needs to be forced to finish. */
+	(CMSampleBufferRef CM_NONNULL sbuf,	/*! @param sbuf
+											The CMSampleBuffer to make ready. */
+	void * CM_NULLABLE makeDataReadyRefcon);	/*! @param makeDataReadyRefcon
+												Client refcon provided to CMSampleBufferCreate.
+												For example, it could point at info about the
+												scheduled read that needs to be forced to finish. */
+
+CF_IMPLICIT_BRIDGING_DISABLED
 
 /*! 
 	@functiongroup	Object management functions
@@ -236,45 +254,153 @@ typedef OSStatus (*CMSampleBufferMakeDataReadyCallback)
 */
 CM_EXPORT
 OSStatus CMSampleBufferCreate(
-	CFAllocatorRef allocator,						/*! @param allocator
-														The allocator to use for allocating the CMSampleBuffer object.
-														Pass kCFAllocatorDefault to use the default allocator. */
-	CMBlockBufferRef dataBuffer,					/*! @param dataBuffer
-														CMBlockBuffer for the media data. This can be NULL, a CMBlockBuffer with
-														no backing memory, a CMBlockBuffer with backing memory but no data yet,
-														or a CMBlockBuffer that already contains the media data. Only in that
-														last case (or if NULL and numSamples is 0) should dataReady be true. */
-	Boolean dataReady,								/*! @param dataReady
-														Indicates whether or not the BlockBuffer already contains the media data. */
-	CMSampleBufferMakeDataReadyCallback makeDataReadyCallback,	
-													/*! @param makeDataReadyCallback
-														Callback that CMSampleBufferMakeDataReady should call to make the
-														data ready. Can be NULL. */
-	void *makeDataReadyRefcon,						/*! @param makeDataReadyRefcon
-														Refcon CMSampleBufferMakeDataReady should pass to the callback. */
-	CMFormatDescriptionRef formatDescription,		/*! @param formatDescription
-														A description of the media data's format. Can be NULL. */
-	CMItemCount numSamples,							/*! @param numSamples
-														Number of samples in the CMSampleBuffer. Can be 0. */
-	CMItemCount numSampleTimingEntries,				/*! @param numSampleTimingEntries
-														Number of entries in sampleTimingArray. Must be 0, 1, or numSamples. */
-	const CMSampleTimingInfo *sampleTimingArray,	/*! @param sampleTimingArray
-														Array of CMSampleTimingInfo structs, one struct per sample.
-														If all samples have the same duration and are in presentation order, you can pass a single
-														CMSampleTimingInfo struct with duration set to the duration of one sample, presentationTimeStamp
-														set to the presentation time of the numerically earliest sample, and decodeTimeStamp set to
-														kCMTimeInvalid. Behaviour is undefined if samples in a CMSampleBuffer (or even in multiple
-														buffers in the same stream) have the same presentationTimeStamp. Can be NULL. */
-	CMItemCount numSampleSizeEntries,				/*! @param numSampleSizeEntries
-														Number of entries in sampleSizeArray. Must be 0, 1, or numSamples. */
-	const size_t *sampleSizeArray,					/*! @param sampleSizeArray
-														Array of size entries, one entry per sample. If all samples have the
-														same size, you can pass a single size entry containing the size of one sample. Can be NULL. Must be
-														NULL if the samples are non-contiguous in the buffer (eg. non-interleaved audio, where the channel
-														values for a single sample are scattered through the buffer). */
-	CMSampleBufferRef *sBufOut)						/*! @param sBufOut
-														Returned newly created CMSampleBuffer. */
+	CFAllocatorRef CM_NULLABLE allocator,					/*! @param allocator
+																The allocator to use for allocating the CMSampleBuffer object.
+																Pass kCFAllocatorDefault to use the default allocator. */
+	CMBlockBufferRef CM_NULLABLE dataBuffer,				/*! @param dataBuffer
+																CMBlockBuffer for the media data. This can be NULL, a CMBlockBuffer with
+																no backing memory, a CMBlockBuffer with backing memory but no data yet,
+																or a CMBlockBuffer that already contains the media data. Only in that
+																last case (or if NULL and numSamples is 0) should dataReady be true. */
+	Boolean dataReady,										/*! @param dataReady
+																Indicates whether or not the BlockBuffer already contains the media data. */
+	CMSampleBufferMakeDataReadyCallback CM_NULLABLE makeDataReadyCallback,
+															/*! @param makeDataReadyCallback
+																Callback that CMSampleBufferMakeDataReady should call to make the
+																data ready. Can be NULL. */
+	void * CM_NULLABLE makeDataReadyRefcon,					/*! @param makeDataReadyRefcon
+																Refcon CMSampleBufferMakeDataReady should pass to the callback. */
+	CMFormatDescriptionRef CM_NULLABLE formatDescription,	/*! @param formatDescription
+																A description of the media data's format. Can be NULL. */
+	CMItemCount numSamples,									/*! @param numSamples
+																Number of samples in the CMSampleBuffer. Can be 0. */
+	CMItemCount numSampleTimingEntries,						/*! @param numSampleTimingEntries
+																Number of entries in sampleTimingArray. Must be 0, 1, or numSamples. */
+	const CMSampleTimingInfo * CM_NULLABLE sampleTimingArray,	/*! @param sampleTimingArray
+																Array of CMSampleTimingInfo structs, one struct per sample.
+																If all samples have the same duration and are in presentation order, you can pass a single
+																CMSampleTimingInfo struct with duration set to the duration of one sample, presentationTimeStamp
+																set to the presentation time of the numerically earliest sample, and decodeTimeStamp set to
+																kCMTimeInvalid. Behaviour is undefined if samples in a CMSampleBuffer (or even in multiple
+																buffers in the same stream) have the same presentationTimeStamp. Can be NULL. */
+	CMItemCount numSampleSizeEntries,						/*! @param numSampleSizeEntries
+																Number of entries in sampleSizeArray. Must be 0, 1, or numSamples. */
+	const size_t * CM_NULLABLE sampleSizeArray,				/*! @param sampleSizeArray
+																Array of size entries, one entry per sample. If all samples have the
+																same size, you can pass a single size entry containing the size of one sample. Can be NULL. Must be
+																NULL if the samples are non-contiguous in the buffer (eg. non-interleaved audio, where the channel
+																values for a single sample are scattered through the buffer). */
+	CM_RETURNS_RETAINED_PARAMETER CMSampleBufferRef CM_NULLABLE * CM_NONNULL sBufOut)		/*! @param sBufOut
+																Returned newly created CMSampleBuffer. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+/*!
+	@function	CMSampleBufferCreateReady
+	@abstract	Creates a CMSampleBuffer.
+	@discussion	Array parameters (sampleSizeArray, sampleTimingArray) should have only one element if that same
+				element applies to all samples. All parameters are copied; on return, the caller can release them,
+				free them, reuse them or whatever.  On return, the caller owns the returned CMSampleBuffer, and
+				must release it when done with it.
+				CMSampleBufferCreateReady is identical to CMSampleBufferCreate except that dataReady is always true,
+				and so no makeDataReadyCallback or refcon needs to be passed.
+				
+				Example of usage for in-display-order video frames:
+<ul>				dataBuffer: contains 7 Motion JPEG frames
+<li>				dataFormatDescription: describes Motion JPEG video
+<li>				numSamples: 7
+<li>				numSampleTimingEntries: 1
+<li>				sampleTimingArray: one entry = {duration = 1001/30000, presentationTimeStamp = 0/30000, decodeTimeStamp = invalid }
+<li>				numSampleSizeEntries: 7
+<li>				sampleSizeArray: {105840, 104456, 103464, 116460, 100412, 94808, 120400}
+</ul>
+				Example of usage for out-of-display-order video frames:
+<ul>				dataBuffer: contains 6 H.264 frames in decode order (P2,B0,B1,I5,B3,B4)
+<li>				dataFormatDescription: describes H.264 video
+<li>				numSamples: 6
+<li>				numSampleTimingEntries: 6
+<li>				sampleTimingArray: 6 entries = {
+<ul>					{duration = 1001/30000, presentationTimeStamp = 12012/30000, decodeTimeStamp = 10010/30000},
+<li>					{duration = 1001/30000, presentationTimeStamp = 10010/30000, decodeTimeStamp = 11011/30000},
+<li>					{duration = 1001/30000, presentationTimeStamp = 11011/30000, decodeTimeStamp = 12012/30000},
+<li>					{duration = 1001/30000, presentationTimeStamp = 15015/30000, decodeTimeStamp = 13013/30000},
+<li>					{duration = 1001/30000, presentationTimeStamp = 13013/30000, decodeTimeStamp = 14014/30000},
+<li>					{duration = 1001/30000, presentationTimeStamp = 14014/30000, decodeTimeStamp = 15015/30000}}
+</ul>
+<li>				numSampleSizeEntries: 6
+<li>				sampleSizeArray: {10580, 1234, 1364, 75660, 1012, 988}
+</ul>
+				Example of usage for compressed audio:
+<ul>				dataBuffer: contains 24 compressed AAC packets
+<li>				dataFormatDescription: describes 44.1kHz AAC audio
+<li>				numSamples: 24
+<li>				numSampleTimingEntries: 1
+<li>				sampleTimingArray: one entry = {
+<ul>					{duration = 1024/44100, presentationTimeStamp = 0/44100, decodeTimeStamp = invalid }}
+</ul>
+<li>				numSampleSizeEntries: 24
+<li>				sampleSizeArray:
+<ul>					{191, 183, 208, 213, 202, 206, 209, 206, 204, 192, 202, 277,
+<li>					 282, 240, 209, 194, 193, 197, 196, 198, 168, 199, 171, 194}
+</ul>
+</ul>
+				Example of usage for uncompressed interleaved audio:
+<ul>				dataBuffer: contains 24000 uncompressed interleaved stereo frames, each containing 2 Float32s =
+<ul>					{{L,R},
+<li>					 {L,R},
+<li>					 {L,R}, ...}
+</ul>
+<li>				dataFormatDescription: describes 48kHz Float32 interleaved audio
+<li>				numSamples: 24000
+<li>				numSampleTimingEntries: 1
+<li>				sampleTimingArray: one entry = {
+<ul>					{duration = 1/48000, presentationTimeStamp = 0/48000, decodeTimeStamp = invalid }}
+</ul>
+<li>				numSampleSizeEntries: 1
+<li>				sampleSizeArray: {8}
+</ul>
+				Example of usage for uncompressed non-interleaved audio:
+<ul>				dataBuffer: contains 24000 uncompressed non-interleaved stereo frames, each containing 2 (non-contiguous) Float32s =
+<ul>					{{L,L,L,L,L,...},
+<li>					 {R,R,R,R,R,...}}
+</ul>
+<li>				dataFormatDescription: describes 48kHz Float32 non-interleaved audio
+<li>				numSamples: 24000
+<li>				numSampleTimingEntries: 1
+<li>				sampleTimingArray: one entry = {duration = 1/48000, presentationTimeStamp = 0/48000, decodeTimeStamp = invalid }
+<li>				numSampleSizeEntries: 0
+<li>				sampleSizeArray: NULL (because the samples are not contiguous)
+</ul>
+*/
+CM_EXPORT
+OSStatus CMSampleBufferCreateReady(
+	CFAllocatorRef CM_NULLABLE allocator,					/*! @param allocator
+																The allocator to use for allocating the CMSampleBuffer object.
+																Pass kCFAllocatorDefault to use the default allocator. */
+	CMBlockBufferRef CM_NULLABLE dataBuffer,					/*! @param dataBuffer
+																CMBlockBuffer that already contains the media data. Must not be NULL. */
+	CMFormatDescriptionRef CM_NULLABLE formatDescription,	/*! @param formatDescription
+																A description of the media data's format. Can be NULL. */
+	CMItemCount numSamples,									/*! @param numSamples
+																Number of samples in the CMSampleBuffer. Can be 0. */
+	CMItemCount numSampleTimingEntries,						/*! @param numSampleTimingEntries
+																Number of entries in sampleTimingArray. Must be 0, 1, or numSamples. */
+	const CMSampleTimingInfo * CM_NULLABLE sampleTimingArray,/*! @param sampleTimingArray
+																Array of CMSampleTimingInfo structs, one struct per sample.
+																If all samples have the same duration and are in presentation order, you can pass a single
+																CMSampleTimingInfo struct with duration set to the duration of one sample, presentationTimeStamp
+																set to the presentation time of the numerically earliest sample, and decodeTimeStamp set to
+																kCMTimeInvalid. Behaviour is undefined if samples in a CMSampleBuffer (or even in multiple
+																buffers in the same stream) have the same presentationTimeStamp. Can be NULL. */
+	CMItemCount numSampleSizeEntries,						/*! @param numSampleSizeEntries
+																Number of entries in sampleSizeArray. Must be 0, 1, or numSamples. */
+	const size_t * CM_NULLABLE sampleSizeArray,				/*! @param sampleSizeArray
+																Array of size entries, one entry per sample. If all samples have the
+																same size, you can pass a single size entry containing the size of one sample. Can be NULL. Must be
+																NULL if the samples are non-contiguous in the buffer (eg. non-interleaved audio, where the channel
+																values for a single sample are scattered through the buffer). */
+	CM_RETURNS_RETAINED_PARAMETER CMSampleBufferRef CM_NULLABLE * CM_NONNULL sBufOut)		/*! @param sBufOut
+																Returned newly created CMSampleBuffer. */
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0);
 
 /*!
 	@function	CMAudioSampleBufferCreateWithPacketDescriptions
@@ -285,35 +411,65 @@ OSStatus CMSampleBufferCreate(
 */				
 CM_EXPORT
 OSStatus CMAudioSampleBufferCreateWithPacketDescriptions(
-	CFAllocatorRef allocator,						/*! @param allocator
-														The allocator to use for allocating the CMSampleBuffer object.
-														Pass kCFAllocatorDefault to use the default allocator. */
-	CMBlockBufferRef dataBuffer,					/*! @param dataBuffer
-														CMBlockBuffer for the media data. This can be NULL, a CMBlockBuffer with
-														no backing memory, a CMBlockBuffer with backing memory but no data yet,
-														or a CMBlockBuffer that already contains the media data. Only in that
-														last case should dataReady be true. */
-	Boolean dataReady,								/*! @param dataReady
-														Indicates whether or not the BlockBuffer already contains the media data. */
-	CMSampleBufferMakeDataReadyCallback makeDataReadyCallback,	
-													/*! @param makeDataReadyCallback
-														Callback that CMSampleBufferMakeDataReady should call to make the
-														data ready. Can be NULL. */
-	void *makeDataReadyRefcon,						/*! @param makeDataReadyRefcon
-														Refcon CMSampleBufferMakeDataReady should pass to the callback. */
-	CMFormatDescriptionRef formatDescription,		/*! @param formatDescription
-														A description of the media data's format. Cannot be NULL. */
-	CMItemCount numSamples,							/*! @param numSamples
-														Number of samples in the CMSampleBuffer. Must not be 0. */
-	CMTime	sbufPTS,								/*! @param sbufPTS
-														Timestamp of the first sample in the buffer. Must be a numeric CMTime. */
-	const AudioStreamPacketDescription *packetDescriptions,	/*! @param packetDescriptions
+	CFAllocatorRef CM_NULLABLE allocator,					/*! @param allocator
+																The allocator to use for allocating the CMSampleBuffer object.
+																Pass kCFAllocatorDefault to use the default allocator. */
+	CMBlockBufferRef CM_NULLABLE dataBuffer,				/*! @param dataBuffer
+																CMBlockBuffer for the media data. This can be NULL, a CMBlockBuffer with
+																no backing memory, a CMBlockBuffer with backing memory but no data yet,
+																or a CMBlockBuffer that already contains the media data. Only in that
+																last case should dataReady be true. */
+	Boolean dataReady,										/*! @param dataReady
+																Indicates whether or not the BlockBuffer already contains the media data. */
+	CMSampleBufferMakeDataReadyCallback CM_NULLABLE makeDataReadyCallback,
+															/*! @param makeDataReadyCallback
+																Callback that CMSampleBufferMakeDataReady should call to make the
+																data ready. Can be NULL. */
+	void * CM_NULLABLE makeDataReadyRefcon,					/*! @param makeDataReadyRefcon
+																Refcon CMSampleBufferMakeDataReady should pass to the callback. */
+	CMFormatDescriptionRef CM_NONNULL formatDescription,	/*! @param formatDescription
+																A description of the media data's format. Cannot be NULL. */
+	CMItemCount numSamples,									/*! @param numSamples
+																Number of samples in the CMSampleBuffer. Must not be 0. */
+	CMTime	sbufPTS,										/*! @param sbufPTS
+																Timestamp of the first sample in the buffer. Must be a numeric CMTime. */
+	const AudioStreamPacketDescription * CM_NULLABLE packetDescriptions,	/*! @param packetDescriptions
 																Array of packetDescriptions, one for each of numSamples. May be NULL
 																if the samples are known to have a constant number of frames per
 																packet and a constant size. */
-	CMSampleBufferRef *sBufOut)						/*! @param sBufOut
-														Returned newly created CMSampleBuffer. */
+	CM_RETURNS_RETAINED_PARAMETER CMSampleBufferRef CM_NULLABLE * CM_NONNULL sBufOut)		/*! @param sBufOut
+																Returned newly created CMSampleBuffer. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+/*!
+	@function	CMAudioSampleBufferCreateReadyWithPacketDescriptions
+	@abstract	Creates an CMSampleBuffer containing audio given packetDescriptions instead of sizing and timing info
+	@discussion	Provides an optimization over CMSampleBufferCreate() when the caller already has packetDescriptions for
+				the audio data. This routine will use the packetDescriptions to create the sizing and timing arrays required
+				to make the sample buffer if necessary.
+				CMAudioSampleBufferCreateReadyWithPacketDescriptions is identical to CMAudioSampleBufferCreateWithPacketDescriptions 
+				except that dataReady is always true, and so no makeDataReadyCallback or refcon needs to be passed.
+*/				
+CM_EXPORT
+OSStatus CMAudioSampleBufferCreateReadyWithPacketDescriptions(
+	CFAllocatorRef CM_NULLABLE allocator,								/*! @param allocator
+																			The allocator to use for allocating the CMSampleBuffer object.
+																			Pass kCFAllocatorDefault to use the default allocator. */
+	CMBlockBufferRef CM_NULLABLE dataBuffer,							/*! @param dataBuffer
+																			CMBlockBuffer already containing the media data. Must not be NULL. */
+	CMFormatDescriptionRef CM_NONNULL formatDescription,				/*! @param formatDescription
+																			A description of the media data's format. Cannot be NULL. */
+	CMItemCount numSamples,												/*! @param numSamples
+																			Number of samples in the CMSampleBuffer. Must not be 0. */
+	CMTime	sbufPTS,													/*! @param sbufPTS
+																			Timestamp of the first sample in the buffer. Must be a numeric CMTime. */
+	const AudioStreamPacketDescription * CM_NULLABLE packetDescriptions,/*! @param packetDescriptions
+																			Array of packetDescriptions, one for each of numSamples. May be NULL
+																			if the samples are known to have a constant number of frames per
+																			packet and a constant size. */
+	CM_RETURNS_RETAINED_PARAMETER CMSampleBufferRef CM_NULLABLE * CM_NONNULL sBufOut)					/*! @param sBufOut
+																			Returned newly created CMSampleBuffer. */
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0);
 
 /*!
 	@function	CMSampleBufferCreateForImageBuffer
@@ -340,30 +496,73 @@ OSStatus CMAudioSampleBufferCreateWithPacketDescriptions(
 */
 CM_EXPORT
 OSStatus CMSampleBufferCreateForImageBuffer(
-	CFAllocatorRef allocator,						/*! @param allocator
-														The allocator to use for allocating the CMSampleBuffer object.
-														Pass kCFAllocatorDefault to use the default allocator. */
-	CVImageBufferRef imageBuffer,					/*! @param imageBuffer
-														CVImageBuffer for the media data. This can be a CVImageBuffer whose content
-														has not yet been rendered, or a CVImageBuffer that already contains the media data
-														(in which case dataReady should be true).  May not be NULL. */
-	Boolean dataReady,								/*! @param dataReady
-														Indicates whether or not the CVImageBuffer already contains the media data. */
-	CMSampleBufferMakeDataReadyCallback makeDataReadyCallback,	
-													/*! @param makeDataReadyCallback
-														Callback that CMSampleBufferMakeDataReady should call to make the
-														data ready. Can be NULL. */
-	void *makeDataReadyRefcon,						/*! @param makeDataReadyRefcon
-														Refcon CMSampleBufferMakeDataReady should pass to the callback. */
-	CMVideoFormatDescriptionRef formatDescription,	/*! @param formatDescription
-														A description of the media data's format. See discussion above for constraints.
-														May not be NULL. */
-	const CMSampleTimingInfo *sampleTiming,			/*! @param sampleTiming
-														A CMSampleTimingInfo struct that provides the timing information for the media
-														represented by the CVImageBuffer. */
-	CMSampleBufferRef *sBufOut)						/*! @param sBufOut
-														Returned newly created CMSampleBuffer. */
+	CFAllocatorRef CM_NULLABLE allocator,					/*! @param allocator
+																The allocator to use for allocating the CMSampleBuffer object.
+																Pass kCFAllocatorDefault to use the default allocator. */
+	CVImageBufferRef CM_NONNULL imageBuffer,				/*! @param imageBuffer
+																CVImageBuffer for the media data. This can be a CVImageBuffer whose content
+																has not yet been rendered, or a CVImageBuffer that already contains the media data
+																(in which case dataReady should be true).  May not be NULL. */
+	Boolean dataReady,										/*! @param dataReady
+																Indicates whether or not the CVImageBuffer already contains the media data. */
+	CMSampleBufferMakeDataReadyCallback CM_NULLABLE makeDataReadyCallback,
+															/*! @param makeDataReadyCallback
+																Callback that CMSampleBufferMakeDataReady should call to make the
+																data ready. Can be NULL. */
+	void * CM_NULLABLE makeDataReadyRefcon,					/*! @param makeDataReadyRefcon
+																Refcon CMSampleBufferMakeDataReady should pass to the callback. */
+	CMVideoFormatDescriptionRef CM_NONNULL formatDescription,/*! @param formatDescription
+																A description of the media data's format. See discussion above for constraints.
+																May not be NULL. */
+	const CMSampleTimingInfo * CM_NONNULL sampleTiming,		/*! @param sampleTiming
+																A CMSampleTimingInfo struct that provides the timing information for the media
+																represented by the CVImageBuffer. */
+	CM_RETURNS_RETAINED_PARAMETER CMSampleBufferRef CM_NULLABLE * CM_NONNULL sBufOut)		/*! @param sBufOut
+																Returned newly created CMSampleBuffer. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+/*!
+	@function	CMSampleBufferCreateReadyWithImageBuffer
+	@abstract	Creates a CMSampleBuffer that contains a CVImageBuffer instead of a CMBlockBuffer.
+	@discussion	Unlike a CMBlockBuffer which can reference many samples, a CVImageBuffer is defined to
+				reference only one sample;  therefore this routine has fewer parameters then
+				CMSampleBufferCreate.
+				
+				Sample timing information, which is a vector for CMSampleBufferCreate,
+				consists of only one value for this routine.
+				
+				The concept of sample size does not apply to CVImageBuffers.  As such, CMSampleBufferGetSampleSizeArray
+				will return kCMSampleBufferError_BufferHasNoSampleSizes, and CMSampleBufferGetSampleSize
+				will return 0.
+				
+				Because CVImageBuffers hold visual data, the format description provided is a
+				CMVideoFormatDescription.  The format description must be consistent with the attributes
+				and formatting information attached to the CVImageBuffer. The width, height, and codecType must
+				match (for CVPixelBuffers the codec type is given by CVPixelBufferGetPixelFormatType(pixelBuffer);
+				for other CVImageBuffers, the codecType must be 0). The format description extensions must
+				match the image buffer attachments for all the keys in the list returned by
+				CMVideoFormatDescriptionGetExtensionKeysCommonWithImageBuffers (if absent in either they
+				must be absent in both).
+				
+				CMSampleBufferCreateReadyWithImageBuffer is identical to CMSampleBufferCreateForImageBuffer except that 
+				dataReady is always true, and so no makeDataReadyCallback or refcon needs to be passed.
+*/
+CM_EXPORT
+OSStatus CMSampleBufferCreateReadyWithImageBuffer(
+	CFAllocatorRef CM_NULLABLE allocator,						/*! @param allocator
+																	The allocator to use for allocating the CMSampleBuffer object.
+																	Pass kCFAllocatorDefault to use the default allocator. */
+	CVImageBufferRef CM_NONNULL imageBuffer,					/*! @param imageBuffer
+																	CVImageBuffer already containing the media data. Must not be NULL. */
+	CMVideoFormatDescriptionRef CM_NONNULL formatDescription,	/*! @param formatDescription
+																	A description of the media data's format. See discussion above for constraints.
+																	May not be NULL. */
+	const CMSampleTimingInfo * CM_NONNULL sampleTiming,			/*! @param sampleTiming
+																	A CMSampleTimingInfo struct that provides the timing information for the media
+																	represented by the CVImageBuffer. */
+	CM_RETURNS_RETAINED_PARAMETER CMSampleBufferRef CM_NULLABLE * CM_NONNULL sBufOut)			/*! @param sBufOut
+																	Returned newly created CMSampleBuffer. */
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0);
 
 
 /*!
@@ -376,13 +575,13 @@ OSStatus CMSampleBufferCreateForImageBuffer(
 */
 CM_EXPORT
 OSStatus CMSampleBufferCreateCopy(
-	CFAllocatorRef allocator,						/*! @param allocator
-														The allocator to use for allocating the CMSampleBuffer object.
-														Pass kCFAllocatorDefault to use the default allocator. */
-	CMSampleBufferRef sbuf,							/*! @param sbuf
-														CMSampleBuffer being copied. */
-	CMSampleBufferRef *sbufCopyOut)					/*! @param sbufCopyOut
-														Returned newly created CMSampleBuffer. */
+	CFAllocatorRef CM_NULLABLE allocator,						/*! @param allocator
+																	The allocator to use for allocating the CMSampleBuffer object.
+																	Pass kCFAllocatorDefault to use the default allocator. */
+	CMSampleBufferRef CM_NONNULL sbuf,							/*! @param sbuf
+																	CMSampleBuffer being copied. */
+	CM_RETURNS_RETAINED_PARAMETER CMSampleBufferRef CM_NULLABLE * CM_NONNULL sbufCopyOut)		/*! @param sbufCopyOut
+																	Returned newly created CMSampleBuffer. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -398,24 +597,24 @@ OSStatus CMSampleBufferCreateCopy(
  */				
 CM_EXPORT
 OSStatus CMSampleBufferCreateCopyWithNewTiming(
-  CFAllocatorRef allocator,						/*! @param allocator
-														   The allocator to use for allocating the CMSampleBuffer object.
-														   Pass kCFAllocatorDefault to use the default allocator. */
-  CMSampleBufferRef originalSBuf,            	/*!  @param originalSBuf
-															CMSampleBuffer containing the original samples */
+  CFAllocatorRef CM_NULLABLE allocator,						/*! @param allocator
+																The allocator to use for allocating the CMSampleBuffer object.
+																Pass kCFAllocatorDefault to use the default allocator. */
+  CMSampleBufferRef CM_NONNULL originalSBuf,            	/*!  @param originalSBuf
+																CMSampleBuffer containing the original samples */
 											  
-  CMItemCount numSampleTimingEntries,			/*! @param numSampleTimingEntries
-														   Number of entries in sampleTimingArray. Must be 0, 1, or numSamples 
-														   in original sampleBuffer. */
-  const CMSampleTimingInfo *sampleTimingArray,	/*! @param sampleTimingArray
-														   Array of CMSampleTimingInfo structs, one struct per sample.
-														   If all samples have the same duration and are in presentation order, you can pass a single
-														   CMSampleTimingInfo struct with duration set to the duration of one sample, presentationTimeStamp
-														   set to the presentation time of the numerically earliest sample, and decodeTimeStamp set to
-														   kCMTimeInvalid. Behaviour is undefined if samples in a CMSampleBuffer (or even in multiple
-														   buffers in the same stream) have the same presentationTimeStamp. Can be NULL. */
-  CMSampleBufferRef *sBufCopyOut)				/*! @param sBufCopyOut
-														   Returned newly created CMSampleBuffer. */
+  CMItemCount numSampleTimingEntries,						/*! @param numSampleTimingEntries
+																Number of entries in sampleTimingArray. Must be 0, 1, or numSamples
+																in original sampleBuffer. */
+  const CMSampleTimingInfo * CM_NULLABLE sampleTimingArray,	/*! @param sampleTimingArray
+																Array of CMSampleTimingInfo structs, one struct per sample.
+																If all samples have the same duration and are in presentation order, you can pass a single
+																CMSampleTimingInfo struct with duration set to the duration of one sample, presentationTimeStamp
+																set to the presentation time of the numerically earliest sample, and decodeTimeStamp set to
+																kCMTimeInvalid. Behaviour is undefined if samples in a CMSampleBuffer (or even in multiple
+																buffers in the same stream) have the same presentationTimeStamp. Can be NULL. */
+  CM_RETURNS_RETAINED_PARAMETER CMSampleBufferRef CM_NULLABLE * CM_NONNULL sBufCopyOut)	/*! @param sBufCopyOut
+																Returned newly created CMSampleBuffer. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 	
 /*!
@@ -425,18 +624,19 @@ OSStatus CMSampleBufferCreateCopyWithNewTiming(
  */				
 CM_EXPORT
 OSStatus CMSampleBufferCopySampleBufferForRange(
-  CFAllocatorRef allocator,			/*! @param allocator
-											   The allocator to use for allocating the CMSampleBuffer object.
-											   Pass kCFAllocatorDefault to use the default allocator. */
-  CMSampleBufferRef sbuf,    	   	/*! @param sbuf
-												CMSampleBuffer containing the original samples */
+  CFAllocatorRef CM_NULLABLE allocator,					/*! @param allocator
+															The allocator to use for allocating the CMSampleBuffer object.
+															Pass kCFAllocatorDefault to use the default allocator. */
+  CMSampleBufferRef CM_NONNULL sbuf,					/*! @param sbuf
+															CMSampleBuffer containing the original samples */
 											  
-  CFRange sampleRange,				/*! @param sampleRange
-											   The range of samples to copy from sbuf, where sample 0 is the first sample in the sbuf */
-  CMSampleBufferRef *sBufOut)		/*! @param sBufOut
-											   Returned newly created CMSampleBuffer. */
+  CFRange sampleRange,									/*! @param sampleRange
+															The range of samples to copy from sbuf, where sample 0 is the first sample in the sbuf */
+  CM_RETURNS_RETAINED_PARAMETER CMSampleBufferRef CM_NULLABLE * CM_NONNULL sBufOut)	/*! @param sBufOut
+															Returned newly created CMSampleBuffer. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
+CF_IMPLICIT_BRIDGING_ENABLED
 
 /*!
 	@function	CMSampleBufferGetTypeID
@@ -466,10 +666,10 @@ CFTypeID	CMSampleBufferGetTypeID(void)
 */
 CM_EXPORT
 OSStatus CMSampleBufferSetDataBuffer(
-	CMSampleBufferRef sbuf,			/*! @param sbuf
-										CMSampleBuffer being modified. */
-	CMBlockBufferRef dataBuffer)	/*! @param dataBuffer
-										CMBlockBuffer of data being associated. */
+	CMSampleBufferRef CM_NONNULL sbuf,			/*! @param sbuf
+													CMSampleBuffer being modified. */
+	CMBlockBufferRef CM_NONNULL dataBuffer)		/*! @param dataBuffer
+													CMBlockBuffer of data being associated. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -480,9 +680,9 @@ OSStatus CMSampleBufferSetDataBuffer(
 				CMSampleBuffer contains a CVImageBuffer, or if there is some other error.
 */
 CM_EXPORT
-CMBlockBufferRef CMSampleBufferGetDataBuffer(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
-									CMSampleBuffer being interrogated. */
+CMBlockBufferRef CM_NULLABLE CMSampleBufferGetDataBuffer(
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
+												CMSampleBuffer being interrogated. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -493,9 +693,9 @@ CMBlockBufferRef CMSampleBufferGetDataBuffer(
 				CMSampleBuffer contains a CMBlockBuffer, or if there is some other error.
 */
 CM_EXPORT
-CVImageBufferRef CMSampleBufferGetImageBuffer(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
-									CMSampleBuffer being interrogated. */
+CVImageBufferRef CM_NULLABLE CMSampleBufferGetImageBuffer(
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
+												CMSampleBuffer being interrogated. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 									
 /*!
@@ -507,17 +707,19 @@ CVImageBufferRef CMSampleBufferGetImageBuffer(
 */
 CM_EXPORT
 OSStatus CMSampleBufferSetDataBufferFromAudioBufferList(
-	CMSampleBufferRef sbuf,				/*! @param sbuf
-										CMSampleBuffer being modified. */
-	CFAllocatorRef bbufStructAllocator,	/*! @param bbufStructAllocator
-										Allocator to use when creating the CMBlockBuffer structure. */
-	CFAllocatorRef bbufMemoryAllocator,	/*! @param bbufMemoryAllocator
-										Allocator to use for memory block held by the CMBlockBuffer. */
-	uint32_t flags,						/*! @param flags
-										Flags controlling operation. */
-	const AudioBufferList *bufferList)	/*! @param bufferList
-										Buffer list whose data will be copied into the new CMBlockBuffer. */
+	CMSampleBufferRef CM_NONNULL sbuf,				/*! @param sbuf
+														CMSampleBuffer being modified. */
+	CFAllocatorRef CM_NULLABLE bbufStructAllocator,	/*! @param bbufStructAllocator
+														Allocator to use when creating the CMBlockBuffer structure. */
+	CFAllocatorRef CM_NULLABLE bbufMemoryAllocator,	/*! @param bbufMemoryAllocator
+														Allocator to use for memory block held by the CMBlockBuffer. */
+	uint32_t flags,									/*! @param flags
+														Flags controlling operation. */
+	const AudioBufferList * CM_NONNULL bufferList)	/*! @param bufferList
+														Buffer list whose data will be copied into the new CMBlockBuffer. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+CF_IMPLICIT_BRIDGING_DISABLED
 
 /*!
 	@function	CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer
@@ -531,29 +733,30 @@ OSStatus CMSampleBufferSetDataBufferFromAudioBufferList(
 */
 CM_EXPORT
 OSStatus CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(
-	CMSampleBufferRef sbuf,				/*! @param sbuf
-										CMSampleBuffer being accessed. */
-	size_t *bufferListSizeNeededOut,	/*! @param bufferListSizeNeededOut
-										Receives the size of the AudioBufferList required to
-										accommodate the data. May be NULL. */
-	AudioBufferList *bufferListOut,		/*! @param bufferListOut
-										Allocated by the caller, sized as specified by bufferListSizeNeededOut.
-										It is filled in with pointers into the retained blockBufferOut.
-										May be NULL. */
-	size_t bufferListSize,				/*! @param bufferListSize
-										Size of the bufferListOut allocated by the client. If bufferListOut
-										is not NULL and bufferListSize is insufficient, kFigSampleBufferError_ArrayTooSmall
-										is returned. */ 
-	CFAllocatorRef bbufStructAllocator,	/*! @param bbufStructAllocator
-										Allocator to use when creating the CMBlockBuffer structure. */
-	CFAllocatorRef bbufMemoryAllocator,	/*! @param bbufMemoryAllocator
-										Allocator to use for memory block held by the CMBlockBuffer. */
-	uint32_t flags,						/*! @param flags
-										Flags controlling operation. */
-	CMBlockBufferRef *blockBufferOut)	/*! @param blockBufferOut
-										The retained CMBlockBuffer. */
+	CMSampleBufferRef CM_NONNULL sbuf,							/*! @param sbuf
+																	CMSampleBuffer being accessed. */
+	size_t * CM_NULLABLE bufferListSizeNeededOut,				/*! @param bufferListSizeNeededOut
+																	Receives the size of the AudioBufferList required to
+																	accommodate the data. May be NULL. */
+	AudioBufferList * CM_NULLABLE bufferListOut,				/*! @param bufferListOut
+																	Allocated by the caller, sized as specified by bufferListSizeNeededOut.
+																	It is filled in with pointers into the retained blockBufferOut.
+																	May be NULL. */
+	size_t bufferListSize,										/*! @param bufferListSize
+																	Size of the bufferListOut allocated by the client. If bufferListOut
+																	is not NULL and bufferListSize is insufficient, kFigSampleBufferError_ArrayTooSmall
+																	is returned. */
+	CFAllocatorRef CM_NULLABLE bbufStructAllocator,				/*! @param bbufStructAllocator
+																	Allocator to use when creating the CMBlockBuffer structure. */
+	CFAllocatorRef CM_NULLABLE bbufMemoryAllocator,				/*! @param bbufMemoryAllocator
+																	Allocator to use for memory block held by the CMBlockBuffer. */
+	uint32_t flags,												/*! @param flags
+																	Flags controlling operation. */
+	CM_RETURNS_RETAINED_PARAMETER CMBlockBufferRef CM_NULLABLE * CM_NULLABLE blockBufferOut)	/*! @param blockBufferOut
+																	The retained CMBlockBuffer. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
+CF_IMPLICIT_BRIDGING_ENABLED
 
 /*!
 	@function	CMSampleBufferGetAudioStreamPacketDescriptions
@@ -567,17 +770,17 @@ OSStatus CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(
 */
 CM_EXPORT
 OSStatus CMSampleBufferGetAudioStreamPacketDescriptions(
-    CMSampleBufferRef sbuf,							/*! @param sbuf
-													CMSampleBuffer being accessed. */
-    size_t packetDescriptionsSize,					/*! @param packetDescriptionsSize
-    												Size of packetDescriptionsOut as allocated by the caller. */
-    AudioStreamPacketDescription *packetDescriptionsOut,	/*! @param packetDescriptionsOut
-    														Allocated by the caller, receives the packet descriptions
-    														for the samples in the CMSampleBuffer. If non-NULL and
-    														packetDescriptionsSize is too small, kFigSampleBufferError_ArrayTooSmall
-    														is returned. */
-    size_t *packetDescriptionsSizeNeededOut )		/*! @param packetDescriptionsSizeNeededOut
-    												Used to query for the correct size required for packetDescriptionsOut. May be NULL. */
+    CMSampleBufferRef CM_NONNULL sbuf,								/*! @param sbuf
+																		CMSampleBuffer being accessed. */
+    size_t packetDescriptionsSize,									/*! @param packetDescriptionsSize
+																		Size of packetDescriptionsOut as allocated by the caller. */
+     AudioStreamPacketDescription * CM_NULLABLE packetDescriptionsOut,/*! @param packetDescriptionsOut
+																		Allocated by the caller, receives the packet descriptions
+																		for the samples in the CMSampleBuffer. If non-NULL and
+																		packetDescriptionsSize is too small, kFigSampleBufferError_ArrayTooSmall
+																		is returned. */
+    size_t * CM_NULLABLE packetDescriptionsSizeNeededOut )			/*! @param packetDescriptionsSizeNeededOut
+																		Used to query for the correct size required for packetDescriptionsOut. May be NULL. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 
@@ -596,9 +799,9 @@ OSStatus CMSampleBufferGetAudioStreamPacketDescriptions(
 */
 CM_EXPORT
 OSStatus CMSampleBufferGetAudioStreamPacketDescriptionsPtr(
-    CMSampleBufferRef						sbuf,							/*! @param sbuf CMSampleBuffer being modified. */
-    const AudioStreamPacketDescription   ** packetDescriptionsPtrOut,		/*! @param packetDescriptionsPtrOut returned pointer to constant array of AudioStreamPacketDescriptions. May be NULL. */
-    size_t								  * packetDescriptionsSizeOut )		/*! @param packetDescriptionsSizeOut size in bytes of constant array of AudioStreamPacketDescriptions. May be NULL. */
+    CMSampleBufferRef CM_NONNULL 						sbuf,							/*! @param sbuf CMSampleBuffer being modified. */
+    const AudioStreamPacketDescription   * CM_NULLABLE * CM_NULLABLE packetDescriptionsPtrOut,		/*! @param packetDescriptionsPtrOut returned pointer to constant array of AudioStreamPacketDescriptions. May be NULL. */
+    size_t								  * CM_NULLABLE packetDescriptionsSizeOut )		/*! @param packetDescriptionsSizeOut size in bytes of constant array of AudioStreamPacketDescriptions. May be NULL. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -616,10 +819,10 @@ OSStatus CMSampleBufferGetAudioStreamPacketDescriptionsPtr(
 
 CM_EXPORT
 OSStatus CMSampleBufferCopyPCMDataIntoAudioBufferList(
-	CMSampleBufferRef	sbuf,							/*! @param sbuf Contains PCM audio data to be copied. */
+	CMSampleBufferRef CM_NONNULL   sbuf,				/*! @param sbuf Contains PCM audio data to be copied. */
 	int32_t				frameOffset,					/*! @param frameOffset (zero-based) starting frame number to copy from. */
 	int32_t				numFrames,						/*! @param numFrames number of frames to copy */
-	AudioBufferList		*bufferList)					/*! @param  Pre-populated bufferlist */
+	AudioBufferList		* CM_NONNULL bufferList)		/*! @param  Pre-populated bufferlist */
 							__OSX_AVAILABLE_STARTING(__MAC_10_9,__IPHONE_7_0);
 
 /*!
@@ -631,7 +834,7 @@ OSStatus CMSampleBufferCopyPCMDataIntoAudioBufferList(
 */
 CM_EXPORT
 OSStatus CMSampleBufferSetDataReady(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
 									CMSampleBuffer being modified. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
@@ -643,9 +846,34 @@ OSStatus CMSampleBufferSetDataReady(
 */
 CM_EXPORT
 Boolean CMSampleBufferDataIsReady(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
 									CMSampleBuffer being interrogated. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+/*!
+	@function	CMSampleBufferSetDataFailed
+	@abstract	Marks a CMSampleBuffer's data as "failed", to indicate that the data will not become ready.
+*/
+CM_EXPORT
+OSStatus CMSampleBufferSetDataFailed(
+	CMSampleBufferRef CM_NONNULL sbuf,		/*! @param sbuf
+												CMSampleBuffer being modified. */
+	OSStatus status)						/*! @param status
+												Describes the failure. */
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0);
+
+/*!
+	@function	CMSampleBufferHasDataFailed
+	@abstract	Returns whether or not a CMSampleBuffer's data loading request has failed.
+*/
+CM_EXPORT
+Boolean CMSampleBufferHasDataFailed(
+	CMSampleBufferRef CM_NONNULL sbuf,	/*! @param sbuf
+											CMSampleBuffer being interrogated. */
+	OSStatus * CM_NONNULL statusOut)		/*! @param statusOut
+											Points to an OSStatus to receive a status code describing the failure.
+											Pass NULL if you do not want this information. */
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0);
 
 /*!
 	@function	CMSampleBufferMakeDataReady
@@ -660,8 +888,8 @@ Boolean CMSampleBufferDataIsReady(
 */
 CM_EXPORT
 OSStatus CMSampleBufferMakeDataReady(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
-									CMSampleBuffer being modified. */
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
+												CMSampleBuffer being modified. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -675,10 +903,10 @@ OSStatus CMSampleBufferMakeDataReady(
 */
 CM_EXPORT
 OSStatus CMSampleBufferTrackDataReadiness(
-	CMSampleBufferRef sbuf,				/*! @param sbuf
-										CMSampleBuffer being modified. */
-	CMSampleBufferRef sbufToTrack)		/*! @param sbufToTrack
-										CMSampleBuffer being tracked. */
+	CMSampleBufferRef CM_NONNULL sbuf,				/*! @param sbuf
+														CMSampleBuffer being modified. */
+	CMSampleBufferRef CM_NONNULL sbufToTrack)		/*! @param sbufToTrack
+														CMSampleBuffer being tracked. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -690,8 +918,8 @@ OSStatus CMSampleBufferTrackDataReadiness(
 */
 CM_EXPORT 
 OSStatus CMSampleBufferInvalidate( 
-	CMSampleBufferRef sbuf )	/*! @param sbuf
-								CMSampleBuffer being modified. */
+	CMSampleBufferRef CM_NONNULL sbuf )	/*! @param sbuf
+											CMSampleBuffer being modified. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -699,10 +927,10 @@ OSStatus CMSampleBufferInvalidate(
 	@abstract	Client callback called by CMSampleBufferInvalidate.
 */
 typedef void (*CMSampleBufferInvalidateCallback)
-	(CMSampleBufferRef sbuf,	/*! @param sbuf
-									The CMSampleBuffer being invalidated. */
-	uint64_t invalidateRefCon);	/*! @param invalidateRefCon
-									Reference constant provided when the callback was set up. */
+	(CMSampleBufferRef CM_NONNULL sbuf,	/*! @param sbuf
+											The CMSampleBuffer being invalidated. */
+	uint64_t invalidateRefCon);			/*! @param invalidateRefCon
+											Reference constant provided when the callback was set up. */
 
 /*!
 	@function	CMSampleBufferSetInvalidateCallback
@@ -712,13 +940,37 @@ typedef void (*CMSampleBufferInvalidateCallback)
 */
 CM_EXPORT OSStatus 
 CMSampleBufferSetInvalidateCallback( 
-	CMSampleBufferRef sbuf,									/*! @param sbuf
-															The CMSampleBuffer being modified. */
-	CMSampleBufferInvalidateCallback invalidateCallback,	/*! @param invalidateCallback
-															Pointer to function to be called during CMSampleBufferInvalidate. */
-	uint64_t invalidateRefCon )								/*! invalidateRefCon
-															Reference constant to be passed to invalidateCallback. */
+	CMSampleBufferRef CM_NONNULL sbuf,								/*! @param sbuf
+																		The CMSampleBuffer being modified. */
+	CMSampleBufferInvalidateCallback CM_NONNULL invalidateCallback,	/*! @param invalidateCallback
+																		Pointer to function to be called during CMSampleBufferInvalidate. */
+	uint64_t invalidateRefCon )										/*! @param invalidateRefCon
+																		Reference constant to be passed to invalidateCallback. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+#if __BLOCKS__
+/*!
+	@typedef	CMSampleBufferInvalidateHandler
+	@abstract	Client callback called by CMSampleBufferInvalidate.
+*/
+typedef void (^CMSampleBufferInvalidateHandler)
+	(CMSampleBufferRef CM_NONNULL sbuf);	/*! @param sbuf
+									The CMSampleBuffer being invalidated. */
+
+/*!
+	@function	CMSampleBufferSetInvalidateHandler
+	@abstract	Sets the sample buffer's invalidation handler block, which is called during CMSampleBufferInvalidate.
+	@discussion	A sample buffer can only have one invalidation callback.  
+				The invalidation callback is NOT called during ordinary sample buffer finalization.
+*/
+CM_EXPORT OSStatus 
+CMSampleBufferSetInvalidateHandler( 
+	CMSampleBufferRef CM_NONNULL sbuf,									/*! @param sbuf
+																			The CMSampleBuffer being modified. */
+	CMSampleBufferInvalidateHandler CM_NONNULL invalidateHandler )		/*! @param invalidateCallback
+																			Block to be called during CMSampleBufferInvalidate. */
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0);
+#endif // __BLOCKS__
 
 /*!
 	@function	CMSampleBufferIsValid
@@ -728,10 +980,11 @@ CMSampleBufferSetInvalidateCallback(
 */
 CM_EXPORT 
 Boolean CMSampleBufferIsValid( 
-	CMSampleBufferRef sbuf )	/*! @param sbuf
+	CMSampleBufferRef CM_NONNULL sbuf )	/*! @param sbuf
 								The CMSampleBuffer being interrogated. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
+CM_ASSUME_NONNULL_BEGIN
 
 /*!
 	@constant	kCMSampleBufferNotification_DataBecameReady
@@ -739,6 +992,15 @@ Boolean CMSampleBufferIsValid(
 */
 CM_EXPORT const CFStringRef kCMSampleBufferNotification_DataBecameReady
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+/*!
+	@constant	kCMSampleBufferNotification_DataFailed
+	@abstract	Posted on a CMSampleBuffer by CMSampleBufferSetDataFailed to report that the buffer will never become ready.
+*/
+CM_EXPORT const CFStringRef kCMSampleBufferNotification_DataFailed
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0);
+CM_EXPORT const CFStringRef kCMSampleBufferNotificationParameter_OSStatus
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0);
 
 /*!
 	@constant	kCMSampleBufferConduitNotification_InhibitOutputUntil
@@ -791,6 +1053,8 @@ CM_EXPORT const CFStringRef kCMSampleBufferConduitNotificationParameter_MaxUpcom
 CM_EXPORT const CFStringRef kCMSampleBufferConsumerNotification_BufferConsumed  // payload: CFDictionary
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
+CM_ASSUME_NONNULL_END
+
 /*! 
 	@functiongroup Buffer attribute functions
 */
@@ -802,7 +1066,7 @@ CM_EXPORT const CFStringRef kCMSampleBufferConsumerNotification_BufferConsumed  
 */
 CM_EXPORT
 CMItemCount CMSampleBufferGetNumSamples(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
 									CMSampleBuffer being interrogated */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
@@ -815,7 +1079,7 @@ CMItemCount CMSampleBufferGetNumSamples(
 */
 CM_EXPORT
 CMTime CMSampleBufferGetDuration(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
 									CMSampleBuffer being interrogated */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
@@ -829,7 +1093,7 @@ CMTime CMSampleBufferGetDuration(
 */
 CM_EXPORT
 CMTime CMSampleBufferGetPresentationTimeStamp(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
 									CMSampleBuffer being interrogated */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
@@ -842,7 +1106,7 @@ CMTime CMSampleBufferGetPresentationTimeStamp(
 */
 CM_EXPORT
 CMTime CMSampleBufferGetDecodeTimeStamp(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
 									CMSampleBuffer being interrogated */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
@@ -855,7 +1119,7 @@ CMTime CMSampleBufferGetDecodeTimeStamp(
 */
 CM_EXPORT
 CMTime CMSampleBufferGetOutputDuration(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
 									CMSampleBuffer being interrogated */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
@@ -879,7 +1143,7 @@ CMTime CMSampleBufferGetOutputDuration(
 */
 CM_EXPORT
 CMTime CMSampleBufferGetOutputPresentationTimeStamp(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
 									CMSampleBuffer being interrogated */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
@@ -898,11 +1162,11 @@ CMTime CMSampleBufferGetOutputPresentationTimeStamp(
 */
 CM_EXPORT
 OSStatus CMSampleBufferSetOutputPresentationTimeStamp(
-	CMSampleBufferRef sbuf,	/*! @param sbuf
-									CMSampleBuffer being interrogated */
-	CMTime outputPresentationTimeStamp)	 /*! @param outputPresentationTimeStamp
-									New value for OutputPresentationTimeStamp.  
-									Pass kCMTimeInvalid to go back to the default calculation. */
+	CMSampleBufferRef CM_NONNULL sbuf,		/*! @param sbuf
+												CMSampleBuffer being interrogated */
+	CMTime outputPresentationTimeStamp)		/*! @param outputPresentationTimeStamp
+												New value for OutputPresentationTimeStamp.
+												Pass kCMTimeInvalid to go back to the default calculation. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -914,8 +1178,8 @@ OSStatus CMSampleBufferSetOutputPresentationTimeStamp(
 */
 CM_EXPORT
 CMTime CMSampleBufferGetOutputDecodeTimeStamp(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
-									CMSampleBuffer being interrogated */
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
+												CMSampleBuffer being interrogated */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -925,7 +1189,7 @@ CMTime CMSampleBufferGetOutputDecodeTimeStamp(
 				See documentation of CMSampleTimingInfo for details of how a single CMSampleTimingInfo struct can apply to multiple samples.
 				The timingArrayOut must be allocated by the caller, and the number of entries allocated must be passed in timingArrayEntries.
 				If timingArrayOut is NULL, timingArrayEntriesNeededOut will return the required number of entries.  Similarly, 
-				if *timingArrayEntriesNeededOut is too small, kCMSampleBufferError_ArrayTooSmall will be returned, and timingArrayEntriesNeededOut
+				if timingArrayEntries is too small, kCMSampleBufferError_ArrayTooSmall will be returned, and timingArrayEntriesNeededOut
 				will return the required number of entries. In either case, the caller can then make an appropriately-sized timingArrayOut and call again.
 				For example, the caller might pass the address of a CMSampleTimingInfo struct on the stack (as timingArrayOut), and 1 (as
 				timingArrayEntries). If all samples are describable with a single CMSampleTimingInfo struct (or there is only one sample
@@ -937,15 +1201,15 @@ CMTime CMSampleBufferGetOutputDecodeTimeStamp(
 */
 CM_EXPORT
 OSStatus CMSampleBufferGetSampleTimingInfoArray(
-	CMSampleBufferRef sbuf,						/*! @param sbuf
-													CMSampleBuffer being interrogated */
-	CMItemCount timingArrayEntries,				/*! @param timingArrayEntries
-													Number of entries in timingArray */
-	CMSampleTimingInfo *timingArrayOut,			/*! @param timingArrayOut
-													Points to an array of CMSampleTimingInfo structs
-													to receive the timing info. */
-	CMItemCount *timingArrayEntriesNeededOut)	/*! @param timingArrayEntriesNeededOut
-													Number of entries needed for the result. */
+	CMSampleBufferRef CM_NONNULL sbuf,						/*! @param sbuf
+																CMSampleBuffer being interrogated */
+	CMItemCount timingArrayEntries,							/*! @param timingArrayEntries
+																Number of entries in timingArray */
+	CMSampleTimingInfo * CM_NULLABLE timingArrayOut,		/*! @param timingArrayOut
+																Points to an array of CMSampleTimingInfo structs
+																to receive the timing info. */
+	CMItemCount * CM_NULLABLE timingArrayEntriesNeededOut)	/*! @param timingArrayEntriesNeededOut
+																Number of entries needed for the result. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -955,7 +1219,7 @@ OSStatus CMSampleBufferGetSampleTimingInfoArray(
 				See documentation of CMSampleTimingInfo for details of how a single CMSampleTimingInfo struct can apply to multiple samples.
 				The timingArrayOut must be allocated by the caller, and the number of entries allocated must be passed in timingArrayEntries.
 				If timingArrayOut is NULL, timingArrayEntriesNeededOut will return the required number of entries.  Similarly,
-				if *timingArrayEntriesNeededOut is too small, kCMSampleBufferError_ArrayTooSmall will be returned, and timingArrayEntriesNeededOut
+				if timingArrayEntries is too small, kCMSampleBufferError_ArrayTooSmall will be returned, and timingArrayEntriesNeededOut
 				will return the required number of entries. In either case, the caller can then make an appropriately-sized timingArrayOut and call again.
 				For example, the caller might pass the address of a CMSampleTimingInfo struct on the stack (as timingArrayOut), and 1 (as
 				timingArrayEntries). If all samples are describable with a single CMSampleTimingInfo struct (or there is only one sample
@@ -967,15 +1231,15 @@ OSStatus CMSampleBufferGetSampleTimingInfoArray(
 */
 CM_EXPORT
 OSStatus CMSampleBufferGetOutputSampleTimingInfoArray(
-	CMSampleBufferRef sbuf,						/*! @param sbuf
-													CMSampleBuffer being interrogated */
-	CMItemCount timingArrayEntries,				/*! @param timingArrayEntries
-													Number of entries in timingArray */
-	CMSampleTimingInfo *timingArrayOut,			/*! @param timingArrayOut
-													Points to an array of CMSampleTimingInfo structs
-													to receive the timing info. */
-	CMItemCount *timingArrayEntriesNeededOut)	/*! @param timingArrayEntriesNeededOut
-													Number of entries needed for the result. */
+	CMSampleBufferRef CM_NONNULL sbuf,						/*! @param sbuf
+																CMSampleBuffer being interrogated */
+	CMItemCount timingArrayEntries,							/*! @param timingArrayEntries
+																Number of entries in timingArray */
+	CMSampleTimingInfo * CM_NULLABLE timingArrayOut,		/*! @param timingArrayOut
+																Points to an array of CMSampleTimingInfo structs
+																to receive the timing info. */
+	CMItemCount * CM_NULLABLE timingArrayEntriesNeededOut)	/*! @param timingArrayEntriesNeededOut
+																Number of entries needed for the result. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -990,13 +1254,13 @@ OSStatus CMSampleBufferGetOutputSampleTimingInfoArray(
 */
 CM_EXPORT
 OSStatus CMSampleBufferGetSampleTimingInfo(
-	CMSampleBufferRef sbuf,					/*! @param sbuf
-												CMSampleBuffer being interrogated */
-	CMItemIndex sampleIndex,				/*! @param sampleIndex
-												Sample index (0 is first sample in sbuf) */
-	CMSampleTimingInfo *timingInfoOut)		/*! @param timingInfoOut
-												Points to a single CMSampleTimingInfo
-												struct to receive the timing info. */
+	CMSampleBufferRef CM_NONNULL sbuf,					/*! @param sbuf
+															CMSampleBuffer being interrogated */
+	CMItemIndex sampleIndex,							/*! @param sampleIndex
+															Sample index (0 is first sample in sbuf) */
+	CMSampleTimingInfo * CM_NONNULL timingInfoOut)		/*! @param timingInfoOut
+															Points to a single CMSampleTimingInfo
+															struct to receive the timing info. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -1021,15 +1285,15 @@ OSStatus CMSampleBufferGetSampleTimingInfo(
 */
 CM_EXPORT
 OSStatus CMSampleBufferGetSampleSizeArray(
-	CMSampleBufferRef sbuf,						/*! @param sbuf
-													CMSampleBuffer being interrogated */
-	CMItemCount sizeArrayEntries,				/*! @param sizeArrayEntries
-													Number of entries in sizeArray. */
-	size_t *sizeArrayOut,						/*! @param sizeArrayOut
-													Points to an array of size_t values
-													to receive the sample sizes. */
-	CMItemCount *sizeArrayEntriesNeededOut)		/*! @param sizeArrayEntriesNeededOut
-													Number of entries needed for the result. */
+	CMSampleBufferRef CM_NONNULL sbuf,						/*! @param sbuf
+																CMSampleBuffer being interrogated */
+	CMItemCount sizeArrayEntries,							/*! @param sizeArrayEntries
+																Number of entries in sizeArray. */
+	size_t * CM_NULLABLE sizeArrayOut,						/*! @param sizeArrayOut
+																Points to an array of size_t values
+																to receive the sample sizes. */
+	CMItemCount * CM_NULLABLE sizeArrayEntriesNeededOut)	/*! @param sizeArrayEntriesNeededOut
+																Number of entries needed for the result. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 									   
 /*!
@@ -1046,10 +1310,10 @@ OSStatus CMSampleBufferGetSampleSizeArray(
 */
 CM_EXPORT
 size_t CMSampleBufferGetSampleSize(
-	CMSampleBufferRef sbuf,		/*! @param sbuf
-									CMSampleBuffer being interrogated */
-	CMItemIndex sampleIndex)	/*! @param sampleIndex
-									Sample index (0 is first sample in sbuf) */
+	CMSampleBufferRef CM_NONNULL sbuf,		/*! @param sbuf
+												CMSampleBuffer being interrogated */
+	CMItemIndex sampleIndex)				/*! @param sampleIndex
+												Sample index (0 is first sample in sbuf) */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -1060,8 +1324,8 @@ size_t CMSampleBufferGetSampleSize(
 */
 CM_EXPORT
 size_t CMSampleBufferGetTotalSampleSize(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
-									CMSampleBuffer being interrogated */
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
+												CMSampleBuffer being interrogated */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -1071,9 +1335,9 @@ size_t CMSampleBufferGetTotalSampleSize(
 	@result		The format description of the samples in the CMSampleBuffer.  NULL is returned if there is an error.
 */
 CM_EXPORT
-CMFormatDescriptionRef CMSampleBufferGetFormatDescription(
-	CMSampleBufferRef sbuf)		/*! @param sbuf
-									CMSampleBuffer being interrogated */
+CM_NULLABLE CMFormatDescriptionRef CMSampleBufferGetFormatDescription(
+	CMSampleBufferRef CM_NONNULL sbuf)		/*! @param sbuf
+												CMSampleBuffer being interrogated */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*!
@@ -1091,13 +1355,15 @@ CMFormatDescriptionRef CMSampleBufferGetFormatDescription(
 				in the CMSampleBuffer). NULL is returned if there is an error.
 */
 CM_EXPORT
-CFArrayRef CMSampleBufferGetSampleAttachmentsArray(
-	CMSampleBufferRef sbuf,		/*! @param sbuf
-									CMSampleBuffer being interrogated */
-	Boolean createIfNecessary)	/*! @param createIfNecessary
-									Specifies whether an empty array should be
-									created (if there are no sample attachments yet). */
+CM_NULLABLE CFArrayRef CMSampleBufferGetSampleAttachmentsArray(
+	CMSampleBufferRef CM_NONNULL sbuf,		/*! @param sbuf
+												CMSampleBuffer being interrogated */
+	Boolean createIfNecessary)				/*! @param createIfNecessary
+												Specifies whether an empty array should be
+												created (if there are no sample attachments yet). */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+CM_ASSUME_NONNULL_BEGIN
 
 // The following keys may be attached to individual samples via the CMSampleBufferGetSampleAttachmentsArray() interface:
 CM_EXPORT const CFStringRef kCMSampleAttachmentKey_NotSync  // CFBoolean (absence of this key implies Sync)
@@ -1153,6 +1419,8 @@ CM_EXPORT const CFStringRef kCMSampleBufferAttachmentKey_TransitionID
 		(eg, the samples are only being decoded to prime the decoder) the usual convention
 		is to set kCMSampleBufferAttachmentKey_TrimDurationAtStart to the whole duration 
 		and not to set a kCMSampleBufferAttachmentKey_TrimDurationAtEnd attachment.
+		Note that setting or removing kCMSampleBufferAttachmentKey_TrimDurationAtStart from
+		a sample buffer will not adjust an explicitly-set OutputPresentationTimeStamp.
 */
 CM_EXPORT const CFStringRef kCMSampleBufferAttachmentKey_TrimDurationAtStart  // CFDictionary/CMTime, default 0
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
@@ -1352,6 +1620,69 @@ CM_EXPORT const CFStringRef kCMSampleBufferAttachmentKey_DroppedFrameReasonInfo
 CM_EXPORT const CFStringRef kCMSampleBufferDroppedFrameReasonInfo_CameraModeSwitch
 							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 	
+	
+	
+/*!
+	@constant	kCMSampleBufferAttachmentKey_StillImageLensStabilizationInfo
+	@abstract	Indicates information about the lens stabilization applied to the current still image buffer.
+	@discussion
+        Sample buffers that have been captured with a lens stabilization module may have an attachment of
+		kCMSampleBufferAttachmentKey_StillImageLensStabilizationInfo which has information about the stabilization status
+        during the capture.  This key will not be present in CMSampleBuffers coming from cameras without a lens stabilization module.
+*/
+CM_EXPORT const CFStringRef kCMSampleBufferAttachmentKey_StillImageLensStabilizationInfo  // CFString, one of kCMSampleBufferLensStabilizationInfo_*
+							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_9_0);
+
+/*!
+ @constant	kCMSampleBufferLensStabilizationInfo_Active
+ @abstract	The lens stabilization module was active for the duration this buffer.
+ @discussion
+ */
+CM_EXPORT const CFStringRef kCMSampleBufferLensStabilizationInfo_Active  // CFString
+							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_9_0);
+
+/*!
+ @constant	kCMSampleBufferLensStabilizationInfo_OutOfRange
+ @abstract	The motion of the device or duration of the capture was outside of what the stabilization mechanism could support.
+ @discussion
+	The value of kCMSampleBufferAttachmentKey_StillImageLensStabilizationInfo if the module stabilizing the lens was unable to
+	compensate for the movement.
+ */
+CM_EXPORT const CFStringRef kCMSampleBufferLensStabilizationInfo_OutOfRange  // CFString
+							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_9_0);
+
+/*!
+ @constant	kCMSampleBufferLensStabilizationInfo_Unavailable
+ @abstract	The lens stabilization module was unavailable for use.
+ @discussion
+	The value of kCMSampleBufferAttachmentKey_StillImageLensStabilizationInfo if the lens stabilization module is unavailable
+	to compensate for the motion of the device.  The module may be available at a later time.
+ */
+CM_EXPORT const CFStringRef kCMSampleBufferLensStabilizationInfo_Unavailable  // CFString
+							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_9_0);
+
+/*!
+ @constant	kCMSampleBufferLensStabilizationInfo_Off
+ @abstract	The lens stabilization module was not used during this capture.
+ @discussion
+	The value of kCMSampleBufferAttachmentKey_StillImageLensStabilizationInfo if the lens stabilization module was not used for this capture.
+ */
+CM_EXPORT const CFStringRef kCMSampleBufferLensStabilizationInfo_Off  // CFString
+							__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_9_0);
+
+/*!
+	@constant	kCMSampleBufferAttachmentKey_ForceKeyFrame
+	@abstract	Indicates that the current or next video sample buffer should be forced to be encoded as a key frame.
+	@discussion
+		A value of kCFBooleanTrue for kCMSampleBufferAttachmentKey_ForceKeyFrame indicates that the current or next video sample buffer processed in the stream should be forced to be encoded as a key frame.
+		If this attachment is present and kCFBooleanTrue on a sample buffer with a video frame, that video frame will be forced to become a key frame.  If the sample buffer for which this is present and kCFBooleanTrue does not have a valid video frame, the next sample buffer processed that contains a valid video frame will be encoded as a key frame.
+		
+		Usual care should be taken when setting attachments on sample buffers whose orgins and destinations are ambiguous.  For example, CMSetAttachment() is not thread-safe, and CMSampleBuffers may be used in multiple sample buffer streams in a given system.  This can lead to crashes during concurrent access and/or unexpected behavior on alternate sample buffer streams.  Therefore, unless the orgin and destination of a sample buffer is known, the general recommended practice is to synthesize an empty sample buffer with this attachment alone and insert it into the sample buffer stream ahead of the concrete sample buffer rather than setting this attachment on the concrete sample buffer itself.
+ */
+CM_EXPORT const CFStringRef kCMSampleBufferAttachmentKey_ForceKeyFrame
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0); // CFBoolean
+
+CM_ASSUME_NONNULL_END
 
 // Use CMAttachmentBearer APIs to set, get, and remove buffer-level attachments on the CMSampleBuffer itself
 
@@ -1369,14 +1700,39 @@ CM_EXPORT const CFStringRef kCMSampleBufferDroppedFrameReasonInfo_CameraModeSwit
 */
 CM_EXPORT OSStatus
 CMSampleBufferCallForEachSample(
-	CMSampleBufferRef sbuf,		/*! @param sbuf
-									CMSampleBuffer that may contain multiple samples. */
-	OSStatus (*callback)( CMSampleBufferRef sampleBuffer, CMItemCount index, void *refcon ),
-								/*! @param callback
-									Function to be called for each individual sample. */
-	void *refcon )				/*! @param refcon
-									Refcon to be passed to the callback function. */
+	CMSampleBufferRef CM_NONNULL sbuf,		/*! @param sbuf
+												CMSampleBuffer that may contain multiple samples. */
+	OSStatus (* CM_NONNULL callback)( CMSampleBufferRef CM_NONNULL sampleBuffer, CMItemCount index, void * CM_NULLABLE refcon ),
+											/*! @param callback
+												Function to be called for each individual sample. */
+	void * CM_NULLABLE refcon )				/*! @param refcon
+												Refcon to be passed to the callback function. */
 							__OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
+
+#if __BLOCKS__
+/*!
+	@function	CMSampleBufferCallBlockForEachSample
+	@abstract	Calls a block for every individual sample in a sample buffer.
+	@discussion Temporary sample buffers will be created for individual samples,
+				referring to the sample data and containing its timing, size and attachments.
+				The block may retain these sample buffers if desired.
+				If the block returns an error, iteration will stop immediately
+				and the error will be returned.
+				If there are no sample sizes in the provided sample buffer, kCMSampleBufferError_CannotSubdivide will be returned.
+				This will happen, for example, if the samples in the buffer are non-contiguous (eg. non-interleaved audio, where
+				the channel values for a single sample are scattered through the buffer).
+*/
+CM_EXPORT OSStatus
+CMSampleBufferCallBlockForEachSample(
+	CMSampleBufferRef CM_NONNULL sbuf,		/*! @param sbuf
+												CMSampleBuffer that may contain multiple samples. */
+	OSStatus (^ CM_NONNULL handler)( CMSampleBufferRef CM_NONNULL sampleBuffer, CMItemCount index ) )
+											/*! @param handler
+												Block to be called for each individual sample. */
+							__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0);
+#endif // __BLOCKS__
+
+CF_IMPLICIT_BRIDGING_DISABLED
 
 #pragma pack(pop)
     

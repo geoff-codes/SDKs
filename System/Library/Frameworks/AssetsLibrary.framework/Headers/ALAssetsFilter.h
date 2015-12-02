@@ -14,7 +14,7 @@
 
 #if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
 
-NS_CLASS_AVAILABLE(NA, 4_0)
+NS_CLASS_DEPRECATED_IOS(4_0, 9_0, "Use fetchAssetsInAssetCollection:options: on PHAsset and set a mediaType predicate on the PHFetchOptions from the Photos framework instead")
 @interface ALAssetsFilter : NSObject {
 @package
     id _internal;

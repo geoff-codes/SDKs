@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009,2012-2013 Apple Inc. All Rights Reserved.
  * 
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -30,11 +30,15 @@
 #define _SECURITY_SECIMPORTEXPORT_H_
 
 #include <Security/SecBase.h>
+#include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFArray.h>
 #include <CoreFoundation/CFData.h>
 #include <CoreFoundation/CFDictionary.h>
 
 __BEGIN_DECLS
+
+CF_ASSUME_NONNULL_BEGIN
+CF_IMPLICIT_BRIDGING_ENABLED
 
 /*!
     @enum Import/Export options
@@ -43,7 +47,7 @@ __BEGIN_DECLS
     @constant kSecImportExportPassphrase Specifies a passphrase represented by
         a CFStringRef to be used to encrypt/decrypt.
 */
-extern CFStringRef kSecImportExportPassphrase
+extern const CFStringRef kSecImportExportPassphrase
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
@@ -62,15 +66,15 @@ extern CFStringRef kSecImportExportPassphrase
     @constant kSecImportItemCertChain a CFArrayRef holding all relevant 
         certificates for this item's identity
 */
-extern CFStringRef kSecImportItemLabel
+extern const CFStringRef kSecImportItemLabel
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFStringRef kSecImportItemKeyID
+extern const CFStringRef kSecImportItemKeyID
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFStringRef kSecImportItemTrust
+extern const CFStringRef kSecImportItemTrust
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFStringRef kSecImportItemCertChain
+extern const CFStringRef kSecImportItemCertChain
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFStringRef kSecImportItemIdentity
+extern const CFStringRef kSecImportItemIdentity
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
@@ -87,7 +91,10 @@ extern CFStringRef kSecImportItemIdentity
         incorrect password was passed, or data in the container got damaged.
 */
 OSStatus SecPKCS12Import(CFDataRef pkcs12_data, CFDictionaryRef options,
-    CFArrayRef *items) __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
+    CFArrayRef * __nonnull CF_RETURNS_RETAINED items) __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
+
+CF_IMPLICIT_BRIDGING_DISABLED
+CF_ASSUME_NONNULL_END
 
 __END_DECLS
 

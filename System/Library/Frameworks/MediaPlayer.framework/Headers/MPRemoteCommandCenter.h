@@ -8,7 +8,9 @@
 #import <Foundation/Foundation.h>
 #import <MediaPlayer/MediaPlayerDefines.h>
 
-@class MPRemoteCommand, MPSkipIntervalCommand, MPRatingCommand, MPChangePlaybackRateCommand, MPFeedbackCommand;
+NS_ASSUME_NONNULL_BEGIN
+
+@class MPRemoteCommand, MPSkipIntervalCommand, MPRatingCommand, MPChangePlaybackRateCommand, MPFeedbackCommand, MPChangePlaybackPositionCommand;
 
 MP_EXTERN_CLASS_AVAILABLE(7_1)
 @interface MPRemoteCommandCenter : NSObject
@@ -18,6 +20,8 @@ MP_EXTERN_CLASS_AVAILABLE(7_1)
 @property (nonatomic, readonly) MPRemoteCommand *playCommand;
 @property (nonatomic, readonly) MPRemoteCommand *stopCommand;
 @property (nonatomic, readonly) MPRemoteCommand *togglePlayPauseCommand;
+@property (nonatomic, readonly) MPRemoteCommand *enableLanguageOptionCommand;
+@property (nonatomic, readonly) MPRemoteCommand *disableLanguageOptionCommand;
 
 // Previous/Next Track Commands
 @property (nonatomic, readonly) MPRemoteCommand *nextTrackCommand;
@@ -45,6 +49,10 @@ MP_EXTERN_CLASS_AVAILABLE(7_1)
 @property (nonatomic, readonly) MPFeedbackCommand *dislikeCommand;
 @property (nonatomic, readonly) MPFeedbackCommand *bookmarkCommand;
 
+@property (nonatomic, readonly) MPChangePlaybackPositionCommand *changePlaybackPositionCommand;
+
 + (MPRemoteCommandCenter *)sharedCommandCenter;
 
 @end
+
+NS_ASSUME_NONNULL_END

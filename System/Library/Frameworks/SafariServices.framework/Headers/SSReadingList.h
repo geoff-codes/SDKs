@@ -5,20 +5,26 @@
 //  Copyright (c) 2013 Apple Inc. All rights reserved.
 //
 
+#import <SafariServices/SFFoundation.h>
 #import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /*!
     @class SSReadingList
     Provides an interface for adding to a user's Reading List.
 */
-NS_CLASS_AVAILABLE_IOS(7_0) @interface SSReadingList : NSObject
+NS_CLASS_AVAILABLE_IOS(7_0)
+@interface SSReadingList : NSObject
 
 /*!
     @method defaultReadingList
     @result Returns a pointer to a shared instance of SSReadingList, or nil if access to Reading List is not permitted.
     @discussion This class method to obtain the instance of SSReadingList should used instead of direct alloc and init.  
 */
-+ (instancetype)defaultReadingList;
++ (nullable SSReadingList *)defaultReadingList;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 /*!
     @method supportsURL:
@@ -38,13 +44,15 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SSReadingList : NSObject
     @result Returns YES if the item was added, otherwise returns NO and error param is set.
     @discussion Only URLs with http:// or https:// schemes are supported by Reading List.
 */
-- (BOOL)addReadingListItemWithURL:(NSURL *)URL title:(NSString *)title previewText:(NSString *)previewText error:(NSError **)error NS_AVAILABLE_IOS(7_0);
+- (BOOL)addReadingListItemWithURL:(NSURL *)URL title:(nullable NSString *)title previewText:(nullable NSString *)previewText error:(NSError **)error NS_AVAILABLE_IOS(7_0);
 
 @end
 
 // domain for NSError
-extern NSString *const SSReadingListErrorDomain NS_AVAILABLE_IOS(7_0);
+SF_EXTERN NSString *const SSReadingListErrorDomain NS_AVAILABLE_IOS(7_0);
 
 typedef NS_ENUM(NSInteger, SSReadingListErrorCode) {
     SSReadingListErrorURLSchemeNotAllowed = 1,
 } NS_ENUM_AVAILABLE_IOS(7_0);
+
+NS_ASSUME_NONNULL_END

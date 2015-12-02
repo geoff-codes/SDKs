@@ -11,6 +11,8 @@
 
 @class CTCall;
 
+NS_ASSUME_NONNULL_BEGIN
+
 CORETELEPHONY_CLASS_AVAILABLE(4_0)
 @interface CTCallCenter : NSObject
 {
@@ -29,7 +31,7 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
  *   in progress. If no calls are active, this will be nil.
  *   
  */
-@property(readonly, retain) NSSet *currentCalls __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(readonly, retain, nullable) NSSet<CTCall*> *currentCalls __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*
  * callEventHandler
@@ -39,6 +41,8 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
  *   queue when a new call event occurs. Set this property to a block
  *   that is defined in your application to handle call events.
  */
-@property(nonatomic, copy) void (^callEventHandler)(CTCall*) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic, copy, nullable) void (^callEventHandler)(CTCall*) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 @end
+
+NS_ASSUME_NONNULL_END

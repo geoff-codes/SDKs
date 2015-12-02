@@ -1,11 +1,13 @@
 /*
 	NSFileWrapper.h
-	Copyright (c) 1995-2013, Apple Inc. All rights reserved.
+	Copyright (c) 1995-2015, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 
-@class NSData, NSDictionary, NSError, NSURL;
+@class NSData, NSDictionary<KeyType, ObjectType>, NSError, NSString, NSURL;
+
+NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_OPTIONS(NSUInteger, NSFileWrapperReadingOptions) {
     
@@ -46,46 +48,47 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 
 /* A designated initializer for creating an instance whose kind (directory, regular file, or symbolic link) is determined based on what the URL locates. If reading is not successful return nil after setting *outError to an NSError that encapsulates the reason why the file wrapper could not be read.
 */
-- (id)initWithURL:(NSURL *)url options:(NSFileWrapperReadingOptions)options error:(NSError **)outError NS_AVAILABLE(10_6, 4_0);
+- (nullable instancetype)initWithURL:(NSURL *)url options:(NSFileWrapperReadingOptions)options error:(NSError **)outError NS_DESIGNATED_INITIALIZER NS_AVAILABLE(10_6, 4_0);
 
 /* A designated initializer for creating an instance for which -isDirectory returns YES. The passed-in dictionary must contain entries whose values are the file wrappers that are to become children and whose keys are file names. Each file wrapper that does not already have a preferred file name is sent -setPreferredFilename: with the corresponding key as the argument.
 */
-- (id)initDirectoryWithFileWrappers:(NSDictionary *)childrenByPreferredName;
+- (instancetype)initDirectoryWithFileWrappers:(NSDictionary<NSString *, NSFileWrapper *> *)childrenByPreferredName NS_DESIGNATED_INITIALIZER;
 
 /* A designated initializer for creating an instance for which -isRegularFile returns YES.
 */
-- (id)initRegularFileWithContents:(NSData *)contents;
+- (instancetype)initRegularFileWithContents:(NSData *)contents NS_DESIGNATED_INITIALIZER;
 
 /* A designated initializer for creating an instance for which -isSymbolicLink returns YES. -writeToURL:options:originalContentsURL:error: uses the result of sending -relativePath to this URL when creating a symbolic link. (An NSURL initialized by -initFileURLWithPath: returns that entire path when sent -relativePath though.)
 */
-- (id)initSymbolicLinkWithDestinationURL:(NSURL *)url NS_AVAILABLE(10_6, 4_0);
+- (instancetype)initSymbolicLinkWithDestinationURL:(NSURL *)url NS_DESIGNATED_INITIALIZER NS_AVAILABLE(10_6, 4_0);
 
 /* A designated initializer. The data must be in the same format as that returned by -serializedRepresentation.
 */
-- (id)initWithSerializedRepresentation:(NSData *)serializeRepresentation;
+- (nullable instancetype)initWithSerializedRepresentation:(NSData *)serializeRepresentation NS_DESIGNATED_INITIALIZER;
+
+- (nullable instancetype)initWithCoder:(NSCoder *)inCoder NS_DESIGNATED_INITIALIZER;
 
 #pragma mark *** Properties Applicable to Every Kind of File Wrapper ***
 
 /* What kind of file wrapper it is. Invocations of -readFromURL:options:error: may change what subsequent invocations of these methods return.
 */
-- (BOOL)isDirectory;
-- (BOOL)isRegularFile;
-- (BOOL)isSymbolicLink;
+@property (readonly, getter=isDirectory) BOOL directory;
+@property (readonly, getter=isRegularFile) BOOL regularFile;
+@property (readonly, getter=isSymbolicLink) BOOL symbolicLink;
 
 /* The file name that is "preferred." When the receiver is added to a parent directory file wrapper the parent will attempt to use this name as the key into its dictionary of children. Usually the preferred file name will actually get used in this situation but it won't be if that key is already in use. The default implementation of this method causes existing parents to remove and re-add the child to accommodate the change. Preferred file names of children are not effectively preserved when you write a file wrapper to disk and then later instantiate another file wrapper by reading. If your application needs to preserve the user-visible names of attachments it has to make its own arrangements for their storage.
+
+Some instances of NSFileWrapper may be created without a preferredFilename (e.g. -initDirectoryWithFileWrappers: or -initRegularFileWithContents:), meaning preferredFilename may be nil. However, setting nil is never allowed and will result in an exception.
 */
-- (void)setPreferredFilename:(NSString *)fileName;
-- (NSString *)preferredFilename;
+@property (nullable, copy) NSString *preferredFilename;
 
 /* The actual file name. Often it will be the same as the preferred file name but might instead be a name derived from the preferred file name. You can use this method to find out the name of a child that's just been read but you should not use it to find out the name of a child that's about to be written, because the name might be about to change. Send -keyForFileWrapper: to the parent instead.
 */
-- (void)setFilename:(NSString *)fileName;
-- (NSString *)filename;
+@property (nullable, copy) NSString *filename;
 
 /* The file attributes, in a dictionary of the same sort as those returned by -[NSFileManager attributesOfItemAtPath:error:].
 */
-- (void)setFileAttributes:(NSDictionary *)fileAttributes;
-- (NSDictionary *)fileAttributes;
+@property (copy) NSDictionary<NSString *, id> *fileAttributes;
 
 /* On Mac OS X methods for setting and getting the icon are in AppKit's NSFileWrapper(NSExtensions), declared in <AppKit/NSFileWrapperExtensions.h>.
 */
@@ -104,13 +107,13 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 
 /* Recursively write the entire contents of the receiver at the specified location, and return YES if successful. If not successful, return NO after setting *outError to an NSError that encapsulates the reason why the file wrapper could not be written. originalContentsURL may be nil or it may be the location of a previous revision of what is being written. If it is not nil the default implementation of this method attempts to avoid unnecessary I/O by merely writing hard links to regular files instead of actually writing out their contents. The descendant file wrappers must return accurate values when sent -filename for this to work (use NSFileWrapperWritingWithNameUpdating to increase the likelihood of that).
 */
-- (BOOL)writeToURL:(NSURL *)url options:(NSFileWrapperWritingOptions)options originalContentsURL:(NSURL *)originalContentsURL error:(NSError **)outError NS_AVAILABLE(10_6, 4_0);
+- (BOOL)writeToURL:(NSURL *)url options:(NSFileWrapperWritingOptions)options originalContentsURL:(nullable NSURL *)originalContentsURL error:(NSError **)outError NS_AVAILABLE(10_6, 4_0);
 
 #pragma mark *** Serialization ***
 
 /* Return an NSData suitable for passing to -initWithSerializedRepresentation:. This method may return nil if the receiver is the result of reading from the file system (use NSFileWrapperReadingImmediately if appropriate to prevent that).
 */
-- (NSData *)serializedRepresentation;
+@property (nullable, readonly, copy) NSData *serializedRepresentation;
 
 #pragma mark *** Directories ***
 
@@ -130,11 +133,11 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 
 /* Return a dictionary whose values are the receiver's children and whose keys are the unique file name that has been assigned to each one. This method may return nil if the receiver is the result of reading a parent from the file system (use NSFileWrapperReadingImmediately if appropriate to prevent that).
 */
-- (NSDictionary *)fileWrappers;
+@property (nullable, readonly, copy) NSDictionary<NSString *, NSFileWrapper *> *fileWrappers;
 
 /* Return the unique file name that has been assigned to a child or nil if it is not a child of the receiver.
 */
-- (NSString *)keyForFileWrapper:(NSFileWrapper *)child;
+- (nullable NSString *)keyForFileWrapper:(NSFileWrapper *)child;
 
 #pragma mark *** Regular Files ***
 
@@ -142,7 +145,7 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 
 /* Return the receiver's contents. This may return nil if the receiver is the result of reading a parent from the file system (use NSFileWrapperReadingImmediately if appropriate to prevent that).
 */
-- (NSData *)regularFileContents;
+@property (nullable, readonly, copy) NSData *regularFileContents;
 
 #pragma mark *** Symbolic Links ***
 
@@ -150,7 +153,7 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 
 /* Return the destination link of the receiver. This may return nil if the receiver is the result of reading a parent from the file system (use NSFileWrapperReadingImmediately if appropriate to prevent that).
 */
-- (NSURL *)symbolicLinkDestinationURL NS_AVAILABLE(10_6, 4_0);
+@property (nullable, readonly, copy) NSURL *symbolicLinkDestinationURL NS_AVAILABLE(10_6, 4_0);
 
 @end
 
@@ -160,30 +163,19 @@ NS_CLASS_AVAILABLE(10_0, 4_0)
 
 #pragma mark *** Backward Compatibility ***
 
-/* Methods that were deprecated in Mac OS 10.6 and never available on iPhone OS. You can instead use -initWithURL:options:error: and -initSymbolicLinkWithDestinationURL:. One thing to pay attention to is that -initSymbolicLinkWithDestination: sets the preferrred file name but its replacement, -initSymbolicLinkWithDestinationURL:, does not, for better consistency with -initDirectoryWithFileWrappers: and -initRegularFileWithContents:.
-*/
-- (id)initWithPath:(NSString *)path;
-- (id)initSymbolicLinkWithDestination:(NSString *)path;
+/* Methods that were deprecated in OS X 10.6 and never available on iOS. */
 
-/* Methods that were deprecated in Mac OS 10.6 and never available on iPhone OS. You can instead use -matchesContentsOfURL: and -readFromURL:options:error:.
-*/
-- (BOOL)needsToBeUpdatedFromPath:(NSString *)path;
-- (BOOL)updateFromPath:(NSString *)path;
-
-/* Methods that were deprecated in Mac OS 10.6 and never available on iPhone OS. You can instead use -writeToURL:options:originalContentsURL:error:.
-*/
-- (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomicFlag updateFilenames:(BOOL)updateFilenamesFlag;
-
-/* Methods that were deprecated in Mac OS 10.6 and never available on iPhone OS. You can instead instantiate NSFileWrapper with one of the initializers, send it -setPreferredFileName: if necessary, and pass the result to -addFileWrapper:.
-*/
-- (NSString *)addFileWithPath:(NSString *)path;
-- (NSString *)addSymbolicLinkWithDestination:(NSString *)path preferredFilename:(NSString *)filename;
-
-/* Methods that were deprecated in Mac OS 10.6 and never available on iPhone OS. You can instead use -symbolicLinkDestinationURL.
-*/
-- (NSString *)symbolicLinkDestination;
+- (nullable id)initWithPath:(NSString *)path NS_DEPRECATED_MAC(10_0, 10_10, "Use -initWithURL:options:error: instead.");
+- (id)initSymbolicLinkWithDestination:(NSString *)path NS_DEPRECATED_MAC(10_0, 10_10, "Use -initSymbolicLinkWithDestinationURL: and -setPreferredFileName:, if necessary, instead.");
+- (BOOL)needsToBeUpdatedFromPath:(NSString *)path NS_DEPRECATED_MAC(10_0, 10_10, "Use -matchesContentsOfURL: instead.");
+- (BOOL)updateFromPath:(NSString *)path NS_DEPRECATED_MAC(10_0, 10_10, "Use -readFromURL:options:error: instead.");
+- (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomicFlag updateFilenames:(BOOL)updateFilenamesFlag NS_DEPRECATED_MAC(10_0, 10_10, "Use -writeToURL:options:originalContentsURL:error: instead.");
+- (NSString *)addFileWithPath:(NSString *)path NS_DEPRECATED_MAC(10_0, 10_10, "Instantiate a new NSFileWrapper with -initWithURL:options:error:, send it -setPreferredFileName: if necessary, then use -addFileWrapper: instead.");
+- (NSString *)addSymbolicLinkWithDestination:(NSString *)path preferredFilename:(NSString *)filename NS_DEPRECATED_MAC(10_0, 10_10, "Instantiate a new NSFileWrapper with -initWithSymbolicLinkDestinationURL:, send it -setPreferredFileName: if necessary, then use -addFileWrapper: instead.");
+- (NSString *)symbolicLinkDestination NS_DEPRECATED_MAC(10_0, 10_10, "Use -symbolicLinkDestinationURL instead.");
 
 @end
 
 #endif
 
+NS_ASSUME_NONNULL_END

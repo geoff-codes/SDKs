@@ -2,7 +2,7 @@
 //  MKUserTrackingBarButtonItem.h
 //  MapKit
 //
-//  Copyright (c) 2010-2013, Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2014, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIBarButtonItem.h>
@@ -10,10 +10,14 @@
 
 @class MKMapView;
 
-MK_CLASS_AVAILABLE(NA, 5_0)
+NS_ASSUME_NONNULL_BEGIN
+
+MK_CLASS_AVAILABLE(NA, 5_0) __WATCHOS_PROHIBITED
 @interface MKUserTrackingBarButtonItem : UIBarButtonItem
 
-- (id)initWithMapView:(MKMapView *)mapView;
-@property (nonatomic, strong) MKMapView *mapView;
+- (instancetype)initWithMapView:(nullable MKMapView *)mapView NS_DESIGNATED_INITIALIZER;
+@property (nonatomic, strong, nullable) MKMapView *mapView;
 
 @end
+
+NS_ASSUME_NONNULL_END

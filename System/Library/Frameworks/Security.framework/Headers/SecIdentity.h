@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2004,2007-2009 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2002-2004,2007-2009,2012-2013 Apple Inc. All Rights Reserved.
  * 
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -35,6 +35,9 @@
 
 __BEGIN_DECLS
 
+CF_ASSUME_NONNULL_BEGIN
+CF_IMPLICIT_BRIDGING_ENABLED
+
 /*!
 	@function SecIdentityGetTypeID
 	@abstract Returns the type identifier of SecIdentity instances.
@@ -54,7 +57,7 @@ CFTypeID SecIdentityGetTypeID(void)
 */
 OSStatus SecIdentityCopyCertificate(
             SecIdentityRef identityRef, 
-            SecCertificateRef *certificateRef)
+            SecCertificateRef * __nonnull CF_RETURNS_RETAINED certificateRef)
     __OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_2_0);
 
 /*!
@@ -67,8 +70,11 @@ OSStatus SecIdentityCopyCertificate(
 */
 OSStatus SecIdentityCopyPrivateKey(
             SecIdentityRef identityRef, 
-            SecKeyRef *privateKeyRef)
+            SecKeyRef * __nonnull CF_RETURNS_RETAINED privateKeyRef)
     __OSX_AVAILABLE_STARTING(__MAC_10_3, __IPHONE_2_0);
+
+CF_IMPLICIT_BRIDGING_DISABLED
+CF_ASSUME_NONNULL_END
 
 __END_DECLS
 

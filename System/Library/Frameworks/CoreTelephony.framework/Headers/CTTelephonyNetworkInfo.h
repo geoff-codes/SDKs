@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreTelephony/CoreTelephonyDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  * CTRadioAccessTechnologyDataTechnologyDidChangeNotification
  *
@@ -50,7 +52,7 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
  *   A CTCarrier object that contains information about the subscriber's
  *   home cellular service provider.
  */
-@property(readonly, retain) CTCarrier *subscriberCellularProvider __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(readonly, retain, nullable) CTCarrier *subscriberCellularProvider __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*
  * subscriberCellularProviderDidUpdateNotifier
@@ -61,7 +63,7 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
  *   this property to a block that is defined in your application to
  *   receive the newly updated information.
  */
-@property(nonatomic, copy) void (^subscriberCellularProviderDidUpdateNotifier)(CTCarrier*) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic, copy, nullable) void (^subscriberCellularProviderDidUpdateNotifier)(CTCarrier*) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*
  * currentRadioAccessTechnology
@@ -70,6 +72,9 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
  *   The current radio access technology the device is registered with. May be NULL
  *   if device is not registered on any network.
  */
-@property (nonatomic, readonly, retain) NSString* currentRadioAccessTechnology __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+@property (nonatomic, readonly, retain, nullable) NSString* currentRadioAccessTechnology __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 
 @end
+
+NS_ASSUME_NONNULL_END
+

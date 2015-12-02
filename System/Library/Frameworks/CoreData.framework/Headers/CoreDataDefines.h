@@ -1,7 +1,7 @@
 /*
 	CoreDataDefines.h
     Core Data
-    Copyright (c) 2004-2012 Apple Inc.
+    Copyright (c) 2004-2015, Apple Inc.
 	All rights reserved.
 */
 #ifndef _COREDATADEFINES_H
@@ -83,6 +83,12 @@ COREDATA_EXTERN double NSCoreDataVersionNumber;
 #define NSCoreDataVersionNumber10_7_4     358.14
 #define NSCoreDataVersionNumber10_8       407.5
 #define NSCoreDataVersionNumber10_8_2     407.7
+#define NSCoreDataVersionNumber10_9       481.0
+#define NSCoreDataVersionNumber10_9_2     481.1
+#define NSCoreDataVersionNumber10_9_3     481.3
+#define NSCoreDataVersionNumber10_10      526.0
+#define NSCoreDataVersionNumber10_10_2    526.1
+#define NSCoreDataVersionNumber10_10_3    526.2
 
 #define NSCoreDataVersionNumber_iPhoneOS_3_0		241.0
 #define NSCoreDataVersionNumber_iPhoneOS_3_1		248.0
@@ -94,5 +100,10 @@ COREDATA_EXTERN double NSCoreDataVersionNumber;
 #define NSCoreDataVersionNumber_iPhoneOS_5_0		386.1
 #define NSCoreDataVersionNumber_iPhoneOS_5_1		386.5
 #define NSCoreDataVersionNumber_iPhoneOS_6_0		419.0
+#define NSCoreDataVersionNumber_iPhoneOS_6_1		419.1
+#define NSCoreDataVersionNumber_iPhoneOS_7_0		479.1
+#define NSCoreDataVersionNumber_iPhoneOS_7_1		479.3
+#define NSCoreDataVersionNumber_iPhoneOS_8_0		519.0
+#define NSCoreDataVersionNumber_iPhoneOS_8_3		519.15
 
 #endif // _COREDATADEFINES_H

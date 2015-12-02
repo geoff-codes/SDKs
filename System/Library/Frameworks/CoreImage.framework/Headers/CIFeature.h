@@ -6,9 +6,10 @@
 #import <CoreImage/CoreImageDefines.h>
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 /** Generic feature found by a CIDetector. */
-CORE_IMAGE_CLASS_EXPORT
+NS_CLASS_AVAILABLE(10_7, 5_0)
 @interface CIFeature : NSObject {}
 
 /** The type of the feature. */
@@ -21,11 +22,17 @@ CORE_IMAGE_CLASS_EXPORT
 
 /** Specifies the type of a feature that is a face. */
 CORE_IMAGE_EXPORT NSString* const CIFeatureTypeFace;
+/** Specifies the type of a feature that is a rectangle. */
+CORE_IMAGE_EXPORT NSString* const CIFeatureTypeRectangle;
+/** Specifies the type of a feature that is a QR code. */
+CORE_IMAGE_EXPORT NSString* const CIFeatureTypeQRCode;
+/** Specifies the type of a feature that is a text. */
+CORE_IMAGE_EXPORT NSString* const CIFeatureTypeText;
 
 
 /** A face feature found by a CIDetector.
  All positions are relative to the original image. */
-CORE_IMAGE_CLASS_EXPORT
+NS_CLASS_AVAILABLE(10_7, 5_0)
 @interface CIFaceFeature : CIFeature
 {
 	CGRect bounds;
@@ -48,7 +55,6 @@ CORE_IMAGE_CLASS_EXPORT
 	BOOL hasSmile;
 	BOOL leftEyeClosed;
 	BOOL rightEyeClosed;
-	
 }
 
 /** coordinates of various cardinal points within a face.
@@ -79,3 +85,69 @@ CORE_IMAGE_CLASS_EXPORT
 
 @end
 
+/** A rectangle feature found by a CIDetector
+ All positions are relative to the original image. */
+
+NS_CLASS_AVAILABLE(10_10, 8_0)
+@interface CIRectangleFeature : CIFeature
+{
+    CGRect bounds;
+    CGPoint topLeft;
+    CGPoint topRight;
+    CGPoint bottomLeft;
+    CGPoint bottomRight;
+}
+
+@property (readonly) CGRect bounds;
+@property (readonly) CGPoint topLeft;
+@property (readonly) CGPoint topRight;
+@property (readonly) CGPoint bottomLeft;
+@property (readonly) CGPoint bottomRight;
+
+@end
+
+/** A barcode feature found by a CIDetector
+ All positions are relative to the original image. */
+
+NS_CLASS_AVAILABLE(10_10, 8_0)
+@interface CIQRCodeFeature : CIFeature
+{
+    CGRect bounds;
+    CGPoint topLeft;
+    CGPoint topRight;
+    CGPoint bottomLeft;
+    CGPoint bottomRight;
+    NSString* messageString;
+}
+
+@property (readonly) CGRect bounds;
+@property (readonly) CGPoint topLeft;
+@property (readonly) CGPoint topRight;
+@property (readonly) CGPoint bottomLeft;
+@property (readonly) CGPoint bottomRight;
+@property (readonly) NSString* messageString;
+
+
+@end
+
+/** A text feature found by a CIDetector
+ All positions are relative to the original image. */
+
+#if __OBJC2__
+NS_CLASS_AVAILABLE(10_11, 9_0)
+@interface CITextFeature : CIFeature
+{
+}
+
+@property (readonly) CGRect bounds;
+@property (readonly) CGPoint topLeft;
+@property (readonly) CGPoint topRight;
+@property (readonly) CGPoint bottomLeft;
+@property (readonly) CGPoint bottomRight;
+@property (readonly) NSArray *subFeatures;
+
+
+@end
+#endif // __OBJC2__
+
+NS_ASSUME_NONNULL_END

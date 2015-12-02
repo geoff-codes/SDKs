@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreMotion/CMLogItem.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CMMagneticField
  *  
@@ -35,7 +37,7 @@ typedef struct {
  *  Discussion:
  *    Contains a single magnetometer measurement.
  */
-NS_CLASS_AVAILABLE(NA,5_0)
+NS_CLASS_AVAILABLE(NA,5_0) __TVOS_PROHIBITED
 @interface CMMagnetometerData : CMLogItem
 {
 @private
@@ -54,3 +56,5 @@ NS_CLASS_AVAILABLE(NA,5_0)
 @property(readonly, nonatomic) CMMagneticField magneticField;
 
 @end
+
+NS_ASSUME_NONNULL_END

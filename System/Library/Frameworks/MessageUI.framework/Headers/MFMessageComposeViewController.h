@@ -9,6 +9,8 @@
  */
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*!
  @enum       MessageComposeResult
  @abstract   Composition result sent to the delegate upon user completion.
@@ -106,7 +108,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  @property   messageComposeDelegate
  @abstract   This property is the delegate for the MFMessageComposeViewController method callbacks.
  */
-@property(nonatomic,assign) id<MFMessageComposeViewControllerDelegate> messageComposeDelegate /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0)*/;
+@property(nonatomic,assign,nullable) id<MFMessageComposeViewControllerDelegate> messageComposeDelegate /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0)*/;
 
 /*!
  @method     disableUserAttachments;
@@ -123,7 +125,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 			 to display.
 			 </p>After the view has been presented to the user, this property will no longer change the value.
  */
-@property(nonatomic,copy) NSArray *recipients /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0)*/;
+@property(nonatomic,copy,nullable) NSArray<NSString *> *recipients /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0)*/;
 
 /*!
  @property   body
@@ -132,7 +134,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 			 to display.
 			 </p>After the view has been presented to the user, this property will no longer change the value.
  */
-@property(nonatomic,copy) NSString *body /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0)*/;
+@property(nonatomic,copy,nullable) NSString *body /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0)*/;
 
 /*!
  @property   subject
@@ -141,7 +143,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  to display.
  </p>After the view has been presented to the user, this property will no longer change the value.
  */
-@property(nonatomic,copy) NSString *subject /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0)*/;
+@property(nonatomic,copy,nullable) NSString *subject /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0)*/;
 
 /*!
  @property   attachments
@@ -149,7 +151,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  @discussion This property returns an NSArray of NSDictionaries describing the properties of the current attachments.
              See MFMessageComposeViewControllerAttachmentURL, MFMessageComposeViewControllerAttachmentAlternateFilename.
  */
-@property(nonatomic,copy, readonly) NSArray *attachments /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0)*/;
+@property(nonatomic,copy,readonly,nullable) NSArray<NSDictionary *> *attachments /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0)*/;
 
 /*!
  @method     addAttachmentURL:withAlternateFilename:
@@ -159,7 +161,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
              URL must not be NIL.  The alternate filename will be display to the user in leiu of the attachments URL.
              The alternate filename may be NIL.
  */
-- (BOOL)addAttachmentURL:(NSURL *)attachmentURL withAlternateFilename:(NSString *)alternateFilename __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+- (BOOL)addAttachmentURL:(NSURL *)attachmentURL withAlternateFilename:(nullable NSString *)alternateFilename __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 
 /*!
  @method     addAttachmentData:typeIdentifier:filename:
@@ -194,3 +196,5 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result;
 
 @end
+
+NS_ASSUME_NONNULL_END

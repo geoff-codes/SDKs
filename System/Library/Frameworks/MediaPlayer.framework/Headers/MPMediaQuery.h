@@ -8,10 +8,14 @@
 #import <Foundation/Foundation.h>
 #import <MediaPlayer/MediaPlayerDefines.h>
 #import <MediaPlayer/MPMediaItem.h>
+#import <MediaPlayer/MPMediaItemCollection.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class MPMediaPredicate;
+@class MPMediaQuerySection;
 
-enum {
+typedef NS_ENUM(NSInteger, MPMediaGrouping) {
     MPMediaGroupingTitle,
     MPMediaGroupingAlbum,
     MPMediaGroupingArtist,
@@ -20,34 +24,34 @@ enum {
     MPMediaGroupingGenre,
     MPMediaGroupingPlaylist,
     MPMediaGroupingPodcastTitle
-};
-typedef NSInteger MPMediaGrouping;
+} NS_ENUM_AVAILABLE_IOS(3_0) __TVOS_PROHIBITED;
 
 // MPMediaQuery represents a collection of items or playlists determined by a chain of MPMediaPredicate objects.
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaQuery : NSObject <NSSecureCoding, NSCopying>
+MP_EXTERN_CLASS_AVAILABLE(3_0)
+__TVOS_PROHIBITED
+@interface MPMediaQuery : NSObject <NSSecureCoding, NSCopying>
 
-- (id)init;
-- (id)initWithFilterPredicates:(NSSet *)filterPredicates;
-@property(nonatomic, strong) NSSet *filterPredicates;
+- (instancetype)initWithFilterPredicates:(nullable NSSet<MPMediaPredicate *> *)filterPredicates NS_DESIGNATED_INITIALIZER;
+@property (nonatomic, strong, nullable) NSSet<MPMediaPredicate *> *filterPredicates;
 
 - (void)addFilterPredicate:(MPMediaPredicate *)predicate;
 - (void)removeFilterPredicate:(MPMediaPredicate *)predicate;
 
 // Returns an array of MPMediaItems matching the query filter predicates.
 // If no items match this method returns an empty array, otherwise returns nil if an error prevents the items from being fetched.
-@property(nonatomic, readonly) NSArray *items;
+@property (nonatomic, readonly, nullable) NSArray<MPMediaItem *> *items;
 
 // Returns an array of MPMediaItemCollections matching the query filter predicates. The collections are grouped by the groupingType.
-@property(nonatomic, readonly) NSArray *collections;
+@property (nonatomic, readonly, nullable) NSArray<MPMediaItemCollection *> *collections;
 
 // The property used to group collections, defaults to MPMediaGroupingTitle.
-@property(nonatomic) MPMediaGrouping groupingType;
+@property (nonatomic) MPMediaGrouping groupingType;
 
 // Returns an array of MPMediaQuerySection instances representing the section grouping of the query's items or collections.
 // May be nil in cases where no section grouping of the items or collections is appropriate.
-@property (nonatomic, readonly) NSArray *itemSections NS_AVAILABLE_IOS(4_2);
-@property (nonatomic, readonly) NSArray *collectionSections NS_AVAILABLE_IOS(4_2);
+@property (nonatomic, readonly, nullable) NSArray<MPMediaQuerySection *> *itemSections NS_AVAILABLE_IOS(4_2);
+@property (nonatomic, readonly, nullable) NSArray<MPMediaQuerySection *> *collectionSections NS_AVAILABLE_IOS(4_2);
 
 // Base queries which can be used directly or as the basis for custom queries.
 // The groupingType for these queries is preset to the appropriate type for the query.
@@ -67,27 +71,30 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaQuery : NSObject <NSSecureCodin
 // MPMediaPredicate is an abstract class that allows filtering media in an MPMediaQuery.
 // See the concrete subclass MPMediaPropertyPredicate for filtering options.
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPredicate : NSObject <NSSecureCoding> {}
+MP_EXTERN_CLASS_AVAILABLE(3_0)
+__TVOS_PROHIBITED
+@interface MPMediaPredicate : NSObject <NSSecureCoding> {}
 @end
 
 // ------------------------------------------------------------------------
 // MPMediaPropertyPredicate allows filtering based on a specific property value of an item or collection.
 // See MPMediaItem.h and MPMediaPlaylist.h for a list of properties.
 
-enum {
+typedef NS_ENUM(NSInteger, MPMediaPredicateComparison) {
     MPMediaPredicateComparisonEqualTo,
     MPMediaPredicateComparisonContains
-};
-typedef NSInteger MPMediaPredicateComparison;
+} NS_ENUM_AVAILABLE_IOS(3_0) __TVOS_PROHIBITED;
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPropertyPredicate : MPMediaPredicate
+MP_EXTERN_CLASS_AVAILABLE(3_0)
+__TVOS_PROHIBITED
+@interface MPMediaPropertyPredicate : MPMediaPredicate
 
-+ (MPMediaPropertyPredicate *)predicateWithValue:(id)value forProperty:(NSString *)property; // comparisonType is MPMediaPredicateComparisonEqualTo
-+ (MPMediaPropertyPredicate *)predicateWithValue:(id)value forProperty:(NSString *)property comparisonType:(MPMediaPredicateComparison)comparisonType;
++ (MPMediaPropertyPredicate *)predicateWithValue:(nullable id)value forProperty:(NSString *)property; // comparisonType is MPMediaPredicateComparisonEqualTo
++ (MPMediaPropertyPredicate *)predicateWithValue:(nullable id)value forProperty:(NSString *)property comparisonType:(MPMediaPredicateComparison)comparisonType;
 
-@property(nonatomic, readonly, copy) NSString *property;
-@property(nonatomic, readonly, copy) id value;
-@property(nonatomic, readonly) MPMediaPredicateComparison comparisonType;
+@property (nonatomic, readonly, copy) NSString *property;
+@property (nonatomic, readonly, copy, nullable) id value;
+@property (nonatomic, readonly) MPMediaPredicateComparison comparisonType;
 
 @end
 
@@ -106,3 +113,5 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPropertyPredicate : MPMediaPred
 + (NSString *)titlePropertyForGroupingType:(MPMediaGrouping)groupingType NS_AVAILABLE_IOS(4_2);
 
 @end
+
+NS_ASSUME_NONNULL_END

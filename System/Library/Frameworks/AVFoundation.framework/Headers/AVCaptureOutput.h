@@ -3,7 +3,7 @@
  	
  	Framework:  AVFoundation
  
-	Copyright 2010-2013 Apple Inc. All rights reserved.
+	Copyright 2010-2015 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
@@ -30,10 +30,10 @@
     created. When an output is added to an AVCaptureSession, connections are created that map media data from that
     session's inputs to its outputs.
 
-    Concrete AVCaptureOutput instances can be added to an AVCaptureSession using the -[AVCaptureSession addOutput:]
-    method.
+    Concrete AVCaptureOutput instances can be added to an AVCaptureSession using the -[AVCaptureSession addOutput:] and
+    -[AVCaptureSession addOutputWithNoConnections:] methods.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureOutput : NSObject
 {
 @private
@@ -52,7 +52,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 @property(nonatomic, readonly) NSArray *connections;
 
 /*!
- @property connectionWithMediaType:
+ @method connectionWithMediaType:
  @abstract
     Returns the first connection in the connections array with an inputPort of the specified mediaType.
 
@@ -162,7 +162,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     Instances of AVCaptureVideoDataOutput produce video frames suitable for processing using other media APIs.
     Applications can access the frames with the captureOutput:didOutputSampleBuffer:fromConnection: delegate method.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureVideoDataOutput : AVCaptureOutput 
 {
 @private
@@ -231,11 +231,13 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     Specifies the settings used to decode or re-encode video before it is output by the receiver.
 
  @discussion
-    The value of this property is an NSDictionary containing values for compression settings keys defined in
-    AVVideoSettings.h, or pixel buffer attributes keys defined in <CoreVideo/CVPixelBuffer.h>.  When
-    videoSettings is set to nil, the AVCaptureVideoDataOutput vends samples in their device native format.
+    See AVVideoSettings.h for more information on how to construct a video settings dictionary.  To receive samples in their 
+    device native format, set this property to an empty dictionary (i.e. [NSDictionary dictionary]).  To receive samples in
+    a default uncompressed format, set this property to nil.  Note that after this property is set to nil, subsequent
+    querying of this property will yield a non-nil dictionary reflecting the settings used by the AVCaptureSession's current 
+    sessionPreset.
 
-    Currently, the only supported key is kCVPixelBufferPixelFormatTypeKey. Supported pixel formats are
+    On iOS, the only supported key is kCVPixelBufferPixelFormatTypeKey. Supported pixel formats are
     kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange and kCVPixelFormatType_32BGRA.
 */
 @property(nonatomic, copy) NSDictionary *videoSettings;
@@ -263,7 +265,8 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 
     Note that the dictionary of settings is dependent on the current configuration of the receiver's AVCaptureSession
     and its inputs.  The settings dictionary may change if the session's configuration changes.  As such, you should
-    configure your session first, then query the recommended video settings.
+    configure your session first, then query the recommended video settings.  As of iOS 8.3, movies produced with these
+    settings successfully import into the iOS camera roll and sync to and from like devices via iTunes.
 */
 - (NSDictionary *)recommendedVideoSettingsForAssetWriterWithOutputFileType:(NSString *)outputFileType NS_AVAILABLE_IOS(7_0);
 
@@ -302,7 +305,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     rate. The default value is kCMTimeInvalid.  As of iOS 5.0, minFrameDuration is deprecated.  Use AVCaptureConnection's
     videoMinFrameDuration property instead.
 */
-@property(nonatomic) CMTime minFrameDuration NS_DEPRECATED_IOS(4_0, 5_0);
+@property(nonatomic) CMTime minFrameDuration NS_DEPRECATED_IOS(4_0, 5_0, "Use AVCaptureConnection's videoMinFrameDuration property instead.");
 
 /*!
  @property alwaysDiscardsLateVideoFrames
@@ -327,6 +330,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     Defines an interface for delegates of AVCaptureVideoDataOutput to receive captured video sample buffers and be
     notified of late sample buffers that were dropped.
 */
+__TVOS_PROHIBITED
 @protocol AVCaptureVideoDataOutputSampleBufferDelegate <NSObject>
 
 @optional
@@ -382,7 +386,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     Delegates receive this message whenever a video frame is dropped. This method is called once 
     for each dropped frame. The CMSampleBuffer object passed to this delegate method will contain metadata 
     about the dropped video frame, such as its duration and presentation time stamp, but will contain no 
-    actual video data. Included in the sample buffer attachments is the kCMSampleBufferAttachmentKey_DroppedFrameReason,
+    actual video data. On iOS, Included in the sample buffer attachments is the kCMSampleBufferAttachmentKey_DroppedFrameReason,
     which indicates why the frame was dropped.  This method will be called on the dispatch queue specified by the output's
     sampleBufferCallbackQueue property. Because this method will be called on the same dispatch queue that is responsible
     for outputting video frames, it must be efficient to prevent further capture performance problems, such as additional
@@ -407,7 +411,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     Applications can access the sample buffers with the captureOutput:didOutputSampleBuffer:fromConnection: delegate
     method.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureAudioDataOutput : AVCaptureOutput 
 {
 @private
@@ -516,6 +520,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @abstract
     Defines an interface for delegates of AVCaptureAudioDataOutput to receive captured audio sample buffers.
 */
+__TVOS_PROHIBITED
 @protocol AVCaptureAudioDataOutputSampleBufferDelegate <NSObject>
 
 @optional
@@ -574,7 +579,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     The concrete subclasses of AVCaptureFileOutput are AVCaptureMovieFileOutput, which records media to a QuickTime movie
     file, and AVCaptureAudioFileOutput, which writes audio media to a variety of audio file formats.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureFileOutput : AVCaptureOutput 
 {
 @private
@@ -790,6 +795,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     Defines an interface for delegates of AVCaptureFileOutput to respond to events that occur in the process of recording
     a single file.
 */
+__TVOS_PROHIBITED
 @protocol AVCaptureFileOutputRecordingDelegate <NSObject>
 
 @optional
@@ -982,7 +988,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     This method is called whenever the file output receives a single sample buffer (a single video frame or audio buffer,
     for example) from the given connection. This gives delegates an opportunity to start and stop recording or change
     output files at an exact sample boundary if -captureOutputShouldProvideSampleAccurateRecordingStart: returns YES. 
-    If called from within this method, the file output’s startRecordingToOutputFileURL:recordingDelegate: and 
+    If called from within this method, the file output's startRecordingToOutputFileURL:recordingDelegate: and 
     resumeRecording methods are guaranteed to include the received sample buffer in the new file, whereas calls to 
     stopRecording and pauseRecording are guaranteed to include all samples leading up to those in the current sample 
     buffer in the existing file.
@@ -1027,7 +1033,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     options specific to the QuickTime file format, including allowing them to write metadata collections to each file,
     specify media encoding options for each track (Mac OS X), and specify an interval at which movie fragments should be written.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureMovieFileOutput : AVCaptureFileOutput
 {
 @private
@@ -1103,6 +1109,79 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 
 #endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
+#if TARGET_OS_IPHONE
+
+/*!
+ @method recordsVideoOrientationAndMirroringChangesAsMetadataTrackForConnection:
+ @abstract
+    Returns YES if the movie file output will create a timed metadata track that records samples which
+	reflect changes made to the given connection's videoOrientation and videoMirrored properties
+	during recording.
+
+ @param connection
+    A connection delivering video media to the movie file output. This method throws an NSInvalidArgumentException
+	if the connection does not have a mediaType of AVMediaTypeVideo or if the connection does not terminate at
+	the movie file output.
+
+ @discussion
+	See setRecordsVideoOrientationAndMirroringChanges:asMetadataTrackForConnection: for details on the behavior
+	controlled by this value.
+	
+	The default value returned is NO.
+*/
+- (BOOL)recordsVideoOrientationAndMirroringChangesAsMetadataTrackForConnection:(AVCaptureConnection *)connection NS_AVAILABLE_IOS(9_0);
+
+/*!
+ @method setRecordsVideoOrientationAndMirroringChanges:asMetadataTrackForConnection:
+ @abstract
+    Controls whether or not the movie file output will create a timed metadata track that records samples which
+	reflect changes made to the given connection's videoOrientation and videoMirrored properties during
+	recording.
+ 
+ @param doRecordChanges
+    If YES, the movie file output will create a timed metadata track that records samples which reflect changes
+	made to the given connection's videoOrientation and videoMirrored properties during recording.
+
+ @param connection
+    A connection delivering video media to the movie file output. This method throws an NSInvalidArgumentException
+	if the connection does not have a mediaType of AVMediaTypeVideo or if the connection does not terminate at
+	the movie file output.
+
+ @discussion
+    When a recording is started the current state of a video capture connection's videoOrientation and videoMirrored
+	properties are used to build the display matrix for the created video track. The movie file format allows only
+	one display matrix per track, which means that any changes made during a recording to the videoOrientation and
+	videoMirrored properties are not captured.  For example, a user starts a recording with their device in the portrait
+	orientation, and then partway through the recording changes the device to a landscape orientation. The landscape
+	orientation requires a different display matrix, but only the initial display matrix (the portrait display
+	matrix) is recorded for the video track.
+	
+	By invoking this method the client application directs the movie file output to create an additional track in the
+	captured movie. This track is a timed metadata track that is associated with the video track, and contains one or
+	more samples that contain a Video Orientation value (as defined by EXIF and TIFF specifications, which is enumerated
+	by CGImagePropertyOrientation in <ImageIO/CGImageProperties.h>).  The value represents the display matrix corresponding
+	to the AVCaptureConnection's videoOrientation and videoMirrored properties when applied to the input source.  The
+	initial sample written to the timed metadata track represents video track's display matrix. During recording additional
+	samples will be written to the timed metadata track whenever the client application changes the video connection's
+	videoOrienation or videoMirrored properties. Using the above example, when the client application detects the user
+	changing the device from portrait to landscape orientation, it updates the video connection's videoOrientation property,
+	thus causing the movie file output to add a new sample to the timed metadata track.
+	
+	After capture, playback and editing applications can use the timed metadata track to enhance their user's experience.
+	For example, when playing back the captured movie, a playback engine can use the samples to adjust the display of the
+	video samples to keep the video properly oriented.  Another example is an editing application that uses the sample
+	the sample times to suggest cut points for breaking the captured movie into separate clips, where each clip is properly
+	oriented.
+	
+	The default behavior is to not create the timed metadata track.
+	
+	The doRecordChanges value is only observed at the start of recording.  Changes to the value will not have any
+	effect until the next recording is started.
+*/
+- (void)setRecordsVideoOrientationAndMirroringChanges:(BOOL)doRecordChanges asMetadataTrackForConnection:(AVCaptureConnection *)connection NS_AVAILABLE_IOS(9_0);
+
+#endif // TARGET_OS_IPHONE
+
 @end
 
 
@@ -1122,7 +1201,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     specific to the audio file formats, including allowing them to write metadata collections to each file and specify
     audio encoding options.
 */
-NS_CLASS_AVAILABLE(10_7, NA)
+NS_CLASS_AVAILABLE(10_7, NA) __TVOS_PROHIBITED
 @interface AVCaptureAudioFileOutput : AVCaptureFileOutput
 {
 @private
@@ -1218,7 +1297,7 @@ NS_CLASS_AVAILABLE(10_7, NA)
     captureStillImageAsynchronouslyFromConnection:completionHandler: method. Clients can also configure still image
     outputs to produce still images in specific image formats.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureStillImageOutput : AVCaptureOutput 
 {
 @private
@@ -1263,6 +1342,8 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 */
 @property(nonatomic, readonly) NSArray *availableImageDataCodecTypes;
 
+#if TARGET_OS_IPHONE
+
 /*!
  @property stillImageStabilizationSupported
  @abstract
@@ -1302,6 +1383,23 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 @property(nonatomic, readonly, getter=isStillImageStabilizationActive) BOOL stillImageStabilizationActive NS_AVAILABLE_IOS(7_0);
 
 /*!
+ @property highResolutionStillImageOutputEnabled
+ @abstract
+    Indicates whether the receiver should emit still images at the highest resolution supported
+    by its source AVCaptureDevice's activeFormat.
+ 
+ @discussion
+    By default, AVCaptureStillImageOutput emits images with the same dimensions as its source AVCaptureDevice's
+    activeFormat.formatDescription.  However, if you set this property to YES, the receiver emits still images at its source
+    AVCaptureDevice's activeFormat.highResolutionStillImageDimensions.  Note that if you enable video stabilization
+    (see AVCaptureConnection's preferredVideoStabilizationMode) for any output, the high resolution still images 
+    emitted by AVCaptureStillImageOutput may be smaller by 10 or more percent.
+*/
+@property(nonatomic, getter=isHighResolutionStillImageOutputEnabled) BOOL highResolutionStillImageOutputEnabled NS_AVAILABLE_IOS(8_0);
+
+#endif // TARGET_OS_IPHONE
+
+/*!
  @property capturingStillImage
  @abstract
     A boolean value that becomes true when a still image is being captured.
@@ -1334,6 +1432,14 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     <ImageIO/CGImageProperties.h> for a list of keys and value types.
 
     Clients should not assume that the completion handler will be called on a specific thread.
+ 
+    Calls to captureStillImageAsynchronouslyFromConnection:completionHandler: are not synchronized with AVCaptureDevice
+    manual control completion handlers. Setting a device manual control, waiting for its completion, then calling
+    captureStillImageAsynchronouslyFromConnection:completionHandler: DOES NOT ensure that the still image returned reflects
+    your manual control change. It may be from an earlier time. You can compare your manual control completion handler sync time
+    to the returned still image's presentation time. You can retrieve the sample buffer's pts using 
+    CMSampleBufferGetPresentationTimestamp(). If the still image has an earlier timestamp, your manual control command 
+    does not apply to it.
 */
 - (void)captureStillImageAsynchronouslyFromConnection:(AVCaptureConnection *)connection completionHandler:(void (^)(CMSampleBufferRef imageDataSampleBuffer, NSError *error))handler;
 
@@ -1355,6 +1461,189 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 
 @end
 
+#if TARGET_OS_IPHONE
+
+/*!
+ @class AVCaptureBracketedStillImageSettings
+ @abstract
+    AVCaptureBracketedStillImageSettings is an abstract base class that defines an interface for settings
+	pertaining to a bracketed capture.
+ 
+ @discussion
+    AVCaptureBracketedStillImageSettings may not be instantiated directly.
+*/
+NS_CLASS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED
+@interface AVCaptureBracketedStillImageSettings : NSObject
+@end
+
+/*!
+ @class AVCaptureManualExposureBracketedStillImageSettings
+ @abstract
+    AVCaptureManualExposureBracketedStillImageSettings is a concrete subclass of AVCaptureBracketedStillImageSettings
+    to be used when bracketing exposure duration and ISO.
+ 
+ @discussion
+    An AVCaptureManualExposureBracketedStillImageSettings instance defines the exposure duration and ISO
+    settings that should be applied to one image in a bracket. An array of settings objects is passed to
+    -[AVCaptureStillImageOutput captureStillImageBracketAsynchronouslyFromConnection:withSettingsArray:completionHandler:].
+    Min and max duration and ISO values are queryable properties of the AVCaptureDevice supplying data to
+    an AVCaptureStillImageOutput instance. If you wish to leave exposureDuration unchanged for this bracketed
+    still image, you may pass the special value AVCaptureExposureDurationCurrent. To keep ISO unchanged, you may
+    pass AVCaptureISOCurrent (see AVCaptureDevice.h).
+*/
+NS_CLASS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED
+@interface AVCaptureManualExposureBracketedStillImageSettings : AVCaptureBracketedStillImageSettings
+
++ (instancetype)manualExposureSettingsWithExposureDuration:(CMTime)duration ISO:(float)ISO;
+
+@property(readonly) CMTime exposureDuration;
+@property(readonly) float ISO;
+
+@end
+
+/*!
+ @class AVCaptureAutoExposureBracketedStillImageSettings
+ @abstract
+    AVCaptureAutoExposureBracketedStillImageSettings is a concrete subclass of AVCaptureBracketedStillImageSettings
+    to be used when bracketing exposure target bias.
+ 
+ @discussion
+    An AVCaptureAutoExposureBracketedStillImageSettings instance defines the exposure target bias
+    setting that should be applied to one image in a bracket. An array of settings objects is passed to
+    -[AVCaptureStillImageOutput captureStillImageBracketAsynchronouslyFromConnection:withSettingsArray:completionHandler:].
+    Min and max exposure target bias are queryable properties of the AVCaptureDevice supplying data to
+    an AVCaptureStillImageOutput instance. If you wish to leave exposureTargetBias unchanged for this bracketed
+    still image, you may pass the special value AVCaptureExposureTargetBiasCurrent (see AVCaptureDevice.h).
+*/
+NS_CLASS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED
+@interface AVCaptureAutoExposureBracketedStillImageSettings : AVCaptureBracketedStillImageSettings
+
++ (instancetype)autoExposureSettingsWithExposureTargetBias:(float)exposureTargetBias;
+
+@property(readonly) float exposureTargetBias;
+
+@end
+
+/*!
+ @category AVCaptureStillImageOutput (BracketedCaptureMethods)
+ @abstract
+    A category of methods for bracketed still image capture.
+ 
+ @discussion
+    A "still image bracket" is a batch of images taken as quickly as possible in succession,
+    optionally with different settings from picture to picture.
+ 
+    In a bracketed capture, AVCaptureDevice flashMode property is ignored (flash is forced off), as is AVCaptureStillImageOutput's
+    automaticallyEnablesStillImageStabilizationWhenAvailable property (stabilization is forced off).
+*/
+@interface AVCaptureStillImageOutput ( BracketedCaptureMethods )
+
+/*!
+ @property maxBracketedCaptureStillImageCount
+ @abstract
+    Specifies the maximum number of still images that may be taken in a single bracket.
+
+ @discussion
+    AVCaptureStillImageOutput can only satisfy a limited number of image requests in a single bracket without exhausting system
+    resources. The maximum number of still images that may be taken in a single bracket depends on the size of the images being captured,
+    and consequently may vary with AVCaptureSession -sessionPreset and AVCaptureDevice -activeFormat.  Some formats do not support
+    bracketed capture and return a maxBracketedCaptureStillImageCount of 0.  This read-only property is key-value observable.
+    If you exceed -maxBracketedCaptureStillImageCount, then -captureStillImageBracketAsynchronouslyFromConnection:withSettingsArray:completionHandler:
+    fails and the completionHandler is called [settings count] times with a NULL sample buffer and AVErrorMaximumStillImageCaptureRequestsExceeded.
+*/
+@property(nonatomic, readonly) NSUInteger maxBracketedCaptureStillImageCount NS_AVAILABLE_IOS(8_0);
+
+/*!
+ @property lensStabilizationDuringBracketedCaptureSupported
+ @abstract
+    Indicates whether the receiver supports lens stabilization during bracketed captures.
+ 
+ @discussion
+    The receiver's lensStabilizationDuringBracketedCaptureEnabled property can only be set 
+    if this property returns YES.  Its value may change as the session's -sessionPreset or input device's
+    -activeFormat changes.  This read-only property is key-value observable.
+*/
+@property(nonatomic, readonly, getter=isLensStabilizationDuringBracketedCaptureSupported) BOOL lensStabilizationDuringBracketedCaptureSupported NS_AVAILABLE_IOS(9_0);
+
+/*!
+ @property lensStabilizationDuringBracketedCaptureEnabled
+ @abstract
+    Indicates whether the receiver should use lens stabilization during bracketed captures.
+ 
+ @discussion
+    On a receiver where -isLensStabilizationDuringBracketedCaptureSupported returns YES, lens stabilization
+    may be applied to the bracket to reduce blur commonly found in low light photos.  When lens stabilization is 
+    enabled, bracketed still image captures incur additional latency.  Lens stabilization is more effective with longer-exposure
+    captures, and offers limited or no benefit for exposure durations shorter than 1/30 of a second.  It is possible 
+    that during the bracket, the lens stabilization module may run out of correction range and therefore will not be active for 
+    every frame in the bracket.  Each emitted CMSampleBuffer from the bracket will have an attachment of kCMSampleBufferAttachmentKey_StillImageLensStabilizationInfo
+    indicating additional information about stabilization was applied to the buffer, if any.  The default value of 
+    -isLensStabilizationDuringBracketedCaptureEnabled is NO.  This value will be set to NO when -isLensStabilizationDuringBracketedCaptureSupported
+    changes to NO.  Setting this property throws an NSInvalidArgumentException if -isLensStabilizationDuringBracketedCaptureSupported returns NO.
+    This property is key-value observable.
+*/
+@property(nonatomic, getter=isLensStabilizationDuringBracketedCaptureEnabled) BOOL lensStabilizationDuringBracketedCaptureEnabled NS_AVAILABLE_IOS(9_0);
+
+/*!
+ @method prepareToCaptureStillImageBracketFromConnection:withSettingsArray:completionHandler:
+ @abstract
+    Allows the receiver to prepare resources in advance of capturing a still image bracket.
+ 
+ @param connection
+    The connection through which the still image bracket should be captured.
+ 
+ @param settings
+    An array of AVCaptureBracketedStillImageSettings objects. All must be of the same kind of AVCaptureBracketedStillImageSettings
+    subclass, or an NSInvalidArgumentException is thrown.
+ 
+ @param completionHandler
+    A user provided block that will be called asynchronously once resources have successfully been allocated
+    for the specified bracketed capture operation. If sufficient resources could not be allocated, the
+    "prepared" parameter contains NO, and "error" parameter contains a non-nil error value. If [settings count]
+    exceeds -maxBracketedCaptureStillImageCount, then AVErrorMaximumStillImageCaptureRequestsExceeded is returned.
+    You should not assume that the completion handler will be called on a specific thread.
+ 
+ @discussion
+    -maxBracketedCaptureStillImageCount tells you the maximum number of images that may be taken in a single
+    bracket given the current AVCaptureDevice/AVCaptureSession/AVCaptureStillImageOutput configuration. But before
+    taking a still image bracket, additional resources may need to be allocated. By calling
+    -prepareToCaptureStillImageBracketFromConnection:withSettingsArray:completionHandler: first, you are able to 
+    deterministically know when the receiver is ready to capture the bracket with the specified settings array.
+
+*/
+- (void)prepareToCaptureStillImageBracketFromConnection:(AVCaptureConnection *)connection withSettingsArray:(NSArray *)settings completionHandler:(void (^)(BOOL prepared, NSError *error))handler NS_AVAILABLE_IOS(8_0);
+
+/*!
+ @method captureStillImageBracketAsynchronouslyFromConnection:withSettingsArray:completionHandler:
+ @abstract
+    Captures a still image bracket.
+ 
+ @param connection
+    The connection through which the still image bracket should be captured.
+ 
+ @param settings
+    An array of AVCaptureBracketedStillImageSettings objects. All must be of the same kind of AVCaptureBracketedStillImageSettings
+    subclass, or an NSInvalidArgumentException is thrown.
+ 
+ @param completionHandler
+    A user provided block that will be called asynchronously as each still image in the bracket is captured.
+    If the capture request is successful, the "sampleBuffer" parameter contains a valid CMSampleBuffer, the
+    "stillImageSettings" parameter contains the settings object corresponding to this still image, and a nil
+    "error" parameter. If the bracketed capture fails, sample buffer is NULL and error is non-nil.
+    If [settings count] exceeds -maxBracketedCaptureStillImageCount, then AVErrorMaximumStillImageCaptureRequestsExceeded 
+    is returned. You should not assume that the completion handler will be called on a specific thread.
+ 
+ @discussion
+    If you have not called -prepareToCaptureStillImageBracketFromConnection:withSettingsArray:completionHandler: for this 
+    still image bracket request, the bracket may not be taken immediately, as the receiver may internally need to 
+    prepare resources.
+*/
+- (void)captureStillImageBracketAsynchronouslyFromConnection:(AVCaptureConnection *)connection withSettingsArray:(NSArray *)settings completionHandler:(void (^)(CMSampleBufferRef sampleBuffer, AVCaptureBracketedStillImageSettings *stillImageSettings, NSError *error))handler NS_AVAILABLE_IOS(8_0);
+
+@end
+
+#endif // TARGET_OS_IPHONE
+
 
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
@@ -1371,7 +1660,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     being captured by the capture session. The unique ID of a Core Audio device can be obtained from its
     kAudioDevicePropertyDeviceUID property.
 */
-NS_CLASS_AVAILABLE(10_7, NA)
+NS_CLASS_AVAILABLE(10_7, NA) __TVOS_PROHIBITED
 @interface AVCaptureAudioPreviewOutput : AVCaptureOutput 
 {
 @private
@@ -1418,7 +1707,7 @@ NS_CLASS_AVAILABLE(10_7, NA)
     as detected faces. Applications can access the metadata objects with the captureOutput:didOutputMetadataObjects:fromConnection: 
     delegate method.
 */
-NS_CLASS_AVAILABLE(NA, 6_0)
+NS_CLASS_AVAILABLE(NA, 6_0) __TVOS_PROHIBITED
 @interface AVCaptureMetadataOutput : AVCaptureOutput 
 {
 @private
@@ -1520,6 +1809,7 @@ NS_CLASS_AVAILABLE(NA, 6_0)
  @abstract
     Defines an interface for delegates of AVCaptureMetadataOutput to receive emitted objects.
 */
+__TVOS_PROHIBITED
 @protocol AVCaptureMetadataOutputObjectsDelegate <NSObject>
 
 @optional

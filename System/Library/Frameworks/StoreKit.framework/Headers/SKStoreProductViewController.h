@@ -8,17 +8,19 @@
 #import <StoreKit/StoreKitDefines.h>
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol SKStoreProductViewControllerDelegate;
 
 /* View controller to display iTunes Store product information */
-SK_EXTERN_CLASS_AVAILABLE(6_0) @interface SKStoreProductViewController : UIViewController
+SK_EXTERN_CLASS_AVAILABLE(6_0) __TVOS_PROHIBITED @interface SKStoreProductViewController : UIViewController
 
 // Delegate for product page events
-@property(nonatomic, assign) id <SKStoreProductViewControllerDelegate> delegate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+@property(nonatomic, assign, nullable) id <SKStoreProductViewControllerDelegate> delegate NS_AVAILABLE_IOS(6_0);
 
 // Load product view for the product with the given parameters.  See below for parameters (SKStoreProductParameter*).
 // Block is invoked when the load finishes.
-- (void)loadProductWithParameters:(NSDictionary *)parameters completionBlock:(void(^)(BOOL result, NSError *error))block __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+- (void)loadProductWithParameters:(NSDictionary<NSString *, id> *)parameters completionBlock:(nullable void(^)(BOOL result, NSError * __nullable error))block NS_AVAILABLE_IOS(6_0);
 
 @end
 
@@ -28,10 +30,21 @@ SK_EXTERN_CLASS_AVAILABLE(6_0) @interface SKStoreProductViewController : UIViewC
 @optional
 
 // Sent if the user requests that the page be dismissed
-- (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+- (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController __TVOS_PROHIBITED NS_AVAILABLE_IOS(6_0);
 
 @end
 
 
 // iTunes Store item identifier (NSNumber) of the product
-SK_EXTERN NSString * const SKStoreProductParameterITunesItemIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+SK_EXTERN NSString * const SKStoreProductParameterITunesItemIdentifier NS_AVAILABLE_IOS(6_0);
+
+// iTunes Store affiliate token (NSString)
+SK_EXTERN NSString * const SKStoreProductParameterAffiliateToken NS_AVAILABLE_IOS(8_0);
+
+// iTunes Store affiliate campaign token (NSString)
+SK_EXTERN NSString * const SKStoreProductParameterCampaignToken NS_AVAILABLE_IOS(8_0);
+
+// Analytics provider token (NSString)
+SK_EXTERN NSString * const SKStoreProductParameterProviderToken NS_AVAILABLE_IOS(8_3);
+
+NS_ASSUME_NONNULL_END

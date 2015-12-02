@@ -1,5 +1,5 @@
 /*	CFFileDescriptor.h
-	Copyright (c) 2006-2013, Apple Inc. All rights reserved.
+	Copyright (c) 2006-2015, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFFILEDESCRIPTOR__)
@@ -7,15 +7,15 @@
 
 #include <CoreFoundation/CFRunLoop.h>
 
-
+CF_IMPLICIT_BRIDGING_ENABLED
 CF_EXTERN_C_BEGIN
 
 typedef int CFFileDescriptorNativeDescriptor;
 
-typedef struct __CFFileDescriptor * CFFileDescriptorRef;
+typedef struct CF_BRIDGED_MUTABLE_TYPE(id) __CFFileDescriptor * CFFileDescriptorRef;
 
 /* Callback Reason Types */
-enum {
+CF_ENUM(CFOptionFlags) {
     kCFFileDescriptorReadCallBack = 1UL << 0,
     kCFFileDescriptorWriteCallBack = 1UL << 1
 };
@@ -48,7 +48,7 @@ CF_EXPORT CFRunLoopSourceRef	CFFileDescriptorCreateRunLoopSource(CFAllocatorRef 
 
 
 CF_EXTERN_C_END
-
+CF_IMPLICIT_BRIDGING_DISABLED
 
 #endif /* ! __COREFOUNDATION_CFFILEDESCRIPTOR__ */
 

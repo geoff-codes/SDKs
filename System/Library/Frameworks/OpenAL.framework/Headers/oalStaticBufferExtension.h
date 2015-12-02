@@ -31,6 +31,6 @@
 	AL_EXT_STATIC_BUFFER
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-typedef ALvoid	AL_APIENTRY	(*alBufferDataStaticProcPtr) (ALint bid, ALenum format, ALvoid* data, ALsizei size, ALsizei freq);
+typedef ALvoid	AL_APIENTRY	(*alBufferDataStaticProcPtr) (ALint bid, ALenum format, const ALvoid* __nonnull data, ALsizei size, ALsizei freq);
 
 #endif // __OAL_STATIC_BUFFER_EXTENSION_H__

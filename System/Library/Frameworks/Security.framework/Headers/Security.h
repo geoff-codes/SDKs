@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2008 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2007-2008,2012,2014 Apple Inc. All Rights Reserved.
  * 
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -25,9 +25,11 @@
 #include <Security/SecCertificate.h>
 #include <Security/SecIdentity.h>
 #include <Security/SecImportExport.h>
+#include <Security/SecAccessControl.h>
 #include <Security/SecItem.h>
 #include <Security/SecKey.h>
 #include <Security/SecPolicy.h>
 #include <Security/SecRandom.h>
+#include <Security/SecSharedCredential.h>
 #include <Security/SecTrust.h>
 

@@ -1,13 +1,16 @@
 /*
     NSPropertyMapping.h
     Core Data
-    Copyright (c) 2004-2012 Apple Inc.
+    Copyright (c) 2004-2015, Apple Inc.
     All rights reserved.
 */
 
+#import <Foundation/NSArray.h>
 #import <Foundation/NSDictionary.h>
 
-@class NSArray;
+
+NS_ASSUME_NONNULL_BEGIN
+
 @class NSExpression;
 
 NS_CLASS_AVAILABLE(10_5,3_0)
@@ -27,17 +30,16 @@ NS_CLASS_AVAILABLE(10_5,3_0)
 
 /* Returns/sets the name of the property in the destination entity for the mapping.  
 */
-- (NSString *)name;
-- (void)setName:(NSString *)name;
+@property (nullable, copy) NSString *name;
 
 /* Returns/sets the value expression for the property mapping.  The expression is used to create the value for the destination property.
 */
-- (NSExpression *)valueExpression;
-- (void)setValueExpression:(NSExpression *)expression;
+@property (nullable, strong) NSExpression *valueExpression;
 
 /* Returns/sets the user info for the property mapping.
 */
-- (NSDictionary *)userInfo;
-- (void)setUserInfo:(NSDictionary *)userInfo;
+@property (nullable, strong) NSDictionary *userInfo;
 
 @end
+
+NS_ASSUME_NONNULL_END

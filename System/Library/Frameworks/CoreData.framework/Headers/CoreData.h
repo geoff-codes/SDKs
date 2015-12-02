@@ -1,7 +1,7 @@
 /*
 	CoreData.h
 	Core Data
-    Copyright (c) 2004-2012 Apple Inc.
+    Copyright (c) 2004-2015, Apple Inc.
 	All rights reserved.
 */
 
@@ -37,8 +37,14 @@
 
 #import <CoreData/NSIncrementalStore.h>
 #import <CoreData/NSIncrementalStoreNode.h>
+
 #import <CoreData/NSPersistentStoreRequest.h>
+#import <CoreData/NSPersistentStoreResult.h>
 #import <CoreData/NSSaveChangesRequest.h>
+#import <CoreData/NSBatchUpdateRequest.h>
+#import <CoreData/NSBatchDeleteRequest.h>
+
 #import <CoreData/NSMergePolicy.h>
 
 #import <CoreData/NSFetchedResultsController.h>
+

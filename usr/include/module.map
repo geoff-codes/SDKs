@@ -1,4 +1,4 @@
-module Darwin [system] {
+module Darwin [system] [extern_c] {
   // Headers that are repeatedly included, and therefore should not be 
   // assigned to any given module.
   exclude header "_structs.h"
@@ -126,6 +126,11 @@ module Darwin [system] {
 
     module wctype {
       header "wctype.h"
+      export *
+    }
+
+    module xlocale {
+      header "xlocale.h"
       export *
     }
 
@@ -278,8 +283,22 @@ module Darwin [system] {
 
     module pthread {
       header "pthread.h"
-      header "pthread_impl.h"
       export *
+     
+      module impl {
+        header "pthread_impl.h"
+        export *
+      }
+
+      module qos {
+        header "pthread/qos.h"
+        export *
+      }
+      
+      module spis {
+        header "pthread_spis.h"
+        export *
+      }
     }
 
     module pwd {
@@ -1031,6 +1050,14 @@ module Darwin [system] {
     }
   }
 
+  module device {
+
+
+
+
+    exclude header "device/device_types.h"
+  }
+
   module libkern {
     export *
 
@@ -1161,6 +1188,21 @@ module Darwin [system] {
   }
 
   module sys {
+    module _pthread {
+      umbrella "sys/_pthread"
+
+      module * {
+        export *
+      }
+
+      export *
+    }
+
+    module qos {
+      header "sys/qos.h"
+      export *
+    }
+
 
 
 
@@ -1395,14 +1437,23 @@ module Darwin [system] {
   }
 }
 
-module os [system] {
+module os [system] [extern_c] {
+  module base {
+    header "os/base.h"
+    export *
+  }
   module object {
     header "os/object.h"
     export *
   }
+  explicit module activity {
+    header "os/activity.h"
+    export *
+  }
+  exclude header "os/trace.h"
 }
 
-module libkern [system] {
+module libkern [system] [extern_c] {
   module OSCacheControl {
     header "libkern/OSCacheControl.h"
     export *
@@ -1410,4 +1461,7 @@ module libkern [system] {
 
 
 }
+
+
+
 

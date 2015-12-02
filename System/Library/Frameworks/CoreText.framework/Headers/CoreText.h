@@ -2,7 +2,7 @@
  *  CoreText.h
  *  CoreText
  *
- *  Copyright (c) 2006-2013 Apple Inc. All rights reserved.
+ *  Copyright (c) 2006-2015 Apple Inc. All rights reserved.
  *
  */
 
@@ -28,6 +28,7 @@
 #include <CoreText/CTGlyphInfo.h>
 #include <CoreText/CTLine.h>
 #include <CoreText/CTParagraphStyle.h>
+#include <CoreText/CTRubyAnnotation.h>
 #include <CoreText/CTRun.h>
 #include <CoreText/CTRunDelegate.h>
 #include <CoreText/CTStringAttributes.h>
@@ -36,9 +37,7 @@
 #include <CoreText/SFNTLayoutTypes.h>
 #include <CoreText/SFNTTypes.h>
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+CF_EXTERN_C_BEGIN
 
 /*!
     @function   CTGetCoreTextVersion
@@ -69,10 +68,9 @@ uint32_t CTGetCoreTextVersion( void ) CT_AVAILABLE(10_5, 3_2);
 #define kCTVersionNumber10_7 0x00040000
 #define kCTVersionNumber10_8 0x00050000
 #define kCTVersionNumber10_9 0x00060000
+#define kCTVersionNumber10_10 0x00070000
+#define kCTVersionNumber10_11 0x00080000
 
-#if defined(__cplusplus)
-}
-#endif
+CF_EXTERN_C_END
 
 #endif // __CORETEXT__
-

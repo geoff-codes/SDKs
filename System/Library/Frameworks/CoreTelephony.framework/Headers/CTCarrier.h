@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreTelephony/CoreTelephonyDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 CORETELEPHONY_CLASS_AVAILABLE(4_0)
 @interface CTCarrier : NSObject
 
@@ -18,7 +20,7 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
  * Discussion:
  *   An NSString containing the name of the subscriber's cellular service provider.
  */
-@property (nonatomic, readonly, retain) NSString *carrierName __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (nonatomic, readonly, retain, nullable) NSString *carrierName __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*
  * mobileCountryCode
@@ -27,7 +29,7 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
  *   An NSString containing the mobile country code for the subscriber's 
  *   cellular service provider, in its numeric representation
  */
-@property (nonatomic, readonly, retain) NSString *mobileCountryCode __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (nonatomic, readonly, retain, nullable) NSString *mobileCountryCode __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*
  * mobileNetworkCode
@@ -36,7 +38,7 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
  *   An NSString containing the  mobile network code for the subscriber's 
  *   cellular service provider, in its numeric representation
  */
-@property (nonatomic, readonly, retain) NSString *mobileNetworkCode __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (nonatomic, readonly, retain, nullable) NSString *mobileNetworkCode __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*
  * isoCountryCode
@@ -47,7 +49,7 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
  *   country code string
  */
 
-@property (nonatomic, readonly, retain) NSString* isoCountryCode __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property (nonatomic, readonly, retain, nullable) NSString* isoCountryCode __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*
  * allowsVOIP
@@ -60,4 +62,6 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
 @property (nonatomic, readonly, assign) BOOL allowsVOIP __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 @end
+
+NS_ASSUME_NONNULL_END
 

@@ -2,7 +2,16 @@
  *  AddressBook.h
  *  AddressBook
  *
- *  Copyright (c) 2012 Apple Inc. All rights reserved.
+ *  Copyright (c) 2010-2015 Apple Inc. All rights reserved.
+ *
+ *
+ *  !!!! DEPRECATED !!!!
+ *
+ *  AddressBook framework is deprecated as of iOS 9.0
+ *  Please use Contacts framework instead.
+ *
+ *  !!!! DEPRECATED !!!!
+ *
  *
  *  This library is not threadsafe. Recommended practice is to use
  *  a separate ABAddressBook instance on each thread in your

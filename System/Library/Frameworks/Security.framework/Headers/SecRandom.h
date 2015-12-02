@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2007-2009,2012-2013 Apple Inc. All Rights Reserved.
  * 
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -36,6 +36,9 @@
 
 __BEGIN_DECLS
 
+CF_ASSUME_NONNULL_BEGIN
+CF_IMPLICIT_BRIDGING_ENABLED
+
 /*!
     @typedef SecRandomRef
     @abstract Reference to a (psuedo) random number generator.
@@ -53,8 +56,11 @@ extern const SecRandomRef kSecRandomDefault
 	@result Return 0 on success or -1 if something went wrong, check errno
     to find out the real error.
 */
-int SecRandomCopyBytes(SecRandomRef rnd, size_t count, uint8_t *bytes)
+int SecRandomCopyBytes(SecRandomRef __nullable rnd, size_t count, uint8_t *bytes)
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
+
+CF_IMPLICIT_BRIDGING_DISABLED
+CF_ASSUME_NONNULL_END
 
 __END_DECLS
 

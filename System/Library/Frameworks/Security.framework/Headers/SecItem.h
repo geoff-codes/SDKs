@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2006-2013 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2006-2014 Apple Inc. All Rights Reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
- *
+ * 
  * This file contains Original Code and/or Modifications of Original Code
  * as defined in and that are subject to the Apple Public Source License
  * Version 2.0 (the 'License'). You may not use this file except in
  * compliance with the License. Please obtain a copy of the License at
  * http://www.opensource.apple.com/apsl/ and read it before using this
  * file.
- *
+ * 
  * The Original Code and all software distributed under the License are
  * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
@@ -17,7 +17,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
  * Please see the License for the specific language governing rights and
  * limitations under the License.
- *
+ * 
  * @APPLE_LICENSE_HEADER_END@
  */
 
@@ -37,6 +37,9 @@
 
 __BEGIN_DECLS
 
+CF_ASSUME_NONNULL_BEGIN
+CF_IMPLICIT_BRIDGING_ENABLED
+
 /*!
     @enum Class Key Constant
     @discussion Predefined key constant used to get or set item class values in
@@ -46,7 +49,7 @@ __BEGIN_DECLS
         class code.  You use this key to get or set a value of type CFTypeRef
         that contains the item class code.
 */
-extern CFTypeRef kSecClass
+extern const CFStringRef kSecClass
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
@@ -60,15 +63,15 @@ extern CFTypeRef kSecClass
     @constant kSecClassKey Specifies key items.
     @constant kSecClassIdentity Specifies identity items.
 */
-extern CFTypeRef kSecClassGenericPassword
+extern const CFStringRef kSecClassGenericPassword
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
-extern CFTypeRef kSecClassInternetPassword
+extern const CFStringRef kSecClassInternetPassword
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecClassCertificate
+extern const CFStringRef kSecClassCertificate
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
-extern CFTypeRef kSecClassKey
+extern const CFStringRef kSecClassKey
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
-extern CFTypeRef kSecClassIdentity
+extern const CFStringRef kSecClassIdentity
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 
@@ -80,6 +83,7 @@ extern CFTypeRef kSecClassIdentity
 
     kSecClassGenericPassword item attributes:
         kSecAttrAccessible
+        kSecAttrAccessControl
         kSecAttrAccessGroup
         kSecAttrCreationDate
         kSecAttrModificationDate
@@ -93,9 +97,11 @@ extern CFTypeRef kSecClassIdentity
         kSecAttrAccount
         kSecAttrService
         kSecAttrGeneric
+        kSecAttrSynchronizable
 
     kSecClassInternetPassword item attributes:
         kSecAttrAccessible
+        kSecAttrAccessControl
         kSecAttrAccessGroup
         kSecAttrCreationDate
         kSecAttrModificationDate
@@ -113,9 +119,11 @@ extern CFTypeRef kSecClassIdentity
         kSecAttrAuthenticationType
         kSecAttrPort
         kSecAttrPath
+        kSecAttrSynchronizable
 
     kSecClassCertificate item attributes:
         kSecAttrAccessible
+        kSecAttrAccessControl
         kSecAttrAccessGroup
         kSecAttrCertificateType
         kSecAttrCertificateEncoding
@@ -125,9 +133,11 @@ extern CFTypeRef kSecClassIdentity
         kSecAttrSerialNumber
         kSecAttrSubjectKeyID
         kSecAttrPublicKeyHash
+        kSecAttrSynchronizable
 
     kSecClassKey item attributes:
         kSecAttrAccessible
+        kSecAttrAccessControl
         kSecAttrAccessGroup
         kSecAttrKeyClass
         kSecAttrLabel
@@ -144,6 +154,7 @@ extern CFTypeRef kSecClassIdentity
         kSecAttrCanVerify
         kSecAttrCanWrap
         kSecAttrCanUnwrap
+        kSecAttrSynchronizable
 
     kSecClassIdentity item attributes:
         Since an identity is the combination of a private key and a
@@ -161,6 +172,10 @@ extern CFTypeRef kSecClassIdentity
      both attributes are specified on either OS X or iOS, the value for the
      kSecAttrAccessible key may only be one whose name does not end with
      "ThisDeviceOnly", as those cannot sync to another device.
+
+     @constant kSecAttrAccessControl Specifies a dictionary key whose value
+     is SecAccessControl instance which contains access control conditions
+     for item.
 
      @constant kSecAttrAccessGroup Specifies a dictionary key whose value is
      a CFStringRef indicating which access group a item is in.  The access
@@ -218,11 +233,6 @@ extern CFTypeRef kSecClassIdentity
            search keys are limited to the item's class and attributes.
            The only search constant which may be used is kSecMatchLimit; other
            constants using the kSecMatch prefix are not supported at this time.
-
-     @constant kSecAttrSynchronizableAny Specifies that both synchronizable and
-     non-synchronizable results should be returned from this query. This may be
-     used as a value for the kSecAttrSynchronizable dictionary key in a call to
-     SecItemCopyMatching, SecItemUpdate, or SecItemDelete.
 
     @constant kSecAttrCreationDate (read-only) Specifies a dictionary key whose
         value is the item's creation date. You use this key to get a value
@@ -379,93 +389,110 @@ extern CFTypeRef kSecClassIdentity
     @constant kSecAttrCanUnwrap Specifies a dictionary key whole value is a
         CFBooleanRef indicating whether the key in question can be used to
         unwrap another key.
-*/
-extern CFTypeRef kSecAttrAccessible
+    @constant kSecAttrSyncViewHint Specifies a dictionary key whose value is
+	a CFStringRef. This value is part of the primary key of each item, and
+	can be used to help distiguish Sync Views when defining their
+	queries.
+    @constant kSecAttrTokenID Specifies a dictionary key whose presence
+	indicates that item is backed by external token. Value of this attribute
+	is CFStringRef uniquely identifying containing token. When this attribute
+	is not present, item is stored in internal keychain database.
+	Note that once item is created, this attribute cannot be changed - in other
+	words it is not possible to migrate existing items to, from or between tokens.
+	Currently the only available value for this attribute is
+	kSecAttrTokenIDSecureEnclave, which indicates that item (private key) is
+	backed by device's Secure Enclave.
+ */
+extern const CFStringRef kSecAttrAccessible
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_4_0);
-extern CFTypeRef kSecAttrAccessGroup
+extern const CFStringRef kSecAttrAccessControl
+    __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
+extern const CFStringRef kSecAttrAccessGroup
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_3_0);
-extern CFTypeRef kSecAttrSynchronizable
+extern const CFStringRef kSecAttrSynchronizable
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
-extern CFTypeRef kSecAttrSynchronizableAny
-    __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
-extern CFTypeRef kSecAttrCreationDate
+extern const CFStringRef kSecAttrCreationDate
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrModificationDate
+extern const CFStringRef kSecAttrModificationDate
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrDescription
+extern const CFStringRef kSecAttrDescription
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrComment
+extern const CFStringRef kSecAttrComment
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCreator
+extern const CFStringRef kSecAttrCreator
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrType
+extern const CFStringRef kSecAttrType
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrLabel
+extern const CFStringRef kSecAttrLabel
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrIsInvisible
+extern const CFStringRef kSecAttrIsInvisible
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrIsNegative
+extern const CFStringRef kSecAttrIsNegative
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrAccount
+extern const CFStringRef kSecAttrAccount
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrService
+extern const CFStringRef kSecAttrService
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrGeneric
+extern const CFStringRef kSecAttrGeneric
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrSecurityDomain
+extern const CFStringRef kSecAttrSecurityDomain
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrServer
+extern const CFStringRef kSecAttrServer
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocol
+extern const CFStringRef kSecAttrProtocol
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrAuthenticationType
+extern const CFStringRef kSecAttrAuthenticationType
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrPort
+extern const CFStringRef kSecAttrPort
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrPath
+extern const CFStringRef kSecAttrPath
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrSubject
+extern const CFStringRef kSecAttrSubject
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrIssuer
+extern const CFStringRef kSecAttrIssuer
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrSerialNumber
+extern const CFStringRef kSecAttrSerialNumber
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrSubjectKeyID
+extern const CFStringRef kSecAttrSubjectKeyID
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrPublicKeyHash
+extern const CFStringRef kSecAttrPublicKeyHash
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCertificateType
+extern const CFStringRef kSecAttrCertificateType
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCertificateEncoding
+extern const CFStringRef kSecAttrCertificateEncoding
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrKeyClass
+extern const CFStringRef kSecAttrKeyClass
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrApplicationLabel
+extern const CFStringRef kSecAttrApplicationLabel
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrIsPermanent
+extern const CFStringRef kSecAttrIsPermanent
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrApplicationTag
+extern const CFStringRef kSecAttrApplicationTag
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrKeyType
+extern const CFStringRef kSecAttrKeyType
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrKeySizeInBits
+extern const CFStringRef kSecAttrKeySizeInBits
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrEffectiveKeySize
+extern const CFStringRef kSecAttrEffectiveKeySize
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCanEncrypt
+extern const CFStringRef kSecAttrCanEncrypt
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCanDecrypt
+extern const CFStringRef kSecAttrCanDecrypt
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCanDerive
+extern const CFStringRef kSecAttrCanDerive
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCanSign
+extern const CFStringRef kSecAttrCanSign
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCanVerify
+extern const CFStringRef kSecAttrCanVerify
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCanWrap
+extern const CFStringRef kSecAttrCanWrap
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrCanUnwrap
+extern const CFStringRef kSecAttrCanUnwrap
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
+extern const CFStringRef kSecAttrSyncViewHint
+    __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0);
+extern const CFStringRef kSecAttrTokenID
+    __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0);
 
 /*!
     @enum kSecAttrAccessible Value Constants
@@ -489,6 +516,15 @@ extern CFTypeRef kSecAttrCanUnwrap
         regardless of the lock state of the device.  This is not recommended
         for anything except system use. Items with this attribute will migrate
         to a new device when using encrypted backups.
+    @constant kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly Item data can
+         only be accessed while the device is unlocked. This class is only 
+         available if a passcode is set on the device. This is recommended for
+         items that only need to be accessible while the application is in the
+         foreground. Items with this attribute will never migrate to a new 
+         device, so after a backup is restored to a new device, these items 
+         will be missing. No items can be stored in this class on devices 
+         without a passcode. Disabling the device passcode will cause all 
+         items in this class to be deleted.
     @constant kSecAttrAccessibleWhenUnlockedThisDeviceOnly Item data can only
         be accessed while the device is unlocked. This is recommended for items
         that only need be accesible while the application is in the foreground.
@@ -506,17 +542,19 @@ extern CFTypeRef kSecAttrCanUnwrap
         attribute will never migrate to a new device, so after a backup is
         restored to a new device, these items will be missing.
 */
-extern CFTypeRef kSecAttrAccessibleWhenUnlocked
+extern const CFStringRef kSecAttrAccessibleWhenUnlocked
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_4_0);
-extern CFTypeRef kSecAttrAccessibleAfterFirstUnlock
+extern const CFStringRef kSecAttrAccessibleAfterFirstUnlock
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_4_0);
-extern CFTypeRef kSecAttrAccessibleAlways
+extern const CFStringRef kSecAttrAccessibleAlways
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_4_0);
-extern CFTypeRef kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+extern const CFStringRef kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
+    __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
+extern const CFStringRef kSecAttrAccessibleWhenUnlockedThisDeviceOnly
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_4_0);
-extern CFTypeRef kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+extern const CFStringRef kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_4_0);
-extern CFTypeRef kSecAttrAccessibleAlwaysThisDeviceOnly
+extern const CFStringRef kSecAttrAccessibleAlwaysThisDeviceOnly
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_4_0);
 
 /*!
@@ -556,67 +594,67 @@ extern CFTypeRef kSecAttrAccessibleAlwaysThisDeviceOnly
     @constant kSecAttrProtocolIRCS.
     @constant kSecAttrProtocolPOP3S.
 */
-extern CFTypeRef kSecAttrProtocolFTP
+extern const CFStringRef kSecAttrProtocolFTP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolFTPAccount
+extern const CFStringRef kSecAttrProtocolFTPAccount
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolHTTP
+extern const CFStringRef kSecAttrProtocolHTTP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolIRC
+extern const CFStringRef kSecAttrProtocolIRC
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolNNTP
+extern const CFStringRef kSecAttrProtocolNNTP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolPOP3
+extern const CFStringRef kSecAttrProtocolPOP3
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolSMTP
+extern const CFStringRef kSecAttrProtocolSMTP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolSOCKS
+extern const CFStringRef kSecAttrProtocolSOCKS
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolIMAP
+extern const CFStringRef kSecAttrProtocolIMAP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolLDAP
+extern const CFStringRef kSecAttrProtocolLDAP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolAppleTalk
+extern const CFStringRef kSecAttrProtocolAppleTalk
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolAFP
+extern const CFStringRef kSecAttrProtocolAFP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolTelnet
+extern const CFStringRef kSecAttrProtocolTelnet
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolSSH
+extern const CFStringRef kSecAttrProtocolSSH
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolFTPS
+extern const CFStringRef kSecAttrProtocolFTPS
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolHTTPS
+extern const CFStringRef kSecAttrProtocolHTTPS
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolHTTPProxy
+extern const CFStringRef kSecAttrProtocolHTTPProxy
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolHTTPSProxy
+extern const CFStringRef kSecAttrProtocolHTTPSProxy
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolFTPProxy
+extern const CFStringRef kSecAttrProtocolFTPProxy
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolSMB
+extern const CFStringRef kSecAttrProtocolSMB
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolRTSP
+extern const CFStringRef kSecAttrProtocolRTSP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolRTSPProxy
+extern const CFStringRef kSecAttrProtocolRTSPProxy
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolDAAP
+extern const CFStringRef kSecAttrProtocolDAAP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolEPPC
+extern const CFStringRef kSecAttrProtocolEPPC
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolIPP
+extern const CFStringRef kSecAttrProtocolIPP
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolNNTPS
+extern const CFStringRef kSecAttrProtocolNNTPS
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolLDAPS
+extern const CFStringRef kSecAttrProtocolLDAPS
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolTelnetS
+extern const CFStringRef kSecAttrProtocolTelnetS
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolIMAPS
+extern const CFStringRef kSecAttrProtocolIMAPS
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolIRCS
+extern const CFStringRef kSecAttrProtocolIRCS
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrProtocolPOP3S
+extern const CFStringRef kSecAttrProtocolPOP3S
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
@@ -633,21 +671,21 @@ extern CFTypeRef kSecAttrProtocolPOP3S
     @constant kSecAttrAuthenticationTypeHTMLForm.
     @constant kSecAttrAuthenticationTypeDefault.
 */
-extern CFTypeRef kSecAttrAuthenticationTypeNTLM
+extern const CFStringRef kSecAttrAuthenticationTypeNTLM
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrAuthenticationTypeMSN
+extern const CFStringRef kSecAttrAuthenticationTypeMSN
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrAuthenticationTypeDPA
+extern const CFStringRef kSecAttrAuthenticationTypeDPA
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrAuthenticationTypeRPA
+extern const CFStringRef kSecAttrAuthenticationTypeRPA
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrAuthenticationTypeHTTPBasic
+extern const CFStringRef kSecAttrAuthenticationTypeHTTPBasic
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrAuthenticationTypeHTTPDigest
+extern const CFStringRef kSecAttrAuthenticationTypeHTTPDigest
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrAuthenticationTypeHTMLForm
+extern const CFStringRef kSecAttrAuthenticationTypeHTMLForm
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecAttrAuthenticationTypeDefault
+extern const CFStringRef kSecAttrAuthenticationTypeDefault
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
@@ -659,11 +697,11 @@ extern CFTypeRef kSecAttrAuthenticationTypeDefault
     @constant kSecAttrKeyClassPrivate.
     @constant kSecAttrKeyClassSymmetric.
 */
-extern CFTypeRef kSecAttrKeyClassPublic
+extern const CFStringRef kSecAttrKeyClassPublic
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
-extern CFTypeRef kSecAttrKeyClassPrivate
+extern const CFStringRef kSecAttrKeyClassPrivate
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
-extern CFTypeRef kSecAttrKeyClassSymmetric
+extern const CFStringRef kSecAttrKeyClassSymmetric
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 /*!
@@ -674,10 +712,23 @@ extern CFTypeRef kSecAttrKeyClassSymmetric
     @constant kSecAttrKeyTypeRSA.
     @constant kSecAttrKeyTypeEC.
 */
-extern CFTypeRef kSecAttrKeyTypeRSA
+extern const CFStringRef kSecAttrKeyTypeRSA
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
-extern CFTypeRef kSecAttrKeyTypeEC
+extern const CFStringRef kSecAttrKeyTypeEC
     __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_4_0);
+
+/*!
+    @enum kSecAttrSynchronizable Value Constants
+    @discussion Predefined item attribute constants used to get or set values
+		in a dictionary. The kSecAttrSynchronizable constant is the key
+		and its value is one of the constants defined here.
+    @constant kSecAttrSynchronizableAny Specifies that both synchronizable and
+        non-synchronizable results should be returned from this query. This may
+        be used as a value for the kSecAttrSynchronizable dictionary key in a
+        call to SecItemCopyMatching, SecItemUpdate, or SecItemDelete.
+*/
+extern const CFStringRef kSecAttrSynchronizableAny
+    __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_7_0);
 
 /*!
     @enum Search Constants
@@ -722,29 +773,29 @@ extern CFTypeRef kSecAttrKeyTypeEC
         may be returned; used as a value for the kSecMatchLimit dictionary
         key.
 */
-extern CFTypeRef kSecMatchPolicy
+extern const CFStringRef kSecMatchPolicy
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchItemList
+extern const CFStringRef kSecMatchItemList
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchSearchList
+extern const CFStringRef kSecMatchSearchList
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchIssuers
+extern const CFStringRef kSecMatchIssuers
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchEmailAddressIfPresent
+extern const CFStringRef kSecMatchEmailAddressIfPresent
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchSubjectContains
+extern const CFStringRef kSecMatchSubjectContains
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchCaseInsensitive
+extern const CFStringRef kSecMatchCaseInsensitive
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchTrustedOnly
+extern const CFStringRef kSecMatchTrustedOnly
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchValidOnDate
+extern const CFStringRef kSecMatchValidOnDate
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchLimit
+extern const CFStringRef kSecMatchLimit
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchLimitOne
+extern const CFStringRef kSecMatchLimitOne
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecMatchLimitAll
+extern const CFStringRef kSecMatchLimitAll
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 
@@ -774,13 +825,13 @@ extern CFTypeRef kSecMatchLimitAll
         is of type CFBooleanRef. A value of kCFBooleanTrue indicates that a
         persistent reference to an item (CFDataRef) should be returned.
 */
-extern CFTypeRef kSecReturnData
+extern const CFStringRef kSecReturnData
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecReturnAttributes
+extern const CFStringRef kSecReturnAttributes
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecReturnRef
+extern const CFStringRef kSecReturnRef
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecReturnPersistentRef
+extern const CFStringRef kSecReturnPersistentRef
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 
@@ -801,11 +852,11 @@ extern CFTypeRef kSecReturnPersistentRef
         the caller and used on a subsequent invocation of the application (or
         even a different application) to retrieve the item referenced by it.
 */
-extern CFTypeRef kSecValueData
+extern const CFStringRef kSecValueData
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecValueRef
+extern const CFStringRef kSecValueRef
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
-extern CFTypeRef kSecValuePersistentRef
+extern const CFStringRef kSecValuePersistentRef
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 
@@ -819,9 +870,75 @@ extern CFTypeRef kSecValuePersistentRef
         SecCertificateRef, SecIdentityRef, or CFDataRef (for a persistent
         item reference.) The items in the array must all be of the same
         type. When this attribute is provided, no keychains are searched.
+    @constant kSecUseOperationPrompt Specifies a dictionary key whose value
+        is a CFStringRef that represents a user-visible string describing
+        the operation for which the application is attempting to authenticate.
+        The application is responsible for the text localization.
+    @constant kSecUseNoAuthenticationUI Specifies a dictionary key whose value
+        is a CFBooleanRef. If provided with a value of kCFBooleanTrue, the error
+        errSecInteractionNotAllowed will be returned if the item is attempting
+        to authenticate with UI.
+    @constant kSecUseAuthenticationUI Specifies a dictionary key whose value
+        is one of kSecUseAuthenticationUIAllow, kSecUseAuthenticationUIFail, kSecUseAuthenticationUISkip.
+    @constant kSecUseAuthenticationContext Specifies a dictionary key whose value
+        is LAContext to be used for keychain item authentication.
+        * If the item requires authentication and this key is omitted, a new context
+          will be created just for the purpose of the single call.
+        * If the specified context has been previously authenticated, the operation
+          will succeed without asking user for authentication.
+        * If the specified context has not been previously authenticated, the new
+          authentication will be started on this context, allowing caller to
+          eventually reuse the sucessfully authenticated context in subsequent
+          keychain operations.
 */
-extern CFTypeRef kSecUseItemList
+extern const CFStringRef kSecUseItemList
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
+extern const CFStringRef kSecUseOperationPrompt
+    __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
+extern const CFStringRef kSecUseNoAuthenticationUI
+    __OSX_AVAILABLE_BUT_DEPRECATED_MSG(__MAC_10_10, __MAC_10_11, __IPHONE_8_0, __IPHONE_9_0, "Use a kSecAuthenticationUI instead.");
+extern const CFStringRef kSecUseAuthenticationUI
+    __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0);
+extern const CFStringRef kSecUseAuthenticationContext
+    __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0);
+
+/*!
+    @enum kSecUseAuthenticationUI Value Constants
+    @discussion Predefined item attribute constants used to get or set values
+        in a dictionary. The kSecUseAuthenticationUI constant is the key and its
+        value is one of the constants defined here.
+        If the key kSecUseAuthenticationUI not provided then kSecUseAuthenticationUIAllow
+        is used as default.
+    @constant kSecUseAuthenticationUIAllow Specifies that authenticate UI can appear.
+    @constant kSecUseAuthenticationUIFail Specifies that the error
+        errSecInteractionNotAllowed will be returned if an item needs
+        to authenticate with UI
+    @constant kSecUseAuthenticationUIAllowSkip Specifies that all items which need
+        to authenticate with UI will be silently skipped. This value can be used
+        only with SecItemCopyMatching.
+ */
+extern const CFStringRef kSecUseAuthenticationUIAllow
+    __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0);
+extern const CFStringRef kSecUseAuthenticationUIFail
+    __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0);
+extern const CFStringRef kSecUseAuthenticationUISkip
+    __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0);
+
+/*!
+     @enum kSecAttrTokenID Value Constants
+     @discussion Predefined item attribute constant used to get or set values
+         in a dictionary. The kSecAttrTokenID constant is the key and its value
+         can be kSecAttrTokenIDSecureEnclave.
+     @constant kSecAttrTokenIDSecureEnclave Specifies well-known identifier of the
+         token implemented using device's Secure Enclave. The only keychain items
+         supported by the Secure Enclave token are 256-bit elliptic curve keys
+         (kSecAttrKeyTypeEC).  Keys must be generated on the secure enclave using
+         SecKeyGenerateKeyPair call with kSecAttrTokenID set to
+         kSecAttrTokenIDSecureEnclave in the parameters dictionary, it is not
+         possible to import pregenerated keys to kSecAttrTokenIDSecureEnclave token.
+*/
+extern const CFStringRef kSecAttrTokenIDSecureEnclave
+    __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_9_0);
 
 /*!
     @function SecItemCopyMatching
@@ -879,7 +996,7 @@ extern CFTypeRef kSecUseItemList
     specify a kSecValuePersistentRef whose value a CFDataRef (the persistent
     reference), and a kSecReturnRef whose value is kCFBooleanTrue.
 */
-OSStatus SecItemCopyMatching(CFDictionaryRef query, CFTypeRef *result)
+OSStatus SecItemCopyMatching(CFDictionaryRef query, CFTypeRef * __nullable CF_RETURNS_RETAINED result)
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
@@ -916,7 +1033,7 @@ OSStatus SecItemCopyMatching(CFDictionaryRef query, CFTypeRef *result)
         returned as a CFDictionaryRef containing all the requested data.
       * If a result type is not specified, no results are returned.
 */
-OSStatus SecItemAdd(CFDictionaryRef attributes, CFTypeRef *result)
+OSStatus SecItemAdd(CFDictionaryRef attributes, CFTypeRef * __nullable CF_RETURNS_RETAINED result)
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
 
 /*!
@@ -967,6 +1084,9 @@ OSStatus SecItemUpdate(CFDictionaryRef query,
 */
 OSStatus SecItemDelete(CFDictionaryRef query)
     __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_2_0);
+
+CF_IMPLICIT_BRIDGING_DISABLED
+CF_ASSUME_NONNULL_END
 
 __END_DECLS
 

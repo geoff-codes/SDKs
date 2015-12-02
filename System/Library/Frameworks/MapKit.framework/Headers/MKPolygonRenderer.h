@@ -2,16 +2,20 @@
 //  MKPolygonRenderer.h
 //  MapKit
 //
-//  Copyright (c) 2013, Apple Inc. All rights reserved.
+//  Copyright (c) 2013-2014, Apple Inc. All rights reserved.
 //
 
 #import <MapKit/MKOverlayPathRenderer.h>
 #import <MapKit/MKPolygon.h>
 
-MK_CLASS_AVAILABLE(10_9, 7_0)
+NS_ASSUME_NONNULL_BEGIN
+
+MK_CLASS_AVAILABLE(10_9, 7_0) __WATCHOS_PROHIBITED
 @interface MKPolygonRenderer : MKOverlayPathRenderer
 
-- (id)initWithPolygon:(MKPolygon *)polygon;
+- (instancetype)initWithPolygon:(MKPolygon *)polygon;
 @property (nonatomic, readonly) MKPolygon *polygon;
 
 @end
+
+NS_ASSUME_NONNULL_END

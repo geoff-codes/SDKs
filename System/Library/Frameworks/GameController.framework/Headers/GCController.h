@@ -7,6 +7,8 @@
 
 #import <GameController/GameController.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  Use these constants with NSNotificationCenter to listen to connection and disconnection events.
  
@@ -37,8 +39,12 @@ GAMECONTROLLER_EXTERN NSString *const GCControllerDidDisconnectNotification;
  Controllers retain the player index they have been assigned between game sessions, so if you wish to unset the player index of a
  controller set it back to this value.
  */
-enum {
+typedef NS_ENUM(NSInteger, GCControllerPlayerIndex) {
     GCControllerPlayerIndexUnset = -1,
+    GCControllerPlayerIndex1 = 0,
+    GCControllerPlayerIndex2,
+    GCControllerPlayerIndex3,
+    GCControllerPlayerIndex4,
 };
 
 /**
@@ -56,30 +62,45 @@ GAMECONTROLLER_EXPORT
 @interface GCController : NSObject
 
 /**
- Set this block to be notified when a user intendeds to suspend or resume the current game state. A controller will have a button
+ Set this block to be notified when a user intends to suspend or resume the current game state. A controller will have a button
  dedicated to suspending and resuming play and invoking context sensitive actions. During event handling the system will
  notify the application using this block such that the application can handle the suspension and resumption from the given controller.
  
  Use this to implement your canonical transition to a pause menu for example if that is your application's desired handling
  of suspension in play. You may pause and resume base don game state as well so the event is only called each time the
  pause/resume button is pressed.
- 
- @param controller the controller that is suspending or resuming play.
  */
-@property (copy) void (^controllerPausedHandler)(GCController *controller);
+@property (nonatomic, copy, nullable) void (^controllerPausedHandler)(GCController *controller);
+
+/**
+ The dispatch queue that element value change handlers are submitted on. The default queue is main, and setting this to any
+ other queue will make value change handlers dispatch async on the given queue. This is useful if the main game loop
+ of the application is not on main, or if input logic is handled on another thread from the main game loop.
+ 
+ @see GCControllerAxisInput.valueChangedHandler
+ @see GCControllerButtonInput.valueChangedHandler
+ @see GCControllerButtonInput.pressedChangedHandler
+ @see GCControllerDirectionPad.valueChangedHandler
+ @see GCMotion.valueChangedHandler
+ */
+#if defined(OS_OBJECT_USE_OBJC) && OS_OBJECT_USE_OBJC==1
+@property (retain) dispatch_queue_t handlerQueue NS_AVAILABLE(10_11, 9_0);
+#else
+@property (assign) dispatch_queue_t handlerQueue NS_AVAILABLE(10_11, 9_0);
+#endif
 
 /**
  A vendor supplied name. May be nil, and is not guaranteed to be unique. This should not be used as a key in a dictionary,
  but simply as a way to present some basic information about the controller in testing or to the user.
  */
-@property (readonly, copy) NSString *vendorName;
+@property (nonatomic, readonly, copy, nullable) NSString *vendorName;
 
 /**
  A controller may be form fitting or otherwise closely attached to the device. This closeness to other inputs on the device
  may suggest that interaction with the device may use other inputs easily. This is presented to developers to allow them to
  make informed descisions about UI and interactions to choose for their game in this situation.
  */
-@property (readonly, getter = isAttachedToDevice) BOOL attachedToDevice;
+@property (nonatomic, readonly, getter = isAttachedToDevice) BOOL attachedToDevice;
 
 /**
  A player index for the controller, defaults to GCControllerPlayerIndexUnset, unless the controller previously had
@@ -94,13 +115,14 @@ GAMECONTROLLER_EXPORT
  
  Negative values less than GCControllerPlayerIndexUnset will just map back to GCControllerPlayerIndexUnset when read back.
  */
-@property (nonatomic) NSInteger playerIndex;
+@property (nonatomic) GCControllerPlayerIndex playerIndex;
 
 /**
  Gets the profile for the controller that suits current application.
  
- There are only two supported profiles. Each controller may be able to map its inputs into all profiles or just one kind of
- profile. Query for the controller profile that suits your game, the simplest kind will be supported by the broadest variety
+ There are two supported profiles, with an additional optional profile for motion as well. 
+ Each controller may be able to map its inputs into all profiles or just one kind of profile. Query for the controller
+ profile that suits your game, the simplest kind will be supported by the broadest variety
  of controllers. A controller supporting the Extended Gamepad profile for example supports the Gamepad profile and more.
  As such it can always be used just in the Gamepad profile if that suits the game.
  
@@ -109,9 +131,18 @@ GAMECONTROLLER_EXPORT
  
  If a controller does not support the given profile the returned value will be nil. Use this to filter controllers if the
  application requires a specific kind of profile.
+ @see motion
  */
-@property (retain, readonly) GCGamepad *gamepad;
-@property (retain, readonly) GCExtendedGamepad *extendedGamepad;
+@property (nonatomic, retain, readonly, nullable) GCGamepad *gamepad;
+@property (nonatomic, retain, readonly, nullable) GCExtendedGamepad *extendedGamepad;
+
+/**
+ Gets the motion input profile. This profile is optional and may be available if the controller is attached to a device that supports motion.
+ If this is nil the controller does not support motion input and only the gamepad & extendedGamepad profiles are available.
+ @see gamepad
+ @see extendedGamepad
+ */
+@property (nonatomic, retain, readonly, nullable) GCMotion *motion NS_AVAILABLE(10_10, 8_0);
 
 /**
  Get a list of controllers currently attached to the system.
@@ -119,7 +150,7 @@ GAMECONTROLLER_EXPORT
  @see GCControllerDidConnectNotification
  @see GCControllerDidDisconnectNotification
  */
-+ (NSArray *)controllers;
++ (NSArray<GCController *> *)controllers;
 
 /**
  Start discovery of new wireless controllers that are discoverable. This is an asynchronous and the supplied completionHandler
@@ -145,7 +176,7 @@ GAMECONTROLLER_EXPORT
  @see stopWirelessControllerDiscovery
  @see controllers
  */
-+ (void)startWirelessControllerDiscoveryWithCompletionHandler:(void (^)(void))completionHandler;
++ (void)startWirelessControllerDiscoveryWithCompletionHandler:(nullable void (^)(void))completionHandler;
 
 /**
  If no more controllers are needed, depending on game state or number of controllers supported by a game, the discovery
@@ -158,4 +189,6 @@ GAMECONTROLLER_EXPORT
 + (void)stopWirelessControllerDiscovery;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

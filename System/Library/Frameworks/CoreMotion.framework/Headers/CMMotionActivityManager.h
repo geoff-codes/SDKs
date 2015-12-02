@@ -8,13 +8,15 @@
 #import <Foundation/Foundation.h>
 #import <CoreMotion/CMMotionActivity.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CMMotionActivityHandler
  *
  *  Discussion:
  *    Typedef of block to be invoked when the device's activity is updated.
  */
-typedef void (^CMMotionActivityHandler)(CMMotionActivity *activity) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+typedef void (^CMMotionActivityHandler)(CMMotionActivity * __nullable activity) NS_AVAILABLE(NA,7_0) __TVOS_PROHIBITED;
 
 /*
  *  CMMotionActivityQueryHandler
@@ -23,7 +25,7 @@ typedef void (^CMMotionActivityHandler)(CMMotionActivity *activity) __OSX_AVAILA
  *    Typedef of block to be invoked when the historical activity query is
  *    completed.  The array is an array of CMMotionActivity objects.
  */
-typedef void (^CMMotionActivityQueryHandler)(NSArray *activities, NSError *error) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+typedef void (^CMMotionActivityQueryHandler)(NSArray<CMMotionActivity *> * __nullable activities, NSError * __nullable error) NS_AVAILABLE(NA,7_0) __TVOS_PROHIBITED;
 
 /*
  *   CMMotionActivityManager
@@ -38,7 +40,7 @@ typedef void (^CMMotionActivityQueryHandler)(NSArray *activities, NSError *error
  *      2. By providing a queue and a block to startActivityUpdatesToQueue:withHandler:
  *      which will provide live activity updates to a running application.
  */
-NS_CLASS_AVAILABLE(NA,7_0)
+NS_CLASS_AVAILABLE(NA,7_0) __TVOS_PROHIBITED
 @interface CMMotionActivityManager : NSObject
 
 /*
@@ -97,3 +99,5 @@ NS_CLASS_AVAILABLE(NA,7_0)
 - (void)stopActivityUpdates;
 
 @end
+
+NS_ASSUME_NONNULL_END

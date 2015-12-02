@@ -3,19 +3,22 @@
 	
 	Framework:  AVFoundation
 	
-	Copyright 2009-2012 Apple Inc. All rights reserved.
+	Copyright 2009-2015 Apple Inc. All rights reserved.
 	
 */
 
 #import <AVFoundation/AVBase.h>
 #import <Foundation/NSObject.h>
+#import <Foundation/NSArray.h>
 #import <Foundation/NSDate.h>	/* for NSTimeInterval */
 #import <AvailabilityMacros.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /* This protocol is available with iPhone 3.0 or later */
 @protocol AVAudioSessionDelegate;
-@class NSError, NSString, NSArray, NSNumber;
+@class NSError, NSString, NSNumber;
 @class AVAudioSessionChannelDescription, AVAudioSessionPortDescription, AVAudioSessionRouteDescription, AVAudioSessionDataSourceDescription;
 
 /*
@@ -59,8 +62,8 @@ default routes the output to the receiver. */
 typedef NS_ENUM(NSUInteger, AVAudioSessionPortOverride)
 {
 	AVAudioSessionPortOverrideNone    = 0,
-	AVAudioSessionPortOverrideSpeaker = 'spkr'
-} NS_AVAILABLE_IOS(6_0);
+	AVAudioSessionPortOverrideSpeaker __TVOS_PROHIBITED = 'spkr'
+} NS_AVAILABLE_IOS(6_0) ;
 
 /* values for AVAudioSessionRouteChangeReasonKey in AVAudioSessionRouteChangeNotification userInfo dictionary
  AVAudioSessionRouteChangeReasonUnknown
@@ -97,9 +100,9 @@ typedef NS_ENUM(NSUInteger, AVAudioSessionRouteChangeReason)
 
 /* values for setCategory:withOptions:error:
 AVAudioSessionCategoryOptionMixWithOthers -- 
-	This allows an application to change the default behavior of some audio session categories with regards
-	to whether other applications can play while your session is active. The typical cases are:
-	 (1) AVAudioSessionCategoryPlayAndRecord
+	This allows an application to set whether or not other active audio apps will be interrupted or mixed with
+	when your app's audio session goes active. The typical cases are:
+	 (1) AVAudioSessionCategoryPlayAndRecord or AVAudioSessionCategoryMultiRoute
 		 this will default to false, but can be set to true. This would allow other applications to play in the background
 		 while an app had both audio input and output enabled
 	 (2) AVAudioSessionCategoryPlayback
@@ -112,14 +115,15 @@ AVAudioSessionCategoryOptionMixWithOthers --
 		 option (it is not sticky across category changes).
  
 AVAudioSessionCategoryOptionDuckOthers -- 
-	If the current session category of an application allows mixing (Music playback in the background for 
-	example), then that other audio will be ducked when the current application makes any sound. An example
-	of this is the Nike app that does this as it provides periodic updates to its user (it ducks any music
-	currently being played while it provides its status). This defaults to off. Note that the other audio 
-	will be ducked for as long as the current session is active. You will need to deactivate your audio
-	session when you want full volume playback of the other audio. If your category is AVAudioSessionCategoryPlayback 
-	and you have this set to its default (non-mixable), setting this value to on will also make your category
-	mixable with others (AVAudioSessionCategoryOptionMixWithOthers will be set to true).
+	This allows an application to set whether or not other active audio apps will be ducked when when your app's audio
+	session goes active. An example of this is the Nike app, which provides periodic updates to its user (it reduces the
+	volume of any music currently being played while it provides its status). This defaults to off. Note that the other
+	audio will be ducked for as long as the current session is active. You will need to deactivate your audio
+	session when you want full volume playback of the other audio. 
+    If your category is AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, or 
+	AVAudioSessionCategoryMultiRoute, by default the audio session will be non-mixable and non-ducking. 
+	Setting this option will also make your category mixable with others (AVAudioSessionCategoryOptionMixWithOthers
+	will be set).
  
 AVAudioSessionCategoryOptionAllowBluetooth --
 	This allows an application to change the default behaviour of some audio session categories with regards to showing
@@ -148,13 +152,30 @@ AVAudioSessionCategoryOptionDefaultToSpeaker --
 		 categories cannot be overridden
 		 An application must be prepared for setting this property to fail as behaviour may change in future releases.
 		 If an application changes their category, they should reassert the override (it is not sticky across
-		 category and mode changes). */
+		 category and mode changes). 
+ 
+AVAudioSessionCategoryOptionInterruptSpokenAudioAndMixWithOthers --
+	If another app's audio session mode is set to AVAudioSessionModeSpokenAudio (podcast playback in the background for example),
+	then that other app's audio will be interrupted when the current application's audio session goes active. An example of this
+	is a navigation app that provides navigation prompts to its user (it pauses any spoken audio currently being played while it
+	plays the prompt). This defaults to off. Note that the other app's audio will be paused for as long as the current session is
+	active. You will need to deactivate your audio session to allow the other audio to resume playback.
+	Setting this option will also make your category mixable with others (AVAudioSessionCategoryOptionMixWithOthers
+	will be set).  If you want other non-spoken audio apps to duck their audio when your app's session goes active, also set
+	AVAudioSessionCategoryOptionDuckOthers.
+ */
 typedef NS_OPTIONS(NSUInteger, AVAudioSessionCategoryOptions)
 {
-	AVAudioSessionCategoryOptionMixWithOthers		= 1,  /* only valid with AVAudioSessionCategoryPlayAndRecord and AVAudioSessionCategoryPlayback */
-	AVAudioSessionCategoryOptionDuckOthers			= 2,  /* only valid with AVAudioSessionCategoryPlayAndRecord and AVAudioSessionCategoryPlayback */
-	AVAudioSessionCategoryOptionAllowBluetooth		= 4,  /* only valid with AVAudioSessionCategoryRecord and AVAudioSessionCategoryPlayAndRecord */
-	AVAudioSessionCategoryOptionDefaultToSpeaker	= 8   /* only valid with AVAudioSessionCategoryPlayAndRecord */
+	/* MixWithOthers is only valid with AVAudioSessionCategoryPlayAndRecord, AVAudioSessionCategoryPlayback, and  AVAudioSessionCategoryMultiRoute */
+	AVAudioSessionCategoryOptionMixWithOthers			= 0x1,
+	/* DuckOthers is only valid with AVAudioSessionCategoryPlayAndRecord, AVAudioSessionCategoryPlayback, and AVAudioSessionCategoryMultiRoute */
+	AVAudioSessionCategoryOptionDuckOthers				= 0x2,
+	/* AllowBluetooth is only valid with AVAudioSessionCategoryRecord and AVAudioSessionCategoryPlayAndRecord */
+	AVAudioSessionCategoryOptionAllowBluetooth	__TVOS_PROHIBITED		= 0x4,
+	/* DefaultToSpeaker is only valid with AVAudioSessionCategoryPlayAndRecord */
+	AVAudioSessionCategoryOptionDefaultToSpeaker __TVOS_PROHIBITED		= 0x8,
+	/* InterruptSpokenAudioAndMixWithOthers is only valid with AVAudioSessionCategoryPlayAndRecord, AVAudioSessionCategoryPlayback, and AVAudioSessionCategoryMultiRoute */
+	AVAudioSessionCategoryOptionInterruptSpokenAudioAndMixWithOthers NS_AVAILABLE_IOS(9_0) 	= 0x11
 } NS_AVAILABLE_IOS(6_0);
 
 typedef NS_ENUM(NSUInteger, AVAudioSessionInterruptionType)
@@ -162,6 +183,31 @@ typedef NS_ENUM(NSUInteger, AVAudioSessionInterruptionType)
 	AVAudioSessionInterruptionTypeBegan = 1,  /* the system has interrupted your audio session */
 	AVAudioSessionInterruptionTypeEnded = 0,  /* the interruption has ended */
 } NS_AVAILABLE_IOS(6_0);
+
+/* Used in AVAudioSessionSilenceSecondaryAudioHintNotification to indicate whether optional secondary audio muting should begin or end */
+typedef NS_ENUM(NSUInteger, AVAudioSessionSilenceSecondaryAudioHintType)
+{
+	AVAudioSessionSilenceSecondaryAudioHintTypeBegin = 1,  /* the system is indicating that another application's primary audio has started */
+	AVAudioSessionSilenceSecondaryAudioHintTypeEnd = 0,    /* the system is indicating that another application's primary audio has stopped */
+} NS_AVAILABLE_IOS(8_0);
+
+/*!
+	@enum AVAudioSessionRecordPermission values
+	@abstract   These are the values returned by recordPermission.
+	@constant   AVAudioSessionRecordPermissionUndetermined
+		The user has not yet been asked for permission.
+	@constant   AVAudioSessionRecordPermissionDenied
+ 		The user has been asked and has denied permission.
+	@constant   AVAudioSessionRecordPermissionGranted
+ 		The user has been asked and has granted permission.
+*/
+
+typedef NS_OPTIONS(NSUInteger, AVAudioSessionRecordPermission)
+{
+	AVAudioSessionRecordPermissionUndetermined		= 'undt',
+	AVAudioSessionRecordPermissionDenied			= 'deny',
+	AVAudioSessionRecordPermissionGranted			= 'grnt'
+} NS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED;
 
 /*!
 	@enum AVAudioSession error codes
@@ -192,6 +238,11 @@ typedef NS_ENUM(NSUInteger, AVAudioSessionInterruptionType)
  		background and is not an Inter-App Audio app.
 	@constant	AVAudioSessionErrorCodeBadParam
  		An illegal value was used for a property.
+	@constant	AVAudioSessionErrorInsufficientPriority
+ 		The app was not allowed to set the audio category because another app (Phone, etc.) is controlling it.
+	@constant	AVAudioSessionErrorCodeResourceNotAvailable
+		The operation failed because the device does not have sufficient hardware resources to complete the action. 
+		For example, the operation requires audio input hardware, but the device has no audio input available.
 	@constant	AVAudioSessionErrorCodeUnspecified
  		An unspecified error has occurred.
 */
@@ -208,6 +259,8 @@ typedef NS_ENUM(NSInteger, AVAudioSessionErrorCode)
 	AVAudioSessionErrorCodeCannotStartPlaying			= '!pla',			/* 0x21706C61, 561015905	*/
 	AVAudioSessionErrorCodeCannotStartRecording			= '!rec',			/* 0x21726563, 561145187	*/
 	AVAudioSessionErrorCodeBadParam						= -50,
+	AVAudioSessionErrorInsufficientPriority				= '!pri',			/* 0x21707269, 561017449	*/
+	AVAudioSessionErrorCodeResourceNotAvailable			= '!res',			/* 0x21726573, 561145203	*/
 	AVAudioSessionErrorCodeUnspecified					= 'what'			/* 0x77686174, 2003329396	*/
 } NS_AVAILABLE_IOS(7_0);
 
@@ -219,16 +272,30 @@ NS_CLASS_AVAILABLE(NA, 3_0)
 }
 
  /* returns singleton instance */
-+ (id)sharedInstance;
++ (AVAudioSession*)sharedInstance;
 
-/* set the session active or inactive */
+/* Set the session active or inactive. Note that activating an audio session is a synchronous (blocking) operation.
+ Therefore, we recommend that applications not activate their session from a thread where a long blocking operation will be problematic.
+ Note that this method will throw an exception in apps linked on or after iOS 8 if the session is set inactive while it has running or 
+ paused I/O (e.g. audio queues, players, recorders, converters, remote I/Os, etc.).
+*/
 - (BOOL)setActive:(BOOL)active error:(NSError **)outError;
 - (BOOL)setActive:(BOOL)active withOptions:(AVAudioSessionSetActiveOptions)options error:(NSError **)outError NS_AVAILABLE_IOS(6_0);
+
+// Get the list of categories available on the device.  Certain categories may be unavailable on particular devices.  For example,
+// AVAudioSessionCategoryRecord will not be available on devices that have no support for audio input.
+@property(readonly) NSArray<NSString *> *availableCategories NS_AVAILABLE_IOS(9_0);
 
 /* set session category */
 - (BOOL)setCategory:(NSString *)category error:(NSError **)outError;
 /* set session category with options */
-- (BOOL)setCategory:(NSString *)category withOptions: (AVAudioSessionCategoryOptions)options error:(NSError **)outError NS_AVAILABLE_IOS(6_0);
+- (BOOL)setCategory:(NSString *)category withOptions:(AVAudioSessionCategoryOptions)options error:(NSError **)outError NS_AVAILABLE_IOS(6_0);
+
+/* get session category. Examples: AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, etc. */
+@property(readonly) NSString *category;
+
+/* Returns an enum indicating whether the user has granted or denied permission to record, or has not been asked */
+- (AVAudioSessionRecordPermission)recordPermission NS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED;
 
 /* Checks to see if calling process has permission to record audio.  The 'response' block will be called
  immediately if permission has already been granted or denied.  Otherwise, it presents a dialog to notify
@@ -237,37 +304,52 @@ NS_CLASS_AVAILABLE(NA, 3_0)
  */
 typedef void (^PermissionBlock)(BOOL granted);
 
-- (void)requestRecordPermission:(PermissionBlock)response NS_AVAILABLE_IOS(7_0);
-
-/* get session category. Examples: AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, etc. */
-@property(readonly) NSString * category;
+- (void)requestRecordPermission:(PermissionBlock)response NS_AVAILABLE_IOS(7_0) __TVOS_PROHIBITED;
 
 /* get the current set of AVAudioSessionCategoryOptions */
 @property(readonly) AVAudioSessionCategoryOptions categoryOptions NS_AVAILABLE_IOS(6_0);
 
-/* Modes modify the audio category in order to introduce behavior that is tailored to the specific
-use of audio within an application. Examples:  AVAudioSessionModeVideoRecording, AVAudioSessionModeVoiceChat, AVAudioSessionModeMeasurement, etc. */
+// Modes modify the audio category in order to introduce behavior that is tailored to the specific
+// use of audio within an application. Examples:  AVAudioSessionModeVideoRecording, AVAudioSessionModeVoiceChat,
+// AVAudioSessionModeMeasurement, etc.
+
+// Get the list of modes available on the device.  Certain modes may be unavailable on particular devices.  For example,
+// AVAudioSessionModeVideoRecording will not be available on devices that have no support for recording video.
+@property(readonly) NSArray<NSString *> *availableModes NS_AVAILABLE_IOS(9_0);
+
 - (BOOL)setMode:(NSString *)mode error:(NSError **)outError NS_AVAILABLE_IOS(5_0); /* set session mode */
-@property(readonly) NSString * mode NS_AVAILABLE_IOS(5_0); /* get session mode */
+@property(readonly) NSString *mode NS_AVAILABLE_IOS(5_0); /* get session mode */
 
 - (BOOL)overrideOutputAudioPort:(AVAudioSessionPortOverride)portOverride  error:(NSError **)outError NS_AVAILABLE_IOS(6_0);
 
-/* Will be true when another application is playing audio */
+/* Will be true when another application is playing audio.
+Note: As of iOS 8.0, Apple recommends that most applications use secondaryAudioShouldBeSilencedHint instead of this property.
+The otherAudioPlaying property will be true if any other audio (including audio from an app using AVAudioSessionCategoryAmbient)
+is playing, whereas the secondaryAudioShouldBeSilencedHint property is more restrictive in its consideration of whether 
+primary audio from another application is playing.  
+*/
 @property(readonly, getter=isOtherAudioPlaying) BOOL otherAudioPlaying  NS_AVAILABLE_IOS(6_0);
 
+/* Will be true when another application with a non-mixable audio session is playing audio.  Applications may use
+this property as a hint to silence audio that is secondary to the functionality of the application. For example, a game app
+using AVAudioSessionCategoryAmbient may use this property to decide to mute its soundtrack while leaving its sound effects unmuted.
+Note: This property is closely related to AVAudioSessionSilenceSecondaryAudioHintNotification.
+*/
+@property(readonly) BOOL secondaryAudioShouldBeSilencedHint  NS_AVAILABLE_IOS(8_0);
+
 /* A description of the current route, consisting of zero or more input ports and zero or more output ports */
-@property(readonly) AVAudioSessionRouteDescription * currentRoute NS_AVAILABLE_IOS(6_0);
+@property(readonly) AVAudioSessionRouteDescription *currentRoute NS_AVAILABLE_IOS(6_0);
 
 
 /* Select a preferred input port for audio routing. If the input port is already part of the current audio route, this will have no effect.
    Otherwise, selecting an input port for routing will initiate a route change to use the preferred input port, provided that the application's
-   session controls audio routing. */
-- (BOOL) setPreferredInput:(AVAudioSessionPortDescription*)inPort error:(NSError **)outError NS_AVAILABLE_IOS(7_0);
-@property(readonly) AVAudioSessionPortDescription * preferredInput NS_AVAILABLE_IOS(7_0); /* Get the preferred input port.  Will be nil if no preference has been set */
+   session controls audio routing. Setting a nil value will clear the preference. */
+- (BOOL)setPreferredInput:(nullable AVAudioSessionPortDescription *)inPort error:(NSError **)outError NS_AVAILABLE_IOS(7_0);
+@property(readonly, nullable) AVAudioSessionPortDescription * preferredInput NS_AVAILABLE_IOS(7_0); /* Get the preferred input port.  Will be nil if no preference has been set */
 
 /* Get the set of input ports that are available for routing. Note that this property only applies to the session's current category and mode.
    For example, if the session's current category is AVAudioSessionCategoryPlayback, there will be no available inputs.  */
-@property(readonly) NSArray * availableInputs NS_AVAILABLE_IOS(7_0); /* NSArray of AVAudioSessionPortDescription objects. */
+@property(readonly, nullable) NSArray<AVAudioSessionPortDescription *> * availableInputs NS_AVAILABLE_IOS(7_0);
 
 @end
 
@@ -327,19 +409,21 @@ selection of input and/or output data sources. Note that the properties and meth
 equivalent to the properties and methods on AVAudioSessionPortDescription. The methods below only apply to the currently 
 routed ports. */
 
-	/* NSArray of AVAudioSessionDataSourceDescriptions.  Key-value observable. */
-@property(readonly) NSArray * inputDataSources NS_AVAILABLE_IOS(6_0);
+/* Key-value observable. */
+@property(readonly, nullable) NSArray<AVAudioSessionDataSourceDescription *> * inputDataSources NS_AVAILABLE_IOS(6_0);
 
-	/* Get and set the currently selected data source.  Will be nil if no data sources are available. */
-@property(readonly) AVAudioSessionDataSourceDescription * inputDataSource NS_AVAILABLE_IOS(6_0);
-- (BOOL)setInputDataSource:(AVAudioSessionDataSourceDescription *)dataSource error:(NSError **)outError NS_AVAILABLE_IOS(6_0); 
+/* Get and set the currently selected data source.  Will be nil if no data sources are available.
+Setting a nil value will clear the data source preference. */
+@property(readonly, nullable) AVAudioSessionDataSourceDescription *inputDataSource NS_AVAILABLE_IOS(6_0);
+- (BOOL)setInputDataSource:(nullable AVAudioSessionDataSourceDescription *)dataSource error:(NSError **)outError NS_AVAILABLE_IOS(6_0);
 
-	/* NSArray of AVAudioSessionDataSourceDescriptions.  Key-value observable. */
-@property(readonly) NSArray * outputDataSources NS_AVAILABLE_IOS(6_0);
+/* Key-value observable. */
+@property(readonly, nullable) NSArray<AVAudioSessionDataSourceDescription *> * outputDataSources NS_AVAILABLE_IOS(6_0);
 
-	/* Get and set currently selected data source.  Will be nil if no data sources are available. */
-@property(readonly) AVAudioSessionDataSourceDescription * outputDataSource NS_AVAILABLE_IOS(6_0);
-- (BOOL)setOutputDataSource:(AVAudioSessionDataSourceDescription *)dataSource error:(NSError **)outError NS_AVAILABLE_IOS(6_0); 
+/* Get and set currently selected data source.  Will be nil if no data sources are available. 
+Setting a nil value will clear the data source preference. */
+@property(readonly, nullable) AVAudioSessionDataSourceDescription *outputDataSource NS_AVAILABLE_IOS(6_0);
+- (BOOL)setOutputDataSource:(nullable AVAudioSessionDataSourceDescription *)dataSource error:(NSError **)outError NS_AVAILABLE_IOS(6_0);
 
 
 /* Current values for hardware properties.  Note that most of these properties have corresponding methods 
@@ -378,19 +462,19 @@ queried if the audio session category does not support them.  Each of these will
  name:        AVAudioSessionInterruptionNotification 
  object:      [AVAudioSession sharedInstance]]; 
  */
-@property(assign) id<AVAudioSessionDelegate> delegate NS_DEPRECATED_IOS(4_0, 6_0);
+@property(assign, nullable) id<AVAudioSessionDelegate> delegate NS_DEPRECATED_IOS(4_0, 6_0) __TVOS_PROHIBITED;
 
 
-- (BOOL)setActive:(BOOL)active withFlags:(NSInteger)flags error:(NSError **)outError NS_DEPRECATED_IOS(4_0, 6_0);
+- (BOOL)setActive:(BOOL)active withFlags:(NSInteger)flags error:(NSError **)outError NS_DEPRECATED_IOS(4_0, 6_0) __TVOS_PROHIBITED;
 
-@property(readonly) BOOL inputIsAvailable NS_DEPRECATED_IOS(3_0, 6_0); /* is input hardware available or not? */
+@property(readonly) BOOL inputIsAvailable NS_DEPRECATED_IOS(3_0, 6_0) __TVOS_PROHIBITED; /* is input hardware available or not? */
 
 /* deprecated.  Use the corresponding properties without "Hardware" in their names. */
-@property(readonly) double currentHardwareSampleRate NS_DEPRECATED_IOS(3_0, 6_0);
-@property(readonly) NSInteger currentHardwareInputNumberOfChannels NS_DEPRECATED_IOS(3_0, 6_0);
-@property(readonly) NSInteger currentHardwareOutputNumberOfChannels NS_DEPRECATED_IOS(3_0, 6_0);
-- (BOOL)setPreferredHardwareSampleRate:(double)sampleRate error:(NSError **)outError NS_DEPRECATED_IOS(3_0, 6_0);
-@property(readonly) double preferredHardwareSampleRate NS_DEPRECATED_IOS(3_0, 6_0);
+@property(readonly) double currentHardwareSampleRate NS_DEPRECATED_IOS(3_0, 6_0) __TVOS_PROHIBITED;
+@property(readonly) NSInteger currentHardwareInputNumberOfChannels NS_DEPRECATED_IOS(3_0, 6_0) __TVOS_PROHIBITED;
+@property(readonly) NSInteger currentHardwareOutputNumberOfChannels NS_DEPRECATED_IOS(3_0, 6_0) __TVOS_PROHIBITED;
+- (BOOL)setPreferredHardwareSampleRate:(double)sampleRate error:(NSError **)outError NS_DEPRECATED_IOS(3_0, 6_0) __TVOS_PROHIBITED;
+@property(readonly) double preferredHardwareSampleRate NS_DEPRECATED_IOS(3_0, 6_0) __TVOS_PROHIBITED;
 
 @end
 
@@ -418,6 +502,14 @@ AVF_EXPORT NSString *const AVAudioSessionMediaServicesWereLostNotification NS_AV
  */
 AVF_EXPORT NSString *const AVAudioSessionMediaServicesWereResetNotification NS_AVAILABLE_IOS(6_0);
 
+/* Registered listeners that are currently in the foreground and have active audio sessions will be notified 
+ when primary audio from other applications starts and stops.  Check the notification's userInfo dictionary 
+ for the notification type -- either begin or end.
+ Foreground applications may use this notification as a hint to enable or disable audio that is secondary
+ to the functionality of the application. For more information, see the related property secondaryAudioShouldBeSilencedHint.
+*/
+AVF_EXPORT NSString *const AVAudioSessionSilenceSecondaryAudioHintNotification NS_AVAILABLE_IOS(8_0);
+
 #pragma mark -- Keys for NSNotification userInfo dictionaries --
 
 /* keys for AVAudioSessionInterruptionNotification */
@@ -431,6 +523,10 @@ AVF_EXPORT NSString *const AVAudioSessionInterruptionOptionKey NS_AVAILABLE_IOS(
 AVF_EXPORT NSString *const AVAudioSessionRouteChangeReasonKey NS_AVAILABLE_IOS(6_0);
 	/* value is AVAudioSessionRouteDescription * */
 AVF_EXPORT NSString *const AVAudioSessionRouteChangePreviousRouteKey NS_AVAILABLE_IOS(6_0);
+
+/* keys for AVAudioSessionSilenceSecondaryAudioHintNotification */
+/* value is an NSNumber representing an AVAudioSessionSilenceSecondaryAudioHintType */
+AVF_EXPORT NSString *const AVAudioSessionSilenceSecondaryAudioHintTypeKey NS_AVAILABLE_IOS(8_0);
 
 #pragma mark -- Values for the category property --
 
@@ -452,7 +548,7 @@ AVF_EXPORT NSString *const AVAudioSessionCategoryPlayAndRecord;
 
 /*  Use this category when using a hardware codec or signal processor while
  not playing or recording audio. */
-AVF_EXPORT NSString *const AVAudioSessionCategoryAudioProcessing;
+AVF_EXPORT NSString *const AVAudioSessionCategoryAudioProcessing __TVOS_PROHIBITED;
 
 /*  Use this category to customize the usage of available audio accessories and built-in audio hardware.
  For example, this category provides an application with the ability to use an available USB output 
@@ -509,6 +605,11 @@ system-supplied signal processing.  Has the side effect of setting
 AVAudioSessionCategoryOptionAllowBluetooth and AVAudioSessionCategoryOptionDefaultToSpeaker. */
 AVF_EXPORT NSString *const AVAudioSessionModeVideoChat NS_AVAILABLE_IOS(7_0);
 
+/* Appropriate for applications which play spoken audio and wish to be paused (via audio session interruption) rather than ducked
+if another app (such as a navigation app) plays a spoken audio prompt.  Examples of apps that would use this are podcast players and
+audio books.  For more information, see the related category option AVAudioSessionCategoryOptionInterruptSpokenAudioAndMixWithOthers. */
+AVF_EXPORT NSString *const AVAudioSessionModeSpokenAudio NS_AVAILABLE_IOS(9_0);
+
 #pragma mark -- constants for port types --
 
 /* input port types */
@@ -544,6 +645,8 @@ AVF_EXPORT NSString *const AVAudioSessionOrientationTop					NS_AVAILABLE_IOS(7_0
 AVF_EXPORT NSString *const AVAudioSessionOrientationBottom				NS_AVAILABLE_IOS(7_0);
 AVF_EXPORT NSString *const AVAudioSessionOrientationFront				NS_AVAILABLE_IOS(7_0);
 AVF_EXPORT NSString *const AVAudioSessionOrientationBack				NS_AVAILABLE_IOS(7_0);
+AVF_EXPORT NSString *const AVAudioSessionOrientationLeft				NS_AVAILABLE_IOS(8_0);
+AVF_EXPORT NSString *const AVAudioSessionOrientationRight				NS_AVAILABLE_IOS(8_0);
 
 /* The following represent the possible polar patterns for a data source on an iOS device. */
 AVF_EXPORT NSString *const AVAudioSessionPolarPatternOmnidirectional	NS_AVAILABLE_IOS(7_0);
@@ -577,33 +680,33 @@ NS_CLASS_AVAILABLE(NA, 6_0)
 }
 
 /* Value is one of the AVAudioSessionPort constants declared above. */
-@property(readonly) NSString *	portType;
+@property(readonly) NSString *portType;
 
 /* A descriptive name for the port */
-@property(readonly) NSString *	portName;
+@property(readonly) NSString *portName;
 
 /* A system-assigned unique identifier for the port */
-@property(readonly) NSString *	UID;
+@property(readonly) NSString *UID;
 
-/* Array of AVAudioSessionChannelDescription objects */
-@property(readonly) NSArray *	channels;
+@property(readonly, nullable) NSArray<AVAudioSessionChannelDescription *> *	channels;
 
-/* Array of AVAudioSessionDataSourceDescription objects.  Will be nil if there are no selectable data sources. */
-@property(readonly) NSArray *	dataSources NS_AVAILABLE_IOS(7_0);
+/* Will be nil if there are no selectable data sources. */
+@property(readonly, nullable) NSArray<AVAudioSessionDataSourceDescription *> *	dataSources NS_AVAILABLE_IOS(7_0);
 
 /* Will be nil if there are no selectable data sources. In all other cases, this
  property reflects the currently selected data source.*/
-@property(readonly) AVAudioSessionDataSourceDescription * selectedDataSource NS_AVAILABLE_IOS(7_0);
+@property(readonly, nullable) AVAudioSessionDataSourceDescription *selectedDataSource NS_AVAILABLE_IOS(7_0);
 
 /* This property reflects the application's preferred data source for the Port.
  Will be nil if there are no selectable data sources or if no preference has been set.*/
-@property(readonly) AVAudioSessionDataSourceDescription * preferredDataSource NS_AVAILABLE_IOS(7_0);
+@property(readonly, nullable) AVAudioSessionDataSourceDescription *preferredDataSource NS_AVAILABLE_IOS(7_0);
 
-/* Select the preferred data source for this port. The input dataSource parameter must be one of the dataSources exposed by the dataSources property.
+/* Select the preferred data source for this port. The input dataSource parameter must be one of the dataSources exposed by 
+the dataSources property. Setting a nil value will clear the preference.
 Note: if the port is part of the active audio route, changing the data source will likely
 result in a route reconfiguration.  If the port is not part of the active route, selecting a new data source will
 not result in an immediate route reconfiguration.  Use AVAudioSession's setPreferredInput:error: method to activate the port. */
-- (BOOL) setPreferredDataSource:(AVAudioSessionDataSourceDescription *)dataSource error:(NSError **)outError NS_AVAILABLE_IOS(7_0);
+- (BOOL)setPreferredDataSource:(nullable AVAudioSessionDataSourceDescription *)dataSource error:(NSError **)outError NS_AVAILABLE_IOS(7_0);
 
 @end
 
@@ -613,11 +716,9 @@ NS_CLASS_AVAILABLE(NA, 6_0)
     void * _impl;
 }
 
-/* Array of AVAudioSessionPortDescription objects */
-@property(readonly) NSArray * inputs;
+@property(readonly) NSArray<AVAudioSessionPortDescription *> * inputs;
 
-/* Array of AVAudioSessionPortDescription objects */
-@property(readonly) NSArray * outputs;
+@property(readonly) NSArray<AVAudioSessionPortDescription *> * outputs;
 @end
 
 NS_CLASS_AVAILABLE(NA, 6_0)
@@ -627,40 +728,42 @@ NS_CLASS_AVAILABLE(NA, 6_0)
 }
 
 /* system-assigned ID for the data source */
-@property(readonly) NSNumber * dataSourceID;
+@property(readonly) NSNumber *dataSourceID;
 
 /* human-readable name for the data source */
-@property(readonly) NSString * dataSourceName;
+@property(readonly) NSString *dataSourceName;
 
 /* Location and orientation can be used to distinguish between multiple data sources belonging to a single port.  For example, in the case of a port of type AVAudioSessionPortBuiltInMic, one can
    use these properties to differentiate between an upper/front-facing microphone and a lower/bottom-facing microphone. */
 
 /* Describes the general location of a data source. Will be nil for data sources for which the location is not known. */
-@property(readonly) NSString *	location NS_AVAILABLE_IOS(7_0);
+@property(readonly, nullable) NSString *	location NS_AVAILABLE_IOS(7_0);
 
 /* Describes the orientation of a data source.  Will be nil for data sources for which the orientation is not known. */
-@property(readonly) NSString *	orientation NS_AVAILABLE_IOS(7_0);
+@property(readonly, nullable) NSString *	orientation NS_AVAILABLE_IOS(7_0);
 
 /* Array of one or more NSStrings describing the supported polar patterns for a data source.  Will be nil for data sources that have no selectable patterns. */
-@property(readonly) NSArray *	supportedPolarPatterns NS_AVAILABLE_IOS(7_0);
+@property(readonly, nullable) NSArray<NSString *> *	supportedPolarPatterns NS_AVAILABLE_IOS(7_0);
 
 /* Describes the currently selected polar pattern.  Will be nil for data sources that have no selectable patterns. */
-@property(readonly) NSString *	selectedPolarPattern NS_AVAILABLE_IOS(7_0);
+@property(readonly, nullable) NSString *	selectedPolarPattern NS_AVAILABLE_IOS(7_0);
 
 /* Describes the preferred polar pattern.  Will be nil for data sources that have no selectable patterns or if no preference has been set. */
-@property(readonly) NSString *	preferredPolarPattern NS_AVAILABLE_IOS(7_0);
+@property(readonly, nullable) NSString *	preferredPolarPattern NS_AVAILABLE_IOS(7_0);
 
-/* Select the desired polar pattern from the set of available patterns. Note: if the owning port and data source are part of the active audio route, 
+/* Select the desired polar pattern from the set of available patterns. Setting a nil value will clear the preference.
+   Note: if the owning port and data source are part of the active audio route,
    changing the polar pattern will likely result in a route reconfiguration. If the owning port and data source are not part of the active route,
    selecting a polar pattern will not result in an immediate route reconfiguration.  Use AVAudioSession's setPreferredInput:error: method
    to activate the port. Use setPreferredDataSource:error: to active the data source on the port. */
-- (BOOL)setPreferredPolarPattern:(NSString *)pattern error:(NSError **)outError NS_AVAILABLE_IOS(7_0);
+- (BOOL)setPreferredPolarPattern:(nullable NSString *)pattern error:(NSError **)outError NS_AVAILABLE_IOS(7_0);
 
 @end
 
 
 #pragma mark -- AVAudioSessionDelegate protocol --
 /* The AVAudioSessionDelegate protocol is deprecated. Instead you should register for notifications. */
+__TVOS_PROHIBITED
 @protocol AVAudioSessionDelegate <NSObject>
 @optional 
 
@@ -683,11 +786,12 @@ NS_CLASS_AVAILABLE(NA, 6_0)
  Flags passed to you when endInterruptionWithFlags: is called on the delegate */
 enum {
 	AVAudioSessionInterruptionFlags_ShouldResume = 1
-} NS_DEPRECATED_IOS(4_0, 6_0);
+} NS_DEPRECATED_IOS(4_0, 6_0) __TVOS_PROHIBITED;
 
 /* Deprecated in iOS 6.0.  Use AVAudioSessionSetActiveOptions instead.
  flags for use when calling setActive:withFlags:error: */
 enum {	
 	AVAudioSessionSetActiveFlags_NotifyOthersOnDeactivation = 1
-} NS_DEPRECATED_IOS(4_0, 6_0);
+} NS_DEPRECATED_IOS(4_0, 6_0) __TVOS_PROHIBITED;
 
+NS_ASSUME_NONNULL_END

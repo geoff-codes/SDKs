@@ -2,7 +2,7 @@
 //  MKOverlayPathView.h
 //  MapKit
 //
-//  Copyright (c) 2010-2013, Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2014, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -11,7 +11,7 @@
 #import <MapKit/MKFoundation.h>
 
 // Prefer MKOverlayPathRenderer
-MK_CLASS_AVAILABLE(NA, 4_0)
+MK_CLASS_AVAILABLE(NA, 4_0) __WATCHOS_PROHIBITED
 @interface MKOverlayPathView : MKOverlayView
 
 @property (strong) UIColor *fillColor NS_DEPRECATED_IOS(4_0, 7_0);

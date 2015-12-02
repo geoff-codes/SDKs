@@ -5,10 +5,13 @@
 //  Copyright (c) 2011 Apple Inc. All rights reserved.
 //
 
+#import <SpriteKit/SKCameraNode.h>
 #import <SpriteKit/SKEffectNode.h>
 #import <SpriteKit/SpriteKitBase.h>
 
-@class SKView, SKPhysicsWorld;
+@class SKView, SKPhysicsWorld, AVAudioEngine;
+
+NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, SKSceneScaleMode) {
     SKSceneScaleModeFill,           /* Scale the SKScene to fill the entire SKView. */
@@ -16,6 +19,16 @@ typedef NS_ENUM(NSInteger, SKSceneScaleMode) {
     SKSceneScaleModeAspectFit,      /* Scale the SKScene to fit within the SKView while preserving the scene's aspect ratio. Some letterboxing may occur if the view has a different aspect ratio. */
     SKSceneScaleModeResizeFill      /* Modify the SKScene's actual size to exactly match the SKView. */
 } NS_ENUM_AVAILABLE(10_9, 7_0);
+
+NS_AVAILABLE(10_10, 8_0) @protocol SKSceneDelegate <NSObject>
+@optional
+- (void)update:(NSTimeInterval)currentTime forScene:(SKScene *)scene;
+- (void)didEvaluateActionsForScene:(SKScene *)scene;
+- (void)didSimulatePhysicsForScene:(SKScene *)scene;
+
+- (void)didApplyConstraintsForScene:(SKScene *)scene;
+- (void)didFinishUpdateForScene:(SKScene *)scene;
+@end
 
 /**
  A scene is the root node of your content. It is used to display SpriteKit content on an SKView.
@@ -37,25 +50,45 @@ SK_EXPORT @interface SKScene : SKEffectNode
 
 + (instancetype)sceneWithSize:(CGSize)size;
 
-@property (SK_NONATOMIC_IOSONLY) CGSize size;
+@property (nonatomic) CGSize size;
 
 /**
  Used to determine how to scale the scene to match the SKView it is being displayed in.
  */
-@property (SK_NONATOMIC_IOSONLY) SKSceneScaleMode scaleMode;
+@property (nonatomic) SKSceneScaleMode scaleMode;
 
-/* Background color, defaults to gray */
-@property (SK_NONATOMIC_IOSONLY, retain) SKColor *backgroundColor;
+/**
+ The camera that is used to obtain the view scale and translation based on where the camera is in relation to the scene.
+ */
+@property (nonatomic, weak, nullable) SKCameraNode *camera NS_AVAILABLE(10_11, 9_0);
+
+/**
+ The node that is currently the listener for positional audio coming from SKAudioNodes
+ @see SKAudioNode
+ */
+@property (nonatomic, weak, nullable) SKNode *listener NS_AVAILABLE(10_11, 9_0);
+
+/**
+ The audio engine that the listener and the scene's audio nodes use to process their sound through.
+ */
+@property (nonatomic, retain, readonly) AVAudioEngine *audioEngine NS_AVAILABLE(10_11, 9_0);
+
+/**
+ Background color, defaults to gray
+ */
+@property (nonatomic, retain) SKColor *backgroundColor;
+
+@property (nonatomic, assign, nullable) id<SKSceneDelegate> delegate NS_AVAILABLE(10_10, 8_0);
 
 /**
  Used to choose the origin of the scene's coordinate system
  */
-@property (SK_NONATOMIC_IOSONLY) CGPoint anchorPoint;
+@property (nonatomic) CGPoint anchorPoint;
 
 /**
  Physics simulation functionality
  */
-@property (SK_NONATOMIC_IOSONLY, readonly) SKPhysicsWorld *physicsWorld;
+@property (nonatomic, readonly) SKPhysicsWorld *physicsWorld;
 
 - (CGPoint)convertPointFromView:(CGPoint)point;
 - (CGPoint)convertPointToView:(CGPoint)point;
@@ -63,7 +96,7 @@ SK_EXPORT @interface SKScene : SKEffectNode
 /**
  The SKView this scene is currently presented in, or nil if it is not being presented.
  */
-@property (SK_NONATOMIC_IOSONLY, weak, readonly) SKView *view;
+@property (nonatomic, weak, readonly, nullable) SKView *view;
 
 /**
  Override this to perform per-frame game logic. Called exactly once per frame before any actions are evaluated and any physics are simulated.
@@ -82,8 +115,22 @@ SK_EXPORT @interface SKScene : SKEffectNode
  */
 - (void)didSimulatePhysics;
 
+/**
+ Override this to perform game logic. Called exactly once per frame after any enabled constraints have been applied. Any additional actions applied is not evaluated until the next update. Any changes to physics bodies is not simulated until the next update. Any changes to constarints will not be applied until the next update.
+ */
+- (void)didApplyConstraints NS_AVAILABLE(10_10, 8_0);
+
+/**
+ Override this to perform game logic. Called after all update logic has been completed. Any additional actions applied are not evaluated until the next update. Any changes to physics bodies are not simulated until the next update. Any changes to constarints will not be applied until the next update.
+ 
+ No futher update logic will be applied to the scene after this call. Any values set on nodes here will be used when the scene is rendered for the current frame.
+ */
+- (void)didFinishUpdate NS_AVAILABLE(10_10, 8_0);
+
 - (void)didMoveToView:(SKView *)view;
 - (void)willMoveFromView:(SKView *)view;
 - (void)didChangeSize:(CGSize)oldSize;
 
 @end
+
+NS_ASSUME_NONNULL_END

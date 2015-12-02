@@ -1,4 +1,4 @@
-module ObjectiveC [system] {
+module ObjectiveC [system] [extern_c] {
   umbrella "."
   export *
   module * { 

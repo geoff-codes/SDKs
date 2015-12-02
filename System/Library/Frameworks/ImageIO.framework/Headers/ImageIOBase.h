@@ -8,6 +8,8 @@
 #ifndef __IMAGEIOBASE__
 #define __IMAGEIOBASE__
 
+#include <CoreFoundation/CoreFoundation.h>
+
 #if defined(IMAGEIO_BUILDING_IMAGEIO)
 
 #   define IMAGEIO_AVAILABLE_STARTING(_mac,_iphone)
@@ -57,4 +59,17 @@
 #   endif
 #endif
 
-#endif	/* __IMAGEIOBASE__ */
+#if (TARGET_OS_MAC && !TARGET_IPHONE_SIMULATOR) || TARGET_OS_EMBEDDED
+#    define IIO_HAS_IOSURFACE 1
+#else
+#    define IIO_HAS_IOSURFACE 0
+#endif
+
+#if defined(__has_feature) && __has_feature(objc_bridge_id)
+#define IIO_BRIDGED_TYPE(type)       CF_BRIDGED_TYPE(type)
+#else
+#define IIO_BRIDGED_TYPE(type)
+#endif
+
+
+#endif  /* __IMAGEIOBASE__ */

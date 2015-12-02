@@ -1,15 +1,20 @@
 /*	
     NSHTTPCookieStorage.h
-    Copyright (c) 2003-2013, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2015, Apple Inc. All rights reserved.    
     
     Public header file.
 */
 
 #import <Foundation/NSObject.h>
 
-@class NSArray;
+@class NSArray<ObjectType>;
 @class NSHTTPCookie;
 @class NSURL;
+@class NSDate;
+@class NSURLSessionTask;
+@class NSSortDescriptor;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /*!
     @enum NSHTTPCookieAcceptPolicy
@@ -51,11 +56,24 @@ typedef NS_ENUM(NSUInteger, NSHTTPCookieAcceptPolicy) {
 + (NSHTTPCookieStorage *)sharedHTTPCookieStorage;
 
 /*!
+    @method sharedCookieStorageForGroupContainerIdentifier:
+    @abstract Get the cookie storage for the container associated with the specified application group identifier
+    @param identifier The application group identifier
+    @result A cookie storage with a persistent store in the application group container
+    @discussion By default, applications and associated app extensions have different data containers, which means
+    that the sharedHTTPCookieStorage singleton will refer to different persistent cookie stores in an application and
+    any app extensions that it contains. This method allows clients to create a persistent cookie storage that can be
+    shared among all applications and extensions with access to the same application group. Subsequent calls to this
+    method with the same identifier will return the same cookie storage instance.
+ */
++ (NSHTTPCookieStorage *)sharedCookieStorageForGroupContainerIdentifier:(NSString *)identifier NS_AVAILABLE(10_11, 9_0);
+
+/*!
     @method cookies
     @abstract Get all the cookies
     @result An NSArray of NSHTTPCookies
 */
-- (NSArray *)cookies;
+@property (nullable , readonly, copy) NSArray<NSHTTPCookie *> *cookies;
 
 /*!
     @method setCookie:
@@ -72,6 +90,12 @@ typedef NS_ENUM(NSUInteger, NSHTTPCookieAcceptPolicy) {
 - (void)deleteCookie:(NSHTTPCookie *)cookie;
 
 /*!
+ @method removeCookiesSince:
+ @abstract Delete all cookies from the cookie storage since the provided date.
+ */
+- (void)removeCookiesSinceDate:(NSDate *)date NS_AVAILABLE(10_10, 8_0);
+
+/*!
     @method cookiesForURL:
     @abstract Returns an array of cookies to send to the given URL.
     @param URL The URL for which to get cookies.
@@ -81,7 +105,7 @@ typedef NS_ENUM(NSUInteger, NSHTTPCookieAcceptPolicy) {
     <tt>+[NSCookie requestHeaderFieldsWithCookies:]</tt> to turn this array
     into a set of header fields to add to a request.
 */
-- (NSArray *)cookiesForURL:(NSURL *)URL;
+- (nullable NSArray<NSHTTPCookie *> *)cookiesForURL:(NSURL *)URL;
 
 /*!
     @method setCookies:forURL:mainDocumentURL:
@@ -100,23 +124,14 @@ typedef NS_ENUM(NSUInteger, NSHTTPCookieAcceptPolicy) {
     dictionary and then use this method to store the resulting cookies
     in accordance with policy settings.
 */
-- (void)setCookies:(NSArray *)cookies forURL:(NSURL *)URL mainDocumentURL:(NSURL *)mainDocumentURL;
+- (void)setCookies:(NSArray<NSHTTPCookie *> *)cookies forURL:(nullable NSURL *)URL mainDocumentURL:(nullable NSURL *)mainDocumentURL;
 
 /*!
     @method cookieAcceptPolicy
-    @abstract Returns the cookie accept policy preference of the
+    @abstract The cookie accept policy preference of the
     receiver.
-    @result The cookie accept policy preference of the receiver.
 */
-- (NSHTTPCookieAcceptPolicy)cookieAcceptPolicy;
-
-/*!
-    @method setCookieAcceptPolicy:
-    @abstract Sets the cookie accept policy preference of the
-    receiver.
-    @param cookieAcceptPolicy The new cookie accept policy for the receiver.
-*/
-- (void)setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)cookieAcceptPolicy;
+@property NSHTTPCookieAcceptPolicy cookieAcceptPolicy;
 
 /*!
   @method sortedCookiesUsingDescriptors:
@@ -124,8 +139,13 @@ typedef NS_ENUM(NSUInteger, NSHTTPCookieAcceptPolicy) {
   @param sortOrder an array of NSSortDescriptors which represent the preferred sort order of the resulting array.
   @discussion proper sorting of cookies may require extensive string conversion, which can be avoided by allowing the system to perform the sorting.  This API is to be preferred over the more generic -[NSHTTPCookieStorage cookies] API, if sorting is going to be performed.
 */
-- (NSArray*)sortedCookiesUsingDescriptors:(NSArray*) sortOrder NS_AVAILABLE(10_7, 5_0);
+- (NSArray<NSHTTPCookie *> *)sortedCookiesUsingDescriptors:(NSArray<NSSortDescriptor *> *) sortOrder NS_AVAILABLE(10_7, 5_0);
 
+@end
+
+@interface NSHTTPCookieStorage (NSURLSessionTaskAdditions)
+- (void)storeCookies:(NSArray<NSHTTPCookie *> *)cookies forTask:(NSURLSessionTask *)task NS_AVAILABLE(10_10, 8_0);
+- (void)getCookiesForTask:(NSURLSessionTask *)task completionHandler:(void (^) (NSArray<NSHTTPCookie *> * __nullable cookies))completionHandler NS_AVAILABLE(10_10, 8_0);
 @end
 
 /*!
@@ -142,3 +162,4 @@ FOUNDATION_EXPORT NSString * const NSHTTPCookieManagerAcceptPolicyChangedNotific
 */
 FOUNDATION_EXPORT NSString * const NSHTTPCookieManagerCookiesChangedNotification;
 
+NS_ASSUME_NONNULL_END

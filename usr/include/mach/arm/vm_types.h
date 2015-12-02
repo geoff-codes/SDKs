@@ -46,7 +46,6 @@
 #ifndef	ASSEMBLER
 
 #include <arm/_types.h>
-#include <mach/arm/vm_param.h>
 #include <stdint.h>
 #include <Availability.h>
 
@@ -123,9 +122,6 @@ typedef uint32_t		vm32_size_t;
 
 typedef vm_offset_t		mach_port_context_t;
 
-
-#define VM_MAP_MIN_ADDRESS	VM_MIN_ADDRESS
-#define VM_MAP_MAX_ADDRESS	VM_MAX_ADDRESS
 
 #endif	/* ASSEMBLER */
 

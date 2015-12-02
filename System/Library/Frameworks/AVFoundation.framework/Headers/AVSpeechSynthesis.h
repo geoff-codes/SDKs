@@ -3,20 +3,31 @@
  
  Framework:  AVFoundation
  
- Copyright 2013 Apple Inc. All rights reserved.
+ Copyright 2013-2015 Apple Inc. All rights reserved.
  */
 
 #import <AVFoundation/AVBase.h>
 #import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, AVSpeechBoundary) {
     AVSpeechBoundaryImmediate,
     AVSpeechBoundaryWord
 } NS_ENUM_AVAILABLE_IOS(7_0);
 
-AVF_EXPORT const float AVSpeechUtteranceMinimumSpeechRate;
-AVF_EXPORT const float AVSpeechUtteranceMaximumSpeechRate;
-AVF_EXPORT const float AVSpeechUtteranceDefaultSpeechRate;
+typedef NS_ENUM(NSInteger, AVSpeechSynthesisVoiceQuality) {
+    AVSpeechSynthesisVoiceQualityDefault = 1,
+    AVSpeechSynthesisVoiceQualityEnhanced
+} NS_ENUM_AVAILABLE_IOS(9_0);
+
+AVF_EXPORT const float AVSpeechUtteranceMinimumSpeechRate NS_AVAILABLE_IOS(7_0);
+AVF_EXPORT const float AVSpeechUtteranceMaximumSpeechRate NS_AVAILABLE_IOS(7_0);
+AVF_EXPORT const float AVSpeechUtteranceDefaultSpeechRate NS_AVAILABLE_IOS(7_0);
+
+// Use the Alex identifier with voiceWithIdentifier:. If the voice is present on the system,
+// an AVSpeechSynthesisVoice will be returned. Alex is en-US only.
+AVF_EXPORT NSString *const AVSpeechSynthesisVoiceIdentifierAlex NS_AVAILABLE_IOS(9_0);
 
 @protocol AVSpeechSynthesizerDelegate;
 
@@ -26,12 +37,13 @@ AVF_EXPORT const float AVSpeechUtteranceDefaultSpeechRate;
  AVSpeechSynthesisVoice encapsulates the attributes of the voice used to synthesize speech on the system.
  
  @discussion
- Retrieve a voice by specifying the language code your text should be spoken in.
+ Retrieve a voice by specifying the language code your text should be spoken in, or by using voiceWithIdentifier
+ for a known voice identifier.
  */
 NS_CLASS_AVAILABLE_IOS(7_0)
 @interface AVSpeechSynthesisVoice : NSObject<NSSecureCoding>
 
-+ (NSArray *)speechVoices;
++ (NSArray<AVSpeechSynthesisVoice *> *)speechVoices;
 + (NSString *)currentLanguageCode;
 
 /*!
@@ -41,13 +53,28 @@ NS_CLASS_AVAILABLE_IOS(7_0)
  Specifies the BCP-47 language tag that represents the voice.
  @discussion
  The default is the system's region and language.
- Passing in nil will return the default synthesizer.
+ Passing in nil will return the default voice.
  Passing in an invalid languageCode will return nil.
+ Will return enhanced quality voice if available, default quality otherwise.
  Examples: en-US (U.S. English), fr-CA (French Canadian)
  */
-+ (AVSpeechSynthesisVoice *)voiceWithLanguage:(NSString *)language;
++ (nullable AVSpeechSynthesisVoice *)voiceWithLanguage:(nullable NSString *)languageCode;
+
+/*!
+ @method        voiceWithIdentifier:
+ @abstract      Retrieve a voice by its identifier.
+ @param			identifier
+ A unique identifier for a voice.
+ @discussion
+ Passing in an invalid identifier will return nil.
+ Returns nil if the identifier is valid, but the voice is not available on device (i.e. not yet downloaded by the user).
+ */
++ (nullable AVSpeechSynthesisVoice *)voiceWithIdentifier:(NSString *)identifier NS_AVAILABLE_IOS(9_0);
 
 @property(nonatomic, readonly) NSString *language;
+@property(nonatomic, readonly) NSString *identifier NS_AVAILABLE_IOS(9_0);
+@property(nonatomic, readonly) NSString *name NS_AVAILABLE_IOS(9_0);
+@property(nonatomic, readonly) AVSpeechSynthesisVoiceQuality quality NS_AVAILABLE_IOS(9_0);
 
 @end
 
@@ -62,12 +89,12 @@ NS_CLASS_AVAILABLE_IOS(7_0)
 NS_CLASS_AVAILABLE_IOS(7_0)
 @interface AVSpeechUtterance : NSObject<NSCopying, NSSecureCoding>
 
-+ (AVSpeechUtterance *)speechUtteranceWithString:(NSString *)string;
++ (instancetype)speechUtteranceWithString:(NSString *)string;
 
-- (AVSpeechUtterance *)initWithString:(NSString *)string;
+- (instancetype)initWithString:(NSString *)string;
 
 /* If no voice is specified, the system's default will be used. */
-@property(nonatomic, retain) AVSpeechSynthesisVoice *voice;
+@property(nonatomic, retain, nullable) AVSpeechSynthesisVoice *voice;
 
 @property(nonatomic, readonly) NSString *speechString;
 
@@ -94,12 +121,13 @@ NS_CLASS_AVAILABLE_IOS(7_0)
 NS_CLASS_AVAILABLE_IOS(7_0)
 @interface AVSpeechSynthesizer : NSObject
 
-@property(nonatomic, assign) id<AVSpeechSynthesizerDelegate> delegate;
+@property(nonatomic, assign, nullable) id<AVSpeechSynthesizerDelegate> delegate;
 
 @property(nonatomic, readonly, getter=isSpeaking) BOOL speaking;
 @property(nonatomic, readonly, getter=isPaused) BOOL paused;
 
-/* AVSpeechUtterances are queued by default. If an AVSpeechUtterance is already enqueued or is speaking, this method will raise an exception. */
+/* AVSpeechUtterances are queued by default. 
+   Enqueing the same AVSpeechUtterance that is already enqueued or is speaking will raise an exception. */
 - (void)speakUtterance:(AVSpeechUtterance *)utterance;
 
 /* These methods will operate on the speech utterance that is speaking. Returns YES if it succeeds, NO for failure. */
@@ -127,3 +155,6 @@ NS_CLASS_AVAILABLE_IOS(7_0)
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer willSpeakRangeOfSpeechString:(NSRange)characterRange utterance:(AVSpeechUtterance *)utterance;
 @end
+
+NS_ASSUME_NONNULL_END
+

@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreMotion/CMLogItem.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CMMotionActivityConfidence
  *
@@ -42,7 +44,7 @@ typedef NS_ENUM(NSInteger, CMMotionActivityConfidence) {
  *    Note in this case all of the properties are NO.
  *
  */
-NS_CLASS_AVAILABLE(NA, 7_0)
+NS_CLASS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED
 @interface CMMotionActivity : CMLogItem
 
 /*
@@ -105,4 +107,14 @@ NS_CLASS_AVAILABLE(NA, 7_0)
  */
 @property(readonly, nonatomic) BOOL automotive;
 
+/*
+ *  cycling
+ *
+ *  Discussion:
+ *    True if the device is on a bicycle.
+ */
+@property(readonly, nonatomic) BOOL cycling NS_AVAILABLE(NA, 8_0);
+
 @end
+
+NS_ASSUME_NONNULL_END

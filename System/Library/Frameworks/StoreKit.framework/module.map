@@ -1,4 +1,4 @@
-framework module StoreKit [system] {
+framework module StoreKit [extern_c] {
   umbrella header "StoreKit.h"
      
   module SKReceiptRefreshRequest {

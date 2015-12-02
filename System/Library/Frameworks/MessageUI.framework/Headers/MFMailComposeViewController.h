@@ -7,6 +7,8 @@
 */
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 
 /*!
     @enum       MFMailComposeResult
@@ -29,7 +31,6 @@ enum MFMailComposeResult {
     MFMailComposeResultFailed
 };
 typedef enum MFMailComposeResult MFMailComposeResult;   // available in iPhone 3.0
-
 
 /*!
     @const      MFMailComposeErrorDomain
@@ -86,7 +87,7 @@ typedef enum MFMailComposeErrorCode MFMailComposeErrorCode;     // available in 
     @property   mailComposeDelegate
     @abstract   This property is the delegate for the MFMailComposeViewControllerDelegate method callbacks.
  */
-@property(nonatomic,assign) id<MFMailComposeViewControllerDelegate> mailComposeDelegate /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0)*/;
+@property (nonatomic, assign, nullable) id<MFMailComposeViewControllerDelegate> mailComposeDelegate /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0)*/;
 
 /*!
     @method     setSubject:
@@ -106,7 +107,7 @@ typedef enum MFMailComposeErrorCode MFMailComposeErrorCode;     // available in 
                 </p>After the view has been presented to the user, this method will no longer change the value.
     @param      toRecipients  A NSArray of NSString instances specifying the email addresses of recipients.
 */
-- (void)setToRecipients:(NSArray *)toRecipients __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)setToRecipients:(nullable NSArray<NSString *> *)toRecipients __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 /*!
     @method     setCcRecipients:
@@ -116,7 +117,7 @@ typedef enum MFMailComposeErrorCode MFMailComposeErrorCode;     // available in 
                 </p>After the view has been presented to the user, this method will no longer change the value.
     @param      ccRecipients  A NSArray of NSString instances specifying the email addresses of recipients.
  */
-- (void)setCcRecipients:(NSArray *)ccRecipients __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)setCcRecipients:(nullable NSArray<NSString *> *)ccRecipients __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 /*!
     @method     setBccRecipients:
@@ -126,7 +127,7 @@ typedef enum MFMailComposeErrorCode MFMailComposeErrorCode;     // available in 
                 </p>After the view has been presented to the user, this method will no longer change the value.
     @param      bccRecipients    A NSArray of NSString instances specifying the email addresses of recipients.
  */
-- (void)setBccRecipients:(NSArray *)bccRecipients __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)setBccRecipients:(nullable NSArray<NSString *> *)bccRecipients __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 /*!
     @method     setMessageBody:isHTML:
@@ -173,7 +174,9 @@ typedef enum MFMailComposeErrorCode MFMailComposeErrorCode;     // available in 
     @param      error        NSError indicating the failure reason if failure did occur.  This will be <tt>nil</tt> if
                              result did not indicate failure.
 */
-- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(nullable NSError *)error __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @end
+
+NS_ASSUME_NONNULL_END
 

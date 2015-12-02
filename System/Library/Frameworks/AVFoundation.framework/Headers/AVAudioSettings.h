@@ -32,7 +32,7 @@ AVF_EXPORT NSString *const AVEncoderAudioQualityKey;					/* value is an integer 
 AVF_EXPORT NSString *const AVEncoderAudioQualityForVBRKey               NS_AVAILABLE(10_9, 7_0); /* value is an integer from enum AVAudioQuality. only relevant for AVAudioBitRateStrategy_Variable */
 
 	/* only one of AVEncoderBitRateKey and AVEncoderBitRatePerChannelKey should be provided. */
-AVF_EXPORT NSString *const AVEncoderBitRateKey;           				/* value is an integer. ignored for AVAudioBitRateStrategy_Variable */
+AVF_EXPORT NSString *const AVEncoderBitRateKey;           				/* value is an integer. */
 AVF_EXPORT NSString *const AVEncoderBitRatePerChannelKey                NS_AVAILABLE(10_7, 4_0); /* value is an integer */
 AVF_EXPORT NSString *const AVEncoderBitRateStrategyKey                  NS_AVAILABLE(10_9, 7_0); /* value is an AVAudioBitRateStrategy constant. see below. */
 AVF_EXPORT NSString *const AVEncoderBitDepthHintKey;					/* value is an integer from 8 to 32 */
@@ -57,12 +57,11 @@ AVF_EXPORT NSString *const AVAudioBitRateStrategy_Variable              NS_AVAIL
 AVF_EXPORT NSString *const AVSampleRateConverterAlgorithm_Normal        NS_AVAILABLE(10_9, 7_0);
 AVF_EXPORT NSString *const AVSampleRateConverterAlgorithm_Mastering     NS_AVAILABLE(10_9, 7_0);
 
-enum {
+typedef NS_ENUM(NSInteger, AVAudioQuality) {
 	AVAudioQualityMin    = 0,
 	AVAudioQualityLow    = 0x20,
 	AVAudioQualityMedium = 0x40,
 	AVAudioQualityHigh   = 0x60,
 	AVAudioQualityMax    = 0x7F
 };
-typedef NSInteger AVAudioQuality;
 

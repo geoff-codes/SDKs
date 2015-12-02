@@ -124,7 +124,7 @@ dispatch_introspection_hook_queue_item_dequeue(dispatch_queue_t queue,
  * Opaque dentifier for completed item. Must NOT be dereferenced.
  */
 
-__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_1)
+__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_7_1)
 DISPATCH_EXPORT
 void
 dispatch_introspection_hook_queue_item_complete(dispatch_object_t item);

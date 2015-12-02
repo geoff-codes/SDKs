@@ -20,13 +20,14 @@
  download of content, you will be required to call 
  -[NKAssetDownload downloadWithDelegate:].
  */
-@interface NKLibrary : NSObject
+NS_ASSUME_NONNULL_BEGIN
+NS_CLASS_AVAILABLE_IOS(5_0) @interface NKLibrary : NSObject
 
 /*!
  @property   issues
  @abstract   The Newsstand issues in the library
  */
-@property (readonly, retain) NSArray *issues;
+@property (readonly, strong) NSArray<NKIssue *> *issues;
 
 /*!
  @property   downloadingAssets
@@ -34,7 +35,7 @@
  Newsstand library. The issue that this asset is associated with
  can be determined from the asset itself.
  */
-@property (readonly , retain) NSArray *downloadingAssets;
+@property (readonly, strong) NSArray<NKAssetDownload *> *downloadingAssets;
 
 /*!
  @property   currentlyReadingIssue
@@ -42,19 +43,19 @@
  set this property to the currently read issue to prevent data
  from being purged when under disk pressure.
  */
-@property (readwrite, retain) NKIssue *currentlyReadingIssue;
+@property (strong, nullable) NKIssue *currentlyReadingIssue;
 
 /*!
  @method     sharedLibrary
  @abstract   The application's shared Newsstand Content Library
  */
-+ (NKLibrary *)sharedLibrary;
++ (nullable NKLibrary *)sharedLibrary;
 
 /*!
  @method     issueWithName:
  @abstract   Return the issue identified by the given name if it exists.
  */
-- (NKIssue *)issueWithName:(NSString *)name;
+- (nullable NKIssue *)issueWithName:(NSString *)name;
 
 /*!
  @method     addIssueWithName:date:
@@ -69,3 +70,4 @@
 - (void)removeIssue:(NKIssue *)issue;
 
 @end
+NS_ASSUME_NONNULL_END

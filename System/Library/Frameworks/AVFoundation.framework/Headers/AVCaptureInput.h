@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010-2013 Apple Inc. All rights reserved.
+	Copyright 2010-2015 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
@@ -16,6 +16,7 @@
 
 @class AVCaptureInputPort;
 @class AVCaptureInputInternal;
+@class AVTimedMetadataGroup;
 
 /*!
  @class AVCaptureInput
@@ -31,7 +32,7 @@
     AVCaptureInput instances and AVCaptureOutput instances via AVCaptureConnection objects that define the mapping
     between a set of AVCaptureInputPort objects and a single AVCaptureOutput.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureInput : NSObject 
 {
 @private
@@ -60,7 +61,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @discussion
     The notification object is the AVCaptureInputPort instance whose format description changed.
 */
-AVF_EXPORT NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotification NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 @class AVCaptureInputPortInternal;
 
@@ -76,7 +77,7 @@ AVF_EXPORT NSString *const AVCaptureInputPortFormatDescriptionDidChangeNotificat
     formatDescription properties, and allow clients to control the flow of data via the enabled property. Input ports
     are used by an AVCaptureConnection to define the mapping between inputs and outputs in an AVCaptureSession.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureInputPort : NSObject
 {
 @private
@@ -131,12 +132,11 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 /*!
  @property clock
  @abstract
- Provides access to the "native" clock used by the input port.
+	Provides access to the "native" clock used by the input port.
  @discussion
- The clock is read-only.
+	The clock is read-only.
  */
 @property(nonatomic, readonly) __attribute__((NSObject)) CMClockRef clock NS_AVAILABLE(10_9, 7_0);
-
 
 @end
 
@@ -153,7 +153,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     Instances of AVCaptureDeviceInput are input sources for AVCaptureSession that provide media data from devices
     connected to the system, represented by instances of AVCaptureDevice.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureDeviceInput : AVCaptureInput 
 {
 @private
@@ -179,7 +179,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     necessary. If the device cannot be opened because it is no longer available or because it is in use, for example,
     this method returns nil, and the optional outError parameter points to an NSError describing the problem.
 */
-+ (id)deviceInputWithDevice:(AVCaptureDevice *)device error:(NSError **)outError;
++ (instancetype)deviceInputWithDevice:(AVCaptureDevice *)device error:(NSError **)outError;
 
 /*!
  @method initWithDevice:error:
@@ -200,7 +200,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     necessary. If the device cannot be opened because it is no longer available or because it is in use, for example,
     this method returns nil, and the optional outError parameter points to an NSError describing the problem.
 */
-- (id)initWithDevice:(AVCaptureDevice *)device error:(NSError **)outError;
+- (instancetype)initWithDevice:(AVCaptureDevice *)device error:(NSError **)outError;
 
 /*!
  @property device
@@ -229,7 +229,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     Instances of AVCaptureScreenInput are input sources for AVCaptureSession that provide media data from
     one of the screens connected to the system, represented by CGDirectDisplayIDs.
 */
-NS_CLASS_AVAILABLE(10_7, NA)
+NS_CLASS_AVAILABLE(10_7, NA) __TVOS_PROHIBITED
 @interface AVCaptureScreenInput : AVCaptureInput 
 {
 @private
@@ -252,7 +252,7 @@ NS_CLASS_AVAILABLE(10_7, NA)
     an AVCaptureSession. This method validates the displayID. If the display cannot be used because it is not available
     on the system, for example, this method returns nil.
 */
-- (id)initWithDisplayID:(CGDirectDisplayID)displayID;
+- (instancetype)initWithDisplayID:(CGDirectDisplayID)displayID;
 
 /*!
  @property minFrameDuration
@@ -323,12 +323,104 @@ NS_CLASS_AVAILABLE(10_7, NA)
     A property indicating whether duplicate frames should be removed by the input.
 
  @discussion
-    By default, AVCaptureScreenInput performs frame differencing and when it detects duplicate
-    frames, it drops them.  If this property is set to NO, the captured output receives all frames
-    from the input.
+    If this property is set to YES, AVCaptureScreenInput performs frame differencing and when it
+	detects duplicate frames, it drops them.  If set to NO, the captured output receives all frames
+    from the input.  Prior to 10.9 this value defaulted to YES.  In 10.9 and later, it defaults to
+	NO, as modern platforms support frame differencing in hardware-based encoders.
+	
+	As of 10.10, this property has been deprecated and is ignored.  Clients wishing to re-create
+	this functionality can use an AVCaptureVideoDataOutput and compare frame contents in their
+	own code.  If they wish to write a movie file, they can then pass the unique frames to an
+	AVAssetWriterInput.
 */
-@property(nonatomic) BOOL removesDuplicateFrames NS_AVAILABLE(10_8, NA);
+@property(nonatomic) BOOL removesDuplicateFrames NS_DEPRECATED(10_8, 10_10, NA, NA);
 
 @end
 
 #endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+
+
+@class AVCaptureMetadataInputInternal;
+
+/*!
+ @class AVCaptureMetadataInput
+ @abstract
+    AVCaptureMetadataInput is a concrete subclass of AVCaptureInput that provides a way for
+    clients to supply AVMetadataItems to an AVCaptureSession.
+
+ @discussion
+    Instances of AVCaptureMetadataInput are input sources for AVCaptureSession that provide
+    AVMetadataItems to an AVCaptureSession.  AVCaptureMetadataInputs present one and only one
+    AVCaptureInputPort, which currently may only be connected to an AVCaptureMovieFileOutput.
+    The metadata supplied over the input port is provided by the client, and must conform to a
+    client-supplied CMFormatDescription.  The AVMetadataItems are supplied in an AVTimedMetadataGroup.
+*/
+NS_CLASS_AVAILABLE(NA, 9_0) __TVOS_PROHIBITED
+@interface AVCaptureMetadataInput : AVCaptureInput 
+{
+@private
+    AVCaptureMetadataInputInternal *_internal;
+}
+
+/*!
+ @method metadataInputWithFormatDescription:clock:
+ @abstract
+    Returns an AVCaptureMetadataInput instance that allows a client to provide
+    AVTimedMetadataGroups to an AVCaptureSession.
+
+ @param desc
+    A CMFormatDescription that defines the metadata to be supplied by the client.
+    Throws an NSInvalidArgumentException if NULL is passed.
+ @param clock
+    A CMClock that provided the timebase for the supplied samples.
+    Throws an NSInvalidArgumentException if NULL is passed.
+ @result
+    An AVCaptureMetadataInput instance.
+
+ @discussion
+    This method returns an instance of AVCaptureMetadataInput that can be used to capture
+    AVTimedMetadataGroups supplied by the client to an AVCaptureSession.
+*/
++ (instancetype)metadataInputWithFormatDescription:(CMMetadataFormatDescriptionRef)desc clock:(CMClockRef)clock;
+
+/*!
+ @method initWithFormatDescription:clock:
+ @abstract
+    Creates an AVCaptureMetadataInput instance that allows a client to provide
+    AVTimedMetadataGroups to an AVCaptureSession.
+
+ @param desc
+    A CMFormatDescription that defines the metadata to be supplied by the client.
+    Throws NSInvalidArgumentException if NULL is passed.
+ @param clock
+    A CMClock that provided the timebase for the supplied samples.
+    Throws NSInvalidArgumentException if NULL is passed.
+ @result
+    An AVCaptureMetadataInput instance, or nil, if the device could not be used
+    for capture.
+
+ @discussion
+    This method creates an instance of AVCaptureMetadataInput that can be used to capture
+    AVTimedMetadataGroups supplied by the client to an AVCaptureSession.
+*/
+- (instancetype)initWithFormatDescription:(CMMetadataFormatDescriptionRef)desc clock:(CMClockRef)clock;
+
+/*!
+ @method appendTimedMetadataGroup:
+ @abstract
+    Provides metadata to the AVCaptureSession.
+
+ @param metadata
+    An AVTimedMetadataGroup of metadata.  Will throw an exception if nil.
+    In order to denote a period of no metadata, an empty AVTimedMetadataGroup should
+    be passed.
+
+ @discussion
+    The provided AVTimedMetadataGroup will be provided to the AVCaptureSession.  The group's
+    presentation timestamp is expressed in the context of the clock supplied to the initializer.
+    It is not required that the AVTimedMetadataGroup have a duration;  an empty AVTimedMetadataGroup
+    can be supplied to denote a period of no metadata.
+*/
+- (BOOL)appendTimedMetadataGroup:(AVTimedMetadataGroup *)metadata error:(NSError **)outError;
+
+@end

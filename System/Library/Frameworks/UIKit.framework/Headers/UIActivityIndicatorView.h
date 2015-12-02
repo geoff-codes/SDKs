@@ -1,37 +1,36 @@
 //
-//  UIActivityIndicator.h
+//  UIActivityIndicatorView.h
 //  UIKit
 //
-//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2014 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIView.h>
 #import <UIKit/UIKitDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSInteger, UIActivityIndicatorViewStyle) {
     UIActivityIndicatorViewStyleWhiteLarge,
     UIActivityIndicatorViewStyleWhite,
-    UIActivityIndicatorViewStyleGray,
+    UIActivityIndicatorViewStyleGray __TVOS_PROHIBITED,
 };
 
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UIActivityIndicatorView : UIView <NSCoding>
-{ 
-  @package
-    CFTimeInterval               _duration;
-    BOOL                         _animating;
-    UIActivityIndicatorViewStyle _activityIndicatorViewStyle;
-    UIActivityIndicatorViewStyle _actualActivityIndicatorViewStyle;
-    BOOL                         _hidesWhenStopped;
-}
 
-- (id)initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyle)style;     // sizes the view according to the style
-
+- (instancetype)initWithActivityIndicatorStyle:(UIActivityIndicatorViewStyle)style NS_DESIGNATED_INITIALIZER; // sizes the view according to the style
+- (instancetype)initWithFrame:(CGRect)frame NS_DESIGNATED_INITIALIZER;
+- (instancetype) initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
+   
 @property(nonatomic) UIActivityIndicatorViewStyle activityIndicatorViewStyle; // default is UIActivityIndicatorViewStyleWhite
 @property(nonatomic) BOOL                         hidesWhenStopped;           // default is YES. calls -setHidden when animating gets set to NO
 
-@property (readwrite, nonatomic, retain) UIColor *color NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property (nullable, readwrite, nonatomic, strong) UIColor *color NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 - (void)startAnimating;
 - (void)stopAnimating;
 - (BOOL)isAnimating;
+
 @end
+
+NS_ASSUME_NONNULL_END

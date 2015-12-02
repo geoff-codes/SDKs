@@ -8,13 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CMStepQueryHandler
  *
  *  Discussion:
  *    Typedef of block to be invoked when the step count query is completed.
  */
-typedef void (^CMStepQueryHandler)(NSInteger numberOfSteps, NSError *error);
+typedef void (^CMStepQueryHandler)(NSInteger numberOfSteps, NSError * __nullable error) __TVOS_PROHIBITED __WATCHOS_PROHIBITED;
 
 /*
  *  CMStepUpdateHandler
@@ -23,7 +25,7 @@ typedef void (^CMStepQueryHandler)(NSInteger numberOfSteps, NSError *error);
  *      Typedef of block to be invoked on every update.  The total step count since startStepCountingUpdatesToQueue
  *      was called along with the timestamp associated with the latest determination will be returned.
  */
-typedef void (^CMStepUpdateHandler)(NSInteger numberOfSteps, NSDate *timestamp, NSError *error);
+typedef void (^CMStepUpdateHandler)(NSInteger numberOfSteps, NSDate *timestamp, NSError * __nullable error) __TVOS_PROHIBITED __WATCHOS_PROHIBITED;
 
 /*
  *  CMStepCounter
@@ -43,7 +45,7 @@ typedef void (^CMStepUpdateHandler)(NSInteger numberOfSteps, NSDate *timestamp, 
  *      by either calling stopStepCountingUpdates or upon CMStepCounter deallocation.
  *
  */
-NS_CLASS_AVAILABLE(NA,7_0)
+NS_CLASS_DEPRECATED_IOS(7_0,8_0,"Use CMPedometer instead") __TVOS_PROHIBITED __WATCHOS_PROHIBITED
 @interface CMStepCounter : NSObject
 
 /*
@@ -94,3 +96,5 @@ NS_CLASS_AVAILABLE(NA,7_0)
 - (void)stopStepCountingUpdates;
 
 @end
+
+NS_ASSUME_NONNULL_END

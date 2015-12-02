@@ -1,6 +1,8 @@
-framework module * [system] {
+framework module * [extern_c] {
   exclude Kernel
   exclude System
+
+
 
 
 
@@ -11,6 +13,10 @@ framework module * [system] {
   exclude AppleBasebandManager
   exclude CoreServices
   exclude IOKit
+  exclude PushRegistrar
+
+
+
 
 }
 

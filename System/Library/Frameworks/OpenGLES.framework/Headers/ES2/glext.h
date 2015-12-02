@@ -1,7 +1,6 @@
 #ifndef __gl_es20ext_h_
 #define __gl_es20ext_h_
 
-#include <inttypes.h>
 #include <OpenGLES/ES2/gl.h>
 #include <Availability.h>
 
@@ -47,12 +46,15 @@ extern "C" {
 #   define GL_APIENTRYP GL_APIENTRY*
 #endif
 
+#define GL_APPLE_clip_distance                                  1
+#define GL_APPLE_color_buffer_packed_float                      1
 #define GL_APPLE_copy_texture_levels                            1
 #define GL_APPLE_framebuffer_multisample                        1
 #define GL_APPLE_rgb_422                                        1
 #define GL_APPLE_sync                                           1
 #define GL_APPLE_texture_format_BGRA8888                        1
 #define GL_APPLE_texture_max_level                              1
+#define GL_APPLE_texture_packed_float                           1
 #define GL_EXT_blend_minmax                                     1
 #define GL_EXT_color_buffer_half_float                          1
 #define GL_EXT_debug_label                                      1
@@ -89,23 +91,26 @@ extern "C" {
 
 /**************************************************************************/
 
-#ifndef __gltypes_h_
-#if GL_OES_texture_half_float
-typedef unsigned short GLhalf;
-#endif
-#endif
-
-#if GL_APPLE_sync
-typedef int64_t GLint64;
-typedef uint64_t GLuint64;
-typedef struct __GLsync *GLsync;
-#endif
-
-/**************************************************************************/
-
 /*------------------------------------------------------------------------*
  * APPLE extension tokens
  *------------------------------------------------------------------------*/
+#if GL_APPLE_color_buffer_packed_float
+#define GL_R11F_G11F_B10F_APPLE                                 0x8C3A
+#define GL_RGB9_E5_APPLE                                        0x8C3D
+#endif
+
+#if GL_APPLE_clip_distance
+#define GL_CLIP_DISTANCE0_APPLE           0x3000
+#define GL_CLIP_DISTANCE1_APPLE           0x3001
+#define GL_CLIP_DISTANCE2_APPLE           0x3002
+#define GL_CLIP_DISTANCE3_APPLE           0x3003
+#define GL_CLIP_DISTANCE4_APPLE           0x3004
+#define GL_CLIP_DISTANCE5_APPLE           0x3005
+#define GL_CLIP_DISTANCE6_APPLE           0x3006
+#define GL_CLIP_DISTANCE7_APPLE           0x3007
+#define GL_MAX_CLIP_DISTANCES_APPLE       0x0D32
+#endif
+
 #if GL_APPLE_framebuffer_multisample
 #define GL_RENDERBUFFER_SAMPLES_APPLE                           0x8CAB
 #define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_APPLE             0x8D56
@@ -114,6 +119,11 @@ typedef struct __GLsync *GLsync;
 #define GL_DRAW_FRAMEBUFFER_APPLE                               0x8CA9
 #define GL_DRAW_FRAMEBUFFER_BINDING_APPLE                       0x8CA6
 #define GL_READ_FRAMEBUFFER_BINDING_APPLE                       0x8CAA
+#endif
+
+#if GL_APPLE_texture_packed_float
+#define GL_UNSIGNED_INT_10F_11F_11F_REV_APPLE                   0x8C3B
+#define GL_UNSIGNED_INT_5_9_9_9_REV_APPLE                       0x8C3E
 #endif
 
 #if GL_APPLE_rgb_422
@@ -217,7 +227,7 @@ typedef struct __GLsync *GLsync;
 #if GL_EXT_read_format_bgra
 #define GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT                       0x8365
 #define GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT                       0x8366
-#define GL_UNSIGNED_SHORT_1_5_5_5_REV                           GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
+#define GL_UNSIGNED_SHORT_1_5_5_5_REV                           0x8366
 #endif
 
 #if GL_EXT_read_format_bgra || GL_IMG_read_format

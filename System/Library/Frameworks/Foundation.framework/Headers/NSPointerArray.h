@@ -1,6 +1,6 @@
 /*
  *  NSPointerArray.h
- *  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
+ *  Copyright (c) 2005-2015, Apple Inc. All rights reserved.
  *
  */
  
@@ -8,6 +8,8 @@
 #import <Foundation/NSObject.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSPointerFunctions.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /*
    NSPointerArray.h
@@ -24,28 +26,29 @@
 NS_CLASS_AVAILABLE(10_5, 6_0)
 @interface NSPointerArray : NSObject <NSFastEnumeration, NSCopying, NSCoding>
 // construction
-- initWithOptions:(NSPointerFunctionsOptions)options;
-- initWithPointerFunctions:(NSPointerFunctions *)functions;
+- (instancetype)initWithOptions:(NSPointerFunctionsOptions)options NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPointerFunctions:(NSPointerFunctions *)functions NS_DESIGNATED_INITIALIZER;
 
-+ pointerArrayWithOptions:(NSPointerFunctionsOptions)options;
-+ pointerArrayWithPointerFunctions:(NSPointerFunctions *)functions;
++ (NSPointerArray *)pointerArrayWithOptions:(NSPointerFunctionsOptions)options;
++ (NSPointerArray *)pointerArrayWithPointerFunctions:(NSPointerFunctions *)functions;
 
 /* return an NSPointerFunctions object reflecting the functions in use.  This is a new autoreleased object that can be subsequently modified and/or used directly in the creation of other pointer "collections". */
-- (NSPointerFunctions *)pointerFunctions;
+@property (readonly, copy) NSPointerFunctions *pointerFunctions;
 
-- (void *)pointerAtIndex:(NSUInteger)index;
+- (nullable void *)pointerAtIndex:(NSUInteger)index;
 
 // Array like operations that slide or grow contents, including NULLs
-- (void)addPointer:(void *)pointer;  // add pointer at index 'count'
+- (void)addPointer:(nullable void *)pointer;  // add pointer at index 'count'
 - (void)removePointerAtIndex:(NSUInteger)index;    // everything above index, including holes, slide lower
-- (void)insertPointer:(void *)item atIndex:(NSUInteger)index;  // everything at & above index, including holes, slide higher
+- (void)insertPointer:(nullable void *)item atIndex:(NSUInteger)index;  // everything at & above index, including holes, slide higher
 
-- (void)replacePointerAtIndex:(NSUInteger)index withPointer:(void *)item;  // O(1); NULL item is okay; index must be < count
+- (void)replacePointerAtIndex:(NSUInteger)index withPointer:(nullable void *)item;  // O(1); NULL item is okay; index must be < count
 
 - (void)compact;   // eliminate NULLs
 
-- (NSUInteger)count;    // the number of elements in the array, including NULLs
-- (void)setCount:(NSUInteger)count;    // set desired number of elements, adding NULLs or removing items as necessary.
+// Getter: the number of elements in the array, including NULLs
+// Setter: sets desired number of elements, adding NULLs or removing items as necessary.
+@property NSUInteger count;
 
 @end
 
@@ -54,14 +57,15 @@ NS_CLASS_AVAILABLE(10_5, 6_0)
 
 // construction
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
-+ pointerArrayWithStrongObjects NS_DEPRECATED_MAC(10_5, 10_8); // strong objects
-+ pointerArrayWithWeakObjects NS_DEPRECATED_MAC(10_5, 10_8); // weak objects
++ (id) pointerArrayWithStrongObjects NS_DEPRECATED_MAC(10_5, 10_8); // strong objects
++ (id) pointerArrayWithWeakObjects NS_DEPRECATED_MAC(10_5, 10_8); // weak objects
 #endif
 
-+ (id)strongObjectsPointerArray NS_AVAILABLE(10_8, 6_0);
-+ (id)weakObjectsPointerArray NS_AVAILABLE(10_8, 6_0);
++ (NSPointerArray *)strongObjectsPointerArray NS_AVAILABLE(10_8, 6_0);
++ (NSPointerArray *)weakObjectsPointerArray NS_AVAILABLE(10_8, 6_0);
 
-- (NSArray *)allObjects;
+@property (readonly, copy) NSArray *allObjects;
 
 @end
 
+NS_ASSUME_NONNULL_END

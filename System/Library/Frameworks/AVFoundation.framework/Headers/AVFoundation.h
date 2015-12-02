@@ -3,20 +3,13 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2008-2013 Apple Inc. All rights reserved.
+	Copyright 2010-2015 Apple Inc. All rights reserved.
 
 	To report bugs, go to:  http://developer.apple.com/bugreporter/
 
 */
 
 #import <AVFoundation/AVBase.h>
-
-#import <AVFoundation/AVAudioPlayer.h>
-#import <AVFoundation/AVAudioRecorder.h>
-#if TARGET_OS_IPHONE
-#import <AVFoundation/AVAudioSession.h>
-#endif
-#import <AVFoundation/AVAudioSettings.h>
 
 #import <AVFoundation/AVAnimation.h>
 #import <AVFoundation/AVAsset.h>
@@ -34,6 +27,10 @@
 #import <AVFoundation/AVAudioMix.h>
 #import <AVFoundation/AVAudioProcessingSettings.h>
 
+#if TARGET_OS_IPHONE
+#import <AVFoundation/AVAssetDownloadTask.h>
+#endif
+
 #if (TARGET_OS_IPHONE || defined(__MAC_10_7))
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVCaptureInput.h>
@@ -46,12 +43,17 @@
 #import <AVFoundation/AVCompositionTrack.h>
 #import <AVFoundation/AVCompositionTrackSegment.h>
 #import <AVFoundation/AVError.h>
+#import <AVFoundation/AVFAudio.h>
 #import <AVFoundation/AVMediaFormat.h>
+#import <AVFoundation/AVMediaSelection.h>
 #import <AVFoundation/AVMediaSelectionGroup.h>
 #import <AVFoundation/AVMetadataFormat.h>
+#import <AVFoundation/AVMetadataIdentifiers.h> 
 #import <AVFoundation/AVMetadataItem.h>
-#if TARGET_OS_IPHONE
 #import <AVFoundation/AVMetadataObject.h>
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+#import <AVFoundation/AVMovie.h>
+#import <AVFoundation/AVMovieTrack.h>
 #endif
 #import <AVFoundation/AVOutputSettingsAssistant.h>
 #import <AVFoundation/AVPlayer.h>
@@ -63,16 +65,16 @@
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <AVFoundation/AVPlayerLayer.h>
 #import <AVFoundation/AVPlayerMediaSelectionCriteria.h>
-#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
-#endif
-#if TARGET_OS_IPHONE
-#import <AVFoundation/AVSpeechSynthesis.h>
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+#import <AVFoundation/AVSampleBufferGenerator.h>
+#import <AVFoundation/AVSampleCursor.h>
 #endif
 #import <AVFoundation/AVSynchronizedLayer.h>
 #import <AVFoundation/AVTextStyleRule.h>
 #import <AVFoundation/AVTime.h>
 #import <AVFoundation/AVTimedMetadataGroup.h>
 #import <AVFoundation/AVUtilities.h>
+#import <AVFoundation/AVVideoCompositing.h>
 #import <AVFoundation/AVVideoComposition.h>
 #import <AVFoundation/AVVideoSettings.h>

@@ -130,7 +130,7 @@ extern "C" {
 #if GL_EXT_read_format_bgra
 #define GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT                       0x8365
 #define GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT                       0x8366
-#define GL_UNSIGNED_SHORT_1_5_5_5_REV                           GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
+#define GL_UNSIGNED_SHORT_1_5_5_5_REV                           0x8366
 #endif
 
 #if GL_EXT_read_format_bgra || GL_IMG_read_format

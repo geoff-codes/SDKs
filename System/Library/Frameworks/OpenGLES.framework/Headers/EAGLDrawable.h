@@ -7,6 +7,7 @@
 
 #include <OpenGLES/EAGL.h>
 
+
 /************************************************************************/
 /* Keys for EAGLDrawable drawableProperties dictionary                  */
 /*                                                                      */
@@ -53,6 +54,7 @@ EAGL_EXTERN NSString * const kEAGLColorFormatSRGBA8 NS_AVAILABLE_IOS(7_0);
 - (BOOL)presentRenderbuffer:(NSUInteger)target;
 
 @end /* EAGLDrawable protocol */
+
 
 #endif /* _EAGL_DRAWABLE_H_ */
 

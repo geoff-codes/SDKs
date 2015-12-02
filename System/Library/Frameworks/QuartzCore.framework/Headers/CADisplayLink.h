@@ -1,12 +1,14 @@
 /* CoreAnimation - CADisplayLink.h
 
-   Copyright (c) 2009-2012 Apple Inc.
+   Copyright (c) 2009-2015, Apple Inc.
    All rights reserved. */
 
 #import <QuartzCore/CABase.h>
 #import <Foundation/NSObject.h>
 
 @class NSString, NSRunLoop;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /** Class representing a timer bound to the display vsync. **/
 
@@ -45,7 +47,8 @@
  * normal Core Animation conventions, i.e. Mach host time converted to
  * seconds. */
 
-@property(readonly, nonatomic) CFTimeInterval timestamp, duration;
+@property(readonly, nonatomic) CFTimeInterval timestamp;
+@property(readonly, nonatomic) CFTimeInterval duration;
 
 /* When true the object is prevented from firing. Initial state is
  * false. */
@@ -61,3 +64,5 @@
 @property(nonatomic) NSInteger frameInterval;
 
 @end
+
+NS_ASSUME_NONNULL_END

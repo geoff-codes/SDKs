@@ -9,6 +9,8 @@
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUIDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class EKEventStore, EKEvent;
 
 /*!
@@ -20,14 +22,14 @@
     @constant   EKEventEditViewActionDeleted     The event was deleted, either by the user or by another calendar store.
 */
 
-typedef enum {
+typedef NS_ENUM(NSInteger, EKEventEditViewAction) {
     EKEventEditViewActionCanceled,
     EKEventEditViewActionSaved,
     EKEventEditViewActionDeleted,
     
     // going away, use spelling above
     EKEventEditViewActionCancelled = EKEventEditViewActionCanceled
-} EKEventEditViewAction;
+};
 
 /*!
     @class      EKEventEditViewController
@@ -39,14 +41,11 @@ typedef enum {
 */
 @protocol EKEventEditViewDelegate;
 
+NS_EXTENSION_UNAVAILABLE_IOS("EventKitUI is not supported in extensions")
 EVENTKITUI_CLASS_AVAILABLE(4_0)
-@interface EKEventEditViewController : UINavigationController {
-@private
-    EKEvent                        *_event;
-    NSString                       *_eventId;
-}
+@interface EKEventEditViewController : UINavigationController
 
-@property(nonatomic, weak) id<EKEventEditViewDelegate>  editViewDelegate;
+@property(nonatomic, weak, nullable) id<EKEventEditViewDelegate>  editViewDelegate;
 
 /*!
     @property   eventStore
@@ -63,7 +62,7 @@ EVENTKITUI_CLASS_AVAILABLE(4_0)
                 here and it does not belong to the event store (if set) an exception will be
                 raised.
 */
-@property(nonatomic, retain) EKEvent *event;
+@property(nonatomic, retain, nullable) EKEvent *event;
 
 /*!
     @method     cancelEditing
@@ -113,3 +112,5 @@ EVENTKITUI_CLASS_AVAILABLE(4_0)
 
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreTelephony/CoreTelephonyDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  * CTSubscriberTokenRefreshed
  *
@@ -28,6 +30,8 @@ CORETELEPHONY_CLASS_AVAILABLE(7_0)
  *
  *     May return nil if no token is available.
  */
-@property (nonatomic, readonly, retain) NSData* carrierToken  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+@property (nonatomic, readonly, retain, nullable) NSData* carrierToken  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -1,5 +1,5 @@
 /*	CFRunLoop.h
-	Copyright (c) 1998-2013, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2015, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFRUNLOOP__)
@@ -13,18 +13,19 @@
 #include <mach/port.h>
 #endif
 
+CF_IMPLICIT_BRIDGING_ENABLED
 CF_EXTERN_C_BEGIN
 
-typedef struct __CFRunLoop * CFRunLoopRef;
+typedef struct CF_BRIDGED_MUTABLE_TYPE(id) __CFRunLoop * CFRunLoopRef;
 
-typedef struct __CFRunLoopSource * CFRunLoopSourceRef;
+typedef struct CF_BRIDGED_MUTABLE_TYPE(id) __CFRunLoopSource * CFRunLoopSourceRef;
 
-typedef struct __CFRunLoopObserver * CFRunLoopObserverRef;
+typedef struct CF_BRIDGED_MUTABLE_TYPE(id) __CFRunLoopObserver * CFRunLoopObserverRef;
 
-typedef struct __CFRunLoopTimer * CFRunLoopTimerRef;
+typedef struct CF_BRIDGED_MUTABLE_TYPE(NSTimer) __CFRunLoopTimer * CFRunLoopTimerRef;
 
 /* Reasons for CFRunLoopRunInMode() to Return */
-enum {
+typedef CF_ENUM(SInt32, CFRunLoopRunResult) {
     kCFRunLoopRunFinished = 1,
     kCFRunLoopRunStopped = 2,
     kCFRunLoopRunTimedOut = 3,
@@ -59,7 +60,7 @@ CF_EXPORT void CFRunLoopAddCommonMode(CFRunLoopRef rl, CFStringRef mode);
 CF_EXPORT CFAbsoluteTime CFRunLoopGetNextTimerFireDate(CFRunLoopRef rl, CFStringRef mode);
 
 CF_EXPORT void CFRunLoopRun(void);
-CF_EXPORT SInt32 CFRunLoopRunInMode(CFStringRef mode, CFTimeInterval seconds, Boolean returnAfterSourceHandled);
+CF_EXPORT CFRunLoopRunResult CFRunLoopRunInMode(CFStringRef mode, CFTimeInterval seconds, Boolean returnAfterSourceHandled);
 CF_EXPORT Boolean CFRunLoopIsWaiting(CFRunLoopRef rl);
 CF_EXPORT void CFRunLoopWakeUp(CFRunLoopRef rl);
 CF_EXPORT void CFRunLoopStop(CFRunLoopRef rl);
@@ -176,6 +177,7 @@ CF_EXPORT CFTimeInterval CFRunLoopTimerGetTolerance(CFRunLoopTimerRef timer) CF_
 CF_EXPORT void CFRunLoopTimerSetTolerance(CFRunLoopTimerRef timer, CFTimeInterval tolerance) CF_AVAILABLE(10_9, 7_0);
 
 CF_EXTERN_C_END
+CF_IMPLICIT_BRIDGING_DISABLED
 
 #endif /* ! __COREFOUNDATION_CFRUNLOOP__ */
 

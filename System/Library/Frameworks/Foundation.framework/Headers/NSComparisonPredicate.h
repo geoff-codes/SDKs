@@ -1,8 +1,10 @@
 /*	NSComparisonPredicate.h
-	Copyright (c) 2004-2013, Apple Inc. All rights reserved.
+	Copyright (c) 2004-2015, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSPredicate.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 // Flags(s) that can be passed to the factory to indicate that a operator operating on strings should do so in a case insensitive fashion.
 typedef NS_OPTIONS(NSUInteger, NSComparisonPredicateOptions) {
@@ -51,18 +53,20 @@ NS_CLASS_AVAILABLE(10_4, 3_0)
     NSExpression *_rhs;
 }
 
-+ (NSPredicate *)predicateWithLeftExpression:(NSExpression *)lhs rightExpression:(NSExpression *)rhs modifier:(NSComparisonPredicateModifier)modifier type:(NSPredicateOperatorType)type options:(NSComparisonPredicateOptions)options;
-+ (NSPredicate *)predicateWithLeftExpression:(NSExpression *)lhs rightExpression:(NSExpression *)rhs customSelector:(SEL)selector;
++ (NSComparisonPredicate *)predicateWithLeftExpression:(NSExpression *)lhs rightExpression:(NSExpression *)rhs modifier:(NSComparisonPredicateModifier)modifier type:(NSPredicateOperatorType)type options:(NSComparisonPredicateOptions)options;
++ (NSComparisonPredicate *)predicateWithLeftExpression:(NSExpression *)lhs rightExpression:(NSExpression *)rhs customSelector:(SEL)selector;
 
-- (id)initWithLeftExpression:(NSExpression *)lhs rightExpression:(NSExpression *)rhs modifier:(NSComparisonPredicateModifier)modifier type:(NSPredicateOperatorType)type options:(NSComparisonPredicateOptions)options;
-- (id)initWithLeftExpression:(NSExpression *)lhs rightExpression:(NSExpression *)rhs customSelector:(SEL)selector;
+- (instancetype)initWithLeftExpression:(NSExpression *)lhs rightExpression:(NSExpression *)rhs modifier:(NSComparisonPredicateModifier)modifier type:(NSPredicateOperatorType)type options:(NSComparisonPredicateOptions)options NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithLeftExpression:(NSExpression *)lhs rightExpression:(NSExpression *)rhs customSelector:(SEL)selector NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 
-- (NSPredicateOperatorType)predicateOperatorType;
-- (NSComparisonPredicateModifier)comparisonPredicateModifier;
-- (NSExpression *)leftExpression;
-- (NSExpression *)rightExpression;
-- (SEL)customSelector;
-- (NSComparisonPredicateOptions)options;
+@property (readonly) NSPredicateOperatorType predicateOperatorType;
+@property (readonly) NSComparisonPredicateModifier comparisonPredicateModifier;
+@property (readonly, retain) NSExpression *leftExpression;
+@property (readonly, retain) NSExpression *rightExpression;
+@property (nullable, readonly) SEL customSelector;
+@property (readonly) NSComparisonPredicateOptions options;
 
 @end
 
+NS_ASSUME_NONNULL_END

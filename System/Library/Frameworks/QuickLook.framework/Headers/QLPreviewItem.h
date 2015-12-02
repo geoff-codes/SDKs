@@ -7,11 +7,12 @@
 
 
 #import <Foundation/Foundation.h>
+#import <QuickLook/QLBase.h>
 
 /*!
  * @abstract The QLPreviewItem protocol declares the methods that a QLPreviewController  instance uses to access the contents of a given item.
  */
-@protocol QLPreviewItem <NSObject>
+QL_EXPORT @protocol QLPreviewItem <NSObject>
 
 @required
 
@@ -19,7 +20,7 @@
  * @abstract The URL of the item to preview.
  * @discussion The URL must be a file URL. 
  */
-@property(readonly) NSURL * previewItemURL;
+@property(readonly, nonnull, nonatomic) NSURL * previewItemURL;
 
 @optional
 
@@ -27,7 +28,7 @@
  * @abstract The item's title this will be used as apparent item title.
  * @discussion The title replaces the default item display name. This property is optional.
  */
-@property(readonly) NSString * previewItemTitle;
+@property(readonly, nullable, nonatomic) NSString * previewItemTitle;
 
 
 @end

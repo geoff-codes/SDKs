@@ -2,13 +2,13 @@
  *  CVReturn.h
  *  CoreVideo
  *
- *  Copyright (c) 2004 Apple Computer, Inc. All rights reserved.
+ *  Copyright (c) 2004-2014 Apple Inc. All rights reserved.
  *
  */
  
  /*! @header CVReturn.h
-	@copyright 2004 Apple Computer, Inc. All rights reserved.
-	@availability Mac OS X 10.4 or later
+	@copyright 2004-2014 Apple Inc. All rights reserved.
+	@availability Mac OS X 10.4 or later, and iOS 4.0 or later
     @discussion Here you can find all the CoreVideo specific error codes. 
 		   
 */
@@ -37,19 +37,25 @@ extern "C" {
     @constant   kCVReturnInvalidDisplay A CVDisplayLink cannot be created for the given DisplayRef.
     @constant   kCVReturnDisplayLinkAlreadyRunning The CVDisplayLink is already started and running.
     @constant   kCVReturnDisplayLinkNotRunning The CVDisplayLink has not been started.
-    @constant   kCVReturnDisplayLinkCallbacksNotSet The render and display callbacks or the output callback is not set. You have to set either the render/display pair or the single output callback.
+    @constant   kCVReturnDisplayLinkCallbacksNotSet The output callback is not set.
 
     @constant   kCVReturnInvalidPixelFormat The requested pixelformat is not supported for the CVBuffer type.
     @constant   kCVReturnInvalidSize The requested size (most likely too big) is not supported for the CVBuffer type.
     @constant   kCVReturnInvalidPixelBufferAttributes A CVBuffer cannot be created with the given attributes.
     @constant   kCVReturnPixelBufferNotOpenGLCompatible The Buffer cannot be used with OpenGL as either its size, pixelformat or attributes are not supported by OpenGL.
-
+    @constant   kCVReturnPixelBufferNotMetalCompatible The Buffer cannot be used with Metal as either its size, pixelformat or attributes are not supported by Metal.
+ 
     @constant   kCVReturnWouldExceedAllocationThreshold The allocation request failed because it would have exceeded a specified allocation threshold (see kCVPixelBufferPoolAllocationThresholdKey).
     @constant   kCVReturnPoolAllocationFailed The allocation for the buffer pool failed. Most likely because of lack of resources. Check if your parameters are in range.
     @constant   kCVReturnInvalidPoolAttributes A CVBufferPool cannot be created with the given attributes.
 */
 
+typedef int32_t CVReturn;
+#if COREVIDEO_USE_DERIVED_ENUMS_FOR_CONSTANTS
+enum : CVReturn
+#else
 enum _CVReturn
+#endif
 {
     kCVReturnSuccess                         = 0,
     
@@ -58,6 +64,7 @@ enum _CVReturn
     kCVReturnError                           = kCVReturnFirst,
     kCVReturnInvalidArgument                 = -6661,
     kCVReturnAllocationFailed                = -6662,
+	kCVReturnUnsupported                     = -6663,
     
     // DisplayLink related errors
     kCVReturnInvalidDisplay                  = -6670,
@@ -70,16 +77,16 @@ enum _CVReturn
     kCVReturnInvalidSize                     = -6681,
     kCVReturnInvalidPixelBufferAttributes    = -6682,
     kCVReturnPixelBufferNotOpenGLCompatible  = -6683,
+    kCVReturnPixelBufferNotMetalCompatible   = -6684,
     
     // Buffer Pool related errors
     kCVReturnWouldExceedAllocationThreshold  = -6689,
     kCVReturnPoolAllocationFailed            = -6690,
     kCVReturnInvalidPoolAttributes           = -6691,
-    
+	
     kCVReturnLast                            = -6699
     
 };
-typedef int32_t CVReturn;
 
 #if defined(__cplusplus)
 }

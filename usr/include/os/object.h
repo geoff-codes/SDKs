@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012 Apple Inc. All rights reserved.
+ * Copyright (c) 2011-2014 Apple Inc. All rights reserved.
  *
  * @APPLE_APACHE_LICENSE_HEADER_START@
  *
@@ -24,6 +24,7 @@
 #ifdef __APPLE__
 #include <Availability.h>
 #endif
+#include <os/base.h>
 
 /*!
  * @header
@@ -73,29 +74,40 @@
 #if OS_OBJECT_USE_OBJC
 #import <objc/NSObject.h>
 #define OS_OBJECT_CLASS(name) OS_##name
-#define OS_OBJECT_DECL(name, ...) \
+#define OS_OBJECT_DECL_IMPL(name, ...) \
 		@protocol OS_OBJECT_CLASS(name) __VA_ARGS__ \
 		@end \
 		typedef NSObject<OS_OBJECT_CLASS(name)> *name##_t
+#define OS_OBJECT_DECL(name, ...) \
+		OS_OBJECT_DECL_IMPL(name, <NSObject> __VA_ARGS__)
 #define OS_OBJECT_DECL_SUBCLASS(name, super) \
-		OS_OBJECT_DECL(name, <OS_OBJECT_CLASS(super)>)
+		OS_OBJECT_DECL_IMPL(name, <OS_OBJECT_CLASS(super)>)
 #if defined(__has_attribute)
 #if __has_attribute(ns_returns_retained)
 #define OS_OBJECT_RETURNS_RETAINED __attribute__((__ns_returns_retained__))
 #else
 #define OS_OBJECT_RETURNS_RETAINED
 #endif
+#if __has_attribute(ns_consumed)
+#define OS_OBJECT_CONSUMED __attribute__((__ns_consumed__))
+#else
+#define OS_OBJECT_CONSUMED
+#endif
 #else
 #define OS_OBJECT_RETURNS_RETAINED
+#define OS_OBJECT_CONSUMED
 #endif
 #if defined(__has_feature)
 #if __has_feature(objc_arc)
 #define OS_OBJECT_BRIDGE __bridge
+#define OS_WARN_RESULT_NEEDS_RELEASE
 #else
 #define OS_OBJECT_BRIDGE
+#define OS_WARN_RESULT_NEEDS_RELEASE OS_WARN_RESULT
 #endif
 #else
 #define OS_OBJECT_BRIDGE
+#define OS_WARN_RESULT_NEEDS_RELEASE OS_WARN_RESULT
 #endif
 #ifndef OS_OBJECT_USE_OBJC_RETAIN_RELEASE
 #if defined(__clang_analyzer__)
@@ -114,8 +126,65 @@
 /*! @parseOnly */
 #define OS_OBJECT_RETURNS_RETAINED
 /*! @parseOnly */
+#define OS_OBJECT_CONSUMED
+/*! @parseOnly */
 #define OS_OBJECT_BRIDGE
+/*! @parseOnly */
+#define OS_WARN_RESULT_NEEDS_RELEASE OS_WARN_RESULT
 #define OS_OBJECT_USE_OBJC_RETAIN_RELEASE 0
 #endif
+
+#define OS_OBJECT_GLOBAL_OBJECT(type, object) ((OS_OBJECT_BRIDGE type)&(object))
+
+__BEGIN_DECLS
+
+/*!
+ * @function os_retain
+ *
+ * @abstract
+ * Increment the reference count of an os_object.
+ *
+ * @discussion
+ * On a platform with the modern Objective-C runtime this is exactly equivalent
+ * to sending the object the -[retain] message.
+ *
+ * @param object
+ * The object to retain.
+ *
+ * @result
+ * The retained object.
+ */
+__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0)
+OS_EXPORT
+void*
+os_retain(void *object);
+#if OS_OBJECT_USE_OBJC
+#undef os_retain
+#define os_retain(object) [object retain]
+#endif
+
+/*!
+ * @function os_release
+ *
+ * @abstract
+ * Decrement the reference count of a os_object.
+ *
+ * @discussion
+ * On a platform with the modern Objective-C runtime this is exactly equivalent
+ * to sending the object the -[release] message.
+ *
+ * @param object
+ * The object to release.
+ */
+__OSX_AVAILABLE_STARTING(__MAC_10_10,__IPHONE_8_0)
+OS_EXPORT
+void
+os_release(void *object);
+#if OS_OBJECT_USE_OBJC
+#undef os_release
+#define os_release(object) [object release]
+#endif
+
+__END_DECLS
 
 #endif

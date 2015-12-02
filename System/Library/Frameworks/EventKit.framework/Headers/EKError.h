@@ -14,7 +14,7 @@
     @discussion This error domain is used as the domain for all NSError instances stemming from the
                 EventKit Framework.
 */
-EVENTKIT_EXTERN NSString *const EKErrorDomain __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_4_0);
+EVENTKIT_EXTERN NSString *const EKErrorDomain NS_AVAILABLE(10_8, 4_0);
 
 /*!
     @enum       EKErrorCode
@@ -47,12 +47,16 @@ EVENTKIT_EXTERN NSString *const EKErrorDomain __OSX_AVAILABLE_STARTING(__MAC_10_
     @constant   EKErrorCalendarDoesNotAllowEvents       You are trying to add an event to a calendar that does not allow events.
     @constant   EKErrorCalendarDoesNotAllowReminders    You are trying to add a reminder to a calendar that does not allow reminders.
     @constant   EKErrorSourceDoesNotAllowReminders      You are trying to add a calendar that allows reminders to a source that does not allow them.
+    @constant   EKErrorSourceDoesNotAllowEvents         You are trying to add a calendar that allows events to a source that does not allow them.
     @constant   EKErrorPriorityIsInvalid                You have set an invalid priority for a reminder.  Priorities must be between 0 and 9.
     @constant   EKErrorInvalidEntityType                This is not a valid EKEntityType
+    @constant   EKErrorProcedureAlarmsNotMutable        Procedure alarms may not be created or modified.
+    @constant   EKErrorEventStoreNotAuthorized          The user has not authorized your application to access their events and/or reminders.
+    @constant   EKErrorOSNotSupported                   The action is not supported on the current operating system.
 */
 
-#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-typedef enum EKErrorCode {
+#if __IPHONE_4_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED || !TARGET_OS_IPHONE
+typedef NS_ENUM(NSInteger, EKErrorCode) {
     EKErrorEventNotMutable,
     EKErrorNoCalendar,
     EKErrorNoStartDate,
@@ -78,9 +82,13 @@ typedef enum EKErrorCode {
     EKErrorCalendarDoesNotAllowEvents,
     EKErrorCalendarDoesNotAllowReminders,
     EKErrorSourceDoesNotAllowReminders,
+    EKErrorSourceDoesNotAllowEvents,
     EKErrorPriorityIsInvalid,
     EKErrorInvalidEntityType,
+    EKErrorProcedureAlarmsNotMutable,
+    EKErrorEventStoreNotAuthorized,
+    EKErrorOSNotSupported,
 
     EKErrorLast // used internally
-} EKErrorCode;
+};
 #endif

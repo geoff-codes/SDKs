@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreMotion/CMLogItem.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CMAcceleration
  *  
@@ -36,7 +38,7 @@ typedef struct {
  *    Contains a single accelerometer measurement.
  *
  */
-NS_CLASS_AVAILABLE(NA,4_0)
+NS_CLASS_AVAILABLE(NA,4_0) __TVOS_PROHIBITED
 @interface CMAccelerometerData : CMLogItem
 {
 @private
@@ -53,3 +55,5 @@ NS_CLASS_AVAILABLE(NA,4_0)
 @property(readonly, nonatomic) CMAcceleration acceleration;
 
 @end
+
+NS_ASSUME_NONNULL_END

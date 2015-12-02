@@ -86,8 +86,8 @@ typedef NS_ENUM(NSInteger, ADError) {
  *   • On iPhone; portrait = DEVICE_WIDTH × 50px, landscape = DEVICE_WIDTH × 32px
  *   • On iPad; both portrait & landscape = DEVICE_WIDTH × 66px
  *
- * @const ADAdTypeMediumRectangle An iPad-only 320 × 250px ad, based on the
- * International Advertising Bureau's "Medium Rectangle" Interactive Marketing Unit.
+ * @const ADAdTypeMediumRectangle An 320 × 250px ad, based on the International
+ * Advertising Bureau's "Medium Rectangle" Interactive Marketing Unit.
  *
  * @discussion
  * Ad types that can be passed to -[ADBannerView -initWithAdType:].
@@ -122,7 +122,7 @@ NS_CLASS_AVAILABLE_IOS(4_0) @interface ADBannerView : UIView
  * Initialize the view with a specific ad type. The ad type cannot be changed
  * after initialization.
  */
-- (id)initWithAdType:(ADAdType)type NS_AVAILABLE_IOS(6_0);
+- (instancetype)initWithAdType:(ADAdType)type NS_AVAILABLE_IOS(6_0);
 
 /*!
  * @property adType

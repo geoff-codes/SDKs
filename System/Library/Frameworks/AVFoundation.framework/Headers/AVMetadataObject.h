@@ -3,7 +3,7 @@
  
 	Framework:  AVFoundation
  
-	Copyright 2012-2013 Apple Inc. All rights reserved.
+	Copyright 2012-2014 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
@@ -24,9 +24,10 @@
  
     The concrete AVMetadataFaceObject is used by AVCaptureMetadataOutput for face detection.
 */
-NS_CLASS_AVAILABLE(NA, 6_0)
+NS_CLASS_AVAILABLE(10_10, 6_0) __TVOS_PROHIBITED
 @interface AVMetadataObject : NSObject
 {
+@private
 	AVMetadataObjectInternal *_objectInternal;
 }
 
@@ -86,7 +87,7 @@ NS_CLASS_AVAILABLE(NA, 6_0)
  @discussion
     AVMetadataFaceObject objects return this constant as their type.
 */
-AVF_EXPORT NSString *const AVMetadataObjectTypeFace;
+AVF_EXPORT NSString *const AVMetadataObjectTypeFace NS_AVAILABLE(10_10, 6_0) __TVOS_PROHIBITED;
 
 @class AVMetadataFaceObjectInternal;
 
@@ -101,9 +102,10 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeFace;
 
     On supported platforms, AVCaptureMetadataOutput outputs arrays of detected face objects.  See AVCaptureOutput.h.
 */
-NS_CLASS_AVAILABLE(NA, 6_0)
-@interface AVMetadataFaceObject : AVMetadataObject
+NS_CLASS_AVAILABLE(10_10, 6_0) __TVOS_PROHIBITED
+@interface AVMetadataFaceObject : AVMetadataObject <NSCopying>
 {
+@private
 	AVMetadataFaceObjectInternal *_internal;
 }
 
@@ -170,7 +172,7 @@ NS_CLASS_AVAILABLE(NA, 6_0)
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from UPC-E codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypeUPCECode NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypeUPCECode NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVMetadataObjectTypeCode39Code
@@ -178,7 +180,7 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeUPCECode NS_AVAILABLE(NA, 7_0);
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from Code 39 codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypeCode39Code NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypeCode39Code NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVMetadataObjectTypeCode39Mod43Code
@@ -186,7 +188,7 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeCode39Code NS_AVAILABLE(NA, 7_0);
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from Code 39 mod 43 codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypeCode39Mod43Code NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypeCode39Mod43Code NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVMetadataObjectTypeEAN13Code
@@ -194,7 +196,7 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeCode39Mod43Code NS_AVAILABLE(NA, 
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from EAN-13 (including UPC-A) codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypeEAN13Code NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypeEAN13Code NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVMetadataObjectTypeEAN8Code
@@ -202,7 +204,7 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeEAN13Code NS_AVAILABLE(NA, 7_0);
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from EAN-8 codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypeEAN8Code NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypeEAN8Code NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVMetadataObjectTypeCode93Code
@@ -210,7 +212,7 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeEAN8Code NS_AVAILABLE(NA, 7_0);
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from Code 93 codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypeCode93Code NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypeCode93Code NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVMetadataObjectTypeCode128Code
@@ -218,7 +220,7 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeCode93Code NS_AVAILABLE(NA, 7_0);
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from Code 128 codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypeCode128Code NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypeCode128Code NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVMetadataObjectTypePDF417Code
@@ -226,7 +228,7 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeCode128Code NS_AVAILABLE(NA, 7_0)
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from PDF417 codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypePDF417Code NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypePDF417Code NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVMetadataObjectTypeQRCode
@@ -234,7 +236,7 @@ AVF_EXPORT NSString *const AVMetadataObjectTypePDF417Code NS_AVAILABLE(NA, 7_0);
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from QR codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypeQRCode NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypeQRCode NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVMetadataObjectTypeAztecCode
@@ -242,7 +244,31 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeQRCode NS_AVAILABLE(NA, 7_0);
  @discussion
     AVMetadataMachineReadableCodeObject objects generated from Aztec codes return this constant as their type.
  */
-AVF_EXPORT NSString *const AVMetadataObjectTypeAztecCode NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVMetadataObjectTypeAztecCode NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
+
+/*!
+ @constant AVMetadataObjectTypeInterleaved2of5Code
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeInterleaved2of5Code.
+ @discussion
+	AVMetadataMachineReadableCodeObject objects generated from Interleaved 2 of 5 codes return this constant as their type.
+*/
+AVF_EXPORT NSString *const AVMetadataObjectTypeInterleaved2of5Code NS_AVAILABLE(NA, 8_0) __TVOS_PROHIBITED;
+
+/*!
+ @constant AVMetadataObjectTypeITF14Code
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeITF14Code.
+ @discussion
+	AVMetadataMachineReadableCodeObject objects generated from ITF14 codes return this constant as their type.
+*/
+AVF_EXPORT NSString *const AVMetadataObjectTypeITF14Code NS_AVAILABLE(NA, 8_0) __TVOS_PROHIBITED;
+
+/*!
+ @constant AVMetadataObjectTypeDataMatrixCode
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeDataMatrixCode.
+ @discussion
+	AVMetadataMachineReadableCodeObject objects generated from DataMatrix codes return this constant as their type.
+*/
+AVF_EXPORT NSString *const AVMetadataObjectTypeDataMatrixCode NS_AVAILABLE(NA, 8_0) __TVOS_PROHIBITED;
 
 @class AVMetadataMachineReadableCodeObjectInternal;
 
@@ -258,9 +284,10 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeAztecCode NS_AVAILABLE(NA, 7_0);
  
     On supported platforms, AVCaptureMetadataOutput outputs arrays of detected machine readable code objects.  See AVCaptureMetadataOutput.h.
  */
-NS_CLASS_AVAILABLE(NA, 7_0)
+NS_CLASS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED
 @interface AVMetadataMachineReadableCodeObject : AVMetadataObject
 {
+@private
 	AVMetadataMachineReadableCodeObjectInternal *_internal;
 }
 
@@ -281,7 +308,7 @@ NS_CLASS_AVAILABLE(NA, 7_0)
 
 /*!
  @property stringValue
- @abstract Returns the receiver’s errorCorrectedData decoded into a human-readable string.
+ @abstract Returns the receiver's errorCorrectedData decoded into a human-readable string.
  @discussion
     The value of this property is an NSString created by decoding the binary payload according to the format of the machine
     readable code.  Returns nil if a string representation cannot be created from the payload.

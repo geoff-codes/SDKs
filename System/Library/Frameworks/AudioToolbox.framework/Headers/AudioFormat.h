@@ -1,18 +1,12 @@
-/*
-     File:       AudioToolbox/AudioFormat.h
-
-     Contains:   API for finding things out about audio formats.
-
-     Copyright:  (c) 1985-2008 by Apple, Inc., all rights reserved.
-
-     Bugs?:      For bug reports, consult the following page on
-                 the World Wide Web:
-
-                     http://developer.apple.com/bugreporter/
-
+/*!
+	@file		AudioFormat.h
+	@framework	AudioToolbox.framework
+	@copyright	(c) 1985-2015 by Apple, Inc., all rights reserved.
+    @abstract	API for finding things out about audio formats.
 */
-#if !defined(__AudioFormat_h__)
-#define __AudioFormat_h__
+
+#ifndef AudioToolbox_AudioFormat_h
+#define AudioToolbox_AudioFormat_h
 
 //=============================================================================
 //	Includes
@@ -25,6 +19,8 @@
 #else
 	#include <CoreAudioTypes.h>
 #endif
+
+CF_ASSUME_NONNULL_BEGIN
 
 #if defined(__cplusplus)
 extern "C"
@@ -43,14 +39,13 @@ typedef UInt32	AudioFormatPropertyID;
 
 /*!
     @enum		PanningMode
-    @abstract   (description)
-    @discussion (description)
+    @abstract   Different panning algorithms.
     @constant   kPanningMode_SoundField
 					Sound field panning algorithm
     @constant   kPanningMode_VectorBasedPanning
 					Vector based panning algorithm
 */
-enum {
+typedef CF_ENUM(UInt32, AudioPanningMode) {
 	kPanningMode_SoundField		 					= 3,
 	kPanningMode_VectorBasedPanning					= 4
 };
@@ -71,11 +66,11 @@ enum {
 					This is the channel map that is going to be used to determine channel volumes for this pan.
 */
 struct AudioPanningInfo {
-	UInt32						mPanningMode;
+	AudioPanningMode			mPanningMode;
 	UInt32						mCoordinateFlags;
 	Float32						mCoordinates[3];	
 	Float32						mGainScale;
-	const AudioChannelLayout*	mOutputChannelMap;
+	const AudioChannelLayout *	mOutputChannelMap;
 };
 typedef struct AudioPanningInfo AudioPanningInfo;
 
@@ -90,7 +85,7 @@ typedef struct AudioPanningInfo AudioPanningInfo;
 					the gain value is 1.0 when the balance and fade are in the center.
 					From there they can increase to +3dB (1.414) and decrease to -inf dB (0.0).
 */
-enum {
+typedef CF_ENUM(UInt32, AudioBalanceFadeType) {
 	kAudioBalanceFadeType_MaxUnityGain = 0,
 	kAudioBalanceFadeType_EqualPower = 1
 };
@@ -111,7 +106,7 @@ struct AudioBalanceFade
 {
 	Float32						mLeftRightBalance;		// -1 is full left, 0 is center, +1 is full right
 	Float32						mBackFrontFade;			// -1 is full rear, 0 is center, +1 is full front
-	UInt32						mType;					// max unity gain, or equal power.
+	AudioBalanceFadeType		mType;					// max unity gain, or equal power.
 	const AudioChannelLayout*	mChannelLayout;
 };
 typedef struct AudioBalanceFade AudioBalanceFade;
@@ -343,6 +338,10 @@ typedef struct AudioFormatListItem AudioFormatListItem;
 					The channel coordinates are only significant if the channel label is kAudioChannelLabel_UseCoordinates.
 					The specifier is an array of two pointers to AudioChannelLayout structures. 
 					The value is a pointer to the UInt32 result.
+    @constant   kAudioFormatProperty_ChannelLayoutHash
+					Returns a UInt32 which represents the hash of the provided channel layout.
+					The specifier is a pointer to an AudioChannelLayout structure.
+					The value is a pointer to the UInt32 result.
     @constant   kAudioFormatProperty_TagsForNumberOfChannels
 					returns an array of AudioChannelLayoutTags for the number of channels specified.
 					The specifier is a UInt32 number of channels. 
@@ -376,7 +375,7 @@ typedef struct AudioFormatListItem AudioFormatListItem;
 					Caller must call CFRelease for the returned dictionary
 					
 */
-enum
+CF_ENUM(AudioFormatPropertyID)
 {
 //=============================================================================
 //	The following properties are concerned with the AudioStreamBasicDescription
@@ -410,6 +409,7 @@ enum
     kAudioFormatProperty_ChannelMap						= 'chmp',
 	kAudioFormatProperty_NumberOfChannelsForLayout		= 'nchm',
 	kAudioFormatProperty_AreChannelLayoutsEquivalent	= 'cheq',
+    kAudioFormatProperty_ChannelLayoutHash              = 'chha',
 	kAudioFormatProperty_ValidateChannelLayout			= 'vacl',
 	kAudioFormatProperty_ChannelLayoutForTag			= 'cmpl',
 	kAudioFormatProperty_TagForChannelLayout			= 'cmpt',
@@ -432,57 +432,10 @@ enum
 };
 
 #if TARGET_OS_IPHONE
-/*
-	@constant	kAudioFormatProperty_HardwareCodecCapabilities
-					Available with iPhone 3.0 or later
-					Use this property to determine whether a desired set of codecs can be
-					simultaneously instantiated.
-					
-					The specifier is an array of AudioClassDescription, describing a set of one or more
-					audio codecs. The property value is a UInt32 indicating how many of the requested
-					set of codecs, if the application were to begin using them in the specified order, could be 
-					used before a failure. If the return value is the same as the size of the array,
-					all of the requested codecs can be used.
-					
-					Here are some examples. Suppose an application wants to use a hardware AAC encoder
-					and a hardware AAC decoder (in that order of priority).
-					
-						AudioClassDescription requestedCodecs[2] = {
-							{ kAudioEncoderComponentType, kAudioFormatAAC, kAppleHardwareAudioCodecManufacturer },
-							{ kAudioDecoderComponentType, kAudioFormatAAC, kAppleHardwareAudioCodecManufacturer } };
-						
-						UInt32 successfulCodecs = 0, size = sizeof(successfulCodecs);
-						OSStatus result = AudioFormatGetProperty(kAudioFormatProperty_HardwareCodecCapabilities,
-											requestedCodecs, sizeof(requestedCodecs), &size, &successfulCodecs);
-						switch (successfulCodecs) {
-						case 0:
-							// there is no hardware encoder. status of any hardware AAC decoder is unknown;
-							// could ask again with only that class description.
-						case 1:
-							// can use hardware AAC encoder. while using it, no hardware AAC decoder available.
-						case 2:
-							// can use hardware AAC encoder and AAC decoder simultaneously
-						}
-					
-					Software-based codecs can always be instantiated.
-					
-					Hardware-based codecs may only be used via AudioQueue (and other higher-level APIs which
-					use AudioQueue). When describing the presence of a hardware codec, AudioFormat does
-					not take into consideration the current AudioSession's category, which may or may not permit
-					the use of hardware codecs. A set of hardware codecs is considered to be available based
-					only on whether the hardware supports that combination of codecs.
 
-					kAudioFormatProperty_Decoders and kAudioFormatProperty_Encoders may be used to determine
-					not only whether a given codec is present, but also whether it is hardware or
-					software-based. Note that some codecs may be available in both hardware and software forms.
-
-					See also the AudioCodecComponentType and AudioCodecComponentManufacturer constants above.
-
-*/
-enum {
+CF_ENUM(AudioFormatPropertyID) {
 	kAudioFormatProperty_HardwareCodecCapabilities		= 'hwcc',
-};
-
+} __attribute__((deprecated));
 
 /*!
 	@enum           AudioCodecComponentType
@@ -497,7 +450,7 @@ enum {
 					A codec that translates linear PCM data into some other format
 					The component subtype specifies the format ID of the other format
 */
-enum
+CF_ENUM(UInt32)
 {
 	kAudioDecoderComponentType								= 'adec',	
 	kAudioEncoderComponentType								= 'aenc',	
@@ -508,18 +461,14 @@ enum
 
 	@discussion		Audio codec component manufacturer codes. On iPhoneOS, a codec's
 					manufacturer can be used to distinguish between hardware and
-					software codecs. There are no restrictions on the usage
-					of software codecs. Hardware codecs may only be used via
-					AudioQueue.
-					
-					See also the discussion of kAudioFormatProperty_CodecAvailability.
+					software codecs.
 
 	@constant		kAppleSoftwareAudioCodecManufacturer
 					Apple software audio codecs.
 	@constant		kAppleHardwareAudioCodecManufacturer
 					Apple hardware audio codecs.
 */
-enum
+CF_ENUM(UInt32)
 {
 	kAppleSoftwareAudioCodecManufacturer					= 'appl',
 	kAppleHardwareAudioCodecManufacturer					= 'aphw'
@@ -538,15 +487,15 @@ enum
     @param      inPropertyID		an AudioFormatPropertyID constant.
     @param      inSpecifierSize		The size of the specifier data.
     @param      inSpecifier			A specifier is a buffer of data used as an input argument to some of the properties.
-    @param      outDataSize			the the size in bytes of the current value of the property. In order to get the property value, 
+    @param      outPropertyDataSize	The size in bytes of the current value of the property. In order to get the property value,
 									you will need a buffer of this size.
     @result     returns noErr if successful.
 */
 extern OSStatus
 AudioFormatGetPropertyInfo(	AudioFormatPropertyID	inPropertyID,
 							UInt32					inSpecifierSize,
-							const void*				inSpecifier,
-							UInt32*					outPropertyDataSize)	__OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+							const void * __nullable	inSpecifier,
+							UInt32 *				outPropertyDataSize)	__OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
 
 /*!
     @function	AudioFormatGetProperty
@@ -554,7 +503,7 @@ AudioFormatGetPropertyInfo(	AudioFormatPropertyID	inPropertyID,
     @param      inPropertyID		an AudioFormatPropertyID constant.
     @param      inSpecifierSize		The size of the specifier data.
     @param      inSpecifier			A specifier is a buffer of data used as an input argument to some of the properties.
-    @param      ioDataSize			on input the size of the outPropertyData buffer. On output the number of bytes written to the buffer.
+    @param      ioPropertyDataSize	on input the size of the outPropertyData buffer. On output the number of bytes written to the buffer.
     @param      outPropertyData		the buffer in which to write the property data. If outPropertyData is NULL and ioPropertyDataSize is
 									not, the amount that would have been written will be reported.
     @result     returns noErr if successful.
@@ -562,16 +511,17 @@ AudioFormatGetPropertyInfo(	AudioFormatPropertyID	inPropertyID,
 extern OSStatus
 AudioFormatGetProperty(	AudioFormatPropertyID	inPropertyID,
 						UInt32					inSpecifierSize,
-						const void*				inSpecifier,
-						UInt32*					ioPropertyDataSize,
-						void*					outPropertyData)			__OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+						const void * __nullable	inSpecifier,
+						UInt32 * __nullable		ioPropertyDataSize,
+						void * __nullable		outPropertyData)			__OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
 
 
 //-----------------------------------------------------------------------------
 //  AudioFormat Error Codes
 //-----------------------------------------------------------------------------
 
-enum {
+CF_ENUM(OSStatus)
+{
         kAudioFormatUnspecifiedError						= 'what',	// 0x77686174, 2003329396
         kAudioFormatUnsupportedPropertyError 				= 'prop',	// 0x70726F70, 1886547824
         kAudioFormatBadPropertySizeError 					= '!siz',	// 0x2173697A, 561211770
@@ -585,4 +535,6 @@ enum {
 }
 #endif
 
-#endif
+CF_ASSUME_NONNULL_END
+
+#endif // AudioToolbox_AudioFormat_h

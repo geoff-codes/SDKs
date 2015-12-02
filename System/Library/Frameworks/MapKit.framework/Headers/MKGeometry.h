@@ -2,13 +2,14 @@
 //  MKGeometry.h
 //  MapKit
 //
-//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2014, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreLocation/CoreLocation.h>
 #import <MapKit/MKFoundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 typedef struct {
     CLLocationDegrees latitudeDelta;
@@ -177,7 +178,9 @@ MK_EXTERN MKMapRect MKMapRectRemainder(MKMapRect rect) NS_AVAILABLE(10_9, 4_0);
 + (NSValue *)valueWithMKCoordinate:(CLLocationCoordinate2D)coordinate;
 + (NSValue *)valueWithMKCoordinateSpan:(MKCoordinateSpan)span;
 
-- (CLLocationCoordinate2D)MKCoordinateValue;
-- (MKCoordinateSpan)MKCoordinateSpanValue;
+@property (readonly) CLLocationCoordinate2D MKCoordinateValue;
+@property (readonly) MKCoordinateSpan MKCoordinateSpanValue;
 
 @end
+
+NS_ASSUME_NONNULL_END

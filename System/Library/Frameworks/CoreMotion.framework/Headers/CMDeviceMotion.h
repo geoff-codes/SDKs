@@ -11,6 +11,8 @@
 #import <CoreMotion/CMGyro.h>
 #import <CoreMotion/CMMagnetometer.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CMMagneticFieldCalibrationAccuracy
  *  
@@ -52,7 +54,7 @@ typedef struct {
  *    A CMDeviceMotion object contains basic information about the device's
  *		motion.
  */
-NS_CLASS_AVAILABLE(NA,4_0)
+NS_CLASS_AVAILABLE(NA,4_0) __TVOS_PROHIBITED
 @interface CMDeviceMotion : CMLogItem
 {
 @private
@@ -111,3 +113,5 @@ NS_CLASS_AVAILABLE(NA,4_0)
 @property(readonly, nonatomic) CMCalibratedMagneticField magneticField NS_AVAILABLE(NA,5_0);
 
 @end
+
+NS_ASSUME_NONNULL_END

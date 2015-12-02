@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2009,2011 Apple Inc. All Rights Reserved.
+ * Copyright (c) 2006-2009,2011-2013 Apple Inc. All Rights Reserved.
  * 
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -39,13 +39,20 @@
 
 __BEGIN_DECLS
 
+CF_ASSUME_NONNULL_BEGIN
+CF_IMPLICIT_BRIDGING_ENABLED
+
 /* Padding Types (iPhone OS 2.0 and later only). */
-typedef uint32_t SecPadding;
-enum
+typedef CF_OPTIONS(uint32_t, SecPadding)
 {
     kSecPaddingNone      = 0,
-    kSecPaddingPKCS1     = 1,
+    kSecPaddingPKCS1     = 1, // For EC, defaults to a signature in x9.62 DER encoding.
     kSecPaddingOAEP      = 2,
+
+    /* For SecKeyRawSign/SecKeyRawVerify only,
+     ECDSA signature is raw byte format {r,s}, big endian.
+     First half is r, second half is s */
+    kSecPaddingSigRaw  = 0x4000,
 
     /* For SecKeyRawSign/SecKeyRawVerify only, data to be signed is an MD2
        hash; standard ASN.1 padding will be done, as well as PKCS1 padding
@@ -101,9 +108,9 @@ CFTypeID SecKeyGetTypeID(void)
     @constant kSecPublicKeyAttrs The value for this key is a CFDictionaryRef
 	containing attributes specific for the public key to be generated.
 */
-extern CFTypeRef kSecPrivateKeyAttrs
+extern const CFStringRef kSecPrivateKeyAttrs
     __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_2_0);
-extern CFTypeRef kSecPublicKeyAttrs
+extern const CFStringRef kSecPublicKeyAttrs
     __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_2_0);
 
 /*!
@@ -134,6 +141,9 @@ extern CFTypeRef kSecPublicKeyAttrs
 	  * kSecAttrIsPermanent if this key is present and has a Boolean
 	    value of true, the key or key pair will be added to the default
 	    keychain.
+      * kSecAttrTokenID if this key should be generated on specified token.  This
+        attribute can contain CFStringRef and can be present only in the top-level
+        parameters dictionary.
       * kSecAttrApplicationTag default NULL
       * kSecAttrEffectiveKeySize default NULL same as kSecAttrKeySizeInBits
       * kSecAttrCanEncrypt default false for private keys, true for public keys
@@ -145,8 +155,8 @@ extern CFTypeRef kSecPublicKeyAttrs
       * kSecAttrCanUnwrap default true for private keys, false for public keys
 
 */
-OSStatus SecKeyGeneratePair(CFDictionaryRef parameters, SecKeyRef *publicKey,
-    SecKeyRef *privateKey) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
+OSStatus SecKeyGeneratePair(CFDictionaryRef parameters, SecKeyRef * __nullable CF_RETURNS_RETAINED publicKey,
+    SecKeyRef * __nullable CF_RETURNS_RETAINED privateKey) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
 
 
 /*!
@@ -229,9 +239,11 @@ OSStatus SecKeyRawVerify(
     @param cipherTextLen On input, specifies how much space is available at
     cipherText; on return, it is the actual number of cipherText bytes written.
     @result A result code. See "Security Error Codes" (SecBase.h).
-    @discussion If the padding argument is kSecPaddingPKCS1, PKCS1 padding
-    will be performed prior to encryption. If this argument is kSecPaddingNone,
-    the incoming data will be encrypted "as is".
+    @discussion If the padding argument is kSecPaddingPKCS1 or kSecPaddingOAEP,
+    PKCS1 (respectively kSecPaddingOAEP) padding will be performed prior to encryption.
+    If this argument is kSecPaddingNone, the incoming data will be encrypted "as is".
+    kSecPaddingOAEP is the recommended value. Other value are not recommended 
+    for security reason (Padding attack or malleability).
 
     When PKCS1 padding is performed, the maximum length of data that can
     be encrypted is the value returned by SecKeyGetBlockSize() - 11.
@@ -261,9 +273,9 @@ OSStatus SecKeyEncrypt(
     @param plainTextLen On input, specifies how much space is available at
     plainText; on return, it is the actual number of plainText bytes written.
     @result A result code. See "Security Error Codes" (SecBase.h).
-    @discussion If the padding argument is kSecPaddingPKCS1, PKCS1 padding
-    will be removed after decryption. If this argument is kSecPaddingNone,
-    the decrypted data will be returned "as is".
+    @discussion If the padding argument is kSecPaddingPKCS1 or kSecPaddingOAEP,
+    the corresponding padding will be removed after decryption. 
+    If this argument is kSecPaddingNone, the decrypted data will be returned "as is".
 
     When memory usage is a critical issue, note that the input buffer
     (plainText) can be the same as the output buffer (cipherText). 
@@ -289,7 +301,9 @@ OSStatus SecKeyDecrypt(
  */
 size_t SecKeyGetBlockSize(SecKeyRef key)
     __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_2_0);
-    
+
+CF_IMPLICIT_BRIDGING_DISABLED
+CF_ASSUME_NONNULL_END
 
 __END_DECLS
 

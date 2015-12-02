@@ -11,6 +11,8 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import <SpriteKit/SKVersion.h>
+
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
@@ -25,17 +27,12 @@
 #define SK_AVAILABLE __OSX_AVAILABLE_STARTING
 
 #if TARGET_OS_IPHONE
-#define SK_NONATOMIC_IOSONLY nonatomic
-#else
-#define SK_NONATOMIC_IOSONLY atomic
-#endif
-
-#if TARGET_OS_IPHONE
 #define SKColor UIColor
 #else
 #define SKColor NSColor
 #endif
 
+typedef float vector_float3 __attribute__((__ext_vector_type__(3)));
 
 #ifndef CGVECTOR_DEFINED
 #define CGVECTOR_DEFINED 1
@@ -50,3 +47,4 @@ CG_INLINE CGVector CGVectorMake(CGFloat dx, CGFloat dy) {
     CGVector vector; vector.dx = dx; vector.dy = dy; return vector;
 }
 #endif
+

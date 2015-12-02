@@ -1,10 +1,6 @@
 /*	NSURLSession.h
-	Copyright (c) 2013 Apple Inc. All rights reserved.
+	Copyright (c) 2013-2015, Apple Inc. All rights reserved.
 */
-
-#if __OBJC2__
-
-/* NSURLSession is only available on iOS and Mac OS X x86_64 */
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSURLRequest.h>
@@ -15,9 +11,10 @@
 @class NSString;
 @class NSURL;
 @class NSError;
-@class NSArray;
-@class NSDictionary;
+@class NSArray<ObjectType>;
+@class NSDictionary<KeyType, ObjectType>;
 @class NSInputStream;
+@class NSOutputStream;
 @class NSData;
 @class NSOperationQueue;
 
@@ -30,6 +27,10 @@
 @class NSURLProtectionSpace;
 @class NSURLCredential;
 @class NSURLCredentialStorage;
+@class NSURLSessionDataTask;
+@class NSURLSessionUploadTask;
+@class NSURLSessionDownloadTask;
+@class NSNetService;
 
 /*
 
@@ -78,19 +79,43 @@
  otherwise read the file. If canceled, an NSURLSessionDownloadTask can
  produce a data blob that can be used to resume a download at a later
  time.
- 
+
+ Beginning with iOS 9 and Mac OS X 10.11, NSURLSessionStream is
+ available as a task type.  This allows for direct TCP/IP connection
+ to a given host and port with optional secure handshaking and
+ navigation of proxies.  Data tasks may also be upgraded to a
+ NSURLSessionStream task via the HTTP Upgrade: header and appropriate
+ use of the pipelining option of NSURLSessionConfiguration.  See RFC
+ 2817 and RFC 6455 for information about the Upgrade: header, and
+ comments below on turning data tasks into stream tasks.
  */
 
 @class NSURLSession;
 @class NSURLSessionDataTask;                /* DataTask objects receive the payload through zero or more delegate messages */
 @class NSURLSessionUploadTask;              /* UploadTask objects receive periodic progress updates but do not return a body */
 @class NSURLSessionDownloadTask;            /* DownloadTask objects represent an active download to disk.  They can provide resume data when canceled. */
+@class NSURLSessionStreamTask;              /* StreamTask objects may be used to create NSInput and NSOutputStreams, or used directly in reading and writing. */
 @class NSURLSessionConfiguration;
 @protocol NSURLSessionDelegate;
 
-FOUNDATION_EXPORT const int64_t NSURLSessionTransferSizeUnknown NS_AVAILABLE(10_9, 7_0);    /* -1LL */
+NS_ASSUME_NONNULL_BEGIN
 
-NS_CLASS_AVAILABLE(10_9, 7_0)
+/*
+
+ NSURLSession is not available for i386 targets before Mac OS X 10.10.
+
+ */
+
+#if __OBJC2__
+#define NSURLSESSION_AVAILABLE	10_9
+#else
+#define NSURLSESSION_AVAILABLE	10_10
+#endif
+
+
+FOUNDATION_EXPORT const int64_t NSURLSessionTransferSizeUnknown NS_AVAILABLE(NSURLSESSION_AVAILABLE, 7_0);    /* -1LL */
+
+NS_CLASS_AVAILABLE(NSURLSESSION_AVAILABLE, 7_0)
 @interface NSURLSession : NSObject
 
 /*
@@ -107,17 +132,17 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  * the delegate has been sent the URLSession:didBecomeInvalidWithError: message.
  */
 + (NSURLSession *)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration;
-+ (NSURLSession *)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration delegate:(id <NSURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue;
++ (NSURLSession *)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration delegate:(nullable id <NSURLSessionDelegate>)delegate delegateQueue:(nullable NSOperationQueue *)queue;
 
 @property (readonly, retain) NSOperationQueue *delegateQueue;
-@property (readonly, retain) id <NSURLSessionDelegate> delegate;
+@property (nullable, readonly, retain) id <NSURLSessionDelegate> delegate;
 @property (readonly, copy) NSURLSessionConfiguration *configuration;
 
 /*
  * The sessionDescription property is available for the developer to
  * provide a descriptive label for the session.
  */
-@property (copy) NSString *sessionDescription;
+@property (nullable, copy) NSString *sessionDescription;
 
 /* -finishTasksAndInvalidate returns immediately and existing tasks will be allowed
  * to run to completion.  New tasks may not be created.  The session
@@ -126,6 +151,10 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  *
  * -finishTasksAndInvalidate and -invalidateAndCancel do not
  * have any effect on the shared session singleton.
+ *
+ * When invalidating a background session, it is not safe to create another background
+ * session with the same identifier until URLSession:didBecomeInvalidWithError: has
+ * been issued.
  */
 - (void)finishTasksAndInvalidate;
 
@@ -139,7 +168,9 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 - (void)resetWithCompletionHandler:(void (^)(void))completionHandler;    /* empty all cookies, cache and credential stores, removes disk files, issues -flushWithCompletionHandler:. Invokes completionHandler() on the delegate queue if not nil. */
 - (void)flushWithCompletionHandler:(void (^)(void))completionHandler;    /* flush storage to disk and clear transient network caches.  Invokes completionHandler() on the delegate queue if not nil. */
 
-- (void)getTasksWithCompletionHandler:(void (^)(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks))completionHandler; /* invokes completionHandler with outstanding data, upload and download tasks. */
+- (void)getTasksWithCompletionHandler:(void (^)(NSArray<NSURLSessionDataTask *> *dataTasks, NSArray<NSURLSessionUploadTask *> *uploadTasks, NSArray<NSURLSessionDownloadTask *> *downloadTasks))completionHandler; /* invokes completionHandler with outstanding data, upload and download tasks. */
+
+- (void)getAllTasksWithCompletionHandler:(void (^)(NSArray<__kindof NSURLSessionTask *> *tasks))completionHandler NS_AVAILABLE(10_11, 9_0); /* invokes completionHandler with all outstanding tasks. */
 
 /* 
  * NSURLSessionTask objects are always created in a suspended state and
@@ -170,6 +201,15 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 /* Creates a download task with the resume data.  If the download cannot be successfully resumed, URLSession:task:didCompleteWithError: will be called. */
 - (NSURLSessionDownloadTask *)downloadTaskWithResumeData:(NSData *)resumeData;
 
+/* Creates a bidirectional stream task to a given host and port.
+ */
+- (NSURLSessionStreamTask *)streamTaskWithHostName:(NSString *)hostname port:(NSInteger)port NS_AVAILABLE(10_11, 9_0);
+
+/* Creates a bidirectional stream task with an NSNetService to identify the endpoint.
+ * The NSNetService will be resolved before any IO completes.
+ */
+- (NSURLSessionStreamTask *)streamTaskWithNetService:(NSNetService *)service NS_AVAILABLE(10_11, 9_0);
+
 @end
 
 /*
@@ -190,14 +230,14 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  * see <Foundation/NSURLError.h>.  The delegate, if any, will still be
  * called for authentication challenges.
  */
-- (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
-- (NSURLSessionDataTask *)dataTaskWithURL:(NSURL *)url completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
+- (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void (^)(NSData * __nullable data, NSURLResponse * __nullable response, NSError * __nullable error))completionHandler;
+- (NSURLSessionDataTask *)dataTaskWithURL:(NSURL *)url completionHandler:(void (^)(NSData * __nullable data, NSURLResponse * __nullable response, NSError * __nullable error))completionHandler;
 
 /*
  * upload convenience method.
  */
-- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
-- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromData:(NSData *)bodyData completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
+- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromFile:(NSURL *)fileURL completionHandler:(void (^)(NSData * __nullable data, NSURLResponse * __nullable response, NSError * __nullable error))completionHandler;
+- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromData:(nullable NSData *)bodyData completionHandler:(void (^)(NSData * __nullable data, NSURLResponse * __nullable response, NSError * __nullable error))completionHandler;
 
 /*
  * download task convenience methods.  When a download successfully
@@ -205,9 +245,9 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  * copied during the invocation of the completion routine.  The file
  * will be removed automatically.
  */
-- (NSURLSessionDownloadTask *)downloadTaskWithRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURL *location, NSURLResponse *response, NSError *error))completionHandler;
-- (NSURLSessionDownloadTask *)downloadTaskWithURL:(NSURL *)url completionHandler:(void (^)(NSURL *location, NSURLResponse *response, NSError *error))completionHandler;
-- (NSURLSessionDownloadTask *)downloadTaskWithResumeData:(NSData *)resumeData completionHandler:(void (^)(NSURL *location, NSURLResponse *response, NSError *error))completionHandler;
+- (NSURLSessionDownloadTask *)downloadTaskWithRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURL * __nullable location, NSURLResponse * __nullable response, NSError * __nullable error))completionHandler;
+- (NSURLSessionDownloadTask *)downloadTaskWithURL:(NSURL *)url completionHandler:(void (^)(NSURL * __nullable location, NSURLResponse * __nullable response, NSError * __nullable error))completionHandler;
+- (NSURLSessionDownloadTask *)downloadTaskWithResumeData:(NSData *)resumeData completionHandler:(void (^)(NSURL * __nullable location, NSURLResponse * __nullable response, NSError * __nullable error))completionHandler;
 
 @end
 
@@ -216,19 +256,19 @@ typedef NS_ENUM(NSInteger, NSURLSessionTaskState) {
     NSURLSessionTaskStateSuspended = 1,
     NSURLSessionTaskStateCanceling = 2,                   /* The task has been told to cancel.  The session will receive a URLSession:task:didCompleteWithError: message. */
     NSURLSessionTaskStateCompleted = 3,                   /* The task has completed and the session will receive no more delegate notifications */
-} NS_ENUM_AVAILABLE(10_9, 7_0);
+} NS_ENUM_AVAILABLE(NSURLSESSION_AVAILABLE, 7_0);
 
 /*
  * NSURLSessionTask - a cancelable object that refers to the lifetime
  * of processing a given request.
  */
-NS_CLASS_AVAILABLE(10_9, 7_0)
+NS_CLASS_AVAILABLE(NSURLSESSION_AVAILABLE, 7_0)
 @interface NSURLSessionTask : NSObject <NSCopying>
 
-@property (readonly) NSUInteger taskIdentifier;		    /* an identifier for this task, assigned by and unique to the owning session */
-@property (readonly, copy) NSURLRequest *originalRequest;
-@property (readonly, copy) NSURLRequest *currentRequest;    /* may differ from originalRequest due to http server redirection */
-@property (readonly, copy) NSURLResponse *response;	    /* may be nil if no response has been received */
+@property (readonly)                 NSUInteger    taskIdentifier;    /* an identifier for this task, assigned by and unique to the owning session */
+@property (nullable, readonly, copy) NSURLRequest  *originalRequest;  /* may be nil if this is a stream task */
+@property (nullable, readonly, copy) NSURLRequest  *currentRequest;   /* may differ from originalRequest due to http server redirection */
+@property (nullable, readonly, copy) NSURLResponse *response;         /* may be nil if no response has been received */
 
 /* Byte count properties may be zero if no body is expected, 
  * or NSURLSessionTransferSizeUnknown if it is not possible 
@@ -251,7 +291,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  * The taskDescription property is available for the developer to
  * provide a descriptive label for the task.
  */
-@property (copy) NSString *taskDescription;
+@property (nullable, copy) NSString *taskDescription;
 
 /* -cancel returns immediately, but marks a task as being canceled.
  * The task will signal -URLSession:task:didCompleteWithError: with an
@@ -270,7 +310,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  * The error, if any, delivered via -URLSession:task:didCompleteWithError:
  * This property will be nil in the event that no error occured.
  */
-@property (readonly, copy) NSError *error;
+@property (nullable, readonly, copy) NSError *error;
 
 /*
  * Suspending a task will prevent the NSURLSession from continuing to
@@ -284,7 +324,28 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 - (void)suspend;
 - (void)resume;
 
+/*
+ * Sets a scaling factor for the priority of the task. The scaling factor is a
+ * value between 0.0 and 1.0 (inclusive), where 0.0 is considered the lowest
+ * priority and 1.0 is considered the highest.
+ *
+ * The priority is a hint and not a hard requirement of task performance. The
+ * priority of a task may be changed using this API at any time, but not all
+ * protocols support this; in these cases, the last priority that took effect
+ * will be used.
+ *
+ * If no priority is specified, the task will operate with the default priority
+ * as defined by the constant NSURLSessionTaskPriorityDefault. Two additional
+ * priority levels are provided: NSURLSessionTaskPriorityLow and
+ * NSURLSessionTaskPriorityHigh, but use is not restricted to these.
+ */
+@property float priority NS_AVAILABLE(10_10, 8_0);
+
 @end
+
+FOUNDATION_EXPORT const float NSURLSessionTaskPriorityDefault NS_AVAILABLE(10_10, 8_0);
+FOUNDATION_EXPORT const float NSURLSessionTaskPriorityLow NS_AVAILABLE(10_10, 8_0);
+FOUNDATION_EXPORT const float NSURLSessionTaskPriorityHigh NS_AVAILABLE(10_10, 8_0);
 
 /*
  * An NSURLSessionDataTask does not provide any additional
@@ -296,7 +357,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 
 /*
  * An NSURLSessionUploadTask does not currently provide any additional
- * functionality over an NSURLSessionDataTask.  All delgate messages
+ * functionality over an NSURLSessionDataTask.  All delegate messages
  * that may be sent referencing an NSURLSessionDataTask equally apply
  * to NSURLSessionUploadTasks.
  */
@@ -316,7 +377,84 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  * If resume data cannot be created, the completion handler will be
  * called with nil resumeData.
  */
-- (void)cancelByProducingResumeData:(void (^)(NSData *resumeData))completionHandler;
+- (void)cancelByProducingResumeData:(void (^)(NSData * __nullable resumeData))completionHandler;
+
+@end
+
+/*
+ * An NSURLSessionStreamTask provides an interface to perform reads
+ * and writes to a TCP/IP stream created via NSURLSession.  This task
+ * may be explicitly created from an NSURLSession, or created as a
+ * result of the appropriate disposition response to a
+ * -URLSession:dataTask:didReceiveResponse: delegate message.
+ * 
+ * NSURLSessionStreamTask can be used to perform asynchronous reads
+ * and writes.  Reads and writes are enquened and executed serially,
+ * with the completion handler being invoked on the sessions delegate
+ * queuee.  If an error occurs, or the task is canceled, all
+ * outstanding read and write calls will have their completion
+ * handlers invoked with an appropriate error.
+ *
+ * It is also possible to create NSInputStream and NSOutputStream
+ * instances from an NSURLSessionTask by sending
+ * -captureStreams to the task.  All outstanding read and writess are
+ * completed before the streams are created.  Once the streams are
+ * delivered to the session delegate, the task is considered complete
+ * and will receive no more messsages.  These streams are
+ * disassociated from the underlying session.
+ */
+
+NS_CLASS_AVAILABLE(10_11, 9_0)
+@interface NSURLSessionStreamTask : NSURLSessionTask
+
+/* Read minBytes, or at most maxBytes bytes and invoke the completion
+ * handler on the sessions delegate queue with the data or an error.
+ * If an error occurs, any outstanding reads will also fail, and new
+ * read requests will error out immediately.
+ */
+- (void)readDataOfMinLength:(NSUInteger)minBytes maxLength:(NSUInteger)maxBytes timeout:(NSTimeInterval)timeout completionHandler:(void (^) (NSData * __nullable data, BOOL atEOF, NSError * __nullable error))completionHandler;
+
+/* Write the data completely to the underlying socket.  If all the
+ * bytes have not been written by the timeout, a timeout error will
+ * occur.  Note that invocation of the completion handler does not
+ * guarantee that the remote side has received all the bytes, only
+ * that they have been written to the kernel. */
+- (void)writeData:(NSData *)data timeout:(NSTimeInterval)timeout completionHandler:(void (^) (NSError * __nullable error))completionHandler;
+
+/* -captureStreams completes any already enqueued reads
+ * and writes, and then invokes the
+ * URLSession:streamTask:didBecomeInputStream:outputStream: delegate
+ * message. When that message is received, the task object is
+ * considered completed and will not receive any more delegate
+ * messages. */
+- (void)captureStreams;
+
+/* Enqueue a request to close the write end of the underlying socket.
+ * All outstanding IO will complete before the write side of the
+ * socket is closed.  The server, however, may continue to write bytes
+ * back to the client, so best practice is to continue reading from
+ * the server until you receive EOF.
+ */
+- (void)closeWrite;
+
+/* Enqueue a request to close the read side of the underlying socket.
+ * All outstanding IO will complete before the read side is closed.
+ * You may continue writing to the server.
+ */
+- (void)closeRead;
+
+/*
+ * Begin encrypted handshake.  The hanshake begins after all pending 
+ * IO has completed.  TLS authentication callbacks are sent to the 
+ * session's -URLSession:task:didReceiveChallenge:completionHandler:
+ */
+- (void)startSecureConnection;
+
+/*
+ * Cleanly close a secure connection after all pending secure IO has 
+ * completed.
+ */
+- (void)stopSecureConnection;
 
 @end
 
@@ -334,15 +472,15 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  * A background session can be used to perform networking operations
  * on behalf of a suspended application, within certain constraints.
  */
-NS_CLASS_AVAILABLE(10_9, 7_0)
+NS_CLASS_AVAILABLE(NSURLSESSION_AVAILABLE, 7_0)
 @interface NSURLSessionConfiguration : NSObject <NSCopying>
 
 + (NSURLSessionConfiguration *)defaultSessionConfiguration;
 + (NSURLSessionConfiguration *)ephemeralSessionConfiguration;
-+ (NSURLSessionConfiguration *)backgroundSessionConfiguration:(NSString *)identifier;
++ (NSURLSessionConfiguration *)backgroundSessionConfigurationWithIdentifier:(NSString *)identifier NS_AVAILABLE(10_10, 8_0);
 
 /* identifier for the background session configuration */
-@property (readonly, copy) NSString *identifier;
+@property (nullable, readonly, copy) NSString *identifier;
 
 /* default cache policy for requests */
 @property NSURLRequestCachePolicy requestCachePolicy;
@@ -360,17 +498,23 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @property BOOL allowsCellularAccess;
 
 /* allows background tasks to be scheduled at the discretion of the system for optimal performance. */
-@property (getter=isDiscretionary) BOOL discretionary NS_AVAILABLE(NA, 7_0);
+@property (getter=isDiscretionary) BOOL discretionary NS_AVAILABLE(10_10, 7_0);
+
+/* The identifier of the shared data container into which files in background sessions should be downloaded.
+ * App extensions wishing to use background sessions *must* set this property to a valid container identifier, or
+ * all transfers in that session will fail with NSURLErrorBackgroundSessionRequiresSharedContainer.
+ */
+@property (nullable, copy) NSString *sharedContainerIdentifier NS_AVAILABLE(10_10, 8_0);
 
 /* 
  * Allows the app to be resumed or launched in the background when tasks in background sessions complete
- * or when auth is required. This only applies to configurations created with +backgroundSessionConfiguration:
+ * or when auth is required. This only applies to configurations created with +backgroundSessionConfigurationWithIdentifier:
  * and the default value is YES.
  */
 @property BOOL sessionSendsLaunchEvents NS_AVAILABLE(NA, 7_0);
 
 /* The proxy dictionary, as described by <CFNetwork/CFHTTPStream.h> */
-@property (copy) NSDictionary *connectionProxyDictionary;
+@property (nullable, copy) NSDictionary *connectionProxyDictionary;
 
 /* The minimum allowable versions of the TLS protocol, from <Security/SecureTransport.h> */
 @property SSLProtocol TLSMinimumSupportedProtocol;
@@ -389,21 +533,26 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 
 /* Specifies additional headers which will be set on outgoing requests.
    Note that these headers are added to the request only if not already present. */
-@property (copy) NSDictionary *HTTPAdditionalHeaders;
+@property (nullable, copy) NSDictionary *HTTPAdditionalHeaders;
 
 /* The maximum number of simultanous persistent connections per host */
 @property NSInteger HTTPMaximumConnectionsPerHost;
 
 /* The cookie storage object to use, or nil to indicate that no cookies should be handled */
-@property (retain) NSHTTPCookieStorage *HTTPCookieStorage;
+@property (nullable, retain) NSHTTPCookieStorage *HTTPCookieStorage;
 
 /* The credential storage object, or nil to indicate that no credential storage is to be used */
-@property (retain) NSURLCredentialStorage *URLCredentialStorage;
+@property (nullable, retain) NSURLCredentialStorage *URLCredentialStorage;
 
 /* The URL resource cache, or nil to indicate that no caching is to be performed */
-@property (retain) NSURLCache *URLCache;
+@property (nullable, retain) NSURLCache *URLCache;
 
-/* An optional array of Class objects which subclass NSURLProtocol.  
+/* Enable extended background idle mode for any tcp sockets created.    Enabling this mode asks the system to keep the socket open
+ *  and delay reclaiming it when the process moves to the background (see https://developer.apple.com/library/ios/technotes/tn2277/_index.html) 
+ */
+@property BOOL shouldUseExtendedBackgroundIdleMode NS_AVAILABLE(10_11, 9_0);
+
+/* An optional array of Class objects which subclass NSURLProtocol.
    The Class will be sent +canInitWithRequest: when determining if
    an instance of the class can be used for a given URL scheme.
    You should not use +[NSURLProtocol registerClass:], as that
@@ -412,7 +561,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
    Custom NSURLProtocol subclasses are not available to background
    sessions.
  */
-@property (copy) NSArray *protocolClasses;
+@property (nullable, copy) NSArray<Class> *protocolClasses;
 
 @end
 
@@ -420,18 +569,19 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  * Disposition options for various delegate messages
  */
 typedef NS_ENUM(NSInteger, NSURLSessionAuthChallengeDisposition) {
-    NSURLSessionAuthChallengeUseCredential = 0,                     /* Use the specified credential, which may be nil */
-    NSURLSessionAuthChallengePerformDefaultHandling = 1,            /* Default handling for the challenge - as if this delegate were not implemented; the credential parameter is ignored. */
-    NSURLSessionAuthChallengeCancelAuthenticationChallenge = 2,     /* The entire request will be canceled; the credential parameter is ignored. */
-    NSURLSessionAuthChallengeRejectProtectionSpace = 3,             /* This challenge is rejected and the next authentication protection space should be tried;the credential parameter is ignored. */
-} NS_ENUM_AVAILABLE(10_9, 7_0);
+    NSURLSessionAuthChallengeUseCredential = 0,                                       /* Use the specified credential, which may be nil */
+    NSURLSessionAuthChallengePerformDefaultHandling = 1,                              /* Default handling for the challenge - as if this delegate were not implemented; the credential parameter is ignored. */
+    NSURLSessionAuthChallengeCancelAuthenticationChallenge = 2,                       /* The entire request will be canceled; the credential parameter is ignored. */
+    NSURLSessionAuthChallengeRejectProtectionSpace = 3,                               /* This challenge is rejected and the next authentication protection space should be tried; the credential parameter is ignored. */
+} NS_ENUM_AVAILABLE(NSURLSESSION_AVAILABLE, 7_0);
 
 
 typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
-    NSURLSessionResponseCancel = 0,                                 /* Cancel the load, this is the same as -[task cancel] */
-    NSURLSessionResponseAllow = 1,                                  /* Allow the load to continue */
-    NSURLSessionResponseBecomeDownload = 2,                         /* Turn this request into a download */
-} NS_ENUM_AVAILABLE(10_9, 7_0);
+    NSURLSessionResponseCancel = 0,                                      /* Cancel the load, this is the same as -[task cancel] */
+    NSURLSessionResponseAllow = 1,                                       /* Allow the load to continue */
+    NSURLSessionResponseBecomeDownload = 2,                              /* Turn this request into a download */
+    NSURLSessionResponseBecomeStream NS_ENUM_AVAILABLE(10_11, 9_0) = 3,  /* Turn this task into a stream task */
+} NS_ENUM_AVAILABLE(NSURLSESSION_AVAILABLE, 7_0);
 
 /*
  * NSURLSessionDelegate specifies the methods that a session delegate
@@ -447,10 +597,9 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
 
 /* The last message a session receives.  A session will only become
  * invalid because of a systemic error or when it has been
- * explicitly invalidated, in which case it will receive an
- * { NSURLErrorDomain, NSURLUserCanceled } error. 
+ * explicitly invalidated, in which case the error parameter will be nil.
  */
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error;
+- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error;
 
 /* If implemented, when a connection level authentication challenge
  * has occurred, this delegate will be given the opportunity to
@@ -462,7 +611,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
  * interaction. 
  */
 - (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
-                                             completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler;
+                                             completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * __nullable credential))completionHandler;
 
 /* If an application has received an
  * -application:handleEventsForBackgroundURLSession:completionHandler:
@@ -488,11 +637,13 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
  * pass nil to the completionHandler to cause the body of the redirection 
  * response to be delivered as the payload of this request. The default
  * is to follow redirections. 
+ *
+ * For tasks in background sessions, redirections will always be followed and this method will not be called.
  */
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
                      willPerformHTTPRedirection:(NSHTTPURLResponse *)response
                                      newRequest:(NSURLRequest *)request
-                              completionHandler:(void (^)(NSURLRequest *))completionHandler;
+                              completionHandler:(void (^)(NSURLRequest * __nullable))completionHandler;
 
 /* The task has received a request specific authentication challenge.
  * If this delegate is not implemented, the session specific authentication challenge
@@ -501,14 +652,14 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
  */
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
                             didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge 
-                              completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler;
+                              completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * __nullable credential))completionHandler;
 
 /* Sent if a task requires a new, unopened body stream.  This may be
  * necessary when authentication has failed for any request that
  * involves a body stream. 
  */
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-                              needNewBodyStream:(void (^)(NSInputStream *bodyStream))completionHandler;
+                              needNewBodyStream:(void (^)(NSInputStream * __nullable bodyStream))completionHandler;
 
 /* Sent periodically to notify the delegate of upload progress.  This
  * information is also available as properties of the task.
@@ -522,7 +673,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
  * nil, which implies that no error occurred and this task is complete. 
  */
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-                           didCompleteWithError:(NSError *)error;
+                           didCompleteWithError:(nullable NSError *)error;
 
 @end
 
@@ -537,6 +688,8 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
  * allows you to cancel a request or to turn a data task into a
  * download task. This delegate message is optional - if you do not
  * implement it, you can get the response as a property of the task.
+ *
+ * This method will not be called for background upload tasks (which cannot be converted to download tasks).
  */
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
                                  didReceiveResponse:(NSURLResponse *)response
@@ -547,6 +700,25 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
  */
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
                               didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask;
+
+/*
+ * Notification that a data task has become a bidirectional stream
+ * task.  No future messages will be sent to the data task.  The newly
+ * created streamTask will carry the original request and response as
+ * properties.
+ *
+ * For requests that were pipelined, the stream object will only allow
+ * reading, and the object will immediately issue a
+ * -URLSession:writeClosedForStream:.  Pipelining can be disabled for
+ * all requests in a session, or by the NSURLRequest
+ * HTTPShouldUsePipelining property.
+ *
+ * The underlying connection is no longer considered part of the HTTP
+ * connection cache and won't count against the total number of
+ * connections per host.
+ */
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
+                                didBecomeStreamTask:(NSURLSessionStreamTask *)streamTask;
 
 /* Sent when data is available for the delegate to consume.  It is
  * assumed that the delegate will retain and not copy the data.  As
@@ -564,7 +736,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
  */
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
                                   willCacheResponse:(NSCachedURLResponse *)proposedResponse 
-                                  completionHandler:(void (^)(NSCachedURLResponse *cachedResponse))completionHandler;
+                                  completionHandler:(void (^)(NSCachedURLResponse * __nullable cachedResponse))completionHandler;
 
 @end
 
@@ -582,6 +754,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask
                               didFinishDownloadingToURL:(NSURL *)location;
 
+@optional
 /* Sent periodically to notify the delegate of download progress. */
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask
                                            didWriteData:(int64_t)bytesWritten
@@ -599,21 +772,49 @@ typedef NS_ENUM(NSInteger, NSURLSessionResponseDisposition) {
 
 @end
 
-/* Key in the userInfo dictionary of an NSError received during a failed download. */
-FOUNDATION_EXPORT NSString * const NSURLSessionDownloadTaskResumeData NS_AVAILABLE(10_9, 7_0);
+@protocol NSURLSessionStreamDelegate <NSURLSessionTaskDelegate>
+@optional
 
-/*
- * These methods will be removed.
+/* Indiciates that the read side of a connection has been closed.  Any
+ * outstanding reads complete, but future reads will immediately fail.
+ * This may be sent even when no reads are in progress. However, when
+ * this delegate message is received, there may still be bytes
+ * available.  You only know that no more bytes are available when you
+ * are able to read until EOF. */
+- (void)URLSession:(NSURLSession *)session readClosedForStreamTask:(NSURLSessionStreamTask *)streamTask;
+
+/* Indiciates that the write side of a connection has been closed.
+ * Any outstanding writes complete, but future writes will immediately
+ * fail.
  */
-@interface NSURLSession (NSURLSessionDeprecated)
+- (void)URLSession:(NSURLSession *)session writeClosedForStreamTask:(NSURLSessionStreamTask *)streamTask;
 
-/* Use -dataTaskWithURL: instead */
-- (NSURLSessionDataTask *)dataTaskWithHTTPGetRequest:(NSURL *)url NS_DEPRECATED(10_9, 10_9, 7_0, 7_0);
+/* A notification that the system has determined that a better route
+ * to the host has been detected (eg, a wi-fi interface becoming
+ * available.)  This is a hint to the delegate that it may be
+ * desirable to create a new task for subsequent work.  Note that
+ * there is no guarantee that the future task will be able to connect
+ * to the host, so callers should should be prepared for failure of
+ * reads and writes over any new interface. */
+- (void)URLSession:(NSURLSession *)session betterRouteDiscoveredForStreamTask:(NSURLSessionStreamTask *)streamTask;
 
-/* Use -dataTaskWithURL:completionHandler: instead */
-- (NSURLSessionDataTask *)dataTaskWithHTTPGetRequest:(NSURL *)url completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler NS_DEPRECATED(10_9, 10_9, 7_0, 7_0);
+/* The given task has been completed, and unopened NSInputStream and
+ * NSOutputStream objects are created from the underlying network
+ * connection.  This will only be invoked after all enqueued IO has
+ * completed (including any necessary handshakes.)  The streamTask
+ * will not receive any further delegate messages.
+ */
+- (void)URLSession:(NSURLSession *)session streamTask:(NSURLSessionStreamTask *)streamTask
+                                 didBecomeInputStream:(NSInputStream *)inputStream
+                                         outputStream:(NSOutputStream *)outputStream;
 
 @end
 
-#endif
+/* Key in the userInfo dictionary of an NSError received during a failed download. */
+FOUNDATION_EXPORT NSString * const NSURLSessionDownloadTaskResumeData NS_AVAILABLE(NSURLSESSION_AVAILABLE, 7_0);
 
+@interface NSURLSessionConfiguration (NSURLSessionDeprecated)
++ (NSURLSessionConfiguration *)backgroundSessionConfiguration:(NSString *)identifier NS_DEPRECATED(NSURLSESSION_AVAILABLE, 10_10, 7_0, 8_0, "Please use backgroundSessionConfigurationWithIdentifier: instead");
+@end
+
+NS_ASSUME_NONNULL_END

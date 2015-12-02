@@ -2,7 +2,7 @@
 //  UIInterface.h
 //  UIKit
 //
-//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2014 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,35 +12,42 @@
 
 // for UINavigationBar and UIToolBar
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSInteger, UIBarStyle) {
     UIBarStyleDefault          = 0,
     UIBarStyleBlack            = 1,
     
     UIBarStyleBlackOpaque      = 1, // Deprecated. Use UIBarStyleBlack
     UIBarStyleBlackTranslucent = 2, // Deprecated. Use UIBarStyleBlack and set the translucent property to YES
-};
+} __TVOS_PROHIBITED;
+
+typedef NS_ENUM(NSInteger, UIUserInterfaceSizeClass) {
+    UIUserInterfaceSizeClassUnspecified = 0,
+    UIUserInterfaceSizeClassCompact     = 1,
+    UIUserInterfaceSizeClassRegular     = 2,
+} NS_ENUM_AVAILABLE_IOS(8_0);
 
 // System colors
 
 @interface UIColor (UIColorSystemColors)
-+ (UIColor *)lightTextColor;                // for a dark background
-+ (UIColor *)darkTextColor;                 // for a light background
++ (UIColor *)lightTextColor __TVOS_PROHIBITED;                // for a dark background
++ (UIColor *)darkTextColor __TVOS_PROHIBITED;                 // for a light background
 
-// Group style table view backgrounds can no longer be represented by a simple color.
-// If you want to have a background in your own view that looks like the table view background,
-// then you should create an empty table view and place it behind your content.
-+ (UIColor *)groupTableViewBackgroundColor; // This method will be deprecated during the 6.0 seed program
++ (UIColor *)groupTableViewBackgroundColor __TVOS_PROHIBITED;
 
-+ (UIColor *)viewFlipsideBackgroundColor NS_DEPRECATED_IOS(2_0, 7_0);
-+ (UIColor *)scrollViewTexturedBackgroundColor NS_DEPRECATED_IOS(3_2, 7_0);
-+ (UIColor *)underPageBackgroundColor NS_DEPRECATED_IOS(5_0, 7_0);
++ (UIColor *)viewFlipsideBackgroundColor NS_DEPRECATED_IOS(2_0, 7_0) __TVOS_PROHIBITED;
++ (UIColor *)scrollViewTexturedBackgroundColor NS_DEPRECATED_IOS(3_2, 7_0) __TVOS_PROHIBITED;
++ (UIColor *)underPageBackgroundColor NS_DEPRECATED_IOS(5_0, 7_0) __TVOS_PROHIBITED;
 @end
 
 // System fonts
 
 @interface UIFont (UIFontSystemFonts)
-+ (CGFloat)labelFontSize;
-+ (CGFloat)buttonFontSize;
-+ (CGFloat)smallSystemFontSize;
-+ (CGFloat)systemFontSize;
++ (CGFloat)labelFontSize __TVOS_PROHIBITED;
++ (CGFloat)buttonFontSize __TVOS_PROHIBITED;
++ (CGFloat)smallSystemFontSize __TVOS_PROHIBITED;
++ (CGFloat)systemFontSize __TVOS_PROHIBITED;
 @end
+
+NS_ASSUME_NONNULL_END

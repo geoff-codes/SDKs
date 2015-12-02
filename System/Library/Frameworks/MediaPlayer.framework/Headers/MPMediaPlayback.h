@@ -41,4 +41,5 @@
 @end
 
 // Posted when the prepared state changes of an object conforming to the MPMediaPlayback protocol changes.
-MP_EXTERN NSString *const MPMediaPlaybackIsPreparedToPlayDidChangeNotification NS_AVAILABLE_IOS(3_2);
+// This supersedes MPMoviePlayerContentPreloadDidFinishNotification.
+MP_EXTERN __TVOS_PROHIBITED NSString *const MPMediaPlaybackIsPreparedToPlayDidChangeNotification NS_DEPRECATED_IOS(3_2, 9_0);

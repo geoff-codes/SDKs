@@ -1,5 +1,5 @@
 /*	CFBase.h
-	Copyright (c) 1998-2013, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2015, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFBASE__)
@@ -232,6 +232,80 @@ CF_EXTERN_C_BEGIN
 #endif
 #endif
 
+#if __has_attribute(objc_bridge) && __has_feature(objc_bridge_id) && __has_feature(objc_bridge_id_on_typedefs)
+
+#ifdef __OBJC__
+@class NSArray;
+@class NSAttributedString;
+@class NSString;
+@class NSNull;
+@class NSCharacterSet;
+@class NSData;
+@class NSDate;
+@class NSTimeZone;
+@class NSDictionary;
+@class NSError;
+@class NSLocale;
+@class NSNumber;
+@class NSSet;
+@class NSURL;
+#endif
+
+#define CF_BRIDGED_TYPE(T)		__attribute__((objc_bridge(T)))
+#define CF_BRIDGED_MUTABLE_TYPE(T)	__attribute__((objc_bridge_mutable(T)))
+#define CF_RELATED_TYPE(T,C,I)		__attribute__((objc_bridge_related(T,C,I)))
+#else
+#define CF_BRIDGED_TYPE(T)
+#define CF_BRIDGED_MUTABLE_TYPE(T)
+#define CF_RELATED_TYPE(T,C,I)
+#endif
+
+
+#if __has_feature(assume_nonnull)
+#define CF_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
+#define CF_ASSUME_NONNULL_END   _Pragma("clang assume_nonnull end")
+#else
+#define CF_ASSUME_NONNULL_BEGIN
+#define CF_ASSUME_NONNULL_END
+#endif
+
+
+#if !__has_feature(nullability)
+#ifndef __nullable
+#define __nullable
+#endif
+#ifndef __nonnull
+#define __nonnull
+#endif
+#ifndef __null_unspecified
+#define __null_unspecified
+#endif
+#endif
+
+
+#if __has_attribute(swift_private)
+# define CF_REFINED_FOR_SWIFT __attribute__((swift_private))
+#else
+# define CF_REFINED_FOR_SWIFT
+#endif
+
+
+#if __has_attribute(swift_name)
+# define CF_SWIFT_NAME(_name) __attribute__((swift_name(#_name)))
+#else
+# define CF_SWIFT_NAME(_name)
+#endif
+
+
+#if !__has_feature(objc_generics_variance)
+#ifndef __covariant
+#define __covariant
+#endif
+#ifndef __contravariant
+#define __contravariant
+#endif
+#endif
+
 
 CF_EXPORT double kCFCoreFoundationVersionNumber;
 
@@ -307,10 +381,17 @@ CF_EXPORT double kCFCoreFoundationVersionNumber;
 #define kCFCoreFoundationVersionNumber10_8_2    744.12
 #define kCFCoreFoundationVersionNumber10_8_3    744.18
 #define kCFCoreFoundationVersionNumber10_8_4    744.19
+#define kCFCoreFoundationVersionNumber10_9      855.11
+#define kCFCoreFoundationVersionNumber10_9_1    855.11
+#define kCFCoreFoundationVersionNumber10_9_2    855.14
+#define kCFCoreFoundationVersionNumber10_10     1151.16
+#define kCFCoreFoundationVersionNumber10_10_1   1151.16
+#define kCFCoreFoundationVersionNumber10_10_2   1152
+#define kCFCoreFoundationVersionNumber10_10_3   1153.18
 #endif
 
 #if TARGET_OS_IPHONE
-#define kCFCoreFoundationVersionNumber_iPhoneOS_2_0	478.23
+#define kCFCoreFoundationVersionNumber_iPhoneOS_2_0 478.23
 #define kCFCoreFoundationVersionNumber_iPhoneOS_2_1 478.26
 #define kCFCoreFoundationVersionNumber_iPhoneOS_2_2 478.29
 #define kCFCoreFoundationVersionNumber_iPhoneOS_3_0 478.47
@@ -324,6 +405,11 @@ CF_EXPORT double kCFCoreFoundationVersionNumber;
 #define kCFCoreFoundationVersionNumber_iOS_5_1 690.10
 #define kCFCoreFoundationVersionNumber_iOS_6_0 793.00
 #define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
+#define kCFCoreFoundationVersionNumber_iOS_7_0 847.20
+#define kCFCoreFoundationVersionNumber_iOS_7_1 847.24
+#define kCFCoreFoundationVersionNumber_iOS_8_0 1140.1
+#define kCFCoreFoundationVersionNumber_iOS_8_1 1141.14
+#define kCFCoreFoundationVersionNumber_iOS_8_2 1142.16
 #endif
 
 #if __LLP64__
@@ -339,17 +425,17 @@ typedef signed long CFIndex;
 #endif
 
 /* Base "type" of all "CF objects", and polymorphic functions on them */
-typedef const void * CFTypeRef;
+typedef const CF_BRIDGED_TYPE(id) void * CFTypeRef;
 
-typedef const struct __CFString * CFStringRef;
-typedef struct __CFString * CFMutableStringRef;
+typedef const struct CF_BRIDGED_TYPE(NSString) __CFString * CFStringRef;
+typedef struct CF_BRIDGED_MUTABLE_TYPE(NSMutableString) __CFString * CFMutableStringRef;
 
 /*
         Type to mean any instance of a property list type;
         currently, CFString, CFData, CFNumber, CFBoolean, CFDate,
         CFArray, and CFDictionary.
 */
-typedef CFTypeRef CFPropertyListRef;
+typedef CF_BRIDGED_TYPE(id) CFTypeRef CFPropertyListRef;
 
 /* Values returned from comparison functions */
 typedef CF_ENUM(CFIndex, CFComparisonResult) {
@@ -362,10 +448,7 @@ typedef CF_ENUM(CFIndex, CFComparisonResult) {
 typedef CFComparisonResult (*CFComparatorFunction)(const void *val1, const void *val2, void *context);
 
 /* Constant used by some functions to indicate failed searches. */
-/* This is of type CFIndex. */
-enum {
-    kCFNotFound = -1
-};
+static const CFIndex kCFNotFound = -1;
 
 
 /* Range type */
@@ -392,7 +475,7 @@ CFRange __CFRangeMake(CFIndex loc, CFIndex len);
 
 /* Null representant */
 
-typedef const struct __CFNull * CFNullRef;
+typedef const struct CF_BRIDGED_TYPE(NSNull) __CFNull * CFNullRef;
 
 CF_EXPORT
 CFTypeID CFNullGetTypeID(void);
@@ -408,7 +491,7 @@ const CFNullRef kCFNull;	// the singleton null instance
    or the return value from CFAllocatorGetDefault().  This assures that you will use
    the allocator in effect at that time.
 */
-typedef const struct __CFAllocator * CFAllocatorRef;
+typedef const struct CF_BRIDGED_TYPE(id) __CFAllocator * CFAllocatorRef;
 
 /* This is a synonym for NULL, if you'd rather use a named constant. */
 CF_EXPORT

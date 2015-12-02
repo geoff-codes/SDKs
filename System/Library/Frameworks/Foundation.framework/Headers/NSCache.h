@@ -1,5 +1,5 @@
 /*      NSCache.h
-        Copyright (c) 2008-2013, Apple Inc. All rights reserved.
+        Copyright (c) 2008-2015, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
@@ -7,35 +7,30 @@
 @class NSString;
 @protocol NSCacheDelegate;
 
+NS_ASSUME_NONNULL_BEGIN
+
 NS_CLASS_AVAILABLE(10_6, 4_0)
-@interface NSCache : NSObject {
+@interface NSCache <KeyType, ObjectType> : NSObject {
 @private
     id _delegate;
     void *_private[5];
     void *_reserved;
 }
 
-- (void)setName:(NSString *)n;
-- (NSString *)name;
+@property (copy) NSString *name;
 
-- (void)setDelegate:(id <NSCacheDelegate>)d;
-- (id <NSCacheDelegate>)delegate;
+@property (nullable, assign) id<NSCacheDelegate> delegate;
 
-- (id)objectForKey:(id)key;
-- (void)setObject:(id)obj forKey:(id)key; // 0 cost
-- (void)setObject:(id)obj forKey:(id)key cost:(NSUInteger)g;
-- (void)removeObjectForKey:(id)key;
+- (nullable ObjectType)objectForKey:(KeyType)key;
+- (void)setObject:(ObjectType)obj forKey:(KeyType)key; // 0 cost
+- (void)setObject:(ObjectType)obj forKey:(KeyType)key cost:(NSUInteger)g;
+- (void)removeObjectForKey:(KeyType)key;
 
 - (void)removeAllObjects;
 
-- (void)setTotalCostLimit:(NSUInteger)lim;
-- (NSUInteger)totalCostLimit;	// limits are imprecise/not strict
-
-- (void)setCountLimit:(NSUInteger)lim;
-- (NSUInteger)countLimit;	// limits are imprecise/not strict
-
-- (BOOL)evictsObjectsWithDiscardedContent;
-- (void)setEvictsObjectsWithDiscardedContent:(BOOL)b;
+@property NSUInteger totalCostLimit;	// limits are imprecise/not strict
+@property NSUInteger countLimit;	// limits are imprecise/not strict
+@property BOOL evictsObjectsWithDiscardedContent;
 
 @end
 
@@ -44,4 +39,4 @@ NS_CLASS_AVAILABLE(10_6, 4_0)
 - (void)cache:(NSCache *)cache willEvictObject:(id)obj;
 @end
 
-
+NS_ASSUME_NONNULL_END

@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <MediaPlayer/MediaPlayerDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class MPMediaItemArtwork;
 
 /// MPContentItem represents high-level metadata for a particular media item for
@@ -15,6 +17,7 @@
 /// developer might want to represent include song files, streaming audio URLs,
 /// or radio stations.
 MP_EXTERN_CLASS_AVAILABLE(7_1)
+__TVOS_PROHIBITED
 @interface MPContentItem : NSObject
 
 /// A unique identifier for this content item. (Required)
@@ -22,15 +25,15 @@ MP_EXTERN_CLASS_AVAILABLE(7_1)
 
 /// A title for this item. Usually this would be the track name, if representing
 /// a song, the episode name of a podcast, etc.
-@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy, nullable) NSString *title;
 
 /// A subtitle for this item. If this were representing a song, this would
 /// usually be the artist or composer.
-@property (nonatomic, copy) NSString *subtitle;
+@property (nonatomic, copy, nullable) NSString *subtitle;
 
 /// Artwork for this item. Examples of artwork for a content item are the album
 /// cover for a song, or a movie poster for a movie.
-@property (nonatomic, strong) MPMediaItemArtwork *artwork;
+@property (nonatomic, strong, nullable) MPMediaItemArtwork *artwork;
 
 /// Represents whether the content item is a container of other content items.
 /// An example of a container content item might be an album, which contains
@@ -50,6 +53,8 @@ MP_EXTERN_CLASS_AVAILABLE(7_1)
 
 /// Designated initializer. A unique identifier is required to identify the item
 /// for later use.
-- (instancetype)initWithIdentifier:(NSString *)identifier;
+- (instancetype)initWithIdentifier:(NSString *)identifier NS_DESIGNATED_INITIALIZER;
 
 @end
+
+NS_ASSUME_NONNULL_END

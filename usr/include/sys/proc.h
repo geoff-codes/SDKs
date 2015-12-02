@@ -79,6 +79,7 @@
 #include <mach/boolean.h>
 
 
+
 struct session;
 struct pgrp;
 struct proc;
@@ -173,22 +174,18 @@ struct extern_proc {
 #define	P_AFFINITY	0x00010000	/* xxx */
 #define	P_TRANSLATED	0x00020000	/* xxx */
 #define	P_CLASSIC	P_TRANSLATED	/* xxx */
-/*
-#define	P_FSTRACE	0x10000	/ * tracing via file system (elsewhere?) * /
-#define	P_SSTEP		0x20000	/ * process needs single-step fixup ??? * /
-*/
 
 #define	P_DELAYIDLESLEEP 0x00040000	/* Process is marked to delay idle sleep on disk IO */
 #define	P_CHECKOPENEVT 	0x00080000	/* check if a vnode has the OPENEVT flag set on open */
 
 #define	P_DEPENDENCY_CAPABLE	0x00100000	/* process is ok to call vfs_markdependency() */
 #define	P_REBOOT	0x00200000	/* Process called reboot() */
-#define	P_TBE		0x00400000	/* Process is TBE */
+#define	P_RESV6		0x00400000	/* used to be P_TBE */
 #define	P_RESV7		0x00800000	/* (P_SIGEXC)signal exceptions */
 
 #define	P_THCWD		0x01000000	/* process has thread cwd  */
 #define	P_RESV9		0x02000000	/* (P_VFORK)process has vfork children */
-#define	P_RESV10 	0x04000000	/* used to be P_NOATTACH */
+#define	P_RESV10	0x04000000	/* reserved flag */
 #define	P_RESV11	0x08000000	/* (P_INVFORK) proc in vfork */
 
 #define	P_NOSHLIB	0x10000000	/* no shared libs are in use for proc */
@@ -212,6 +209,7 @@ struct extern_proc {
 #define P_DIRTY_BUSY                            0x00000040      /* serialization flag */
 #define P_DIRTY_MARKED                          0x00000080      /* marked dirty previously */
 #define P_DIRTY_DEFER_IN_PROGRESS               0x00000100      /* deferral to idle-band in process */
+#define P_DIRTY_LAUNCH_IN_PROGRESS              0x00000200      /* launch is in progress */
 
 #define P_DIRTY_IS_DIRTY                        (P_DIRTY | P_DIRTY_SHUTDOWN)
 #define P_DIRTY_IDLE_EXIT_ENABLED               (P_DIRTY_TRACK|P_DIRTY_ALLOW_IDLE_EXIT)

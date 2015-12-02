@@ -20,5 +20,9 @@ typedef enum {
 	CMErrorMotionActivityNotAvailable,
 	CMErrorMotionActivityNotAuthorized,
 	CMErrorMotionActivityNotEntitled,
-	CMErrorInvalidParameter
+	CMErrorInvalidParameter,
+	CMErrorInvalidAction,
+	CMErrorNotAvailable,
+	CMErrorNotEntitled,
+	CMErrorNotAuthorized
 } CMError;

@@ -1,6 +1,6 @@
 /*
-vForce.h (from vecLib-459.0)
-Copyright 1999-2014 Apple Inc.  All rights reserved.
+vForce.h (from vecLib-563.2)
+Copyright (c) 1999-2015 by Apple Inc. All rights reserved.
 
 @APPLE_LICENSE_HEADER_START@
 
@@ -54,6 +54,19 @@ extern "C" {
 
 #include <Availability.h>
 
+
+#if !defined __has_feature
+    #define __has_feature(f)    0
+#endif
+#if __has_feature(assume_nonnull)
+    _Pragma("clang assume_nonnull begin")
+#else
+    #define __nullable
+    #define __nonnull
+#endif
+
+
+
 /* Set y[i] to the reciprocal of x[i], for i=0,..,n-1 */
 void vvrecf (float * /* y */, const float * /* x */, const int * /* n */) __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_5_0); 
 void vvrec (double * /* y */, const double * /* x */, const int * /* n */) __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_5_0); 
@@ -66,6 +79,10 @@ void vvdiv (double * /* z */, const double * /* y */, const double * /* x */, co
 void vvsqrtf (float * /* y */, const float * /* x */, const int * /* n */) __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_5_0); 
 void vvsqrt (double * /* y */, const double * /* x */, const int * /* n */) __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_5_0); 
 
+/* Set y[i] to the cube root of x[i], for i=0,..,n-1 */
+void vvcbrtf (float * /* y */, const float * /* x */, const int * /* n */) __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
+void vvcbrt (double * /* y */, const double * /* x */, const int * /* n */) __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
+    
 /* Set y[i] to the reciprocal of the square root of x[i], for i=0,..,n-1 */
 void vvrsqrtf (float * /* y */, const float * /* x */, const int * /* n */) __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_5_0); 
 void vvrsqrt (double * /* y */, const double * /* x */, const int * /* n */) __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_5_0); 
@@ -515,6 +532,10 @@ void vvtanpif (float * /* y */, const float * /* x */, const int * /* n */) __OS
  
  */
 void vvtanpi (double * /* y */, const double * /* x */, const int * /* n */) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_5_0); 
+
+#if __has_feature(assume_nonnull)
+    _Pragma("clang assume_nonnull end")
+#endif
 	
 #ifdef __cplusplus
 }

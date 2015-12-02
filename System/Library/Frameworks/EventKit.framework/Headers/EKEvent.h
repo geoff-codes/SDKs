@@ -7,32 +7,33 @@
 
 #import <Foundation/Foundation.h>
 #import <EventKit/EventKitDefines.h>
-#import <EventKit/EKParticipant.h>
 #import <EventKit/EKCalendarItem.h>
 
-@class EKEventStore, EKCalendar, EKRecurrenceRule, EKAlarm, EKParticipant;
+NS_ASSUME_NONNULL_BEGIN
 
-typedef enum {
+@class EKEventStore, EKCalendar, EKRecurrenceRule, EKAlarm, EKParticipant, EKStructuredLocation;
+
+typedef NS_ENUM(NSInteger, EKEventAvailability) {
     EKEventAvailabilityNotSupported = -1,
     EKEventAvailabilityBusy = 0,
     EKEventAvailabilityFree,
     EKEventAvailabilityTentative,
     EKEventAvailabilityUnavailable
-} EKEventAvailability;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, EKEventStatus) {
     EKEventStatusNone = 0,
     EKEventStatusConfirmed,
     EKEventStatusTentative,
     EKEventStatusCanceled,
-} EKEventStatus;
+};
 
 
 /*!
     @class      EKEvent
     @abstract   The EKEvent class represents an occurrence of an event.
 */
-EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
+NS_CLASS_AVAILABLE(10_8, 4_0)
 @interface EKEvent : EKCalendarItem {
 }
 
@@ -50,7 +51,7 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
                 has not been deleted out from under you when you get an external change notification
                 via the EKEventStore database changed notification. If eventWithIdentifier: returns nil,
                 the event was deleted.
-                 
+
                 Please note that if you change the calendar of an event, this ID will likely change. It is
                 currently also possible for the ID to change due to a sync operation. For example, if
                 a user moved an event on a different client to another calendar, we'd see it as a 
@@ -80,6 +81,15 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
 @property(nonatomic, copy) NSDate *endDate;
 
 /*!
+    @property   structuredLocation
+    @abstract   Allows you to set a structured location (a location with a potential geo-coordinate) on an
+                event. The getter for EKEvent’s location property just returns the structured location’s title.
+                The setter for EKEvent’s location property is equivalent to
+                [event setStructuredLocation:[EKStructuredLocation locationWithTitle:…]].
+ */
+@property(nonatomic, copy, nullable) EKStructuredLocation *structuredLocation NS_AVAILABLE(10_11, 9_0);
+
+/*!
     @method     compareStartDateWithEvent
     @abstract   Comparison function you can pass to sort NSArrays of EKEvents by start date.
 */
@@ -89,7 +99,7 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
     @property   organizer
     @abstract   The organizer of this event, or nil.
 */
-@property(nonatomic, readonly) EKParticipant *organizer;
+@property(nonatomic, readonly, nullable) EKParticipant *organizer;
 
 /*!
     @property   availability
@@ -121,6 +131,17 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
 */
 @property(nonatomic, readonly) BOOL isDetached;
 
+/*!
+    @property   occurrenceDate:
+    @abstract   The occurrence date of an event if it is part of a recurring series.
+    @discussion This is only set if the event is part of a recurring series. It returns
+                the date on which this event was originally scheduled to occur. For occurrences
+                that are unmodified from the recurring series, this is the same as the start date.
+                This value will remain the same even if the event has been detached and its start 
+                date has changed. Floating events (such as all-day events) are currently returned
+                in the default time zone. ([NSTimeZone defaultTimeZone])
+ */
+@property(nonatomic, readonly) NSDate *occurrenceDate NS_AVAILABLE(10_8, 9_0);
 
 /*!
      @method     refresh
@@ -141,12 +162,32 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 4_0)
 - (BOOL)refresh;
 
 /*!
+    @method     birthdayContactIdentifier
+    @abstract   Specifies the contact identifier of the person this event was created for.
+    @discussion This property is only valid for events in the built-in Birthdays calendar. It specifies
+                the contact identifier (for use with the Contacts framework) of the person this event was
+                created for. For any other type of event, this property returns nil.
+ */
+@property(nonatomic, readonly, nullable) NSString *birthdayContactIdentifier NS_AVAILABLE(10_11, 9_0);
+
+/*!
     @property   birthdayPersonID
     @abstract   Specifies the address book ID of the person this event was created for.
-    @disussion  This property is only valid for events in the built-in Birthdays calendar. It specifies
+    @discussion  This property is only valid for events in the built-in Birthdays calendar. It specifies
                 the Address Book ID of the person this event was created for. For any other type of event,
                 this property returns -1.
 */
-@property(nonatomic, readonly) NSInteger    birthdayPersonID __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+@property(nonatomic, readonly) NSInteger birthdayPersonID NS_DEPRECATED_IOS(5_0, 9_0, "Use birthdayContactIdentifier instead");
+
+/*!
+    @property   birthdayPersonUniqueID
+    @abstract   Specifies the address book unique ID of the person this event was created for.
+    @disussion  This property is only valid for events in the built-in Birthdays calendar. It specifies
+                the Address Book unique ID of the person this event was created for. For any other type of event,
+                this property returns nil.
+ */
+@property(nonatomic, readonly, nullable) NSString *birthdayPersonUniqueID NS_DEPRECATED_MAC(10_8, 10_11, "Use birthdayContactIdentifier instead");
 
 @end
+
+NS_ASSUME_NONNULL_END

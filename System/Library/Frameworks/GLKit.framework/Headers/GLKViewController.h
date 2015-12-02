@@ -11,6 +11,7 @@
 
 #import <GLKit/GLKView.h>
 
+NS_ASSUME_NONNULL_BEGIN
 @protocol GLKViewControllerDelegate;
 
 #pragma mark -
@@ -23,7 +24,7 @@ NS_CLASS_AVAILABLE(NA, 5_0)
     
 }
 
-@property (nonatomic, assign) IBOutlet id <GLKViewControllerDelegate> delegate;
+@property (nullable, nonatomic, assign) IBOutlet id <GLKViewControllerDelegate> delegate;
 
 /*
  For setting the desired frames per second at which the update and drawing will take place.
@@ -97,3 +98,4 @@ NS_CLASS_AVAILABLE(NA, 5_0)
 - (void)glkViewController:(GLKViewController *)controller willPause:(BOOL)pause;
 
 @end
+NS_ASSUME_NONNULL_END

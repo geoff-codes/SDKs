@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CLAvailability.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CLLocationDegrees
  *  
@@ -144,6 +146,30 @@ CLLocationCoordinate2D CLLocationCoordinate2DMake(CLLocationDegrees latitude, CL
 #endif
 
 /*
+ *  CLFloor
+ *
+ *  Discussion:
+ *    Encapsulates the information about a floor.
+ */
+NS_CLASS_AVAILABLE(NA, 8_0)
+@interface CLFloor : NSObject <NSCopying, NSSecureCoding>
+
+/*
+ *  level
+ *
+ *  Discussion:
+ *    This is a logical representation that will vary on definition from building-to-building.
+ *    Floor 0 will always represent the floor designated as "ground".
+ *    This number may be negative to designate floors below the ground floor
+ *    and positive to indicate floors above the ground floor.
+ *    It is not intended to match any numbering that might actually be used in the building.
+ *    It is erroneous to use as an estimate of altitude.
+ */
+@property(readonly, nonatomic) NSInteger level;
+
+@end
+
+/*
  *  CLLocation
  *  
  *  Discussion:
@@ -162,7 +188,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *    Initialize with the specified latitude and longitude.
  */
-- (id)initWithLatitude:(CLLocationDegrees)latitude
+- (instancetype)initWithLatitude:(CLLocationDegrees)latitude
 	longitude:(CLLocationDegrees)longitude;
 
 /*
@@ -171,7 +197,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *    Initialize with the specified parameters.
  */
-- (id)initWithCoordinate:(CLLocationCoordinate2D)coordinate
+- (instancetype)initWithCoordinate:(CLLocationCoordinate2D)coordinate
 	altitude:(CLLocationDistance)altitude
 	horizontalAccuracy:(CLLocationAccuracy)hAccuracy
 	verticalAccuracy:(CLLocationAccuracy)vAccuracy
@@ -183,7 +209,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *    Initialize with the specified parameters.
  */
-- (id)initWithCoordinate:(CLLocationCoordinate2D)coordinate
+- (instancetype)initWithCoordinate:(CLLocationCoordinate2D)coordinate
     altitude:(CLLocationDistance)altitude
     horizontalAccuracy:(CLLocationAccuracy)hAccuracy
     verticalAccuracy:(CLLocationAccuracy)vAccuracy
@@ -232,7 +258,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Range:
  *    0.0 - 359.9 degrees, 0 being true North
  */
-@property(readonly, nonatomic) CLLocationDirection course __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_2_2);
+@property(readonly, nonatomic) CLLocationDirection course __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_2_2) __TVOS_PROHIBITED __WATCHOS_PROHIBITED;
 
 /*
  *  speed
@@ -240,7 +266,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *    Returns the speed of the location in m/s. Negative if speed is invalid.
  */
-@property(readonly, nonatomic) CLLocationSpeed speed __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_2_2);
+@property(readonly, nonatomic) CLLocationSpeed speed __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_2_2) __TVOS_PROHIBITED __WATCHOS_PROHIBITED;
 
 /*
  *  timestamp
@@ -248,7 +274,17 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *    Returns the timestamp when this location was determined.
  */
-@property(readonly, nonatomic) NSDate *timestamp;
+@property(readonly, nonatomic, copy) NSDate *timestamp;
+
+/*
+ *  floor
+ *
+ *  Discussion:
+ *    Contains information about the logical floor that you are on
+ *    in the current building if you are inside a supported venue.
+ *    This will be nil if the floor is unavailable.
+ */
+@property(readonly, nonatomic, copy, nullable) CLFloor *floor __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_8_0);
 
 /*
  *  description
@@ -256,7 +292,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *    Returns a string representation of the location.
  */
-- (NSString *)description;
+@property (nonatomic, readonly, copy) NSString *description;
 
 /*
  *  getDistanceFrom:
@@ -264,7 +300,7 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *    Deprecated. Use -distanceFromLocation: instead.
  */
-- (CLLocationDistance)getDistanceFrom:(const CLLocation *)location __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2);
+- (CLLocationDistance)getDistanceFrom:(const CLLocation *)location __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_3_2) __TVOS_PROHIBITED __WATCHOS_PROHIBITED;
 
 /*
  *  distanceFromLocation:
@@ -275,3 +311,5 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
 - (CLLocationDistance)distanceFromLocation:(const CLLocation *)location __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_3_2);
 
 @end
+
+NS_ASSUME_NONNULL_END

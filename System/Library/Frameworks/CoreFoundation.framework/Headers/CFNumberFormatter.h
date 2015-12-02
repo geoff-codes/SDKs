@@ -1,5 +1,5 @@
 /*	CFNumberFormatter.h
-	Copyright (c) 2003-2013, Apple Inc. All rights reserved.
+	Copyright (c) 2003-2015, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFNUMBERFORMATTER__)
@@ -9,9 +9,10 @@
 #include <CoreFoundation/CFNumber.h>
 #include <CoreFoundation/CFLocale.h>
 
+CF_IMPLICIT_BRIDGING_ENABLED
 CF_EXTERN_C_BEGIN
 
-typedef struct __CFNumberFormatter *CFNumberFormatterRef;
+typedef struct CF_BRIDGED_MUTABLE_TYPE(id) __CFNumberFormatter *CFNumberFormatterRef;
 
 // CFNumberFormatters are not thread-safe.  Do not use one from multiple threads!
 
@@ -24,7 +25,11 @@ typedef CF_ENUM(CFIndex, CFNumberFormatterStyle) {	// number format styles
 	kCFNumberFormatterCurrencyStyle = 2,
 	kCFNumberFormatterPercentStyle = 3,
 	kCFNumberFormatterScientificStyle = 4,
-	kCFNumberFormatterSpellOutStyle = 5
+	kCFNumberFormatterSpellOutStyle = 5,
+	kCFNumberFormatterOrdinalStyle CF_ENUM_AVAILABLE(10_11, 9_0) = 6,
+	kCFNumberFormatterCurrencyISOCodeStyle CF_ENUM_AVAILABLE(10_11, 9_0) = 8,
+	kCFNumberFormatterCurrencyPluralStyle CF_ENUM_AVAILABLE(10_11, 9_0) = 9,
+	kCFNumberFormatterCurrencyAccountingStyle CF_ENUM_AVAILABLE(10_11, 9_0) = 10,
 };
 
 
@@ -156,6 +161,7 @@ Boolean CFNumberFormatterGetDecimalInfoForCurrencyCode(CFStringRef currencyCode,
 	// Not localized because these are properties of the currency.
 
 CF_EXTERN_C_END
+CF_IMPLICIT_BRIDGING_DISABLED
 
 #endif /* ! __COREFOUNDATION_CFNUMBERFORMATTER__ */
 

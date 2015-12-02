@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <MediaPlayer/MediaPlayerDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class MPContentItem;
 
 /// MPPlayableContentDataSource is a protocol that application objects conform to
@@ -15,6 +17,7 @@
 /// Data sources are responsible for providing metadata about your media to these
 /// systems in a meaningful way, so that features like user interfaces and play
 /// queues can be setup automatically.
+__TVOS_PROHIBITED
 @protocol MPPlayableContentDataSource <NSObject>
 @optional
 
@@ -24,7 +27,7 @@
 /// content items to display.
 /// Client applications should always call the completion handler after loading
 /// has finished, if this method is implemented.
-- (void)beginLoadingChildItemsAtIndexPath:(NSIndexPath *)indexPath completionHandler:(void(^)(NSError *))completionHandler;
+- (void)beginLoadingChildItemsAtIndexPath:(NSIndexPath *)indexPath completionHandler:(void(^)(NSError * __nullable))completionHandler;
 
 /// Tells MediaPlayer whether the content provided by the data source supports
 /// playback progress as a property of its metadata.
@@ -40,6 +43,8 @@
 
 /// Returns the content item at the specified index path. If the content item is
 /// mutated after returning, its updated contents will be sent to MediaPlayer.
-- (MPContentItem *)contentItemAtIndexPath:(NSIndexPath *)indexPath;
+- (nullable MPContentItem *)contentItemAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
+
+NS_ASSUME_NONNULL_END

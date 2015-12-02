@@ -2,7 +2,7 @@
 //  MKReverseGeocoder.h
 //  MapKit
 //
-//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2014, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,10 +15,10 @@
 
 // MKReverseGeocoder is now deprecated.
 // Use CLGeocoder in CoreLocation instead.
-MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0)
+MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0) __WATCHOS_PROHIBITED
 @interface MKReverseGeocoder : NSObject
 
-- (id)initWithCoordinate:(CLLocationCoordinate2D)coordinate NS_DEPRECATED_IOS(3_0,5_0);
+- (instancetype)initWithCoordinate:(CLLocationCoordinate2D)coordinate NS_DEPRECATED_IOS(3_0,5_0);
 
 
 // A MKReverseGeocoder object should only be started once.
@@ -32,7 +32,7 @@ MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0)
 
 @end
 
-MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0)
+MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0) __WATCHOS_PROHIBITED
 @protocol MKReverseGeocoderDelegate <NSObject>
 @required
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark NS_DEPRECATED_IOS(3_0,5_0);

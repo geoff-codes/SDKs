@@ -1,17 +1,16 @@
-/*
- *  GKError.h
- *  GameKit
- *
- *  Copyright 2010 Apple Inc. All rights reserved.
- *
- */
+//
+//  GKError.h
+//  Game Center
+//
+//  Copyright 2010-2015 Apple Inc. All rights reserved.
+//
 
 #import <Foundation/Foundation.h>
 #import <GameKit/GKDefines.h>
 
-GK_EXTERN_WEAK NSString *GKErrorDomain;
+GK_EXTERN_WEAK NSString * __nonnull GKErrorDomain;
 
-enum {
+typedef NS_ENUM(NSInteger, GKErrorCode) {
     GKErrorUnknown                              = 1,
     GKErrorCancelled                            = 2,
     GKErrorCommunicationsFailure                = 3,
@@ -37,6 +36,7 @@ enum {
     GKErrorTurnBasedInvalidTurn                 = 23,
     GKErrorTurnBasedInvalidState                = 24,
     GKErrorInvitationsDisabled                  = 25,
+    GKErrorPlayerPhotoFailure                   = 26,
+    GKErrorUbiquityContainerUnavailable         = 27
 };
-typedef NSInteger GKErrorCode;
 

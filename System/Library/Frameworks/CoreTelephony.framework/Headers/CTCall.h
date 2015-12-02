@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <CoreTelephony/CoreTelephonyDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 CORETELEPHONY_EXTERN NSString * const CTCallStateDialing  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 CORETELEPHONY_EXTERN NSString * const CTCallStateIncoming  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 CORETELEPHONY_EXTERN NSString * const CTCallStateConnected  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
@@ -43,3 +45,5 @@ CORETELEPHONY_CLASS_AVAILABLE(4_0)
 @property(nonatomic, readonly, copy) NSString *callID  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 @end
+
+NS_ASSUME_NONNULL_END

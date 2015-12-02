@@ -2,7 +2,7 @@
  *  CTStringAttributes.h
  *  CoreText
  *
- *  Copyright (c) 2004-2012 Apple Inc. All rights reserved.
+ *  Copyright (c) 2004-2015 Apple Inc. All rights reserved.
  *
  */
 
@@ -14,9 +14,8 @@
 #include <CoreFoundation/CFString.h>
 #include <CoreGraphics/CGColor.h>
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+CF_EXTERN_C_BEGIN
+CF_ASSUME_NONNULL_BEGIN
 
 /* The purpose of this file is to define all the attributes to which
     CoreText will respond when placed in a CFAttributedString. These
@@ -94,8 +93,6 @@ extern const CFStringRef kCTKernAttributeName CT_AVAILABLE(10_5, 3_2);
                 if the font contains glyphs for any of U+FB00 through U+FB04 and
                 the font lacks AAT or OpenType shaping tables, but as of 6.0
                 shaping tables (or the lack thereof) are treated as definitive.
-                This character-based shaping will still be performed if this
-                attribute is explicitly specified with the default value of 1.
 */
 
 extern const CFStringRef kCTLigatureAttributeName CT_AVAILABLE(10_5, 3_2);
@@ -221,7 +218,7 @@ extern const CFStringRef kCTGlyphInfoAttributeName CT_AVAILABLE(10_5, 3_2);
                 an attribute value of 1 corresponds to kTraditionalCharactersSelector.
 */
 
-extern const CFStringRef kCTCharacterShapeAttributeName CT_AVAILABLE(10_5, 3_2);
+extern const CFStringRef kCTCharacterShapeAttributeName CT_DEPRECATED(10_5, 10_11, 3_2, 9_0);
 
 
 /*!
@@ -367,15 +364,15 @@ extern const CFStringRef kCTBaselineReferenceInfoAttributeName CT_AVAILABLE(10_8
                 kCTWritingDirectionEmbedding or kCTWritingDirectionOverride.
                 This array represents a sequence of nested bidirectional
                 embeddings or overrides, in order from outermost to innermost,
-                with (kCTWritingDirectionLeftToRight | kCTTextWritingDirectionEmbedding)
+                with (kCTWritingDirectionLeftToRight | kCTWritingDirectionEmbedding)
                 corresponding to a LRE/PDF pair in plain text or
                 <span dir="ltr"></span> in HTML, (kCTWritingDirectionRightToLeft
-                | kCTTextWritingDirectionEmbedding) corresponding to a RLE/PDF
+                | kCTWritingDirectionEmbedding) corresponding to a RLE/PDF
                 pair in plain text or a <span dir="rtl"></span> in HTML,
-                (kCTWritingDirectionLeftToRight | kCTTextWritingDirectionOverride)
+                (kCTWritingDirectionLeftToRight | kCTWritingDirectionOverride)
                 corresponding to a LRO/PDF pair in plain text or
                 <bdo dir="ltr"></span> in HTML, and (kCTWritingDirectionRightToLeft
-                | kCTTextWritingDirectionOverride) corresponding to a RLO/PDF
+                | kCTWritingDirectionOverride) corresponding to a RLO/PDF
                 pair in plain text or <bdo dir="rtl"></span> in HTML.
 
     @seealso    kCTWritingDirectionLeftToRight
@@ -403,8 +400,18 @@ enum {
 };
 
 
-#if defined(__cplusplus)
-}
-#endif
+/*!
+    @const      kCTRubyAnnotationAttributeName
+    @abstract   Key to reference a CTRubyAnnotation.
+
+    @discussion Value must be a CTRubyAnnotationRef. See CTRubyAnnotation.h for
+                more information.
+ */
+
+extern const CFStringRef kCTRubyAnnotationAttributeName CT_AVAILABLE(10_10, 8_0);
+
+
+CF_ASSUME_NONNULL_END
+CF_EXTERN_C_END
 
 #endif

@@ -3,10 +3,11 @@
 
 	Framework:  AVFoundation
 
-	Copyright 2010-2013 Apple Inc. All rights reserved.
+	Copyright 2010-2015 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
+#import <AVFoundation/AVCaptureDevice.h>
 #import <Foundation/Foundation.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSync.h>
@@ -20,7 +21,7 @@
     The notification object is the AVCaptureSession instance that encountered a runtime error.
     The userInfo dictionary contains an NSError for the key AVCaptureSessionErrorKey.
 */
-AVF_EXPORT NSString *const AVCaptureSessionRuntimeErrorNotification NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionRuntimeErrorNotification NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVCaptureSessionErrorKey
@@ -34,7 +35,7 @@ AVF_EXPORT NSString *const AVCaptureSessionRuntimeErrorNotification NS_AVAILABLE
     notification gives greater detail on the nature of the error, and in some cases
     recovery suggestions. 
 */
-AVF_EXPORT NSString *const AVCaptureSessionErrorKey NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionErrorKey NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVCaptureSessionDidStartRunningNotification
@@ -45,7 +46,7 @@ AVF_EXPORT NSString *const AVCaptureSessionErrorKey NS_AVAILABLE(10_7, 4_0);
     Clients may observe the AVCaptureSessionDidStartRunningNotification to know
     when an instance of AVCaptureSession starts running.
 */
-AVF_EXPORT NSString *const AVCaptureSessionDidStartRunningNotification NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionDidStartRunningNotification NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVCaptureSessionDidStopRunningNotification
@@ -58,7 +59,7 @@ AVF_EXPORT NSString *const AVCaptureSessionDidStartRunningNotification NS_AVAILA
     may stop running automatically due to external system conditions, such as the
     device going to sleep, or being locked by a user.
 */
-AVF_EXPORT NSString *const AVCaptureSessionDidStopRunningNotification NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionDidStopRunningNotification NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 #if TARGET_OS_IPHONE
 
@@ -73,8 +74,56 @@ AVF_EXPORT NSString *const AVCaptureSessionDidStopRunningNotification NS_AVAILAB
     an incoming phone call, or alarm, or another application taking control of 
     needed hardware resources.  When appropriate, the AVCaptureSession instance
     will stop running automatically in response to an interruption.
+ 
+    Beginning in iOS 9.0, the AVCaptureSessionWasInterruptedNotification userInfo dictionary
+    contains an AVCaptureSessionInterruptionReasonKey indicating the reason for the interruption.
 */
-AVF_EXPORT NSString *const AVCaptureSessionWasInterruptedNotification NS_AVAILABLE_IOS(4_0);
+AVF_EXPORT NSString *const AVCaptureSessionWasInterruptedNotification NS_AVAILABLE_IOS(4_0) __TVOS_PROHIBITED;
+
+/*!
+ @enum AVCaptureSessionInterruptionReason
+ @abstract
+    Constants indicating interruption reason.  One of these is returned with the
+    AVCaptureSessionWasInterruptedNotification (see AVCaptureSessionInterruptionReasonKey).
+ 
+ @constant AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground
+    An interruption caused by the app being sent to the background while using a camera. Camera usage 
+    is prohibited while in the background. Beginning in iOS 9.0, AVCaptureSession no longer produces an
+    AVCaptureSessionRuntimeErrorNotification if you attempt to start running a camera while in the background.
+    Instead, it sends an AVCaptureSessionWasInterruptedNotification with
+    AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground. Provided you don't explicitly call 
+    [session stopRunning], your -startRunning request is preserved, and when your app comes back to foreground,
+    you receive AVCaptureSessionInterruptionEndedNotification and your session starts running.
+ @constant AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient
+    An interruption caused by the audio hardware temporarily being made unavailable, for instance,
+    for a phone call, or alarm.
+ @constant AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient
+    An interruption caused by the video device temporarily being made unavailable, for instance,
+    when stolen away by another AVCaptureSession.
+ @constant AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps
+    An interruption caused when the app is running in a multi-app layout, causing resource contention
+    and degraded recording quality of service. Given your present AVCaptureSession configuration, the 
+    session may only be run if your app occupies the full screen.
+*/
+typedef NS_ENUM(NSInteger, AVCaptureSessionInterruptionReason) {
+    AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableInBackground               = 1,
+    AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient                   = 2,
+    AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient                   = 3,
+    AVCaptureSessionInterruptionReasonVideoDeviceNotAvailableWithMultipleForegroundApps = 4,
+} NS_AVAILABLE_IOS(9_0) __TVOS_PROHIBITED;
+
+/*!
+ @constant AVCaptureSessionInterruptionReasonKey
+ @abstract
+    The key used to provide an NSNumber describing the interruption reason in an
+    AVCaptureSessionWasInterruptedNotification.
+ 
+ @discussion
+    AVCaptureSessionInterruptionReasonKey may be found in the userInfo dictionary provided with
+    an AVCaptureSessionWasInterruptedNotification.  The NSNumber associated with the
+    notification tells you why the interruption occurred.
+*/
+AVF_EXPORT NSString *const AVCaptureSessionInterruptionReasonKey NS_AVAILABLE_IOS(9_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVCaptureSessionInterruptionEndedNotification
@@ -89,7 +138,7 @@ AVF_EXPORT NSString *const AVCaptureSessionWasInterruptedNotification NS_AVAILAB
     stopped in response to an interruption will automatically restart once the
     interruption ends.
 */
-AVF_EXPORT NSString *const AVCaptureSessionInterruptionEndedNotification NS_AVAILABLE_IOS(4_0);
+AVF_EXPORT NSString *const AVCaptureSessionInterruptionEndedNotification NS_AVAILABLE_IOS(4_0) __TVOS_PROHIBITED;
 
 #endif // TARGET_OS_IPHONE
 
@@ -113,7 +162,7 @@ typedef NS_ENUM(NSInteger, AVCaptureVideoOrientation) {
     AVCaptureVideoOrientationPortraitUpsideDown = 2,
     AVCaptureVideoOrientationLandscapeRight     = 3,
     AVCaptureVideoOrientationLandscapeLeft      = 4,
-} NS_AVAILABLE(10_7, 4_0);
+} NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVCaptureSessionPresetPhoto
@@ -124,7 +173,7 @@ typedef NS_ENUM(NSInteger, AVCaptureVideoOrientation) {
     Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPresetPhoto
     for full resolution photo quality output.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPresetPhoto NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionPresetPhoto NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVCaptureSessionPresetHigh
@@ -136,7 +185,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPresetPhoto NS_AVAILABLE(10_7, 4_0);
     to achieve high quality video and audio output.  AVCaptureSessionPresetHigh is the
     default sessionPreset value.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPresetHigh NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionPresetHigh NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVCaptureSessionPresetMedium
@@ -147,7 +196,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPresetHigh NS_AVAILABLE(10_7, 4_0);
     Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPresetMedium
     to achieve output video and audio bitrates suitable for sharing over WiFi.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPresetMedium NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionPresetMedium NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVCaptureSessionPresetLow
@@ -158,7 +207,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPresetMedium NS_AVAILABLE(10_7, 4_0);
     Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPresetLow
     to achieve output video and audio bitrates suitable for sharing over 3G.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPresetLow NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionPresetLow NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
@@ -171,7 +220,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPresetLow NS_AVAILABLE(10_7, 4_0);
     Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPreset320x240
     to achieve 320x240 output.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPreset320x240 NS_AVAILABLE(10_7, NA);
+AVF_EXPORT NSString *const AVCaptureSessionPreset320x240 NS_AVAILABLE(10_7, NA) __TVOS_PROHIBITED;
 
 #endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
@@ -184,7 +233,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPreset320x240 NS_AVAILABLE(10_7, NA);
     Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPreset352x288
     to achieve CIF quality (352x288) output.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPreset352x288 NS_AVAILABLE(10_7, 5_0);
+AVF_EXPORT NSString *const AVCaptureSessionPreset352x288 NS_AVAILABLE(10_7, 5_0) __TVOS_PROHIBITED;
 
 /*!
  @constant AVCaptureSessionPreset640x480
@@ -195,7 +244,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPreset352x288 NS_AVAILABLE(10_7, 5_0)
     Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPreset640x480
     to achieve VGA quality (640x480) output.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPreset640x480 NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionPreset640x480 NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
@@ -208,7 +257,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPreset640x480 NS_AVAILABLE(10_7, 4_0)
     Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPreset960x540
     to achieve quarter HD quality (960x540) output.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPreset960x540 NS_AVAILABLE(10_7, NA);
+AVF_EXPORT NSString *const AVCaptureSessionPreset960x540 NS_AVAILABLE(10_7, NA) __TVOS_PROHIBITED;
 
 #endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
@@ -221,7 +270,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPreset960x540 NS_AVAILABLE(10_7, NA);
     Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPreset1280x720
     to achieve 1280x720 output.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPreset1280x720 NS_AVAILABLE(10_7, 4_0);
+AVF_EXPORT NSString *const AVCaptureSessionPreset1280x720 NS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED;
 
 #if TARGET_OS_IPHONE
 
@@ -234,7 +283,18 @@ AVF_EXPORT NSString *const AVCaptureSessionPreset1280x720 NS_AVAILABLE(10_7, 4_0
     Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPreset1920x1080
     to achieve 1920x1080 output.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPreset1920x1080 NS_AVAILABLE(NA, 5_0);
+AVF_EXPORT NSString *const AVCaptureSessionPreset1920x1080 NS_AVAILABLE(NA, 5_0) __TVOS_PROHIBITED;
+
+/*!
+ @constant AVCaptureSessionPreset3840x2160
+ @abstract
+    An AVCaptureSession preset suitable for 3840x2160 (UHD 4K) video output.
+
+ @discussion
+    Clients may set an AVCaptureSession instance's sessionPreset to AVCaptureSessionPreset3840x2160
+    to achieve 3840x2160 output.
+*/
+AVF_EXPORT NSString *const AVCaptureSessionPreset3840x2160 NS_AVAILABLE(NA, 9_0) __TVOS_PROHIBITED;
 
 #endif // TARGET_OS_IPHONE
 
@@ -248,7 +308,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPreset1920x1080 NS_AVAILABLE(NA, 5_0)
     to achieve 960x540 quality iFrame H.264 video at ~30 Mbits/sec with AAC audio.  QuickTime
     movies captured in iFrame format are optimal for editing applications.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame960x540 NS_AVAILABLE(10_9, 5_0);
+AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame960x540 NS_AVAILABLE(10_9, 5_0) __TVOS_PROHIBITED;
 
 /*!
 @constant AVCaptureSessionPresetiFrame1280x720
@@ -260,7 +320,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame960x540 NS_AVAILABLE(10_9
     to achieve 1280x720 quality iFrame H.264 video at ~40 Mbits/sec with AAC audio.  QuickTime
     movies captured in iFrame format are optimal for editing applications.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame1280x720 NS_AVAILABLE(10_9, 5_0);
+AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame1280x720 NS_AVAILABLE(10_9, 5_0) __TVOS_PROHIBITED;
 
 /*!
 @constant AVCaptureSessionPresetInputPriority
@@ -278,7 +338,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame1280x720 NS_AVAILABLE(10_
     AVCaptureSessionPresetInputPriority, the session resumes responsibility for configuring inputs and outputs,
     and is free to change its inputs' activeFormat as needed.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPresetInputPriority NS_AVAILABLE(NA, 7_0);
+AVF_EXPORT NSString *const AVCaptureSessionPresetInputPriority NS_AVAILABLE(NA, 7_0) __TVOS_PROHIBITED;
 
 @class AVCaptureInput;
 @class AVCaptureOutput;
@@ -297,7 +357,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPresetInputPriority NS_AVAILABLE(NA, 
     [AVCaptureSession stopRunning] stops the flow.  A client may set the sessionPreset property to 
     customize the quality level or bitrate of the output.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureSession : NSObject 
 {
 @private
@@ -442,8 +502,6 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 */
 - (void)removeOutput:(AVCaptureOutput *)output;
 
-#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
-
 /*!
  @method addInputWithNoConnections:
  @abstract
@@ -458,7 +516,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     AVCaptureSession.  -addInputWithNoConnections: may be called if you need 
     fine-grained control over which inputs are connected to which outputs.
 */
-- (void)addInputWithNoConnections:(AVCaptureInput *)input NS_AVAILABLE(10_7, NA);
+- (void)addInputWithNoConnections:(AVCaptureInput *)input NS_AVAILABLE(10_7, 8_0);
 
 /*!
  @method addOutputWithNoConnections:
@@ -474,7 +532,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     AVCaptureSession.  -addOutputWithNoConnections: may be called if you need 
     fine-grained control over which inputs are connected to which outputs.
 */
-- (void)addOutputWithNoConnections:(AVCaptureOutput *)output NS_AVAILABLE(10_7, NA);
+- (void)addOutputWithNoConnections:(AVCaptureOutput *)output NS_AVAILABLE(10_7, 8_0);
 
 /*!
  @method canAddConnection:
@@ -491,7 +549,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     adding connections is only necessary when adding an input or output with
     no connections.
 */
-- (BOOL)canAddConnection:(AVCaptureConnection *)connection NS_AVAILABLE(10_7, NA);
+- (BOOL)canAddConnection:(AVCaptureConnection *)connection NS_AVAILABLE(10_7, 8_0);
 
 /*!
  @method addConnection:
@@ -508,7 +566,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     adding connections is only necessary when adding an input or output with
     no connections.  -addConnection: may be called while the session is running.
 */
-- (void)addConnection:(AVCaptureConnection *)connection NS_AVAILABLE(10_7, NA);
+- (void)addConnection:(AVCaptureConnection *)connection NS_AVAILABLE(10_7, 8_0);
 
 /*!
  @method removeConnection:
@@ -521,9 +579,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @discussion
     -removeConnection: may be called while the session is running.
 */
-- (void)removeConnection:(AVCaptureConnection *)connection NS_AVAILABLE(10_7, NA);
-
-#endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+- (void)removeConnection:(AVCaptureConnection *)connection NS_AVAILABLE(10_7, 8_0);
 
 /*!
  @method beginConfiguration
@@ -648,21 +704,21 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 /*!
  @property masterClock
  @abstract
- Provides the master clock being used for output synchronization.
+	Provides the master clock being used for output synchronization.
  @discussion
- The masterClock is readonly. Use masterClock to synchronize AVCaptureOutput data with external data sources (e.g motion samples).
- All capture output sample buffer timestamps are on the masterClock timebase.
+	The masterClock is readonly. Use masterClock to synchronize AVCaptureOutput data with external data sources (e.g motion samples). 
+	All capture output sample buffer timestamps are on the masterClock timebase.
+	
+	For example, if you want to reverse synchronize the output timestamps to the original timestamps, you can do the following:
+	In captureOutput:didOutputSampleBuffer:fromConnection:
  
- For example, if you want to reverse synchronize the output timestamps to the original timestamps, you can do the following:
- In captureOutput:didOutputSampleBuffer:fromConnection:
+	AVCaptureInputPort *port = [[connection inputPorts] objectAtIndex:0];
+	CMClockRef originalClock = [port clock];
  
- AVCaptureInputPort *port = [[connection inputPorts] objectAtIndex:0];
- CMClockRef originalClock = [port clock];
+	CMTime syncedPTS = CMSampleBufferGetPresentationTime( sampleBuffer );
+	CMTime originalPTS = CMSyncConvertTime( syncedPTS, [session masterClock], originalClock );
  
- CMTime syncedPTS = CMSampleBufferGetPresentationTime( sampleBuffer );
- CMTime originalPTS = CMSyncConvertTime( syncedPTS, [session masterClock], originalClock );
- 
- This property is key-value observable.
+	This property is key-value observable.
  */
 @property(nonatomic, readonly) __attribute__((NSObject)) CMClockRef masterClock NS_AVAILABLE(10_9, 7_0);
 
@@ -690,7 +746,7 @@ typedef NS_ENUM(NSInteger, AVVideoFieldMode) {
     AVVideoFieldModeTopOnly     = 1,
     AVVideoFieldModeBottomOnly  = 2,
     AVVideoFieldModeDeinterlace = 3,
-} NS_AVAILABLE(10_7, NA);
+} NS_AVAILABLE(10_7, NA) __TVOS_PROHIBITED;
 
 
 @class AVCaptureAudioChannel;
@@ -719,14 +775,12 @@ typedef NS_ENUM(NSInteger, AVVideoFieldMode) {
 
     Connections involving video expose video specific properties, such as videoMirrored and videoOrientation.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureConnection : NSObject 
 {
 @private
 	AVCaptureConnectionInternal *_internal;
 }
-
-#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
 /*!
  @method connectionWithInputPorts:output:
@@ -749,7 +803,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     automatically.  You do not need to manually create and add connections to the session unless
     you use the primitive -addInputWithNoConnections: or -addOutputWithNoConnections: methods.
 */
-+ (AVCaptureConnection *)connectionWithInputPorts:(NSArray *)ports output:(AVCaptureOutput *)output NS_AVAILABLE(10_7, NA);
++ (instancetype)connectionWithInputPorts:(NSArray *)ports output:(AVCaptureOutput *)output NS_AVAILABLE(10_7, 8_0);
 
 /*!
  @method connectionWithInputPort:videoPreviewLayer:
@@ -773,7 +827,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     manually create and add connections to the session unless you use AVCaptureVideoPreviewLayer's 
     primitive -initWithSessionWithNoConnection: or -setSessionWithNoConnection: methods.
 */
-+ (AVCaptureConnection *)connectionWithInputPort:(AVCaptureInputPort *)port videoPreviewLayer:(AVCaptureVideoPreviewLayer *)layer NS_AVAILABLE(10_7, NA);
++ (instancetype)connectionWithInputPort:(AVCaptureInputPort *)port videoPreviewLayer:(AVCaptureVideoPreviewLayer *)layer NS_AVAILABLE(10_7, 8_0);
 
 /*!
  @method initWithInputPorts:output:
@@ -796,7 +850,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     automatically.  You do not need to manually create and add connections to the session unless
     you use the primitive -addInputWithNoConnections: or -addOutputWithNoConnections: methods.
 */
-- (id)initWithInputPorts:(NSArray *)ports output:(AVCaptureOutput *)output NS_AVAILABLE(10_7, NA);
+- (instancetype)initWithInputPorts:(NSArray *)ports output:(AVCaptureOutput *)output NS_AVAILABLE(10_7, 8_0);
 
 /*!
  @method initWithInputPort:videoPreviewLayer:
@@ -820,9 +874,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     manually create and add connections to the session unless you use AVCaptureVideoPreviewLayer's 
     primitive -initWithSessionWithNoConnection: or -setSessionWithNoConnection: methods.
 */
-- (id)initWithInputPort:(AVCaptureInputPort *)port videoPreviewLayer:(AVCaptureVideoPreviewLayer *)layer NS_AVAILABLE(10_7, NA);
-
-#endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+- (instancetype)initWithInputPort:(AVCaptureInputPort *)port videoPreviewLayer:(AVCaptureVideoPreviewLayer *)layer NS_AVAILABLE(10_7, 8_0);
 
 /*!
  @property inputPorts
@@ -1012,7 +1064,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     properties.  On Mac OS X, frame rate adjustments are supported both at the AVCaptureDevice
     and at AVCaptureConnection, enabling connections to output different frame rates.
 */
-@property(nonatomic, readonly, getter=isVideoMinFrameDurationSupported) BOOL supportsVideoMinFrameDuration NS_DEPRECATED(10_7, NA, 5_0, 7_0);
+@property(nonatomic, readonly, getter=isVideoMinFrameDurationSupported) BOOL supportsVideoMinFrameDuration NS_DEPRECATED(10_7, NA, 5_0, 7_0, "Use AVCaptureDevice's activeFormat.videoSupportedFrameRateRanges instead.");
 
 /*!
  @property videoMinFrameDuration
@@ -1030,7 +1082,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     properties.  On Mac OS X, frame rate adjustments are supported both at the AVCaptureDevice
     and at AVCaptureConnection, enabling connections to output different frame rates.
 */
-@property(nonatomic) CMTime videoMinFrameDuration NS_DEPRECATED(10_7, NA, 5_0, 7_0);
+@property(nonatomic) CMTime videoMinFrameDuration NS_DEPRECATED(10_7, NA, 5_0, 7_0, "Use AVCaptureDevice's activeVideoMinFrameDuration instead.");
 
 /*!
  @property supportsVideoMaxFrameDuration
@@ -1047,7 +1099,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 	properties.  On Mac OS X, frame rate adjustments are supported both at the AVCaptureDevice
 	and at AVCaptureConnection, enabling connections to output different frame rates.
 */
-@property(nonatomic, readonly, getter=isVideoMaxFrameDurationSupported) BOOL supportsVideoMaxFrameDuration NS_DEPRECATED(10_9, NA, 5_0, 7_0);
+@property(nonatomic, readonly, getter=isVideoMaxFrameDurationSupported) BOOL supportsVideoMaxFrameDuration NS_DEPRECATED(10_9, NA, 5_0, 7_0, "Use AVCaptureDevice's activeFormat.videoSupportedFrameRateRanges instead.");
 
 /*!
  @property videoMaxFrameDuration
@@ -1065,7 +1117,9 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 	properties.  On Mac OS X, frame rate adjustments are supported both at the AVCaptureDevice
 	and at AVCaptureConnection, enabling connections to output different frame rates.
 */
-@property(nonatomic) CMTime videoMaxFrameDuration NS_DEPRECATED(10_9, NA, 5_0, 7_0);
+@property(nonatomic) CMTime videoMaxFrameDuration NS_DEPRECATED(10_9, NA, 5_0, 7_0, "Use AVCaptureDevice's activeVideoMaxFrameDuration instead.");
+
+#if TARGET_OS_IPHONE
 
 /*!
  @property videoMaxScaleAndCropFactor
@@ -1099,6 +1153,42 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 @property(nonatomic) CGFloat videoScaleAndCropFactor NS_AVAILABLE_IOS(5_0);
 
 /*!
+ @property preferredVideoStabilizationMode
+ @abstract
+    Indicates the stabilization mode to apply to video flowing through the receiver when it is supported.
+ 
+ @discussion
+    This property is only applicable to AVCaptureConnection instances involving video.
+    On devices where the video stabilization feature is supported, only a subset of available source
+    formats may be available for stabilization.  By setting the preferredVideoStabilizationMode
+    property to a value other than AVCaptureVideoStabilizationModeOff, video flowing through the receiver is stabilized
+    when the mode is available.  Enabling video stabilization introduces additional latency into the video capture pipeline and
+    may consume more system memory depending on the stabilization mode and format.  If the preferred stabilization mode isn't available,
+    the activeVideoStabilizationMode will be set to AVCaptureVideoStabilizationModeOff.  Clients may key-value observe the
+    activeVideoStabilizationMode property to know which stabilization mode is in use or when it is off.  The default value
+    is AVCaptureVideoStabilizationModeOff.  When setting this property to AVCaptureVideoStabilizationModeAuto, an appropriate
+    stabilization mode will be chosen based on the format and frame rate.  For apps linked before iOS 6.0, the default value
+    is AVCaptureVideoStabilizationModeStandard for a video connection attached to an AVCaptureMovieFileOutput instance.
+    For apps linked on or after iOS 6.0, the default value is always AVCaptureVideoStabilizationModeOff.  Setting a video stabilization
+    mode using this property may change the value of enablesVideoStabilizationWhenAvailable.
+*/
+@property(nonatomic) AVCaptureVideoStabilizationMode preferredVideoStabilizationMode NS_AVAILABLE_IOS(8_0);
+
+/*!
+ @property activeVideoStabilizationMode
+ @abstract
+    Indicates the stabilization mode currently being applied to video flowing through the receiver.
+ 
+ @discussion
+    This property is only applicable to AVCaptureConnection instances involving video.
+    On devices where the video stabilization feature is supported, only a subset of available source formats may be stabilized.
+    The activeVideoStabilizationMode property returns a value other than AVCaptureVideoStabilizationModeOff
+    if video stabilization is currently in use.  This property never returns AVCaptureVideoStabilizationModeAuto.
+    This property is key-value observable.
+*/
+@property(nonatomic, readonly) AVCaptureVideoStabilizationMode activeVideoStabilizationMode NS_AVAILABLE_IOS(8_0);
+
+/*!
  @property supportsVideoStabilization
  @abstract
     Indicates whether the connection supports video stabilization.
@@ -1107,6 +1197,10 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     This property is only applicable to AVCaptureConnection instances involving video.
     In such connections, the -enablesVideoStabilizationWhenAvailable property may only be set if
     -supportsVideoStabilization returns YES.
+    This property returns YES if the connection's input device has one or more formats that support
+    video stabilization and the connection's output supports video stabilization.
+    See [AVCaptureDeviceFormat isVideoStabilizationModeSupported:] to check which video stabilization
+    modes are supported by the active device format.
 */
 @property(nonatomic, readonly, getter=isVideoStabilizationSupported) BOOL supportsVideoStabilization NS_AVAILABLE_IOS(6_0);
 
@@ -1120,9 +1214,9 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     On devices where the video stabilization feature is supported, only a subset of available source 
     formats and resolutions may be available for stabilization.  The videoStabilizationEnabled 
     property returns YES if video stabilization is currently in use.  This property is key-value
-    observable.
+    observable.  This property is deprecated.  Use activeVideoStabilizationMode instead.
 */
-@property(nonatomic, readonly, getter=isVideoStabilizationEnabled) BOOL videoStabilizationEnabled NS_AVAILABLE_IOS(6_0);
+@property(nonatomic, readonly, getter=isVideoStabilizationEnabled) BOOL videoStabilizationEnabled NS_DEPRECATED_IOS(6_0, 8_0, "Use activeVideoStabilizationMode instead.");
 
 /*!
  @property enablesVideoStabilizationWhenAvailable;
@@ -1140,9 +1234,11 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     property to know when stabilization is in use or not.  The default value is NO.
     For apps linked before iOS 6.0, the default value is YES for a video connection attached to an 
     AVCaptureMovieFileOutput instance.  For apps linked on or after iOS 6.0, the default value is
-    always NO.
+    always NO.  This property is deprecated.  Use preferredVideoStabilizationMode instead.
 */
-@property(nonatomic) BOOL enablesVideoStabilizationWhenAvailable NS_AVAILABLE_IOS(6_0);
+@property(nonatomic) BOOL enablesVideoStabilizationWhenAvailable NS_DEPRECATED_IOS(6_0, 8_0, "Use preferredVideoStabilizationMode instead.");
+
+#endif // TARGET_OS_IPHONE
 
 @end
 
@@ -1162,7 +1258,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     available.  Iterating through these audio channel objects, a client may poll
     for audio levels. Instances of AVCaptureAudioChannel cannot be created directly.
 */
-NS_CLASS_AVAILABLE(10_7, 4_0)
+NS_CLASS_AVAILABLE(10_7, 4_0) __TVOS_PROHIBITED
 @interface AVCaptureAudioChannel : NSObject
 {
 @private

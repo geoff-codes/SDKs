@@ -1,13 +1,15 @@
 /*
  NSExpressionDescription.h
  Core Data
- Copyright (c) 2004-2012 Apple Inc.
+ Copyright (c) 2004-2015, Apple Inc.
  All rights reserved.
  */
 
 #import <Foundation/NSObject.h>
 #import <CoreData/NSPropertyDescription.h>
 #import <CoreData/NSAttributeDescription.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class NSExpression;
 
@@ -31,11 +33,11 @@ NS_CLASS_AVAILABLE(10_6,3_0)
 	NSAttributeType _expressionResultType;
 }
 
-- (NSExpression *)expression;
-- (void)setExpression:(NSExpression *)expression;
+@property (nullable, strong) NSExpression *expression;
 
-- (NSAttributeType)expressionResultType;
-- (void)setExpressionResultType:(NSAttributeType)type;
+@property () NSAttributeType expressionResultType;
 
 @end
+
+NS_ASSUME_NONNULL_END
 

@@ -10,36 +10,38 @@
 
 @protocol ABPersonViewControllerDelegate;
 
-NS_CLASS_AVAILABLE(NA, 2_0)
+NS_ASSUME_NONNULL_BEGIN
+
+AB_DEPRECATED("Use +[CNContactViewController viewControllerForContact:] from ContactsUI.framework instead")
 @interface ABPersonViewController : UIViewController <UIViewControllerRestoration>
 
 // ABPersonViewController does not support subclassing in iOS 7.0 and later. A nil instance will be returned.
 
-@property(nonatomic,assign)    id<ABPersonViewControllerDelegate> personViewDelegate;
+@property(nonatomic,assign,nullable) id<ABPersonViewControllerDelegate> personViewDelegate;
 
     // The Address Book to use. Any contact returned will be from this ABAddressBook instance.
     // If not set, a new ABAddressBook will be created the first time the property is accessed.
-@property(nonatomic,readwrite) ABAddressBookRef                   addressBook;
+@property(nonatomic,readwrite,nullable) ABAddressBookRef addressBook;
 
     // If displayedPerson has been added to an ABAddressBook, then the addressBook
     // property will be updated to use the displayedPerson's ABAddressBook.
-@property(nonatomic,readwrite) ABRecordRef                        displayedPerson;
+@property(nonatomic,readwrite) ABRecordRef displayedPerson;
 
 
     // An array of NSNumber instances representing the properties (ABPropertyID) that should
     // be visible when viewing the person. Note that all the properties are visible when
     // editing a person.
-@property(nonatomic,copy)      NSArray                           *displayedProperties;
+@property(nonatomic,copy,nullable) NSArray<NSNumber*> *displayedProperties;
 
     // Indicates whether an edit/save button should be shown.
-@property(nonatomic)           BOOL                               allowsEditing;
+@property(nonatomic) BOOL allowsEditing;
 
     // Specifies whether buttons appear to let the user perform actions such as sharing the contact,
     // initiating a FaceTime call, or sending a text message.
-@property(nonatomic)           BOOL                               allowsActions __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic) BOOL allowsActions NS_AVAILABLE_IOS(4_0);
 
     // Indicates whether to show data from people linked to the displayedPerson, defaults to NO
-@property(nonatomic)           BOOL                               shouldShowLinkedPeople __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+@property(nonatomic) BOOL shouldShowLinkedPeople NS_AVAILABLE_IOS(4_0);
 
 	// Indicates whether to highlight a certain value for the displayedPerson,
     // if a single value property is specified, identifier will be ignored.
@@ -55,3 +57,5 @@ NS_CLASS_AVAILABLE(NA, 2_0)
 - (BOOL)personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier;
 
 @end
+
+NS_ASSUME_NONNULL_END

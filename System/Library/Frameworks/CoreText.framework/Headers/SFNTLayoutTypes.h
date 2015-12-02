@@ -2,7 +2,7 @@
  *  SFNTLayoutTypes.h
  *  CoreText
  *
- *  Copyright 1994-2013 Apple Inc. All rights reserved.
+ *  Copyright 1994-2015 Apple Inc. All rights reserved.
  *
  */
 
@@ -801,6 +801,11 @@ struct STXEntryTwo {
 };
 typedef struct STXEntryTwo              STXEntryTwo;
 /* --------------------------------------------------------------------------- */
+/* GENERAL FORMATS FOR STATE TABLES to be used with 'kerx' tables -- prefix "STK" */
+enum {
+  kSTKCrossStreamReset          = 0x2000
+};
+/* --------------------------------------------------------------------------- */
 /* FORMATS FOR TABLE: 'lcar' */
 /* CONSTANTS */
 enum {
@@ -1114,6 +1119,7 @@ enum {
   kMORXCoverVertical            = (int)0x80000000,
   kMORXCoverDescending          = 0x40000000,
   kMORXCoverIgnoreVertical      = 0x20000000,
+  kMORXCoverLogicalOrder        = 0x10000000,
   kMORXCoverTypeMask            = 0x000000FF
 };
 
@@ -1450,7 +1456,8 @@ enum {
   kKERXResetCrossStream         = 0x8000, /* this value in a cross-stream table means reset to zero */
   kKERXCrossStream              = 0x40000000, /* set if this table contains cross-stream kerning values */
   kKERXVariation                = 0x20000000, /* set if this table contains variation kerning values */
-  kKERXUnusedBits               = 0x1FFFFF00, /* UNUSED, MUST BE ZERO */
+  kKERXDescending               = 0x10000000,
+  kKERXUnusedBits               = 0x0FFFFF00, /* UNUSED, MUST BE ZERO */
   kKERXFormatMask               = 0x000000FF /* format of this subtable */
 };
 

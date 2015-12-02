@@ -10,10 +10,12 @@
 //        Further information related to these wrapper can be found in the
 //        iAP specifications.
 //
-//  Copyright (c) 2008-2012 Apple, Inc. All rights reserved.
+//  Copyright (c) 2008-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class EAAccessoryInternal;
 @protocol EAAccessoryDelegate;
@@ -35,11 +37,12 @@ EA_EXTERN_CLASS_AVAILABLE(3_0) @interface EAAccessory : NSObject {
 @property(nonatomic, readonly) NSString *serialNumber __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 @property(nonatomic, readonly) NSString *firmwareRevision __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 @property(nonatomic, readonly) NSString *hardwareRevision __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property(nonatomic, readonly) NSString *dockType __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_9_0);
 
 // array of strings representing the protocols supported by the accessory
-@property(nonatomic, readonly) NSArray *protocolStrings __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property(nonatomic, readonly) NSArray<NSString *> *protocolStrings __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
-@property(nonatomic, assign) id<EAAccessoryDelegate> delegate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property(nonatomic, assign, nullable) id<EAAccessoryDelegate> delegate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 @end
 
@@ -47,3 +50,5 @@ EA_EXTERN_CLASS_AVAILABLE(3_0) @interface EAAccessory : NSObject {
 @optional
 - (void)accessoryDidDisconnect:(EAAccessory *)accessory __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 @end
+
+NS_ASSUME_NONNULL_END

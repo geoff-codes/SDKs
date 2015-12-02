@@ -1,5 +1,5 @@
 /*	CFNotificationCenter.h
-	Copyright (c) 1998-2013, Apple Inc. All rights reserved.
+	Copyright (c) 1998-2015, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFNOTIFICATIONCENTER__)
@@ -8,9 +8,10 @@
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFDictionary.h>
 
+CF_IMPLICIT_BRIDGING_ENABLED
 CF_EXTERN_C_BEGIN
 
-typedef struct __CFNotificationCenter * CFNotificationCenterRef;
+typedef struct CF_BRIDGED_MUTABLE_TYPE(id) __CFNotificationCenter * CFNotificationCenterRef;
 
 typedef void (*CFNotificationCallback)(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo);
 
@@ -58,7 +59,7 @@ CF_EXPORT void CFNotificationCenterRemoveEveryObserver(CFNotificationCenterRef c
 
 CF_EXPORT void CFNotificationCenterPostNotification(CFNotificationCenterRef center, CFStringRef name, const void *object, CFDictionaryRef userInfo, Boolean deliverImmediately);
 
-enum {
+CF_ENUM(CFOptionFlags) {
     kCFNotificationDeliverImmediately = (1UL << 0),
     kCFNotificationPostToAllSessions = (1UL << 1)
 };
@@ -67,6 +68,7 @@ CF_EXPORT void CFNotificationCenterPostNotificationWithOptions(CFNotificationCen
 
 
 CF_EXTERN_C_END
+CF_IMPLICIT_BRIDGING_DISABLED
 
 #endif /* ! __COREFOUNDATION_CFNOTIFICATIONCENTER__ */
 

@@ -1,6 +1,6 @@
 /* CoreAnimation - CoreAnimation.h
 
-   Copyright (c) 2006-2012 Apple Inc.
+   Copyright (c) 2006-2015, Apple Inc.
    All rights reserved. */
 
 #ifndef COREANIMATION_H
@@ -14,6 +14,8 @@
 #import <QuartzCore/CAAnimation.h>
 #import <QuartzCore/CADisplayLink.h>
 #import <QuartzCore/CAEAGLLayer.h>
+#import <QuartzCore/CAMetalLayer.h>
+#import <QuartzCore/CAEmitterBehavior.h>
 #import <QuartzCore/CAEmitterCell.h>
 #import <QuartzCore/CAEmitterLayer.h>
 #import <QuartzCore/CAGradientLayer.h>

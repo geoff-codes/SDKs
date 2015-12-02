@@ -8,9 +8,13 @@
 #import <Foundation/Foundation.h>
 #import <MediaPlayer/MediaPlayerDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 // An MPMediaQuerySection object represents a single section grouping for a query.
 
-MP_EXTERN_CLASS_AVAILABLE(4_2) @interface MPMediaQuerySection : NSObject <NSSecureCoding, NSCopying>
+MP_EXTERN_CLASS_AVAILABLE(4_2)
+__TVOS_PROHIBITED
+@interface MPMediaQuerySection : NSObject <NSSecureCoding, NSCopying>
 
 // The localized title of the section grouping.
 @property (nonatomic, copy, readonly) NSString *title;
@@ -19,3 +23,5 @@ MP_EXTERN_CLASS_AVAILABLE(4_2) @interface MPMediaQuerySection : NSObject <NSSecu
 @property (nonatomic, assign, readonly) NSRange range;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CMRotationMatrix
  *  
@@ -61,14 +63,14 @@ typedef struct
  *          Note that using this reference frame may require device movement to 
  *          calibrate the magnetometer.
  */
-typedef enum {
+typedef NS_OPTIONS(NSUInteger, CMAttitudeReferenceFrame) __TVOS_PROHIBITED {
 	CMAttitudeReferenceFrameXArbitraryZVertical = 1 << 0,
 	CMAttitudeReferenceFrameXArbitraryCorrectedZVertical = 1 << 1,
 	CMAttitudeReferenceFrameXMagneticNorthZVertical = 1 << 2,
 	CMAttitudeReferenceFrameXTrueNorthZVertical = 1 << 3
-} CMAttitudeReferenceFrame;
+};
 
-NS_CLASS_AVAILABLE(NA,4_0)
+NS_CLASS_AVAILABLE(NA,4_0) __TVOS_PROHIBITED
 @interface CMAttitude : NSObject <NSCopying, NSSecureCoding>
 {
 @private
@@ -130,3 +132,5 @@ NS_CLASS_AVAILABLE(NA,4_0)
 - (void)multiplyByInverseOfAttitude:(CMAttitude *)attitude;
 
 @end
+
+NS_ASSUME_NONNULL_END

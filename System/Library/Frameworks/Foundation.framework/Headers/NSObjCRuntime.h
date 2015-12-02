@@ -1,15 +1,16 @@
 /*	NSObjCRuntime.h
-	Copyright (c) 1994-2013, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2015, Apple Inc. All rights reserved.
 */
 
 #include <TargetConditionals.h>
+#include <Availability.h>
+
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)) || (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE)
 #include <objc/NSObjCRuntime.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <limits.h>
 #include <AvailabilityMacros.h>
-#include <Availability.h>
 #endif
 
 #if defined(__cplusplus)
@@ -207,6 +208,22 @@
 #endif
 #endif
 
+#ifndef NS_DESIGNATED_INITIALIZER
+#if __has_attribute(objc_designated_initializer)
+#define NS_DESIGNATED_INITIALIZER __attribute__((objc_designated_initializer))
+#else
+#define NS_DESIGNATED_INITIALIZER
+#endif
+#endif
+
+#ifndef NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
+#if __has_attribute(objc_protocol_requires_explicit_implementation)
+#define NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION __attribute__((objc_protocol_requires_explicit_implementation))
+#else
+#define NS_PROTOCOL_REQUIRES_EXPLICIT_IMPLEMENTATION
+#endif
+#endif
+
 #if !__has_feature(objc_instancetype)
 #undef instancetype
 #define instancetype id
@@ -248,7 +265,19 @@
 #define NS_AVAILABLE_IPHONE(_ios) CF_AVAILABLE_IOS(_ios)
 #define NS_DEPRECATED_IPHONE(_iosIntro, _iosDep) CF_DEPRECATED_IOS(_iosIntro, _iosDep)
 
-#define NS_ENUM(_type, _name) CF_ENUM(_type, _name)
+/* NS_ENUM supports the use of one or two arguments. The first argument is always the integer type used for the values of the enum. The second argument is an optional type name for the macro. When specifying a type name, you must precede the macro with 'typedef' like so:
+ 
+typedef NS_ENUM(NSInteger, NSComparisonResult) {
+    ...
+};
+ 
+If you do not specify a type name, do not use 'typedef'. For example:
+ 
+NS_ENUM(NSInteger) {
+    ...
+};
+*/
+#define NS_ENUM(...) CF_ENUM(__VA_ARGS__)
 #define NS_OPTIONS(_type, _name) CF_OPTIONS(_type, _name)
 
 // This macro is to be used by system frameworks to support the weak linking of classes. Weak linking is supported on iOS 3.1 and Mac OS X 10.6.8 or later.
@@ -268,6 +297,28 @@
 #define NS_CLASS_AVAILABLE_MAC(_mac) NS_CLASS_AVAILABLE(_mac, NA)
 #define NS_CLASS_DEPRECATED_MAC(_macIntro, _macDep, ...) NS_CLASS_DEPRECATED(_macIntro, _macDep, NA, NA, __VA_ARGS__)
 #define NS_CLASS_DEPRECATED_IOS(_iosIntro, _iosDep, ...) NS_CLASS_DEPRECATED(NA, NA, _iosIntro, _iosDep, __VA_ARGS__)
+
+#define NS_EXTENSION_UNAVAILABLE(_msg)      __OS_EXTENSION_UNAVAILABLE(_msg)
+#define NS_EXTENSION_UNAVAILABLE_MAC(_msg)  __OSX_EXTENSION_UNAVAILABLE(_msg)
+#define NS_EXTENSION_UNAVAILABLE_IOS(_msg)  __IOS_EXTENSION_UNAVAILABLE(_msg)
+
+#define NS_SWIFT_UNAVAILABLE(_msg) CF_SWIFT_UNAVAILABLE(_msg)
+
+#define NS_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
+#define NS_ASSUME_NONNULL_END   _Pragma("clang assume_nonnull end")
+
+#define NS_REFINED_FOR_SWIFT CF_REFINED_FOR_SWIFT
+
+#define NS_SWIFT_NAME(_name) CF_SWIFT_NAME(_name)
+
+#if __has_attribute(swift_error)
+#define NS_SWIFT_NOTHROW __attribute__((swift_error(none)))
+#else
+#define NS_SWIFT_NOTHROW
+#endif
+
+
+NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXPORT double NSFoundationVersionNumber;
 
@@ -338,6 +389,13 @@ FOUNDATION_EXPORT double NSFoundationVersionNumber;
 #define NSFoundationVersionNumber10_8_2 945.11
 #define NSFoundationVersionNumber10_8_3 945.16
 #define NSFoundationVersionNumber10_8_4 945.18
+#define NSFoundationVersionNumber10_9 1056
+#define NSFoundationVersionNumber10_9_1 1056
+#define NSFoundationVersionNumber10_9_2 1056.13
+#define NSFoundationVersionNumber10_10 1151.16
+#define NSFoundationVersionNumber10_10_1 1151.16
+#define NSFoundationVersionNumber10_10_2 1152.14
+#define NSFoundationVersionNumber10_10_3 1153.20
 #endif
 
 #if TARGET_OS_IPHONE
@@ -353,8 +411,14 @@ FOUNDATION_EXPORT double NSFoundationVersionNumber;
 #define NSFoundationVersionNumber_iOS_4_3  751.49
 #define NSFoundationVersionNumber_iOS_5_0  881.00
 #define NSFoundationVersionNumber_iOS_5_1  890.10
-#define NSFoundationVersionNumber_iOS_6_0  993.00
+#define NSFoundationVersionNumber_iOS_6_0  992.00
 #define NSFoundationVersionNumber_iOS_6_1  993.00
+#define NSFoundationVersionNumber_iOS_7_0 1047.20
+#define NSFoundationVersionNumber_iOS_7_1 1047.25
+#define NSFoundationVersionNumber_iOS_8_0 1140.11
+#define NSFoundationVersionNumber_iOS_8_1 1141.1
+#define NSFoundationVersionNumber_iOS_8_2 1142.14
+#define NSFoundationVersionNumber_iOS_8_3 1144.17
 #endif
 
 #if TARGET_OS_WIN32
@@ -374,12 +438,12 @@ FOUNDATION_EXPORT NSString *NSStringFromSelector(SEL aSelector);
 FOUNDATION_EXPORT SEL NSSelectorFromString(NSString *aSelectorName);
 
 FOUNDATION_EXPORT NSString *NSStringFromClass(Class aClass);
-FOUNDATION_EXPORT Class NSClassFromString(NSString *aClassName);
+FOUNDATION_EXPORT Class __nullable NSClassFromString(NSString *aClassName);
 
 FOUNDATION_EXPORT NSString *NSStringFromProtocol(Protocol *proto) NS_AVAILABLE(10_5, 2_0);
-FOUNDATION_EXPORT Protocol *NSProtocolFromString(NSString *namestr) NS_AVAILABLE(10_5, 2_0);
+FOUNDATION_EXPORT Protocol * __nullable NSProtocolFromString(NSString *namestr) NS_AVAILABLE(10_5, 2_0);
 
-FOUNDATION_EXPORT const char *NSGetSizeAndAlignment(const char *typePtr, NSUInteger *sizep, NSUInteger *alignp);
+FOUNDATION_EXPORT const char *NSGetSizeAndAlignment(const char *typePtr, NSUInteger * __nullable sizep, NSUInteger * __nullable alignp);
 
 FOUNDATION_EXPORT void NSLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 FOUNDATION_EXPORT void NSLogv(NSString *format, va_list args) NS_FORMAT_FUNCTION(1,0);
@@ -390,20 +454,37 @@ typedef NS_ENUM(NSInteger, NSComparisonResult) {NSOrderedAscending = -1L, NSOrde
 typedef NSComparisonResult (^NSComparator)(id obj1, id obj2);
 #endif
 
-enum {
+typedef NS_OPTIONS(NSUInteger, NSEnumerationOptions) {
     NSEnumerationConcurrent = (1UL << 0),
     NSEnumerationReverse = (1UL << 1),
 };
-typedef NSUInteger NSEnumerationOptions;
 
-enum {
+typedef NS_OPTIONS(NSUInteger, NSSortOptions) {
     NSSortConcurrent = (1UL << 0),
     NSSortStable = (1UL << 4),
 };
-typedef NSUInteger NSSortOptions;
 
+/* The following Quality of Service (QoS) classifications are used to indicate to the system the nature and importance of work.  They are used by the system to manage a variety of resources.  Higher QoS classes receive more resources than lower ones during resource contention. */
+typedef NS_ENUM(NSInteger, NSQualityOfService) {
+    /* UserInteractive QoS is used for work directly involved in providing an interactive UI such as processing events or drawing to the screen. */
+    NSQualityOfServiceUserInteractive = 0x21,
+    
+    /* UserInitiated QoS is used for performing work that has been explicitly requested by the user and for which results must be immediately presented in order to allow for further user interaction.  For example, loading an email after a user has selected it in a message list. */
+    NSQualityOfServiceUserInitiated = 0x19,
+    
+    /* Utility QoS is used for performing work which the user is unlikely to be immediately waiting for the results.  This work may have been requested by the user or initiated automatically, does not prevent the user from further interaction, often operates at user-visible timescales and may have its progress indicated to the user by a non-modal progress indicator.  This work will run in an energy-efficient manner, in deference to higher QoS work when resources are constrained.  For example, periodic content updates or bulk file operations such as media import. */
+    NSQualityOfServiceUtility = 0x11,
+    
+    /* Background QoS is used for work that is not user initiated or visible.  In general, a user is unaware that this work is even happening and it will run in the most efficient manner while giving the most deference to higher QoS work.  For example, pre-fetching content, search indexing, backups, and syncing of data with external systems. */
+    NSQualityOfServiceBackground = 0x09,
 
-enum {NSNotFound = NSIntegerMax};
+    /* Default QoS indicates the absence of QoS information.  Whenever possible QoS information will be inferred from other sources.  If such inference is not possible, a QoS between UserInitiated and Utility will be used. */
+    NSQualityOfServiceDefault = -1
+} NS_ENUM_AVAILABLE(10_10, 8_0);
+
+static const NSInteger NSNotFound = NSIntegerMax;
+
+NS_ASSUME_NONNULL_END
 
 #if !defined(YES)
     #define YES	(BOOL)1

@@ -103,14 +103,12 @@
  * type given below. Each sysctl level defines a set of name/type
  * pairs to be used by sysctl(1) in manipulating the subsystem.
  *
- * When declaring new sysctl names, unless your sysctl is callable
- * from the paging path, please use the CTLFLAG_LOCKED flag in the
+ * When declaring new sysctl names, use the CTLFLAG_LOCKED flag in the
  * type to indicate that all necessary locking will be handled
  * within the sysctl.
  *
  * Any sysctl defined without CTLFLAG_LOCKED is considered legacy
- * and will be protected by both wiring the user process pages and,
- * if it is a 32 bit legacy KEXT, by the obsolete kernel funnel.
+ * and will be protected by a global mutex.
  *
  * Note:	This is not optimal, so it is best to handle locking
  *		yourself, if you are able to do so.  A simple design
@@ -277,7 +275,7 @@ struct ctlname {
 #define	KERN_SPECULATIVE_READS	64	/* int: whether speculative reads are disabled */
 #define	KERN_OSVERSION		65	/* for build number i.e. 9A127 */
 #define	KERN_SAFEBOOT		66	/* are we booted safe? */
-#define	KERN_LCTX		67	/* node: login context */
+			/*	67 was KERN_LCTX (login context) */
 #define KERN_RAGEVNODE		68
 #define KERN_TTY		69	/* node: tty settings */
 #define KERN_CHECKOPENEVT       70      /* spi: check the VOPENEVT flag on vnodes at open time */
@@ -330,7 +328,7 @@ struct ctlname {
 /* Don't use 13 as it is overloaded with KERN_VNODE */
 #define KERN_KDPIDEX            14
 #define KERN_KDSETRTCDEC        15
-#define KERN_KDGETENTROPY       16
+#define KERN_KDGETENTROPY       16		/* Obsolescent */
 #define KERN_KDWRITETR		17
 #define KERN_KDWRITEMAP		18
 #define KERN_KDENABLE_BG_TRACE	19
@@ -339,6 +337,10 @@ struct ctlname {
 #define KERN_KDSET_TYPEFILTER   22
 #define KERN_KDBUFWAIT		23
 #define KERN_KDCPUMAP		24
+#define KERN_KDWAIT_BG_TRACE_RESET 25
+#define KERN_KDSET_BG_TYPEFILTER   26
+#define KERN_KDWRITEMAP_V3	27
+#define KERN_KDWRITETR_V3	28
 
 #define CTL_KERN_NAMES { \
 	{ 0, 0 }, \
@@ -408,7 +410,7 @@ struct ctlname {
 	{ "speculative_reads_disabled", CTLTYPE_INT }, \
 	{ "osversion", CTLTYPE_STRING }, \
 	{ "safeboot", CTLTYPE_INT }, \
-	{ "lctx", CTLTYPE_NODE }, \
+	{ "dummy", CTLTYPE_INT }, 		/* deprecated: lctx */ \
 	{ "rage_vnode", CTLTYPE_INT }, \
 	{ "tty", CTLTYPE_NODE },	\
 	{ "check_openevt", CTLTYPE_INT }, \
@@ -433,13 +435,6 @@ struct ctlname {
 #define	KERN_PROC_UID		5	/* by effective uid */
 #define	KERN_PROC_RUID		6	/* by real uid */
 #define	KERN_PROC_LCID		7	/* by login context id */
-
-/*
- * KERN_LCTX subtypes
- */
-#define	KERN_LCTX_ALL		0	/* everything */
-#define	KERN_LCTX_LCID		1	/* by login context id */
-
 
 /* 
  * KERN_PROC subtype ops return arrays of augmented proc structures:
@@ -487,18 +482,8 @@ struct kinfo_proc {
 #define	EPROC_SLEADER	0x02	/* session leader */
 #define	COMAPT_MAXLOGNAME	12
 		char	e_login[COMAPT_MAXLOGNAME];	/* short setlogin() name */
-#if CONFIG_LCTX
-		pid_t	e_lcid;
-		int32_t	e_spare[3];
-#else
 		int32_t	e_spare[4];
-#endif
 	} kp_eproc;
-};
-
-struct kinfo_lctx {
-	pid_t	id;	/* Login Context ID */
-	int	mc;	/* Member Count */
 };
 
 

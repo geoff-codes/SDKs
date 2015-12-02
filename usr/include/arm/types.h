@@ -103,7 +103,5 @@ typedef u_int64_t		syscall_arg_t;
 #error Unknown architecture.
 #endif 
 
-#include <sys/_types/___offsetof.h>
-
 #endif /* __ASSEMBLER__ */
 #endif	/* _MACHTYPES_H_ */

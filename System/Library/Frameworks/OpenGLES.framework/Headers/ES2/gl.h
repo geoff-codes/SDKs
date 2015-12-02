@@ -50,24 +50,7 @@ extern "C" {
  * Data type definitions
  *-----------------------------------------------------------------------*/
 
-typedef void            GLvoid;
-typedef char            GLchar;
-typedef unsigned int    GLenum;
-typedef unsigned char   GLboolean;
-typedef unsigned int    GLbitfield;
-typedef signed char     GLbyte;
-typedef short           GLshort;
-typedef int             GLint;
-typedef int             GLsizei;
-typedef unsigned char   GLubyte;
-typedef unsigned short  GLushort;
-typedef unsigned int    GLuint;
-typedef float           GLfloat;
-typedef float           GLclampf;
-typedef int             GLfixed;
-typedef int             GLclampx;
-typedef long            GLintptr;
-typedef long            GLsizeiptr;
+#include <OpenGLES/gltypes.h>
 
 /*-------------------------------------------------------------------------
  * Token definitions

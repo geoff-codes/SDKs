@@ -10,13 +10,15 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CLAvailability.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CLError
  *  
  *  Discussion:
  *    Error returned as code to NSError from CoreLocation.
  */
-enum {
+typedef NS_ENUM(NSInteger, CLError) {
     kCLErrorLocationUnknown  = 0,         // location is currently unknown, but CL will keep trying
     kCLErrorDenied,                       // Access to location or ranging has been denied by the user
     kCLErrorNetwork,                      // general, network-related error
@@ -36,7 +38,6 @@ enum {
 	kCLErrorRangingUnavailable,           // Ranging cannot be performed
 	kCLErrorRangingFailure,               // General ranging failure
 };
-typedef NSInteger CLError;
 
 /*
  *  kCLErrorUserInfoAlternateRegionKey
@@ -45,4 +46,6 @@ typedef NSInteger CLError;
  *    When an error with code kCLErrorRegionMonitoringResponseDelayed is received, this key may be populated
  *    in the userInfo dictionary.  The value is a CLRegion that the location service can more effectively monitor.
  */
-extern NSString *const kCLErrorUserInfoAlternateRegionKey NS_AVAILABLE(10_7, 5_0);
+extern NSString *const kCLErrorUserInfoAlternateRegionKey NS_AVAILABLE(10_7, 5_0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED;
+
+NS_ASSUME_NONNULL_END

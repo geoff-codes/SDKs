@@ -19,6 +19,8 @@
 #import <CoreMIDI/MIDIServices.h>
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 #ifndef MIDI_EXPORT
 #define MIDI_EXPORT __attribute__((visibility("default")))
 #endif
@@ -40,12 +42,11 @@ MIDI_EXPORT extern NSString *const MIDINetworkNotificationSessionDidChange __OSX
 /* __________________________________________________________________________________________________
 	These are the values of connectionPolicy
 */
-enum {
+typedef NS_ENUM(NSUInteger, MIDINetworkConnectionPolicy) {
 	MIDINetworkConnectionPolicy_NoOne				= 0,
 	MIDINetworkConnectionPolicy_HostsInContactList	= 1,
 	MIDINetworkConnectionPolicy_Anyone				= 2
 };
-typedef NSUInteger MIDINetworkConnectionPolicy;
 
 /* __________________________________________________________________________________________________
 	MIDINetworkHost
@@ -59,18 +60,18 @@ typedef NSUInteger MIDINetworkConnectionPolicy;
 MIDI_EXPORT NS_CLASS_AVAILABLE(NA, 4_2)
 @interface MIDINetworkHost : NSObject {
 @private
-    __strong struct _MIDINetworkHostImpl *_impl;
+    void *_imp;
 }
-+ (id)hostWithName: (NSString *)name address: (NSString *)address port: (NSUInteger)port;
-+ (id)hostWithName: (NSString *)name netService: (NSNetService *)netService;
-+ (id)hostWithName: (NSString *)name netServiceName: (NSString *)netServiceName netServiceDomain: (NSString *)netServiceDomain;
++ (instancetype)hostWithName: (NSString *)name address: (NSString *)address port: (NSUInteger)port;
++ (instancetype)hostWithName: (NSString *)name netService: (NSNetService *)netService;
++ (instancetype)hostWithName: (NSString *)name netServiceName: (NSString *)netServiceName netServiceDomain: (NSString *)netServiceDomain;
 - (BOOL)hasSameAddressAs: (MIDINetworkHost *)other;
 
 @property(nonatomic,readonly,retain) NSString *name;				/* user's tag */
 @property(nonatomic,readonly,retain) NSString *address;				/* IP address or hostname */
 @property(nonatomic,readonly) NSUInteger port;						/* UDP port */
-@property(nonatomic,readonly,retain) NSString *netServiceName;		/* NSNetService name */
-@property(nonatomic,readonly,retain) NSString *netServiceDomain;	/* NSNetService domain */
+@property(nonatomic,readonly,retain,nullable) NSString *netServiceName;		/* NSNetService name */
+@property(nonatomic,readonly,retain,nullable) NSString *netServiceDomain;	/* NSNetService domain */
 @end
 
 /*__________________________________________________________________________________________________
@@ -81,9 +82,9 @@ MIDI_EXPORT NS_CLASS_AVAILABLE(NA, 4_2)
 MIDI_EXPORT NS_CLASS_AVAILABLE(NA, 4_2)
 @interface MIDINetworkConnection : NSObject {
 @private
-    __strong struct _MIDINetworkConnectionImpl *_impl;
+    void *_imp;
 }
-+ (id)connectionWithHost: (MIDINetworkHost *)host;
++ (instancetype)connectionWithHost: (MIDINetworkHost *)host;
 @property(nonatomic,retain,readonly) MIDINetworkHost *host;
 @end
 
@@ -97,7 +98,7 @@ MIDI_EXPORT NS_CLASS_AVAILABLE(NA, 4_2)
 MIDI_EXPORT NS_CLASS_AVAILABLE(NA, 4_2)
 @interface MIDINetworkSession : NSObject {
 @private
-    __strong struct _MIDINetworkSessionImpl *_impl;
+    void *_imp;
 }
 
 + (MIDINetworkSession *)defaultSession; /* returns the singleton. */
@@ -111,17 +112,19 @@ MIDI_EXPORT NS_CLASS_AVAILABLE(NA, 4_2)
 
 /*	The driver maintains a directory of MIDINetworkHosts, "contacts," for user convenience in initiating 
 	connections, and for controlling incoming connection requests. */
-- (NSSet *)contacts;							/* elements MIDINetworkHost. */
+- (NSSet<MIDINetworkHost *> *)contacts;
 - (BOOL)addContact: (MIDINetworkHost *)contact;
 - (BOOL)removeContact: (MIDINetworkHost *)contact;
 
-- (NSSet *)connections;							/* elements are MIDINetworkConnection. */
+- (NSSet<MIDINetworkConnection *> *)connections;
 - (BOOL)addConnection: (MIDINetworkConnection *)connection;
 - (BOOL)removeConnection: (MIDINetworkConnection *)connection;
 
 - (MIDIEndpointRef)sourceEndpoint;
 - (MIDIEndpointRef)destinationEndpoint;
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif /* __OBJC__ */
 

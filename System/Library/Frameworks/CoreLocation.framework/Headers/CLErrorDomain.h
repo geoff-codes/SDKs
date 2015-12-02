@@ -9,6 +9,8 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  kCLErrorDomain
  *  
@@ -16,3 +18,5 @@
  *    Error returned as the domain to NSError from CoreLocation.
  */
 extern NSString *const kCLErrorDomain;
+
+NS_ASSUME_NONNULL_END

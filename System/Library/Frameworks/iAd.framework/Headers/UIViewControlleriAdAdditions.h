@@ -141,6 +141,6 @@ typedef NS_ENUM(NSInteger, ADInterstitialPresentationPolicy) {
  * state. The method will be invoked when the framework is about to present an interstitial
  * ad in the ADInterstitialPresentationPolicyAutomatic configuration.
  */
-- (BOOL)shouldPresentInterstitialAd NS_AVAILABLE_IOS(7_0);
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldPresentInterstitialAd NS_AVAILABLE_IOS(7_0);
 
 @end

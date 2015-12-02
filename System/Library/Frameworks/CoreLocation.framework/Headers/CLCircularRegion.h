@@ -11,6 +11,8 @@
 #import <CoreLocation/CLLocation.h>
 #import <CoreLocation/CLAvailability.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /*
  *  CLCircularRegion
  *
@@ -28,7 +30,7 @@ NS_CLASS_AVAILABLE(NA, 7_0)
  *    the distance in meters between the center and the region's boundary. identifier is a description
  *    for the region that could be displayed to the user, and ideally should be chosen by the user.
  */
-- (id)initWithCenter:(CLLocationCoordinate2D)center
+- (instancetype)initWithCenter:(CLLocationCoordinate2D)center
                             radius:(CLLocationDistance)radius
                         identifier:(NSString *)identifier;
 
@@ -57,3 +59,5 @@ NS_CLASS_AVAILABLE(NA, 7_0)
 - (BOOL)containsCoordinate:(CLLocationCoordinate2D)coordinate;
 
 @end
+
+NS_ASSUME_NONNULL_END

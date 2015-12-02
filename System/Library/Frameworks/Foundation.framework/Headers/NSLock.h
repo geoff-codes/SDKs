@@ -1,11 +1,13 @@
 /*	NSLock.h
-	Copyright (c) 1994-2013, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2015, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 
 @class NSDate;
-	
+
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol NSLocking
 
 - (void)lock;
@@ -21,8 +23,7 @@
 - (BOOL)tryLock;
 - (BOOL)lockBeforeDate:(NSDate *)limit;
 
-- (void)setName:(NSString *)n NS_AVAILABLE(10_5, 2_0);
-- (NSString *)name NS_AVAILABLE(10_5, 2_0);
+@property (nullable, copy) NSString *name NS_AVAILABLE(10_5, 2_0);
 
 @end
 
@@ -31,9 +32,9 @@
     void *_priv;
 }
 
-- (id)initWithCondition:(NSInteger)condition;
+- (instancetype)initWithCondition:(NSInteger)condition NS_DESIGNATED_INITIALIZER;
 
-- (NSInteger)condition;
+@property (readonly) NSInteger condition;
 - (void)lockWhenCondition:(NSInteger)condition;
 - (BOOL)tryLock;
 - (BOOL)tryLockWhenCondition:(NSInteger)condition;
@@ -41,8 +42,7 @@
 - (BOOL)lockBeforeDate:(NSDate *)limit;
 - (BOOL)lockWhenCondition:(NSInteger)condition beforeDate:(NSDate *)limit;
 
-- (void)setName:(NSString *)n NS_AVAILABLE(10_5, 2_0);
-- (NSString *)name NS_AVAILABLE(10_5, 2_0);
+@property (nullable, copy) NSString *name NS_AVAILABLE(10_5, 2_0);
 
 @end
 
@@ -54,8 +54,7 @@
 - (BOOL)tryLock;
 - (BOOL)lockBeforeDate:(NSDate *)limit;
 
-- (void)setName:(NSString *)n NS_AVAILABLE(10_5, 2_0);
-- (NSString *)name NS_AVAILABLE(10_5, 2_0);
+@property (nullable, copy) NSString *name NS_AVAILABLE(10_5, 2_0);
 
 @end
 
@@ -72,9 +71,8 @@ NS_CLASS_AVAILABLE(10_5, 2_0)
 - (void)signal;
 - (void)broadcast;
 
-- (void)setName:(NSString *)n;
-- (NSString *)name;
+@property (nullable, copy) NSString *name NS_AVAILABLE(10_5, 2_0);
 
 @end
 
-
+NS_ASSUME_NONNULL_END

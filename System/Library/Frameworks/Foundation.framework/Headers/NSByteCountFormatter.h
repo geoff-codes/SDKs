@@ -1,8 +1,10 @@
 /*	NSByteCountFormatter.h
-	Copyright (c) 2012-2013, Apple Inc. All rights reserved.
+	Copyright (c) 2012-2015, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSFormatter.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_OPTIONS(NSUInteger, NSByteCountFormatterUnits) {
     // This causes default units appropriate for the platform to be used. Specifying any units explicitly causes just those units to be used in showing the number.
@@ -38,9 +40,9 @@ NS_CLASS_AVAILABLE(10_8, 6_0)
     unsigned int _allowedUnits;
     char _countStyle;
     BOOL _allowsNonnumericFormatting, _includesUnit, _includesCount, _includesActualByteCount, _adaptive, _zeroPadsFractionDigits;
-    int _reserved[6];
+    int _formattingContext;
+    int _reserved[5];
 }
-
 
 /* Shortcut for converting a byte count into a string without creating an NSByteCountFormatter and an NSNumber. If you need to specify options other than countStyle, create an instance of NSByteCountFormatter first.
  */
@@ -79,4 +81,10 @@ NS_CLASS_AVAILABLE(10_8, 6_0)
 */
 @property BOOL zeroPadsFractionDigits;
 
+/* Specify the formatting context for the formatted string. Default is NSFormattingContextUnknown.
+*/
+@property NSFormattingContext formattingContext NS_AVAILABLE(10_10, 8_0);
+
 @end
+
+NS_ASSUME_NONNULL_END

@@ -9,16 +9,20 @@
 #import <StoreKit/SKRequest.h>
 #import <StoreKit/StoreKitDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 SK_EXTERN_CLASS_AVAILABLE(7_0) @interface SKReceiptRefreshRequest : SKRequest
 
-- (id)initWithReceiptProperties:(NSDictionary *)properties __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
-@property (nonatomic, readonly) NSDictionary *receiptProperties __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+- (instancetype)initWithReceiptProperties:(nullable NSDictionary<NSString *, id> *)properties NS_AVAILABLE_IOS(7_0);
+@property (nonatomic, readonly, nullable) NSDictionary<NSString *, id> *receiptProperties NS_AVAILABLE_IOS(7_0);
 
 @end
 
-SK_EXTERN void SKTerminateForInvalidReceipt(void) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_1);
+SK_EXTERN void SKTerminateForInvalidReceipt(void) NS_AVAILABLE_IOS(7_1);
 
 // Receipt properties for sandbox testing:
-SK_EXTERN NSString * const SKReceiptPropertyIsExpired __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);  // NSNumber BOOL, defaults to NO
-SK_EXTERN NSString * const SKReceiptPropertyIsRevoked __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);  // NSNumber BOOL, defaults to NO
-SK_EXTERN NSString * const SKReceiptPropertyIsVolumePurchase __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);  // NSNumber BOOL, defaults to NO
+SK_EXTERN NSString * const SKReceiptPropertyIsExpired NS_AVAILABLE_IOS(7_0);  // NSNumber BOOL, defaults to NO
+SK_EXTERN NSString * const SKReceiptPropertyIsRevoked NS_AVAILABLE_IOS(7_0);  // NSNumber BOOL, defaults to NO
+SK_EXTERN NSString * const SKReceiptPropertyIsVolumePurchase NS_AVAILABLE_IOS(7_0);  // NSNumber BOOL, defaults to NO
+
+NS_ASSUME_NONNULL_END

@@ -3,7 +3,7 @@
  
 	 Contains:   CoreFoundation Network HTTP streams header
  
-	 Copyright:  Copyright (c) 2001-2008 Apple Inc. All rights reserved.
+	 Copyright:  Copyright (c) 2001-2013 Apple Inc. All rights reserved.
  
 	 Bugs?:	  For bug reports, consult the following page on
 				 the World Wide Web:
@@ -28,17 +28,12 @@
 
 
 
-
-
-#include <Availability.h>
-
 #if PRAGMA_ONCE
 #pragma once
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+CF_EXTERN_C_BEGIN
+CF_ASSUME_NONNULL_BEGIN
 
 #if PRAGMA_ENUM_ALWAYSINT
 	#pragma enumsalwaysint on
@@ -50,12 +45,8 @@ extern "C" {
  *  Discussion:
  *	Result code returned by HTTP server
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.1 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const SInt32 kCFStreamErrorDomainHTTP						 __OSX_AVAILABLE_STARTING(__MAC_10_1,__IPHONE_2_0);
+CFN_EXPORT const SInt32 kCFStreamErrorDomainHTTP CF_AVAILABLE(10_1, 2_0);
 
 /*
  *  CFStreamErrorHTTP
@@ -63,7 +54,7 @@ CFN_EXPORT const SInt32 kCFStreamErrorDomainHTTP						 __OSX_AVAILABLE_STARTING(
  *  Discussion:
  *	Errors from the kCFStreamErrorDomainHTTP domain.
  */
-enum CFStreamErrorHTTP {
+typedef CF_ENUM(int, CFStreamErrorHTTP) {
 
   /*
    * Could not parse the request/response.
@@ -80,7 +71,6 @@ enum CFStreamErrorHTTP {
    */
   kCFStreamErrorHTTPBadURL	  = -3
 };
-typedef enum CFStreamErrorHTTP CFStreamErrorHTTP;
 
 /*
  *  kCFStreamPropertyHTTPResponseHeader
@@ -89,16 +79,12 @@ typedef enum CFStreamErrorHTTP CFStreamErrorHTTP;
  *	Stream property key, for copy operations. Value is a
  *	CFHTTPMessage with 0 bytes data.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.1 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPResponseHeader		 __OSX_AVAILABLE_STARTING(__MAC_10_1,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPResponseHeader CF_DEPRECATED(10_1, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 
 /*
- *  kCFStreamPropertyHTTPFinalURL
+ *  kCFStreamPropertyHTTPFinalURL   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Stream property key, for copy operations. The response header
@@ -106,15 +92,11 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPResponseHeader		 __OSX_AVAILAB
  *	the URL in the original request if an autoredirection has
  *	occurred.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.2 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPFinalURL			   __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPFinalURL CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 /*
- *  kCFStreamPropertyHTTPFinalRequest
+ *  kCFStreamPropertyHTTPFinalRequest   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Stream property key, for copy operations. The value is the
@@ -122,15 +104,11 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPFinalURL			   __OSX_AVAILABLE_
  *	(such as for authentication, connection policy, or redirection)
  *	have been made.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.5 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPFinalRequest		   __OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPFinalRequest CF_DEPRECATED(10_5, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 /*
- *  kCFStreamPropertyHTTPProxy
+ *  kCFStreamPropertyHTTPProxy   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Stream property key, for both set and copy operations. The value
@@ -142,91 +120,67 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPFinalRequest		   __OSX_AVAILAB
  *	by SystemConfiguration.framework to set the default values for
  *	the system. HTTP proxies are not applied automatically.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.2 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPProxy				  __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPProxy CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 
 /*
- *  kCFStreamPropertyHTTPProxyHost
+ *  kCFStreamPropertyHTTPProxyHost   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Proxy dictionary key. The hostname of an HTTP proxy. The value is
  *	a CFString. The key name matches kSCPropNetProxiesHTTPProxy.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.2 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPProxyHost			  __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPProxyHost CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 
 /*
- *  kCFStreamPropertyHTTPProxyPort
+ *  kCFStreamPropertyHTTPProxyPort   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Proxy dictionary key. Value is a CFNumber.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.2 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPProxyPort			  __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPProxyPort CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 /* matches kSCPropNetProxiesHTTPPort */
 
 
 /*
- *  kCFStreamPropertyHTTPSProxyHost
+ *  kCFStreamPropertyHTTPSProxyHost   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Proxy dictionary key. Value is a CFString.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.2 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPSProxyHost			 __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPSProxyHost CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 /* matches kSCPropNetProxiesHTTPSProxy */
 
 
 /*
- *  kCFStreamPropertyHTTPSProxyPort
+ *  kCFStreamPropertyHTTPSProxyPort   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Proxy dictionary key. Value is a CFNumber.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.2 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPSProxyPort			 __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPSProxyPort CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 /* matches kSCPropNetProxiesHTTPSPort */
 
 
 /*
- *  kCFStreamPropertyHTTPShouldAutoredirect
+ *  kCFStreamPropertyHTTPShouldAutoredirect   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Stream property key. Value is a CFBoolean. Redirection is not
  *	performed by default.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.2 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPShouldAutoredirect	 __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPShouldAutoredirect CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 
 /*
- *  kCFStreamPropertyHTTPAttemptPersistentConnection
+ *  kCFStreamPropertyHTTPAttemptPersistentConnection   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Stream property key. Value is a CFBoolean.  If this property is
@@ -235,16 +189,12 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPShouldAutoredirect	 __OSX_AVAI
  *	none, will try to create one. Persistent connections are not used
  *	by default.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.2 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPAttemptPersistentConnection __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPAttemptPersistentConnection CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 
 /*
- *  kCFStreamPropertyHTTPRequestBytesWrittenCount
+ *  kCFStreamPropertyHTTPRequestBytesWrittenCount   *** DEPRECATED ***
  *  
  *  Discussion:
  *	Stream property key. Value is a CFNumber. This property can only
@@ -252,20 +202,18 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPAttemptPersistentConnection __
  *	from the body of the request that have been written to the
  *	underlying socket
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPRequestBytesWrittenCount __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPRequestBytesWrittenCount CF_DEPRECATED(10_3, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 
 /*********************/
 /* Creation routines */
 /*********************/
 /*
- *  CFReadStreamCreateForHTTPRequest()
+ *  CFReadStreamCreateForHTTPRequest()   *** DEPRECATED ***
  *  
+ *  DEPRECATED: Use NSURLSession API for http requests
+ *
  *  Discussion:
  *	Create an HTTP read stream for the response to the given request.
  *	When the stream is opened, it will begin transmitting the
@@ -294,20 +242,16 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyHTTPRequestBytesWrittenCount __OSX
  *	caller's responsibilty to release the memory allocated for the
  *	read stream.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.1 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
 CFN_EXPORT CFReadStreamRef 
-CFReadStreamCreateForHTTPRequest(
-  CFAllocatorRef	 alloc,
-  CFHTTPMessageRef   request)								 __OSX_AVAILABLE_STARTING(__MAC_10_1,__IPHONE_2_0);
+CFReadStreamCreateForHTTPRequest(CFAllocatorRef __nullable alloc, CFHTTPMessageRef request) CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 
 /*
- *  CFReadStreamCreateForStreamedHTTPRequest()
+ *  CFReadStreamCreateForStreamedHTTPRequest()   *** DEPRECATED ***
  *  
+ *  DEPRECATED: Use NSURLSession API for http requests
+ *
  *  Discussion:
  *	Creates a read stream for the response to the given
  *	requestHeaders plus requestBody. Use in preference to
@@ -344,16 +288,9 @@ CFReadStreamCreateForHTTPRequest(
  *	caller's responsibilty to release the memory allocated for the
  *	read stream.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.2 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
 CFN_EXPORT CFReadStreamRef 
-CFReadStreamCreateForStreamedHTTPRequest(
-  CFAllocatorRef	 alloc,
-  CFHTTPMessageRef   requestHeaders,
-  CFReadStreamRef	requestBody)							 __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_2_0);
+CFReadStreamCreateForStreamedHTTPRequest(CFAllocatorRef __nullable alloc, CFHTTPMessageRef requestHeaders, CFReadStreamRef requestBody) CF_DEPRECATED(10_2, 10_11, 2_0, 9_0, "Use NSURLSession API for http requests");
 
 
 /*
@@ -374,47 +311,9 @@ CFReadStreamCreateForStreamedHTTPRequest(
  *	shouldAutoRedirect:
  *	  A boolean indicating whether to redirect or not.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.1 and later in CoreServices.framework but deprecated in 10.3
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
 CFN_EXPORT void 
-CFHTTPReadStreamSetRedirectsAutomatically(
-  CFReadStreamRef   httpStream,
-  Boolean		   shouldAutoRedirect)					   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_1,__MAC_10_3,__IPHONE_NA,__IPHONE_NA);
-
-
-/*
- *  CFHTTPReadStreamSetProxy()   *** DEPRECATED ***
- *  
- *  Deprecated:
- *	Use the kCFStreamPropertyHTTPProxy above instead.
- *  
- *  Discussion:
- *	Sets the redirection property on the http stream.
- *  
- *  Parameters:
- *	
- *	httpStream:
- *	  A pointer to the CFHTTPStream to be set.
- *	
- *	proxyHost:
- *	  The proxy hostname. A CFString value.
- *	
- *	proxyPort:
- *	  The port number. A CFNumber value.
- *  
- *  Availability:
- *	Mac OS X:		 in version 10.1 and later in CoreServices.framework but deprecated in 10.3
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
- */
-CFN_EXPORT void 
-CFHTTPReadStreamSetProxy(
-  CFReadStreamRef   httpStream,
-  CFStringRef	   proxyHost,
-  CFIndex		   proxyPort)								__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_1,__MAC_10_3,__IPHONE_NA,__IPHONE_NA);
+CFHTTPReadStreamSetRedirectsAutomatically(CFReadStreamRef httpStream, Boolean shouldAutoRedirect) CF_DEPRECATED(10_1, 10_3, NA, NA);
 
 
 
@@ -422,9 +321,8 @@ CFHTTPReadStreamSetProxy(
 	#pragma enumsalwaysint reset
 #endif
 
-#ifdef __cplusplus
-}
-#endif
+CF_ASSUME_NONNULL_END
+CF_EXTERN_C_END
 
 #endif /* __CFHTTPSTREAM__ */
 

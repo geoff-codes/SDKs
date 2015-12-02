@@ -3,11 +3,11 @@
  
      Contains:   Master include for vecLib framework
  
-     Version:    vecLib-459.0
+     Version:    vecLib-563.2
  
-     Copyright:  © 2000-2014 by Apple Inc., all rights reserved.
+     Copyright:  Copyright (c) 2000-2015 by Apple Inc. All rights reserved.
  
-     Bugs?:      For bug reports, consult the following page on
+     Bugs:       For bug reports, consult the following page on
                  the World Wide Web:
  
                      http://developer.apple.com/bugreporter/
@@ -22,6 +22,7 @@
 #if PRAGMA_ONCE
 #pragma once
 #endif
+
 
 #pragma options align=power
 
@@ -200,4 +201,3 @@ typedef __m128                          vFloat;
 
 
 #endif /* __VECLIBTYPES__ */
-

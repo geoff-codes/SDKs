@@ -1,52 +1,70 @@
-/* CoreImage - CIColor.h
+/* 
+   CoreImage - CIColor.h
 
-   Copyright (c) 2011 Apple, Inc.
-   All rights reserved. */
+   Copyright (c) 2015 Apple, Inc.
+   All rights reserved. 
+*/
 
 #import <CoreImage/CoreImageDefines.h>
 #import <Foundation/Foundation.h>
+#import <CoreImage/CIVector.h>
 
-CORE_IMAGE_CLASS_EXPORT
-@interface CIColor : NSObject <NSCoding, NSCopying>
+NS_ASSUME_NONNULL_BEGIN
+
+NS_CLASS_AVAILABLE(10_4, 5_0)
+@interface CIColor : NSObject <NSSecureCoding, NSCopying>
 {
     void *_priv;
     void *_pad[3];
 }
 
 /* Create a new color object. */
-+ (CIColor *)colorWithCGColor:(CGColorRef)c;
++ (instancetype)colorWithCGColor:(CGColorRef)c;
 
-/* Create a new color object.
- It's created using the GenericRGB color space. To create a CIColor with a different color space, use +colorWithCGColor:. */
-+ (CIColor *)colorWithRed:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b alpha:(CGFloat)a;
-+ (CIColor *)colorWithRed:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b;
+/* Create a new color object in CI's default RGB colorspace
+   which is kCGColorSpaceSRGB or, if running on OSX before 10.10,
+   kCGColorSpaceGenericRGB. */
++ (instancetype)colorWithRed:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b alpha:(CGFloat)a;
++ (instancetype)colorWithRed:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b;
 
 /* Create a new color object, 'representation' should be a string in one of
  * the formats returned by the stringRepresentation method. */
-+ (CIColor *)colorWithString:(NSString *)representation;
++ (instancetype)colorWithString:(NSString *)representation;
 
-/* Initializer. */
 
-- (id)initWithCGColor:(CGColorRef)c;
+/* Initialize a new color object. */
+- (instancetype)initWithCGColor:(CGColorRef)c NS_DESIGNATED_INITIALIZER;
+
+/* Initialize a new color object in CI's default RGB colorspace
+   which is kCGColorSpaceSRGB or, if running on OSX before 10.10,
+   kCGColorSpaceGenericRGB. */
+- (instancetype)initWithRed:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b alpha:(CGFloat)a;
+- (instancetype)initWithRed:(CGFloat)r green:(CGFloat)g blue:(CGFloat)b NS_AVAILABLE(10_11, 9_0);
+
 
 /* Return the number of color components (including alpha). */
-- (size_t)numberOfComponents;
+@property (readonly) size_t numberOfComponents;
 
 /* Return the color components (including alpha). */
-- (const CGFloat *)components;
+@property (readonly) const CGFloat *components NS_RETURNS_INNER_POINTER;
 
 /* Return the alpha value of the color. */
-- (CGFloat)alpha;
+@property (readonly) CGFloat alpha;
 
 /* Return the color space object associated with the color. */
-- (CGColorSpaceRef)colorSpace;
+@property (readonly) CGColorSpaceRef colorSpace CF_RETURNS_NOT_RETAINED;
 
 /* Return the (unpremultiplied) red, green or blue components of the color. */
-- (CGFloat)red;
-- (CGFloat)green;
-- (CGFloat)blue;
+@property (readonly) CGFloat red;
+@property (readonly) CGFloat green;
+@property (readonly) CGFloat blue;
 
-/* Returns a formatted string with the components of the color. */
-- (NSString *)stringRepresentation;
+/* Returns a formatted string with the components of the color.
+ * The string is suitable for passing to [CIColor colorWithString:].
+ * This property is not KVO-safe because it returns a new NSString each time.
+ * The value of the NSString will be the same each time it is called. */
+@property (readonly) NSString *stringRepresentation;
 
 @end
+
+NS_ASSUME_NONNULL_END

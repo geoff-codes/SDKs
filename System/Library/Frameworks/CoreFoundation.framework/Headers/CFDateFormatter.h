@@ -1,5 +1,5 @@
 /*	CFDateFormatter.h
-	Copyright (c) 2003-2013, Apple Inc. All rights reserved.
+	Copyright (c) 2003-2015, Apple Inc. All rights reserved.
 */
 
 #if !defined(__COREFOUNDATION_CFDATEFORMATTER__)
@@ -9,9 +9,10 @@
 #include <CoreFoundation/CFDate.h>
 #include <CoreFoundation/CFLocale.h>
 
+CF_IMPLICIT_BRIDGING_ENABLED
 CF_EXTERN_C_BEGIN
 
-typedef struct __CFDateFormatter *CFDateFormatterRef;
+typedef struct CF_BRIDGED_MUTABLE_TYPE(id) __CFDateFormatter *CFDateFormatterRef;
 
 // CFDateFormatters are not thread-safe.  Do not use one from multiple threads!
 
@@ -144,6 +145,7 @@ CF_EXPORT const CFStringRef kCFDateFormatterDoesRelativeDateFormattingKey CF_AVA
 //	const CFStringRef kCFISO8601Calendar;
 
 CF_EXTERN_C_END
+CF_IMPLICIT_BRIDGING_DISABLED
 
 #endif /* ! __COREFOUNDATION_CFDATEFORMATTER__ */
 

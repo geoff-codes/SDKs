@@ -75,6 +75,7 @@ _STRUCT_ARM_THREAD_STATE64
 	__uint64_t    __sp;		/* Stack pointer x31 */
 	__uint64_t    __pc;		/* Program counter */
 	__uint32_t    __cpsr;	/* Current program status register */
+	__uint32_t    __pad;    /* Same size for 32-bit or 64-bit clients */
 };
 #else /* !__DARWIN_UNIX03 */
 #define _STRUCT_ARM_THREAD_STATE64	struct arm_thread_state64
@@ -86,6 +87,7 @@ _STRUCT_ARM_THREAD_STATE64
 	__uint64_t    sp;		/* Stack pointer x31 */
 	__uint64_t    pc; 		/* Program counter */
 	__uint32_t    cpsr;		/* Current program status register */
+	__uint32_t    __pad;    /* Same size for 32-bit or 64-bit clients */
 };
 #endif /* __DARWIN_UNIX03 */
 

@@ -12,47 +12,31 @@
 #ifndef	_MACH_ARM_VM_PARAM_H_
 #define _MACH_ARM_VM_PARAM_H_
 
+#if !defined (KERNEL) && !defined (__ASSEMBLER__)
+#include <mach/vm_page_size.h>
+#endif
+
 #define BYTE_SIZE	8	/* byte size in bits */
 
-#define ARM_PGBYTES	4096	/* bytes per ARM small page */
-#define ARM_PGSHIFT	12	/* number of bits to shift for pages */
+
+#define PAGE_SHIFT			vm_page_shift
+#define PAGE_SIZE			vm_page_size
+#define PAGE_MASK			vm_page_mask
+
+#define VM_PAGE_SIZE		vm_page_size
+
+#define	machine_ptob(x)		((x) << PAGE_SHIFT)
 
 
-#if defined (KERNEL) || !defined (__arm64__)
+#define PAGE_MAX_SHIFT		14
+#define PAGE_MAX_SIZE		(1 << PAGE_MAX_SHIFT)
+#define PAGE_MAX_MASK		(PAGE_MAX_SIZE-1)
 
-#define PAGE_SIZE       ARM_PGBYTES
-#define PAGE_SHIFT     ARM_PGSHIFT
-#define PAGE_MASK      (PAGE_SIZE-1)
-#define VM_PAGE_SIZE	ARM_PGBYTES
-#define	machine_ptob(x)	((x) << ARM_PGSHIFT)
-
-#else
-
-/* ARM64 userland gets a 16k pagesize */
-#define PAGE_SIZE    	(0x4000)
-#define PAGE_SHIFT    	(14)
-#define PAGE_MASK      (PAGE_SIZE-1)
-
-#define VM_PAGE_SIZE	PAGE_SIZE
-
-#define	machine_ptob(x)	((x) << 14)
-
-#endif
-
-#if defined(__arm64__)
-#define KERNEL_STACK_SIZE	(5*ARM_PGBYTES)
-#else
-#define KERNEL_STACK_SIZE	(4*ARM_PGBYTES)
-#endif
-#define INTSTACK_SIZE		(4*ARM_PGBYTES)
-						/* interrupt stack size */
+#define PAGE_MIN_SHIFT		12
+#define PAGE_MIN_SIZE		(1 << PAGE_MIN_SHIFT)
+#define PAGE_MIN_MASK		(PAGE_MIN_SIZE-1)
 
 #ifndef __ASSEMBLER__
-/*
- *	Round off or truncate to the nearest page.  These will work
- *	for either addresses or counts.  (i.e. 1 byte rounds to 1 page
- *	bytes.
- */
 
 
 #if defined (__arm__)
@@ -60,49 +44,29 @@
 #define VM_MIN_ADDRESS		((vm_address_t) 0x00000000)
 #define VM_MAX_ADDRESS		((vm_address_t) 0x80000000)
 
-#define HIGH_EXC_VECTORS	((vm_address_t) 0xFFFF0000)
-
-#define VM_MIN_KERNEL_ADDRESS	((vm_address_t) 0x80000000)
-#define VM_MIN_KERNEL_AND_KEXT_ADDRESS VM_MIN_KERNEL_ADDRESS
-#define VM_HIGH_KERNEL_WINDOW	((vm_address_t) 0xFFFE0000)
-#define VM_MAX_KERNEL_ADDRESS	((vm_address_t) 0xFFFEFFFF)
-
-#define VM_KERNEL_ADDRESS(va)	((((vm_address_t)(va))>=VM_MIN_KERNEL_ADDRESS) && \
-              (((vm_address_t)(va))<=VM_MAX_KERNEL_ADDRESS))
-
 /* system-wide values */
-#define MACH_VM_MIN_ADDRESS		((mach_vm_offset_t) 0)
-#define MACH_VM_MAX_ADDRESS		((mach_vm_offset_t) VM_MAX_ADDRESS)
+#define MACH_VM_MIN_ADDRESS	((mach_vm_offset_t) 0)
+#define MACH_VM_MAX_ADDRESS	((mach_vm_offset_t) VM_MAX_ADDRESS)
 
 #elif defined (__arm64__)
 
 #define VM_MIN_ADDRESS		((vm_address_t) 0x0000000000000000ULL)
 #define VM_MAX_ADDRESS		((vm_address_t) 0x0000000080000000ULL)
 
-#define VM_MIN_KERNEL_ADDRESS	((vm_address_t) 0xffffff8000000000ULL)
-#define VM_MIN_KERNEL_AND_KEXT_ADDRESS VM_MIN_KERNEL_ADDRESS
-#define VM_MAX_KERNEL_ADDRESS	((vm_address_t) 0xffffff80ffffffffULL)
-
-#define VM_KERNEL_ADDRESS(va)	((((vm_address_t)(va))>=VM_MIN_KERNEL_ADDRESS) && \
-              (((vm_address_t)(va))<=VM_MAX_KERNEL_ADDRESS))
-
 /* system-wide values */
-#define MACH_VM_MIN_ADDRESS		((mach_vm_offset_t) 0x0ULL)
-#define MACH_VM_MAX_ADDRESS		((mach_vm_offset_t) 0x00000001A0000000ULL)
+#define MACH_VM_MIN_ADDRESS	((mach_vm_offset_t) 0x0ULL)
+#define MACH_VM_MAX_ADDRESS	((mach_vm_offset_t) 0x0000001000000000ULL)
 
 #else
 #error architecture not supported
 #endif
 
-/*
- *	Physical memory is mapped linearly at an offset virtual memory.
- */
-extern unsigned long gVirtBase, gPhysBase, gPhysSize;
-#define isphysmem(a) (((vm_address_t)(a) - gPhysBase) < gPhysSize)
-#define phystokv(a)	((vm_address_t)(a) - gPhysBase + gVirtBase)
-#endif
+#define VM_MAP_MIN_ADDRESS      VM_MIN_ADDRESS
+#define VM_MAP_MAX_ADDRESS      VM_MAX_ADDRESS
+
+
+#endif	/* !__ASSEMBLER__ */
 
 #define SWI_SYSCALL	0x80
 
 #endif	/* _MACH_ARM_VM_PARAM_H_ */
-

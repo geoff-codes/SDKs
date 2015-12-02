@@ -9,6 +9,7 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
 /*
  Enums for color buffer formats.
  */
@@ -60,9 +61,9 @@ NS_CLASS_AVAILABLE(NA, 5_0)
 
 }
 
-- (id)initWithFrame:(CGRect)frame context:(EAGLContext *)context;
+- (instancetype)initWithFrame:(CGRect)frame context:(EAGLContext *)context;
 
-@property (nonatomic, assign) IBOutlet id <GLKViewDelegate> delegate;
+@property (nullable, nonatomic, assign) IBOutlet id <GLKViewDelegate> delegate;
 
 @property (nonatomic, retain) EAGLContext *context;
 
@@ -90,7 +91,7 @@ NS_CLASS_AVAILABLE(NA, 5_0)
  Returns a UIImage of the resulting draw. Snapshot should never be called from within the draw method or from a
  thread other than the main thread.
  */
-- (UIImage *)snapshot;
+@property (readonly, strong) UIImage *snapshot;
 
 /*
  Controls whether the view responds to setNeedsDisplay. If true, then the view behaves similarily to a UIView.
@@ -124,3 +125,4 @@ NS_CLASS_AVAILABLE(NA, 5_0)
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect;
 
 @end
+NS_ASSUME_NONNULL_END

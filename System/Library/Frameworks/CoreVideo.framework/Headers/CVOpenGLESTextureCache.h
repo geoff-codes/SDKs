@@ -2,12 +2,12 @@
  *  CVOpenGLESTextureCache.h
  *  CoreVideo
  *
- *  Copyright 2011 Apple Computer, Inc. All rights reserved.
+ *  Copyright 2011-2015 Apple Inc. All rights reserved.
  *
  */
 
 /*! @header CVOpenGLESTextureCache.h
- @copyright 2011 Apple Computer, Inc. All rights reserved.
+ @copyright 2011-2015 Apple Inc. All rights reserved.
  @availability iOS 5.0 or later
  @discussion A CoreVideo TextureCache is used to cache and manage CVOpenGLESTextures.
  
@@ -30,7 +30,7 @@ extern "C" {
     @abstract   CoreVideo OpenGLES Texture Cache
 
 */
-typedef struct __CVOpenGLESTextureCache *CVOpenGLESTextureCacheRef;
+typedef struct CV_BRIDGED_TYPE(id) __CVOpenGLESTextureCache *CVOpenGLESTextureCacheRef;
 
 #ifndef COREVIDEO_USE_EAGLCONTEXT_CLASS_IN_API
 #define COREVIDEO_USE_EAGLCONTEXT_CLASS_IN_API 1
@@ -50,7 +50,7 @@ typedef void *CVEAGLContext;
 // texture age of zero will disable the age-out mechanism completely.
 // CVOpenGLESTextureCacheFlush() can be used to force eviction in either case.
 
-CV_EXPORT const CFStringRef kCVOpenGLESTextureCacheMaximumTextureAgeKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+CV_EXPORT const CFStringRef CV_NONNULL kCVOpenGLESTextureCacheMaximumTextureAgeKey __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 //
 // textureAttributes - reserved for future use
@@ -68,11 +68,11 @@ CV_EXPORT CFTypeID CVOpenGLESTextureCacheGetTypeID(void) __OSX_AVAILABLE_STARTIN
     @result     Returns kCVReturnSuccess on success
 */
 CV_EXPORT CVReturn CVOpenGLESTextureCacheCreate(
-					CFAllocatorRef allocator,
-					CFDictionaryRef cacheAttributes,
-					CVEAGLContext eaglContext,
-					CFDictionaryRef textureAttributes,
-					CVOpenGLESTextureCacheRef *cacheOut) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+    CFAllocatorRef CV_NULLABLE allocator,
+    CFDictionaryRef CV_NULLABLE cacheAttributes,
+    CVEAGLContext CV_NONNULL eaglContext,
+    CFDictionaryRef CV_NULLABLE textureAttributes,
+    CV_RETURNS_RETAINED_PARAMETER CVOpenGLESTextureCacheRef CV_NULLABLE * CV_NONNULL cacheOut) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 /*!
     @function   CVOpenGLESTextureCacheCreateTextureFromImage
@@ -114,18 +114,19 @@ CV_EXPORT CVReturn CVOpenGLESTextureCacheCreate(
                 Mapping a yuvs buffer as a source texture (note: yuvs/f and 2vuy are unpacked and resampled -- not colorspace converted)
                 CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, textureCache, pixelBuffer, NULL, GL_TEXTURE_2D, GL_RGB_422_APPLE, width, height, GL_RGB_422_APPLE, GL_UNSIGNED_SHORT_8_8_APPLE, 1, &outTexture);
 */
-CV_EXPORT CVReturn CVOpenGLESTextureCacheCreateTextureFromImage(CFAllocatorRef allocator,
-								       CVOpenGLESTextureCacheRef textureCache,
-								       CVImageBufferRef sourceImage,
-								       CFDictionaryRef textureAttributes,
-								       GLenum target,
-								       GLint internalFormat,
-								       GLsizei width,
-								       GLsizei height,
-								       GLenum format,
-								       GLenum type,
-								       size_t planeIndex,
-								       CVOpenGLESTextureRef *textureOut) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+CV_EXPORT CVReturn CVOpenGLESTextureCacheCreateTextureFromImage(
+    CFAllocatorRef CV_NULLABLE allocator,
+    CVOpenGLESTextureCacheRef CV_NONNULL textureCache,
+    CVImageBufferRef CV_NONNULL sourceImage,
+    CFDictionaryRef CV_NULLABLE textureAttributes,
+    GLenum target,
+    GLint internalFormat,
+    GLsizei width,
+    GLsizei height,
+    GLenum format,
+    GLenum type,
+    size_t planeIndex,
+    CV_RETURNS_RETAINED_PARAMETER CVOpenGLESTextureRef CV_NULLABLE * CV_NONNULL textureOut ) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 /*!
     @function   CVOpenGLESTextureCacheFlush
@@ -136,7 +137,7 @@ CV_EXPORT CVReturn CVOpenGLESTextureCacheCreateTextureFromImage(CFAllocatorRef a
     @param      textureCache The texture cache object to flush
     @param      options Currently unused, set to 0.
 */
-CV_EXPORT void CVOpenGLESTextureCacheFlush(CVOpenGLESTextureCacheRef textureCache, CVOptionFlags options) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+CV_EXPORT void CVOpenGLESTextureCacheFlush( CVOpenGLESTextureCacheRef CV_NONNULL textureCache, CVOptionFlags options ) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
 #if defined(__cplusplus)
 }

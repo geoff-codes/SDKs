@@ -27,13 +27,13 @@
 /************************************************************************/
 
 /* EAGL rendering API */
-enum
+typedef NS_ENUM(NSUInteger, EAGLRenderingAPI)
 {
 	kEAGLRenderingAPIOpenGLES1 = 1,
 	kEAGLRenderingAPIOpenGLES2 = 2,
 	kEAGLRenderingAPIOpenGLES3 = 3,
 };
-typedef NSUInteger EAGLRenderingAPI;
+
 
 /************************************************************************/
 /* EAGL Functions                                                       */
@@ -67,8 +67,9 @@ EAGL_EXTERN_CLASS
 	struct _EAGLContextPrivate *_private;
 }
 
-- (id) initWithAPI:(EAGLRenderingAPI) api;
-- (id) initWithAPI:(EAGLRenderingAPI) api sharegroup:(EAGLSharegroup*) sharegroup;
+- (instancetype) init NS_UNAVAILABLE;
+- (instancetype) initWithAPI:(EAGLRenderingAPI) api;
+- (instancetype) initWithAPI:(EAGLRenderingAPI) api sharegroup:(EAGLSharegroup*) sharegroup NS_DESIGNATED_INITIALIZER;
 
 + (BOOL)            setCurrentContext:(EAGLContext*) context;
 + (EAGLContext*)    currentContext;

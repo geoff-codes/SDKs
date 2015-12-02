@@ -2,7 +2,7 @@
 //  MKOverlayView.h
 //  MapKit
 //
-//  Copyright (c) 2010-2013, Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2014, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -12,10 +12,10 @@
 
 
 // Prefer MKOverlayRenderer
-MK_CLASS_AVAILABLE(NA, 4_0)
+MK_CLASS_AVAILABLE(NA, 4_0) __WATCHOS_PROHIBITED
 @interface MKOverlayView : UIView
 
-- (id)initWithOverlay:(id <MKOverlay>)overlay NS_DEPRECATED_IOS(4_0, 7_0);
+- (instancetype)initWithOverlay:(id <MKOverlay>)overlay NS_DESIGNATED_INITIALIZER NS_DEPRECATED_IOS(4_0, 7_0);
 
 @property (nonatomic, readonly) id <MKOverlay> overlay NS_DEPRECATED_IOS(4_0, 7_0);
 
@@ -49,4 +49,4 @@ MK_CLASS_AVAILABLE(NA, 4_0)
 // Road widths are typically not drawn to scale on the map.  This function
 // returns the approximate width in points of roads at the specified zoomScale.
 // The result of this function is suitable for use with CGContextSetLineWidth.
-MK_EXTERN CGFloat MKRoadWidthAtZoomScale(MKZoomScale zoomScale) NS_AVAILABLE(10_9, 4_0);
+MK_EXTERN CGFloat MKRoadWidthAtZoomScale(MKZoomScale zoomScale) NS_AVAILABLE(10_9, 4_0) __WATCHOS_PROHIBITED;

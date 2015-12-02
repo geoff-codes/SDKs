@@ -46,6 +46,8 @@ extern "C" {
 #   define GL_APIENTRYP GL_APIENTRY*
 #endif
 
+#define GL_APPLE_clip_distance                                  1
+#define GL_APPLE_color_buffer_packed_float                      1
 #define GL_APPLE_copy_texture_levels                            1
 #define GL_APPLE_rgb_422                                        1
 #define GL_APPLE_texture_format_BGRA8888                        1
@@ -62,11 +64,29 @@ extern "C" {
 #define GL_EXT_texture_filter_anisotropic                       1
 #define GL_IMG_read_format                                      1
 #define GL_IMG_texture_compression_pvrtc                        1
+#define GL_KHR_texture_compression_astc_ldr                     1
 #define GL_OES_standard_derivatives                             1
 
 /*------------------------------------------------------------------------*
  * APPLE extension tokens
  *------------------------------------------------------------------------*/
+#if GL_APPLE_color_buffer_packed_float
+#define GL_R11F_G11F_B10F_APPLE                                 0x8C3A
+#define GL_RGB9_E5_APPLE                                        0x8C3D
+#endif
+
+#if GL_APPLE_clip_distance
+#define GL_CLIP_DISTANCE0_APPLE           0x3000
+#define GL_CLIP_DISTANCE1_APPLE           0x3001
+#define GL_CLIP_DISTANCE2_APPLE           0x3002
+#define GL_CLIP_DISTANCE3_APPLE           0x3003
+#define GL_CLIP_DISTANCE4_APPLE           0x3004
+#define GL_CLIP_DISTANCE5_APPLE           0x3005
+#define GL_CLIP_DISTANCE6_APPLE           0x3006
+#define GL_CLIP_DISTANCE7_APPLE           0x3007
+#define GL_MAX_CLIP_DISTANCES_APPLE       0x0D32
+#endif
+
 #if GL_APPLE_rgb_422
 #define GL_RGB_422_APPLE                                        0x8A1F
 #define GL_UNSIGNED_SHORT_8_8_APPLE                             0x85BA
@@ -116,7 +136,7 @@ extern "C" {
 #if GL_EXT_read_format_bgra
 #define GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT                       0x8365
 #define GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT                       0x8366
-#define GL_UNSIGNED_SHORT_1_5_5_5_REV                           GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT
+#define GL_UNSIGNED_SHORT_1_5_5_5_REV                           0x8366
 #endif
 
 #if GL_EXT_read_format_bgra || GL_IMG_read_format
@@ -162,6 +182,40 @@ extern "C" {
 #define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG                      0x8C01
 #define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG                     0x8C02
 #define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG                     0x8C03
+#endif
+
+/*------------------------------------------------------------------------*
+ * KHR extension tokens
+ *------------------------------------------------------------------------*/
+#if GL_KHR_texture_compression_astc_ldr
+#define GL_COMPRESSED_RGBA_ASTC_4x4_KHR                         0x93B0
+#define GL_COMPRESSED_RGBA_ASTC_5x4_KHR                         0x93B1
+#define GL_COMPRESSED_RGBA_ASTC_5x5_KHR                         0x93B2
+#define GL_COMPRESSED_RGBA_ASTC_6x5_KHR                         0x93B3
+#define GL_COMPRESSED_RGBA_ASTC_6x6_KHR                         0x93B4
+#define GL_COMPRESSED_RGBA_ASTC_8x5_KHR                         0x93B5
+#define GL_COMPRESSED_RGBA_ASTC_8x6_KHR                         0x93B6
+#define GL_COMPRESSED_RGBA_ASTC_8x8_KHR                         0x93B7
+#define GL_COMPRESSED_RGBA_ASTC_10x5_KHR                        0x93B8
+#define GL_COMPRESSED_RGBA_ASTC_10x6_KHR                        0x93B9
+#define GL_COMPRESSED_RGBA_ASTC_10x8_KHR                        0x93BA
+#define GL_COMPRESSED_RGBA_ASTC_10x10_KHR                       0x93BB
+#define GL_COMPRESSED_RGBA_ASTC_12x10_KHR                       0x93BC
+#define GL_COMPRESSED_RGBA_ASTC_12x12_KHR                       0x93BD
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR                 0x93D0
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR                 0x93D1
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR                 0x93D2
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR                 0x93D3
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR                 0x93D4
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR                 0x93D5
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR                 0x93D6
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR                 0x93D7
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR                0x93D8
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR                0x93D9
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR                0x93DA
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR               0x93DB
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR               0x93DC
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR               0x93DD
 #endif
 
 /*------------------------------------------------------------------------*

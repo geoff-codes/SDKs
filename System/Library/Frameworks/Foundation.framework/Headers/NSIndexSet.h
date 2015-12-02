@@ -1,5 +1,5 @@
 /*	NSIndexSet.h
-	Copyright (c) 2002-2013, Apple Inc. All rights reserved.
+	Copyright (c) 2002-2015, Apple Inc. All rights reserved.
 */
 
 /* Class for managing set of indexes. The set of valid indexes are 0 .. NSNotFound - 1; trying to use indexes outside this range is an error.  NSIndexSet uses NSNotFound as a return value in cases where the queried index doesn't exist in the set; for instance, when you ask firstIndex and there are no indexes; or when you ask for indexGreaterThanIndex: on the last index, and so on.
@@ -26,7 +26,9 @@ To enumerate without doing a call per index, you can use the method getIndexes:m
 #import <Foundation/NSObject.h>
 #import <Foundation/NSRange.h>
 
-@interface NSIndexSet : NSObject <NSCopying, NSMutableCopying, NSCoding> {
+NS_ASSUME_NONNULL_BEGIN
+
+@interface NSIndexSet : NSObject <NSCopying, NSMutableCopying, NSSecureCoding> {
     @protected   // all instance variables are private
     struct {
         NSUInteger _isEmpty:1;
@@ -49,20 +51,19 @@ To enumerate without doing a call per index, you can use the method getIndexes:m
 + (instancetype)indexSetWithIndex:(NSUInteger)value;
 + (instancetype)indexSetWithIndexesInRange:(NSRange)range;
 
-- (instancetype)init;	/* designated initializer */
-- (instancetype)initWithIndexesInRange:(NSRange)range;	/* designated initializer */
-- (instancetype)initWithIndexSet:(NSIndexSet *)indexSet;	/* designated initializer */
+- (instancetype)initWithIndexesInRange:(NSRange)range NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithIndexSet:(NSIndexSet *)indexSet NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithIndex:(NSUInteger)value;
 
 - (BOOL)isEqualToIndexSet:(NSIndexSet *)indexSet;
 
-- (NSUInteger)count;
+@property (readonly) NSUInteger count;
 
 /* The following six methods will return NSNotFound if there is no index in the set satisfying the query. 
 */
-- (NSUInteger)firstIndex;
-- (NSUInteger)lastIndex;
+@property (readonly) NSUInteger firstIndex;
+@property (readonly) NSUInteger lastIndex;
 - (NSUInteger)indexGreaterThanIndex:(NSUInteger)value;
 - (NSUInteger)indexLessThanIndex:(NSUInteger)value;
 - (NSUInteger)indexGreaterThanOrEqualToIndex:(NSUInteger)value;
@@ -70,7 +71,7 @@ To enumerate without doing a call per index, you can use the method getIndexes:m
 
 /* Fills up to bufferSize indexes in the specified range into the buffer and returns the number of indexes actually placed in the buffer; also modifies the optional range passed in by pointer to be "positioned" after the last index filled into the buffer.Example: if the index set contains the indexes 0, 2, 4, ..., 98, 100, for a buffer of size 10 and the range (20, 80) the buffer would contain 20, 22, ..., 38 and the range would be modified to (40, 60).
 */
-- (NSUInteger)getIndexes:(NSUInteger *)indexBuffer maxCount:(NSUInteger)bufferSize inIndexRange:(NSRangePointer)range;
+- (NSUInteger)getIndexes:(NSUInteger *)indexBuffer maxCount:(NSUInteger)bufferSize inIndexRange:(nullable NSRangePointer)range;
 
 - (NSUInteger)countOfIndexesInRange:(NSRange)range NS_AVAILABLE(10_5, 2_0);
 
@@ -80,7 +81,6 @@ To enumerate without doing a call per index, you can use the method getIndexes:m
 
 - (BOOL)intersectsIndexesInRange:(NSRange)range;
 
-#if NS_BLOCKS_AVAILABLE
 - (void)enumerateIndexesUsingBlock:(void (^)(NSUInteger idx, BOOL *stop))block NS_AVAILABLE(10_6, 4_0);
 - (void)enumerateIndexesWithOptions:(NSEnumerationOptions)opts usingBlock:(void (^)(NSUInteger idx, BOOL *stop))block NS_AVAILABLE(10_6, 4_0);
 - (void)enumerateIndexesInRange:(NSRange)range options:(NSEnumerationOptions)opts usingBlock:(void (^)(NSUInteger idx, BOOL *stop))block NS_AVAILABLE(10_6, 4_0);
@@ -101,9 +101,6 @@ To enumerate without doing a call per index, you can use the method getIndexes:m
 - (void)enumerateRangesUsingBlock:(void (^)(NSRange range, BOOL *stop))block NS_AVAILABLE(10_7, 5_0);
 - (void)enumerateRangesWithOptions:(NSEnumerationOptions)opts usingBlock:(void (^)(NSRange range, BOOL *stop))block NS_AVAILABLE(10_7, 5_0);
 - (void)enumerateRangesInRange:(NSRange)range options:(NSEnumerationOptions)opts usingBlock:(void (^)(NSRange range, BOOL *stop))block NS_AVAILABLE(10_7, 5_0);
-
-
-#endif
 
 @end
 
@@ -126,3 +123,4 @@ To enumerate without doing a call per index, you can use the method getIndexes:m
 
 @end
 
+NS_ASSUME_NONNULL_END

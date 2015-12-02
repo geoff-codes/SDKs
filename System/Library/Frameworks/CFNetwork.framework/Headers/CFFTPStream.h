@@ -3,7 +3,7 @@
  
 	 Contains:   CoreFoundation FTP stream header
   
-	 Copyright:  Copyright (c) 2001-2008 Apple Inc. All rights reserved.
+	 Copyright:  Copyright (c) 2001-2013 Apple Inc. All rights reserved.
  
 	 Bugs?:	  For bug reports, consult the following page on
 				 the World Wide Web:
@@ -23,38 +23,31 @@
 #endif
 
 
-
-#include <Availability.h>
-
 #if PRAGMA_ONCE
 #pragma once
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+CF_EXTERN_C_BEGIN
+CF_ASSUME_NONNULL_BEGIN
 
 /*
  *  kCFStreamErrorDomainFTP
  *  
  *  Discussion:
  *	Result code returned by FTP server
- *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
+ *
  */
-CFN_EXPORT const SInt32 kCFStreamErrorDomainFTP						  __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const SInt32 kCFStreamErrorDomainFTP CF_AVAILABLE(10_3, 2_0);
 
 
 /*
-FTP Stream Property keys.  These keys can be passed to the stream
-property "set/get" functions, such as CFReadStreamSetProperty/
-CFReadStreamCopyProperty, or to a CFDictionary creator or an item
-accessor/mutator.  The comment before each key declaration (treated
-as definition) indicates the value type of the property.
-*/
+ *  FTP Stream Property keys.
+ *  These keys can be passed to the stream property "set/get" functions,
+ *  such as CFReadStreamSetProperty/CFReadStreamCopyProperty, or to a
+ *  CFDictionary creator or an item accessor/mutator.  The comment before
+ *  each key declaration (treated as definition) indicates the value type
+ *  of the property.
+ */
 
 
 /*
@@ -65,12 +58,8 @@ as definition) indicates the value type of the property.
  *	type to hold login user name.  Don't set this property if you
  *	want anonymous FTP.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPUserName				__OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPUserName CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -81,12 +70,8 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyFTPUserName				__OSX_AVAILABLE_STA
  *	type to hold login password.  Don't set this property if you want
  *	anonymous FTP.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPPassword				__OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPPassword CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -97,12 +82,8 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyFTPPassword				__OSX_AVAILABLE_STA
  *	type. kCFBooleanTrue means use passive mode, kCFBooleanFalse
  *	otherwise
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPUsePassiveMode		  __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPUsePassiveMode CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -112,12 +93,8 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyFTPUsePassiveMode		  __OSX_AVAILAB
  *	Stream property key, for read stream copy operations.  CFNumber
  *	of kCFNumberLongLongType to hold resource size in bytes.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPResourceSize			__OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPResourceSize CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -130,12 +107,8 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyFTPResourceSize			__OSX_AVAILABLE_
  *	resource size/other info is unnecessary.  Initially, only
  *	resource size is implemented.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPFetchResourceInfo	   __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPFetchResourceInfo CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -145,12 +118,8 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyFTPFetchResourceInfo	   __OSX_AVAI
  *	Stream property key, for both set and copy operations.  CFNumber
  *	of kCFNumberLongLongType for the file offset to start transfer at.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPFileTransferOffset	  __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPFileTransferOffset CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -161,12 +130,8 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyFTPFileTransferOffset	  __OSX_AVAI
  *	type.  TRUE by default, set to FALSE to avoid reusing existing
  *	server connections.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPAttemptPersistentConnection __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPAttemptPersistentConnection CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -175,15 +140,11 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyFTPAttemptPersistentConnection __O
  *  Discussion:
  *	Stream property key, for both set and copy operations. 
  *	CFDictionary type that holds key-value pairs of proxy dictionary.
- *	 The dictionary returned by SystemConfiguration can also be
+ *	The dictionary returned by SystemConfiguration can also be
  *	passed directly as the value.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxy				   __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxy CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -196,12 +157,8 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxy				   __OSX_AVAILABLE_STA
  *	This property can be set and copied individually or via a
  *	CFDictionary.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxyHost			   __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxyHost CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -214,38 +171,27 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxyHost			   __OSX_AVAILABLE_
  *	server port number.  This property can be set and copied
  *	individually or via a CFDictionary.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxyPort			   __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxyPort CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 /*
  *  kCFStreamPropertyFTPProxyUser
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxyUser			   __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxyUser CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
+
 /*
  *  kCFStreamPropertyFTPProxyPassword
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxyPassword		   __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFStreamPropertyFTPProxyPassword CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
-CFDictionary keys for resource information.  The information is
-extracted from a line of the directory list by function
-CFFTPCreateParsedResourceListing.
-*/
+ *  CFDictionary keys for resource information.  The information is
+ *  extracted from a line of the directory list by function
+ *  CFFTPCreateParsedResourceListing.
+ */
 
 
 /*
@@ -255,12 +201,8 @@ CFFTPCreateParsedResourceListing.
  *	CFDictionary key, for get value operation.  CFNumber to hold the
  *	resource access permission defined in sys/types.h.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFFTPResourceMode						  __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFFTPResourceMode CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -270,12 +212,8 @@ CFN_EXPORT const CFStringRef kCFFTPResourceMode						  __OSX_AVAILABLE_STARTING(
  *	CFDictionary key, for get value operation.  CFString that holds
  *	the resource name.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFFTPResourceName						  __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFFTPResourceName CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -285,12 +223,8 @@ CFN_EXPORT const CFStringRef kCFFTPResourceName						  __OSX_AVAILABLE_STARTING(
  *	CFDictionary key, for get value operation.  CFString that holds
  *	the resource owner's name.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFFTPResourceOwner						 __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFFTPResourceOwner CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -300,12 +234,8 @@ CFN_EXPORT const CFStringRef kCFFTPResourceOwner						 __OSX_AVAILABLE_STARTING(
  *	CFDictionary key, for get value operation.  CFString to hold the
  *	name of the group that shares the resource.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFFTPResourceGroup						 __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFFTPResourceGroup CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -316,12 +246,8 @@ CFN_EXPORT const CFStringRef kCFFTPResourceGroup						 __OSX_AVAILABLE_STARTING(
  *	symbolic link information.  If the item is a symbolic link the
  *	string will contain the path to the item the link references.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFFTPResourceLink						  __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFFTPResourceLink CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -331,12 +257,8 @@ CFN_EXPORT const CFStringRef kCFFTPResourceLink						  __OSX_AVAILABLE_STARTING(
  *	CFDictionary key, for get value operation.  CFNumber of
  *	kCFNumberLongLongType to hold the resource length in bytes.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFFTPResourceSize						  __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFFTPResourceSize CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -346,12 +268,8 @@ CFN_EXPORT const CFStringRef kCFFTPResourceSize						  __OSX_AVAILABLE_STARTING(
  *	CFDictionary key, for get value operation.  CFNumber to hold the
  *	resource type as defined in sys/dirent.h.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFFTPResourceType						  __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFFTPResourceType CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
@@ -361,17 +279,15 @@ CFN_EXPORT const CFStringRef kCFFTPResourceType						  __OSX_AVAILABLE_STARTING(
  *	CFDictionary key, for get value operation.  CFDate to hold the
  *	last modification date and time information.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT const CFStringRef kCFFTPResourceModDate					   __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT const CFStringRef kCFFTPResourceModDate CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 /*
  *  CFReadStreamCreateWithFTPURL()
  *  
+ *  DEPRECATED: Use NSURLSessionAPI for ftp requests
+ *
  *  Discussion:
  *	Create an FTP read stream for downloading operation from an FTP
  *	URL. If the URL refers to a directory, the stream is a filtered
@@ -400,21 +316,17 @@ CFN_EXPORT const CFStringRef kCFFTPResourceModDate					   __OSX_AVAILABLE_STARTI
  *	caller's responsibilty to release the memory allocated for the
  *	read stream.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
 CFN_EXPORT CFReadStreamRef 
-CFReadStreamCreateWithFTPURL(
-  CFAllocatorRef   alloc,
-  CFURLRef		 ftpURL)									__OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFReadStreamCreateWithFTPURL(CFAllocatorRef __nullable alloc, CFURLRef ftpURL) CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 
 /*
  *  CFFTPCreateParsedResourceListing()
  *  
+ *  DEPRECATED: Use NSURLSessionAPI for ftp requests
+ *
  *  Discussion:
  *	Parse a line of file or folder listing of Unix format, and store
  *	the extracted result in a CFDictionary.
@@ -448,23 +360,17 @@ CFReadStreamCreateWithFTPURL(
  *	The number of bytes consumed from buffer, 0 if there are not
  *	enough bytes, or -1 if a parse failure occurs.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
 CFN_EXPORT CFIndex 
-CFFTPCreateParsedResourceListing(
-  CFAllocatorRef	 alloc,
-  const UInt8 *	  buffer,
-  CFIndex			bufferLength,
-  CFDictionaryRef *  parsed)								  __OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFFTPCreateParsedResourceListing(CFAllocatorRef __nullable alloc, const UInt8 *buffer, CFIndex bufferLength, CFDictionaryRef __nullable *  __nullable parsed) CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
 
 /*
  *  CFWriteStreamCreateWithFTPURL()
- *  
+ *
+ *  DEPRECATED: Use NSURLSessionAPI for ftp requests
+ *
  *  Discussion:
  *	Create an FTP write stream for uploading operation to a FTP URL.
  *	If the URL specifies a directory, the open will be followed by a
@@ -492,21 +398,13 @@ CFFTPCreateParsedResourceListing(
  *	is caller's responsibilty to release the memory allocated for the
  *	write stream.
  *  
- *  Availability:
- *	Mac OS X:		 in version 10.3 and later in CoreServices.framework
- *	CarbonLib:		not available
- *	Non-Carbon CFM:   not available
  */
-CFN_EXPORT CFWriteStreamRef 
-CFWriteStreamCreateWithFTPURL(
-  CFAllocatorRef   alloc,
-  CFURLRef		 ftpURL)									__OSX_AVAILABLE_STARTING(__MAC_10_3,__IPHONE_2_0);
+CFN_EXPORT CFWriteStreamRef
+CFWriteStreamCreateWithFTPURL(CFAllocatorRef __nullable alloc, CFURLRef ftpURL) CF_DEPRECATED(10_3, 10_11, 2_0, 9_0 , "Use NSURLSessionAPI for ftp requests");
 
 
-
-#ifdef __cplusplus
-}
-#endif
+CF_ASSUME_NONNULL_END
+CF_EXTERN_C_END
 
 #endif /* __CFFTPSTREAM__ */
 

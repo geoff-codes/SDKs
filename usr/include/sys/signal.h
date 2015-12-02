@@ -71,6 +71,7 @@
 
 #include <sys/cdefs.h>
 #include <sys/appleapiopts.h>
+#include <Availability.h>
 
 #define __DARWIN_NSIG	32	/* counting 0; could be 33 (mask is 1-32) */
 
@@ -143,11 +144,13 @@
 #include <sys/_types.h>
 
 #include <machine/_mcontext.h>
+
+#include <sys/_pthread/_pthread_attr_t.h>
+
 #include <sys/_types/_sigaltstack.h>
 #include <sys/_types/_ucontext.h>
 
 #include <sys/_types/_pid_t.h>
-#include <sys/_types/_pthread_attr_t.h>
 #include <sys/_types/_sigset_t.h>
 #include <sys/_types/_size_t.h>
 #include <sys/_types/_uid_t.h>

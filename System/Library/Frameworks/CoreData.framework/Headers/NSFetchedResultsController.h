@@ -1,7 +1,7 @@
 /*
     NSFetchedResultsController.h
     Core Data
-    Copyright (c) 2009-2012 Apple Inc.
+    Copyright (c) 2009-2015, Apple Inc.
     All rights reserved.
 
 Class Overview
@@ -40,12 +40,19 @@ Handling of Invalidated Objects
 		
 */
 
-#import <Foundation/Foundation.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSSet.h>
+#import <Foundation/NSError.h>
+#import <Foundation/NSIndexPath.h>
+#import <CoreData/NSManagedObjectContext.h>
+#import <CoreData/NSManagedObject.h>
+#import <CoreData/NSFetchRequest.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol NSFetchedResultsControllerDelegate;
-
-@class NSFetchRequest;
-@class NSManagedObjectContext;
+@protocol NSFetchedResultsSectionInfo;
 
 NS_CLASS_AVAILABLE(NA,3_0)
 @interface NSFetchedResultsController : NSObject {
@@ -90,7 +97,7 @@ NS_CLASS_AVAILABLE(NA,3_0)
 	sectionNameKeyPath - keypath on resulting objects that returns the section name. This will be used to pre-compute the section information.
 	cacheName - Section info is cached persistently to a private file under this name. Cached sections are checked to see if the time stamp matches the store, but not if you have illegally mutated the readonly fetch request, predicate, or sort descriptor.
 */
-- (id)initWithFetchRequest:(NSFetchRequest *)fetchRequest managedObjectContext: (NSManagedObjectContext *)context sectionNameKeyPath:(NSString *)sectionNameKeyPath cacheName:(NSString *)name;
+- (instancetype)initWithFetchRequest:(NSFetchRequest *)fetchRequest managedObjectContext: (NSManagedObjectContext *)context sectionNameKeyPath:(nullable NSString *)sectionNameKeyPath cacheName:(nullable NSString *)name;
 
 /* Executes the fetch request on the store to get objects.
     Returns YES if successful or NO (and an error) if a problem occurred. 
@@ -113,20 +120,20 @@ NS_CLASS_AVAILABLE(NA,3_0)
 
 /* The keyPath on the fetched objects used to determine the section they belong to. 
 */
-@property (nonatomic, readonly) NSString *sectionNameKeyPath;
+@property (nullable, nonatomic, readonly) NSString *sectionNameKeyPath;
 
 /* Name of the persistent cached section information. Use nil to disable persistent caching, or +deleteCacheWithName to clear a cache.
 */
-@property (nonatomic, readonly) NSString *cacheName;
+@property (nullable, nonatomic, readonly) NSString *cacheName;
 
 /* Delegate that is notified when the result set changes.
 */
-@property(nonatomic, assign) id< NSFetchedResultsControllerDelegate > delegate;
+@property(nullable, nonatomic, assign) id< NSFetchedResultsControllerDelegate > delegate;
 
 /* Deletes the cached section information with the given name.
     If name is nil, then all caches are deleted.
 */
-+ (void)deleteCacheWithName:(NSString *)name;
++ (void)deleteCacheWithName:(nullable NSString *)name;
 
 /* ========================================================*/
 /* ============= ACCESSING OBJECT RESULTS =================*/
@@ -135,7 +142,7 @@ NS_CLASS_AVAILABLE(NA,3_0)
 /* Returns the results of the fetch.
     Returns nil if the performFetch: hasn't been called.
 */
-@property  (nonatomic, readonly) NSArray *fetchedObjects;
+@property  (nullable, nonatomic, readonly) NSArray *fetchedObjects;
 
 /* Returns the fetched object at a given indexPath.
 */
@@ -143,7 +150,7 @@ NS_CLASS_AVAILABLE(NA,3_0)
 
 /* Returns the indexPath of a given object.
 */
--(NSIndexPath *)indexPathForObject:(id)object;
+-(nullable NSIndexPath *)indexPathForObject:(id)object;
 
 /* ========================================================*/
 /* =========== CONFIGURING SECTION INFORMATION ============*/
@@ -156,7 +163,7 @@ NS_CLASS_AVAILABLE(NA,3_0)
     Developers that need different behavior can implement the delegate method -(NSString*)controller:(NSFetchedResultsController *)controller sectionIndexTitleForSectionName
     Only needed if a section index is used.
 */
-- (NSString *)sectionIndexTitleForSectionName:(NSString *)sectionName;
+- (nullable NSString *)sectionIndexTitleForSectionName:(NSString *)sectionName;
 
 /* Returns the array of section index titles.
     It's expected that developers call this method when implementing UITableViewDataSource's
@@ -166,7 +173,7 @@ NS_CLASS_AVAILABLE(NA,3_0)
     Developers should override this method if they wish to return a different array for the section index.
     Only needed if a section index is used.
 */
-@property (nonatomic, readonly) NSArray *sectionIndexTitles;
+@property (nonatomic, readonly) NSArray<NSString *> *sectionIndexTitles;
 
 /* ========================================================*/
 /* =========== QUERYING SECTION INFORMATION ===============*/
@@ -180,7 +187,7 @@ NS_CLASS_AVAILABLE(NA,3_0)
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section; 
 
 */
-@property (nonatomic, readonly) NSArray *sections;
+@property (nullable, nonatomic, readonly) NSArray<id<NSFetchedResultsSectionInfo>> *sections;
 
 /* Returns the section number for a given section title and index in the section index.
     It's expected that developers call this method when executing UITableViewDataSource's
@@ -200,7 +207,7 @@ NS_CLASS_AVAILABLE(NA,3_0)
 
 /* Title of the section (used when displaying the index)
 */
-@property (nonatomic, readonly) NSString *indexTitle;
+@property (nullable, nonatomic, readonly) NSString *indexTitle;
 
 /* Number of objects in section
 */
@@ -208,22 +215,20 @@ NS_CLASS_AVAILABLE(NA,3_0)
 
 /* Returns the array of objects in the section.
 */
-@property (nonatomic, readonly) NSArray *objects;
+@property (nullable, nonatomic, readonly) NSArray *objects;
 
 @end // NSFetchedResultsSectionInfo
 
 
 
-@protocol NSFetchedResultsControllerDelegate
+@protocol NSFetchedResultsControllerDelegate <NSObject>
 
-enum {
+typedef NS_ENUM(NSUInteger, NSFetchedResultsChangeType) {
 	NSFetchedResultsChangeInsert = 1,
 	NSFetchedResultsChangeDelete = 2,
 	NSFetchedResultsChangeMove = 3,
 	NSFetchedResultsChangeUpdate = 4
-	
-};
-typedef NSUInteger NSFetchedResultsChangeType;
+} NS_ENUM_AVAILABLE(NA,  3_0);
 
 /* Notifies the delegate that a fetched object has been changed due to an add, remove, move, or update. Enables NSFetchedResultsController change tracking.
 	controller - controller instance that noticed the change on its fetched objects
@@ -239,7 +244,7 @@ typedef NSUInteger NSFetchedResultsChangeType;
 	The Update object is reported when an object's state changes, and the changed attributes aren't part of the sort keys. 
 */
 @optional
-- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath;
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(nullable NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(nullable NSIndexPath *)newIndexPath;
 
 /* Notifies the delegate of added or removed sections.  Enables NSFetchedResultsController change tracking.
 
@@ -270,6 +275,8 @@ typedef NSUInteger NSFetchedResultsChangeType;
     Only needed if a section index is used.
 */
 @optional
-- (NSString *)controller:(NSFetchedResultsController *)controller sectionIndexTitleForSectionName:(NSString *)sectionName __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+- (nullable NSString *)controller:(NSFetchedResultsController *)controller sectionIndexTitleForSectionName:(NSString *)sectionName __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 @end
+
+NS_ASSUME_NONNULL_END

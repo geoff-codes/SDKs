@@ -52,4 +52,12 @@
  */
 - (void)playPrerollAdWithCompletionHandler:(void (^)(NSError *error))completionHandler NS_AVAILABLE_IOS(7_0);
 
+/*!
+ * @method -cancelPreroll
+ *
+ * @discussion
+ * Cancel pre-roll video ad playback.
+ */
+- (void)cancelPreroll NS_AVAILABLE_IOS(8_0);
+
 @end

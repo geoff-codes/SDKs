@@ -1,11 +1,21 @@
 /*	NSXMLParser.h
-        Copyright (c) 2003-2013, Apple Inc. All rights reserved.
+        Copyright (c) 2003-2015, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 
-@class NSData, NSDictionary, NSError, NSString, NSURL, NSInputStream;
+@class NSData, NSDictionary<KeyType, ObjectType>, NSError, NSString, NSURL, NSInputStream, NSSet<ObjectType>;
 @protocol NSXMLParserDelegate;
+
+NS_ASSUME_NONNULL_BEGIN
+
+NS_ENUM_AVAILABLE(10_9, 8_0)
+typedef NS_ENUM(NSUInteger, NSXMLParserExternalEntityResolvingPolicy) {
+    NSXMLParserResolveExternalEntitiesNever = 0, // default
+    NSXMLParserResolveExternalEntitiesNoNetwork,
+    NSXMLParserResolveExternalEntitiesSameOriginOnly, //only applies to NSXMLParser instances initialized with -initWithContentsOfURL:
+    NSXMLParserResolveExternalEntitiesAlways
+};
 
 @interface NSXMLParser : NSObject {
 @private
@@ -15,34 +25,39 @@
     id _reserved2;
     id _reserved3;
 }
-- (id)initWithContentsOfURL:(NSURL *)url;  // initializes the parser with the specified URL.
-- (id)initWithData:(NSData *)data; // create the parser from data
-- (id)initWithStream:(NSInputStream *)stream NS_AVAILABLE(10_7, 5_0); //create a parser that incrementally pulls data from the specified stream and parses it.
+- (nullable instancetype)initWithContentsOfURL:(NSURL *)url;  // initializes the parser with the specified URL.
+- (instancetype)initWithData:(NSData *)data NS_DESIGNATED_INITIALIZER; // create the parser from data
+- (instancetype)initWithStream:(NSInputStream *)stream NS_AVAILABLE(10_7, 5_0); //create a parser that incrementally pulls data from the specified stream and parses it.
 
 // delegate management. The delegate is not retained.
-- (id <NSXMLParserDelegate>)delegate;
-- (void)setDelegate:(id <NSXMLParserDelegate>)delegate;
+@property (nullable, assign) id <NSXMLParserDelegate> delegate;
 
-- (void)setShouldProcessNamespaces:(BOOL)shouldProcessNamespaces;
-- (void)setShouldReportNamespacePrefixes:(BOOL)shouldReportNamespacePrefixes;
-- (void)setShouldResolveExternalEntities:(BOOL)shouldResolveExternalEntities;
+@property BOOL shouldProcessNamespaces;
+@property BOOL shouldReportNamespacePrefixes;
     
-- (BOOL)shouldProcessNamespaces;
-- (BOOL)shouldReportNamespacePrefixes;
-- (BOOL)shouldResolveExternalEntities;
+// The next two properties are really only available in OS X 10.9.5 or later
+@property NSXMLParserExternalEntityResolvingPolicy externalEntityResolvingPolicy NS_AVAILABLE(10_9, 8_0); //defaults to NSXMLNodeLoadExternalEntitiesNever
+
+@property (nullable, copy) NSSet<NSURL *> *allowedExternalEntityURLs NS_AVAILABLE(10_9, 8_0);
 
 - (BOOL)parse;	// called to start the event-driven parse. Returns YES in the event of a successful parse, and NO in case of error.
 - (void)abortParsing;	// called by the delegate to stop the parse. The delegate will get an error message sent to it.
 
-- (NSError *)parserError;	// can be called after a parse is over to determine parser state.
+@property (nullable, readonly, copy) NSError *parserError;	// can be called after a parse is over to determine parser state.
+
+//Toggles between disabling external entities entirely, and the current setting of the 'externalEntityResolvingPolicy'.
+//The 'externalEntityResolvingPolicy' property should be used instead of this, unless targeting 10.9/7.0 or earlier
+@property BOOL shouldResolveExternalEntities;
+
 @end
 
 // Once a parse has begun, the delegate may be interested in certain parser state. These methods will only return meaningful information during parsing, or after an error has occurred.
 @interface NSXMLParser (NSXMLParserLocatorAdditions)
-- (NSString *)publicID;
-- (NSString *)systemID;
-- (NSInteger)lineNumber;
-- (NSInteger)columnNumber;
+@property (nullable, readonly, copy) NSString *publicID;
+@property (nullable, readonly, copy) NSString *systemID;
+@property (readonly) NSInteger lineNumber;
+@property (readonly) NSInteger columnNumber;
+
 @end
 
 /*
@@ -72,19 +87,19 @@
     // sent when the parser has completed parsing. If this is encountered, the parse was successful.
 
 // DTD handling methods for various declarations.
-- (void)parser:(NSXMLParser *)parser foundNotationDeclarationWithName:(NSString *)name publicID:(NSString *)publicID systemID:(NSString *)systemID;
+- (void)parser:(NSXMLParser *)parser foundNotationDeclarationWithName:(NSString *)name publicID:(nullable NSString *)publicID systemID:(nullable NSString *)systemID;
 
-- (void)parser:(NSXMLParser *)parser foundUnparsedEntityDeclarationWithName:(NSString *)name publicID:(NSString *)publicID systemID:(NSString *)systemID notationName:(NSString *)notationName;
+- (void)parser:(NSXMLParser *)parser foundUnparsedEntityDeclarationWithName:(NSString *)name publicID:(nullable NSString *)publicID systemID:(nullable NSString *)systemID notationName:(nullable NSString *)notationName;
 
-- (void)parser:(NSXMLParser *)parser foundAttributeDeclarationWithName:(NSString *)attributeName forElement:(NSString *)elementName type:(NSString *)type defaultValue:(NSString *)defaultValue;
+- (void)parser:(NSXMLParser *)parser foundAttributeDeclarationWithName:(NSString *)attributeName forElement:(NSString *)elementName type:(nullable NSString *)type defaultValue:(nullable NSString *)defaultValue;
 
 - (void)parser:(NSXMLParser *)parser foundElementDeclarationWithName:(NSString *)elementName model:(NSString *)model;
 
-- (void)parser:(NSXMLParser *)parser foundInternalEntityDeclarationWithName:(NSString *)name value:(NSString *)value;
+- (void)parser:(NSXMLParser *)parser foundInternalEntityDeclarationWithName:(NSString *)name value:(nullable NSString *)value;
 
-- (void)parser:(NSXMLParser *)parser foundExternalEntityDeclarationWithName:(NSString *)name publicID:(NSString *)publicID systemID:(NSString *)systemID;
+- (void)parser:(NSXMLParser *)parser foundExternalEntityDeclarationWithName:(NSString *)name publicID:(nullable NSString *)publicID systemID:(nullable NSString *)systemID;
 
-- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict;
+- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(nullable NSString *)namespaceURI qualifiedName:(nullable NSString *)qName attributes:(NSDictionary<NSString *, NSString *> *)attributeDict;
     // sent when the parser finds an element start tag.
     // In the case of the cvslog tag, the following is what the delegate receives:
     //   elementName == cvslog, namespaceURI == http://xml.apple.com/cvslog, qualifiedName == cvslog
@@ -92,7 +107,7 @@
     //    elementName == radar, namespaceURI == http://xml.apple.com/radar, qualifiedName == radar:radar
     // If namespace processing >isn't< on, the xmlns:radar="http://xml.apple.com/radar" is returned as an attribute pair, the elementName is 'radar:radar' and there is no qualifiedName.
 
-- (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName;
+- (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(nullable NSString *)namespaceURI qualifiedName:(nullable NSString *)qName;
     // sent when an end tag is encountered. The various parameters are supplied as above.
 
 - (void)parser:(NSXMLParser *)parser didStartMappingPrefix:(NSString *)prefix toURI:(NSString *)namespaceURI;
@@ -109,7 +124,7 @@
 - (void)parser:(NSXMLParser *)parser foundIgnorableWhitespace:(NSString *)whitespaceString;
     // The parser reports ignorable whitespace in the same way as characters it's found.
 
-- (void)parser:(NSXMLParser *)parser foundProcessingInstructionWithTarget:(NSString *)target data:(NSString *)data;
+- (void)parser:(NSXMLParser *)parser foundProcessingInstructionWithTarget:(NSString *)target data:(nullable NSString *)data;
     // The parser reports a processing instruction to you using this method. In the case above, target == @"xml-stylesheet" and data == @"type='text/css' href='cvslog.css'"
 
 - (void)parser:(NSXMLParser *)parser foundComment:(NSString *)comment;
@@ -118,7 +133,7 @@
 - (void)parser:(NSXMLParser *)parser foundCDATA:(NSData *)CDATABlock;
     // this reports a CDATA block to the delegate as an NSData.
 
-- (NSData *)parser:(NSXMLParser *)parser resolveExternalEntityName:(NSString *)name systemID:(NSString *)systemID;
+- (nullable NSData *)parser:(NSXMLParser *)parser resolveExternalEntityName:(NSString *)name systemID:(nullable NSString *)systemID;
     // this gives the delegate an opportunity to resolve an external entity itself and reply with the resulting data.
 
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError;
@@ -226,3 +241,5 @@ typedef NS_ENUM(NSInteger, NSXMLParserError) {
     NSXMLParserNoDTDError = 94,
     NSXMLParserDelegateAbortedParseError = 512
 };
+
+NS_ASSUME_NONNULL_END

@@ -54,6 +54,8 @@
  */
 DISPATCH_DECL(dispatch_source);
 
+__BEGIN_DECLS
+
 /*!
  * @typedef dispatch_source_type_t
  *
@@ -130,7 +132,7 @@ DISPATCH_SOURCE_TYPE_DECL(mach_recv);
  */
 #define DISPATCH_SOURCE_TYPE_MEMORYPRESSURE \
 		(&_dispatch_source_type_memorypressure)
-__OSX_AVAILABLE_STARTING(__MAC_10_9,__IPHONE_NA)
+__OSX_AVAILABLE_STARTING(__MAC_10_9,__IPHONE_8_0)
 DISPATCH_SOURCE_TYPE_DECL(memorypressure);
 
 /*!
@@ -319,7 +321,6 @@ typedef unsigned long dispatch_source_vnode_flags_t;
 
 typedef unsigned long dispatch_source_timer_flags_t;
 
-__BEGIN_DECLS
 
 /*!
  * @function dispatch_source_create
@@ -436,7 +437,7 @@ __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
 DISPATCH_EXPORT DISPATCH_NONNULL1 DISPATCH_NOTHROW
 void
 dispatch_source_set_cancel_handler(dispatch_source_t source,
-	dispatch_block_t cancel_handler);
+	dispatch_block_t handler);
 #endif /* __BLOCKS__ */
 
 /*!
@@ -461,7 +462,7 @@ __OSX_AVAILABLE_STARTING(__MAC_10_6,__IPHONE_4_0)
 DISPATCH_EXPORT DISPATCH_NONNULL1 DISPATCH_NOTHROW
 void
 dispatch_source_set_cancel_handler_f(dispatch_source_t source,
-	dispatch_function_t cancel_handler);
+	dispatch_function_t handler);
 
 /*!
  * @function dispatch_source_cancel
@@ -711,7 +712,7 @@ __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_3)
 DISPATCH_EXPORT DISPATCH_NONNULL1 DISPATCH_NOTHROW
 void
 dispatch_source_set_registration_handler(dispatch_source_t source,
-	dispatch_block_t registration_handler);
+	dispatch_block_t handler);
 #endif /* __BLOCKS__ */
 
 /*!
@@ -736,7 +737,7 @@ __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_3)
 DISPATCH_EXPORT DISPATCH_NONNULL1 DISPATCH_NOTHROW
 void
 dispatch_source_set_registration_handler_f(dispatch_source_t source,
-	dispatch_function_t registration_handler);
+	dispatch_function_t handler);
 
 __END_DECLS
 

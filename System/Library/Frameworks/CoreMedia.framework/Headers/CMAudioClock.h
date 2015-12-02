@@ -3,7 +3,7 @@
  
 	Framework:  CoreMedia
  
-	Copyright 2006-2012 Apple Inc. All rights reserved.
+	Copyright 2006-2015 Apple Inc. All rights reserved.
  
 */
 
@@ -37,8 +37,8 @@ extern "C" {
 */
 CM_EXPORT OSStatus
 CMAudioClockCreate(
-		CFAllocatorRef allocator,
-		CMClockRef *clockOut)
+		CM_NULLABLE CFAllocatorRef allocator,
+		CM_RETURNS_RETAINED_PARAMETER CM_NULLABLE CMClockRef * CM_NONNULL clockOut)
 			__OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
 
 #pragma pack(pop)

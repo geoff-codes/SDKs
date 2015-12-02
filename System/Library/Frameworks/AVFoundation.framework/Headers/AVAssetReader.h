@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2015 Apple Inc. All rights reserved.
 
 */
 
@@ -16,6 +16,8 @@
 @class AVAsset;
 @class AVAssetReaderOutput;
 @class AVAssetReaderInternal;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @enum AVAssetReaderStatus
@@ -33,14 +35,13 @@
  @constant	 AVAssetReaderStatusCancelled
 	Indicates that the asset reader can no longer read samples because reading was canceled with the cancelReading method.
  */
-enum {
+typedef NS_ENUM(NSInteger, AVAssetReaderStatus) {
     AVAssetReaderStatusUnknown = 0,
     AVAssetReaderStatusReading,
     AVAssetReaderStatusCompleted,
     AVAssetReaderStatusFailed,
     AVAssetReaderStatusCancelled,
 };
-typedef NSInteger AVAssetReaderStatus;
 
 /*!
  @class AVAssetReader
@@ -62,6 +63,7 @@ NS_CLASS_AVAILABLE(10_7, 4_1)
 @private
 	AVAssetReaderInternal		*_priv;
 }
+AV_INIT_UNAVAILABLE
 
 /*!
  @method assetReaderWithAsset:error:
@@ -73,8 +75,10 @@ NS_CLASS_AVAILABLE(10_7, 4_1)
  @param outError
 	On return, if initialization of the AVAssetReader fails, points to an NSError describing the nature of the failure.
  @result An instance of AVAssetReader.
+ @discussion
+	If the specified asset belongs to a mutable subclass of AVAsset, AVMutableComposition or AVMutableMovie, the results of any asset reading operation are undefined if you mutate the asset after invoking -startReading.
  */
-+ (AVAssetReader *)assetReaderWithAsset:(AVAsset *)asset error:(NSError **)outError;
++ (nullable instancetype)assetReaderWithAsset:(AVAsset *)asset error:(NSError * __nullable * __nullable)outError;
 
 /*!
  @method initWithAsset:error:
@@ -87,8 +91,10 @@ NS_CLASS_AVAILABLE(10_7, 4_1)
 	On return, if initialization of the AVAssetReader fails, points to an NSError describing the nature of the failure.
  @result
 	An instance of AVAssetReader.
+ @discussion
+	If the specified asset belongs to a mutable subclass of AVAsset, AVMutableComposition or AVMutableMovie, the results of any asset reading operation are undefined if you mutate the asset after invoking -startReading.
  */
-- (id)initWithAsset:(AVAsset *)asset error:(NSError **)outError;
+- (nullable instancetype)initWithAsset:(AVAsset *)asset error:(NSError * __nullable * __nullable)outError NS_DESIGNATED_INITIALIZER;
 
 /*!
  @property asset
@@ -118,7 +124,7 @@ NS_CLASS_AVAILABLE(10_7, 4_1)
  @discussion
 	The value of this property is an NSError that describes what caused the receiver to no longer be able to read its asset. If the receiver's status is not AVAssetReaderStatusFailed, the value of this property is nil. This property is thread safe.
  */
-@property (readonly) NSError *error;
+@property (readonly, nullable) NSError *error;
 
 /*!
  @property timeRange
@@ -140,7 +146,7 @@ NS_CLASS_AVAILABLE(10_7, 4_1)
  @discussion
 	The value of this property is an NSArray containing concrete instances of AVAssetReaderOutput. Outputs can be added to the receiver using the addOutput: method.
  */
-@property (nonatomic, readonly) NSArray *outputs;
+@property (nonatomic, readonly) NSArray<AVAssetReaderOutput *> *outputs;
 
 /*!
  @method canAddOutput:
@@ -200,3 +206,5 @@ NS_CLASS_AVAILABLE(10_7, 4_1)
 - (void)cancelReading;
 
 @end
+
+NS_ASSUME_NONNULL_END

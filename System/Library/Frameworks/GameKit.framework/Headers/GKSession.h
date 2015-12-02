@@ -19,8 +19,11 @@
  
  This a not a Game Center feature. To support Game Center and online play, see GKMatch.
 */
-NS_CLASS_DEPRECATED_IOS(3_0, 7_0)
-GK_EXTERN_CLASS @interface GKSession : NSObject {
+NS_CLASS_DEPRECATED(10_8, 10_10, 3_0, 7_0, "Use MCSession from the MultipeerConnectivity framework instead") 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+@interface GKSession : NSObject {
+#pragma clang diagnostic pop
 @private
     id _session;
 }
@@ -30,13 +33,16 @@ GK_EXTERN_CLASS @interface GKSession : NSObject {
 If sessionID = nil then the GKSession will use the app bundle identifier.
 If name = nil then GKSession will use the device name.
 */
-- (id)initWithSessionID:(NSString *)sessionID displayName:(NSString *)name sessionMode:(GKSessionMode)mode;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+- (id)initWithSessionID:(NSString *)sessionID displayName:(NSString *)name sessionMode:(GKSessionMode)mode NS_DEPRECATED(10_8, 10_10, 3_0, 7_0);
+#pragma clang diagnostic pop
 
 @property(assign) id<GKSessionDelegate> delegate;
 
 @property(readonly) NSString *sessionID;
 @property(readonly) NSString *displayName;
-@property(readonly) GKSessionMode sessionMode;
+@property(readonly) GKSessionMode sessionMode NS_DEPRECATED(10_8, 10_10, 3_0, 7_0);
 @property(readonly) NSString *peerID;            // session's peerID
 
 /* Toggle availability on the network based on session mode and search criteria.  Delegate will get a callback -session:didReceiveConnectionRequestFromPeer: when a peer attempts a connection.
@@ -53,11 +59,11 @@ If name = nil then GKSession will use the device name.
 
 /* Asynchronous delivery of data to one or more peers.  Returns YES if delivery started, NO if unable to start sending, and error will be set.  Delivery will be reliable or unreliable as set by mode.
 */
-- (BOOL)sendData:(NSData *) data toPeers:(NSArray *)peers withDataMode:(GKSendDataMode)mode error:(NSError **)error;
+- (BOOL)sendData:(NSData *) data toPeers:(NSArray *)peers withDataMode:(GKSendDataMode)mode error:(NSError **)error NS_DEPRECATED(10_8, 10_10, 3_0, 7_0);
 
 /* Asynchronous delivery to all peers.  Returns YES if delivery started, NO if unable to start sending, and error will be set.  Delivery will be reliable or unreliable as set by mode.
 */
-- (BOOL)sendDataToAllPeers:(NSData *) data withDataMode:(GKSendDataMode)mode error:(NSError **)error;    // errors: buffer full, data too big
+- (BOOL)sendDataToAllPeers:(NSData *) data withDataMode:(GKSendDataMode)mode error:(NSError **)error NS_DEPRECATED(10_8, 10_10, 3_0, 7_0);    // errors: buffer full, data too big
 
 /* Set the handler to receive data sent from remote peers.
 */
@@ -86,5 +92,5 @@ Failure results in a call to delegate -session:connectionWithPeerFailed:withErro
 
 /* Returns peers according to connection state
 */ 
-- (NSArray *)peersWithConnectionState:(GKPeerConnectionState)state;
+- (NSArray *)peersWithConnectionState:(GKPeerConnectionState)state NS_DEPRECATED(10_8, 10_10, 3_0, 7_0);
 @end

@@ -1,10 +1,12 @@
 /*	NSProxy.h
-	Copyright (c) 1994-2013, Apple Inc. All rights reserved.
+	Copyright (c) 1994-2015, Apple Inc. All rights reserved.
 */
 
 #import <Foundation/NSObject.h>
 
 @class NSMethodSignature, NSInvocation;
+
+NS_ASSUME_NONNULL_BEGIN
 
 NS_ROOT_CLASS
 @interface NSProxy <NSObject> {
@@ -12,15 +14,15 @@ NS_ROOT_CLASS
 }
 
 + (id)alloc;
-+ (id)allocWithZone:(NSZone *)zone NS_AUTOMATED_REFCOUNT_UNAVAILABLE;
++ (id)allocWithZone:(nullable NSZone *)zone NS_AUTOMATED_REFCOUNT_UNAVAILABLE;
 + (Class)class;
 
 - (void)forwardInvocation:(NSInvocation *)invocation;
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel;
+- (nullable NSMethodSignature *)methodSignatureForSelector:(SEL)sel NS_SWIFT_UNAVAILABLE("NSInvocation and related APIs not available");
 - (void)dealloc;
 - (void)finalize;
-- (NSString *)description;
-- (NSString *)debugDescription;
+@property (readonly, copy) NSString *description;
+@property (readonly, copy) NSString *debugDescription;
 + (BOOL)respondsToSelector:(SEL)aSelector;
 
 - (BOOL)allowsWeakReference NS_UNAVAILABLE;
@@ -30,3 +32,4 @@ NS_ROOT_CLASS
 
 @end
 
+NS_ASSUME_NONNULL_END

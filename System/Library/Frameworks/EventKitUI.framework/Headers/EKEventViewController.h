@@ -8,13 +8,15 @@
 #import <UIKit/UIKit.h>
 #import <EventKitUI/EventKitUIDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class EKEvent, EKEventStore;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, EKEventViewAction) {
     EKEventViewActionDone,                  // simply closed
     EKEventViewActionResponded,             // event invitation was responded to and saved
     EKEventViewActionDeleted,               // event was deleted
-} EKEventViewAction;
+};
 
 /*!
     @class      EKEventViewController
@@ -29,10 +31,11 @@ typedef enum {
 */
 @protocol EKEventViewDelegate;
 
+NS_EXTENSION_UNAVAILABLE_IOS("EventKitUI is not supported in extensions")
 EVENTKITUI_CLASS_AVAILABLE(4_0)
 @interface EKEventViewController : UIViewController
 
-@property(nonatomic, weak) id<EKEventViewDelegate>  delegate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2);
+@property(nonatomic, weak, nullable) id<EKEventViewDelegate>  delegate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2);
 
 /*!
     @property   event
@@ -83,3 +86,4 @@ EVENTKITUI_CLASS_AVAILABLE(4_0)
 
 @end
 
+NS_ASSUME_NONNULL_END

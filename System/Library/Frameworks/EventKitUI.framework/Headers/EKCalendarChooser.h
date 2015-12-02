@@ -9,18 +9,21 @@
 #import <EventKitUI/EventKitUIDefines.h>
 #import <EventKit/EventKit.h>
 
-typedef enum {
+NS_ASSUME_NONNULL_BEGIN
+
+typedef NS_ENUM(NSInteger, EKCalendarChooserSelectionStyle) {
     EKCalendarChooserSelectionStyleSingle,
     EKCalendarChooserSelectionStyleMultiple
-} EKCalendarChooserSelectionStyle;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, EKCalendarChooserDisplayStyle) {
     EKCalendarChooserDisplayAllCalendars,
     EKCalendarChooserDisplayWritableCalendarsOnly
-} EKCalendarChooserDisplayStyle;
+};
 
 @protocol EKCalendarChooserDelegate;
 
+NS_EXTENSION_UNAVAILABLE_IOS("EventKitUI is not supported in extensions")
 EVENTKITUI_CLASS_AVAILABLE(5_0)
 @interface EKCalendarChooser : UIViewController
 
@@ -36,7 +39,7 @@ EVENTKITUI_CLASS_AVAILABLE(5_0)
 
 @property(nonatomic, readonly) EKCalendarChooserSelectionStyle    selectionStyle;
 
-@property(nonatomic, weak) id<EKCalendarChooserDelegate>        delegate;
+@property(nonatomic, weak, nullable) id<EKCalendarChooserDelegate>        delegate;
 
 // When used in a navigation controller (presented modally), you can enable
 // the done/cancel buttons and get informed when pressed via the delegate.
@@ -45,7 +48,7 @@ EVENTKITUI_CLASS_AVAILABLE(5_0)
 
 // Regardless of whether the chooser allows you to select one or multiple
 // calendars, the selection is always expressed as a set.
-@property(nonatomic, copy) NSSet    *selectedCalendars;
+@property(nonatomic, copy) NSSet<EKCalendar *> *selectedCalendars;
 
 @end
 
@@ -61,3 +64,5 @@ EVENTKITUI_CLASS_AVAILABLE(5_0)
 - (void)calendarChooserDidCancel:(EKCalendarChooser *)calendarChooser;
 
 @end
+
+NS_ASSUME_NONNULL_END

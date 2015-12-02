@@ -1,16 +1,21 @@
 /*
     NSPersistentStoreCoordinator.h
     Core Data
-    Copyright (c) 2004-2012 Apple Inc.
+    Copyright (c) 2004-2015, Apple Inc.
     All rights reserved.
 */
 
 #import <Foundation/NSArray.h>
+#import <Foundation/NSDictionary.h>
+#import <Foundation/NSSet.h>
+#import <Foundation/NSError.h>
 #import <Foundation/NSLock.h>
 #import <CoreData/CoreDataDefines.h>
 
-@class NSDictionary;
-@class NSError;
+NS_ASSUME_NONNULL_BEGIN
+
+@class NSURL;
+@class NSValue;
 @class NSManagedObjectID;
 @class NSManagedObjectModel;
 @class NSManagedObjectContext;
@@ -152,12 +157,18 @@ COREDATA_EXTERN NSString * const NSPersistentStoreUbiquitousContainerIdentifierK
  */
 COREDATA_EXTERN NSString * const NSPersistentStoreRebuildFromUbiquitousContentOption NS_AVAILABLE(10_9, 7_0);
 
+/* store option for the destroy... and replace... to indicate that the store file should be destroyed even if the operation might be unsafe (overriding locks
+ */
+COREDATA_EXTERN NSString * const NSPersistentStoreForceDestroyOption NS_AVAILABLE(10_8, 6_0);
+
 /* Key to represent the protection class for the persistent store.  Backward compatibility may preclude some features.  The acceptable values are those defined in Foundation for the NSFileProtectionKey.  The default value of NSPersistentStoreFileProtectionKey is NSFileProtectionCompleteUntilFirstUserAuthentication for all applications built on or after iOS5.  The default value for all older applications is NSFileProtectionNone. */
 COREDATA_EXTERN NSString * const NSPersistentStoreFileProtectionKey NS_AVAILABLE(NA, 5_0);
 
 NS_CLASS_AVAILABLE(10_4,3_0)
 @interface NSPersistentStoreCoordinator : NSObject <NSLocking> {
 @private
+    volatile id _queueOwner;
+    void *_dispatchQueue;
     struct _persistentStoreCoordinatorFlags {
         unsigned int _isRegistered:1;
         unsigned int _reservedFlags:31;
@@ -166,17 +177,56 @@ NS_CLASS_AVAILABLE(10_4,3_0)
 	uint32_t _reserved32;
 #endif
     long _miniLock;
-    NSMutableArray *_extendedStoreURLs;
-    id _externalRecordsHelper;
+    id *_additionalPrivateIvars;
     NSManagedObjectModel *_managedObjectModel;
-    id _coreLock;
     NSArray *_persistentStores;
 }
+
+- (instancetype)initWithManagedObjectModel:(NSManagedObjectModel *)model NS_DESIGNATED_INITIALIZER;
+
+@property (readonly, strong) NSManagedObjectModel *managedObjectModel;
+
+@property (readonly, strong) NSArray<__kindof NSPersistentStore *> *persistentStores;
+
+/* custom name for a coordinator.  Coordinators will set the label on their queue */
+@property (nullable, copy) NSString *name  NS_AVAILABLE(10_10, 8_0);
+
+- (nullable __kindof NSPersistentStore *)persistentStoreForURL:(NSURL *)URL;
+- (NSURL *)URLForPersistentStore:(NSPersistentStore *)store;
+
+/* Sets the URL for the specified store in the coordinator.  For atomic stores, this will alter the location to which the next save operation will persist the file;  for non-atomic stores, invoking this method will release the existing connection and create a new one at the specified URL.  (For non-atomic stores, a store must pre-exist at the destination URL; a new store will not be created.)
+ */
+- (BOOL)setURL:(NSURL*)url forPersistentStore:(NSPersistentStore *)store NS_AVAILABLE(10_5, 3_0);
+
+/* Adds the store at the specified URL (of the specified type) to the coordinator with the model configuration and options.  The configuration can be nil -- then it's the complete model; storeURL is usually the file location of the database
+ */
+- (nullable __kindof NSPersistentStore *)addPersistentStoreWithType:(NSString *)storeType configuration:(nullable NSString *)configuration URL:(nullable NSURL *)storeURL options:(nullable NSDictionary *)options error:(NSError **)error;
+
+- (BOOL)removePersistentStore:(NSPersistentStore *)store error:(NSError **)error;
+
+/* Sets the metadata stored in the persistent store during the next save operation executed on it; the store type and UUID (NSStoreTypeKey and NSStoreUUIDKey) are always added automatically (but NSStoreUUIDKey is only added if it is not set manually as part of the dictionary argument)
+ */
+- (void)setMetadata:(nullable NSDictionary<NSString *, id> *)metadata forPersistentStore:(NSPersistentStore *)store;
+
+/* Returns the metadata currently stored or to-be-stored in the persistent store
+ */
+- (NSDictionary<NSString *, id> *)metadataForPersistentStore:(NSPersistentStore *)store;
+
+/* Given a URI representation of an object ID, returns an object ID if a matching store is available or nil if a matching store cannot be found (the URI representation contains a UUID of the store the ID is coming from, and the coordinator can match it against the stores added to it)
+ */
+- (nullable NSManagedObjectID *)managedObjectIDForURIRepresentation:(NSURL *)url;
+
+/* Sends a request to all of the stores associated with this coordinator.
+ Returns an array if successful,  nil if not.
+ The contents of the array will vary depending on the request type: NSFetchRequest results will be an array of managed objects, managed object IDs, or NSDictionaries;
+ NSSaveChangesRequests will an empty array. User defined requests will return arrays of arrays, where the nested array is the result returned form a single store.
+ */
+- (nullable id)executeRequest:(NSPersistentStoreRequest *)request withContext:(NSManagedObjectContext *)context error:(NSError**)error NS_AVAILABLE(10_7,  5_0);
 
 /* Returns a dictionary of the registered store types:  the keys are the store type strings and the values are the NSPersistentStore subclasses wrapped in NSValues.
 */
 
-+ (NSDictionary *)registeredStoreTypes NS_AVAILABLE(10_5, 3_0);
++ (NSDictionary<NSString *, NSValue*> *)registeredStoreTypes NS_AVAILABLE(10_5, 3_0);
 
 /* Registers the specified NSPersistentStore subclass for the specified store type string.  This method must be invoked before a custom subclass of NSPersistentStore can be loaded into a persistent store coordinator.  Passing nil for the store class argument will unregister the specified store type.
 */
@@ -184,57 +234,40 @@ NS_CLASS_AVAILABLE(10_4,3_0)
 
 /* Allows to access the metadata stored in a persistent store without warming up a CoreData stack; the guaranteed keys in this dictionary are NSStoreTypeKey and NSStoreUUIDKey. If storeType is nil, Core Data will guess which store class should be used to get/set the store file's metadata. 
  */
-+ (NSDictionary *)metadataForPersistentStoreOfType:(NSString *)storeType URL:(NSURL *)url error:(NSError **)error NS_AVAILABLE(10_5, 3_0); 
-+ (BOOL)setMetadata:(NSDictionary *)metadata forPersistentStoreOfType:(NSString *)storeType URL:(NSURL*)url error:(NSError **)error NS_AVAILABLE(10_5, 3_0);
++ (nullable NSDictionary<NSString *, id> *)metadataForPersistentStoreOfType:(NSString*)storeType URL:(NSURL *)url options:(nullable NSDictionary *)options error:(NSError **)error NS_AVAILABLE(10_9,7_0);
++ (BOOL)setMetadata:(nullable NSDictionary<NSString *, id> *)metadata forPersistentStoreOfType:(NSString*)storeType URL:(NSURL*)url options:(nullable NSDictionary*)options error:(NSError**)error NS_AVAILABLE(10_9,7_0);
+    
++ (nullable NSDictionary<NSString *, id> *)metadataForPersistentStoreOfType:(nullable NSString *)storeType URL:(NSURL *)url error:(NSError **)error NS_DEPRECATED(10_5,10_11,3_0,9_0, "Use a -metadataForPersistentStoreOfType:URL:options:error: and pass in an options dictionary matching addPersistentStoreWithType");
++ (BOOL)setMetadata:(nullable NSDictionary<NSString *, id> *)metadata forPersistentStoreOfType:(nullable NSString *)storeType URL:(NSURL*)url error:(NSError **)error NS_DEPRECATED(10_5, 10_11,3_0,9_0,"Use a -setMetadata:forPersistentStoreOfType:URL:options:error: and pass in an options dictionary matching addPersistentStoreWithType");
+    
 
 /*
  Delete all ubiquitous content for all peers for the persistent store at the given URL and also delete the local store file. storeOptions should contain the options normally passed to addPersistentStoreWithType:URL:options:error. Errors may be returned as a result of file I/O, iCloud network or iCloud account issues.
  */
-+ (BOOL)removeUbiquitousContentAndPersistentStoreAtURL:(NSURL *)storeURL options:(NSDictionary *)options error:(NSError**)error NS_AVAILABLE(10_9, 7_0);
++ (BOOL)removeUbiquitousContentAndPersistentStoreAtURL:(NSURL *)storeURL options:(nullable NSDictionary *)options error:(NSError**)error NS_AVAILABLE(10_9, 7_0);
 
-/* Sets the metadata stored in the persistent store during the next save operation executed on it; the store type and UUID (NSStoreTypeKey and NSStoreUUIDKey) are always added automatically (but NSStoreUUIDKey is only added if it is not set manually as part of the dictionary argument) 
+/* Used for save as - performance may vary depending on the type of old and new store; the old store is usually removed from the coordinator by the migration operation, and therefore is no longer a useful reference after invoking this method
 */
-- (void)setMetadata:(NSDictionary *)metadata forPersistentStore:(NSPersistentStore *)store;    
+- (nullable NSPersistentStore *)migratePersistentStore:(NSPersistentStore *)store toURL:(NSURL *)URL options:(nullable NSDictionary *)options withType:(NSString *)storeType error:(NSError **)error;
 
-/* Returns the metadata currently stored or to-be-stored in the persistent store
-*/
-- (NSDictionary *)metadataForPersistentStore:(NSPersistentStore *)store;    
-
-- (id)initWithManagedObjectModel:(NSManagedObjectModel *)model;
-
-- (NSManagedObjectModel *)managedObjectModel;
-
-- (NSArray *)persistentStores;
-- (NSPersistentStore *)persistentStoreForURL:(NSURL *)URL;
-- (NSURL *)URLForPersistentStore:(NSPersistentStore *)store;
-
-/* Sets the URL for the specified store in the coordinator.  For atomic stores, this will alter the location to which the next save operation will persist the file;  for non-atomic stores, invoking this method will release the existing connection and create a new one at the specified URL.  (For non-atomic stores, a store must pre-exist at the destination URL; a new store will not be created.) 
-*/
-- (BOOL)setURL:(NSURL*)url forPersistentStore:(NSPersistentStore *)store NS_AVAILABLE(10_5, 3_0);    
-
-/* Adds the store at the specified URL (of the specified type) to the coordinator with the model configuration and options.  The configuration can be nil -- then it's the complete model; storeURL is usually the file location of the database 
-*/
-- (NSPersistentStore *)addPersistentStoreWithType:(NSString *)storeType configuration:(NSString *)configuration URL:(NSURL *)storeURL options:(NSDictionary *)options error:(NSError **)error;    
-- (BOOL)removePersistentStore:(NSPersistentStore *)store error:(NSError **)error;
-
-
-/* Used for save as - performance may vary depending on the type of old and new store; the old store is usually removed from the coordinator by the migration operation, and therefore is no longer a useful reference after invoking this method 
-*/
-- (NSPersistentStore *)migratePersistentStore:(NSPersistentStore *)store toURL:(NSURL *)URL options:(NSDictionary *)options withType:(NSString *)storeType error:(NSError **)error;    
-
-/* Given a URI representation of an object ID, returns an object ID if a matching store is available or nil if a matching store cannot be found (the URI representation contains a UUID of the store the ID is coming from, and the coordinator can match it against the stores added to it) 
-*/
-- (NSManagedObjectID *)managedObjectIDForURIRepresentation:(NSURL *)url;    
-
-/* Sends a request to all of the stores associated with this coordinator. 
-   Returns an array if successful,  nil if not.
-   The contents of the array will vary depending on the request type: NSFetchRequest results will be an array of managed objects, managed object IDs, or NSDictionaries;  
-   NSSaveChangesRequests will an empty array. User defined requests will return arrays of arrays, where the nested array is the result returned form a single store.
+/* delete or truncate the target persistent store in accordance with the store class's requirements.  It is important to pass similar options as addPersistentStoreWithType: ... SQLite stores will honor file locks, journal files, journaling modes, and other intricacies.  It is not possible to unlink a database file safely out from underneath another thread or process, so this API performs a truncation.  Other stores will default to using NSFileManager.
  */
-- (id)executeRequest:(NSPersistentStoreRequest *)request withContext:(NSManagedObjectContext *)context error:(NSError**)error NS_AVAILABLE(10_7,  5_0);
+- (BOOL)destroyPersistentStoreAtURL:(NSURL *)url withType:(NSString *)storeType options:(nullable NSDictionary *)options error:(NSError**)error NS_AVAILABLE(10_11, 9_0);
+    
+/* copy or overwrite the target persistent store in accordance with the store class's requirements.  It is important to pass similar options as addPersistentStoreWithType: ... SQLite stores will honor file locks, journal files, journaling modes, and other intricacies.  Other stores will default to using NSFileManager.
+ */
+- (BOOL)replacePersistentStoreAtURL:(NSURL *)destinationURL destinationOptions:(nullable NSDictionary *)destinationOptions withPersistentStoreFromURL:(NSURL *)sourceURL sourceOptions:(nullable NSDictionary *)sourceOptions storeType:(NSString *)storeType error:(NSError**)error NS_AVAILABLE(10_11, 9_0);
 
-- (void)lock;
-- (void)unlock;
-- (BOOL)tryLock;
+/* asynchronously performs the block on the coordinator's queue.  Encapsulates an autorelease pool. */
+- (void)performBlock:(void (^)())block  NS_AVAILABLE(10_10, 8_0);
+
+/* synchronously performs the block on the coordinator's queue.  May safely be called reentrantly. Encapsulates an autorelease pool. */
+- (void)performBlockAndWait:(void (^)())block  NS_AVAILABLE(10_10, 8_0);
+
+- (void)lock NS_DEPRECATED(10_4, 10_10, 3_0, 8_0, "Use -performBlockAndWait: instead");
+- (void)unlock NS_DEPRECATED(10_4, 10_10, 3_0, 8_0, "Use -performBlockAndWait: instead");
+- (BOOL)tryLock NS_DEPRECATED(10_4, 10_10, 3_0, 8_0, "Use -performBlock: instead");
 
 @end
+
+NS_ASSUME_NONNULL_END

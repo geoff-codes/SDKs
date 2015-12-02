@@ -2,7 +2,6 @@
 #define __gl_es30_h_
 
 #include <Availability.h>
-#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,30 +41,7 @@ extern "C" {
 
 /* OpenGL ES 2.0 */
 
-typedef void            GLvoid;
-typedef char            GLchar;
-typedef unsigned int    GLenum;
-typedef unsigned char   GLboolean;
-typedef unsigned int    GLbitfield;
-typedef signed char     GLbyte;
-typedef short           GLshort;
-typedef int             GLint;
-typedef int             GLsizei;
-typedef unsigned char   GLubyte;
-typedef unsigned short  GLushort;
-typedef unsigned int    GLuint;
-typedef float           GLfloat;
-typedef float           GLclampf;
-typedef int             GLfixed;
-typedef long            GLintptr;
-typedef long            GLsizeiptr;
-
-/* OpenGL ES 3.0 */
-
-typedef unsigned short  GLhalf;
-typedef int64_t         GLint64;
-typedef uint64_t        GLuint64;
-typedef struct __GLsync *GLsync;
+#include <OpenGLES/gltypes.h>
 
 /*-------------------------------------------------------------------------
  * Token definitions

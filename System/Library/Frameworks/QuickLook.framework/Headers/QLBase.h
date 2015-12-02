@@ -18,7 +18,8 @@
     #define QL_EXTERN_C_END
 #endif
 
-#define QL_EXPORT extern
+#define QL_EXPORT_OSX
+#define QL_EXPORT __attribute__((visibility("default")))
 #define QL_PRIVATE_EXPORT __attribute__((visibility("hidden")))
 #define QL_INLINE static __inline__ __attribute__((always_inline))
 #define QL_NOINLINE __attribute__((noinline))

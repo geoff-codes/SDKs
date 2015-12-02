@@ -2,24 +2,24 @@
 //  MKLocalSearch.h
 //  MapKit
 //
-//  Copyright (c) 2012-2013, Apple Inc. All rights reserved.
+//  Copyright (c) 2012-2014, Apple Inc. All rights reserved.
 //
 
 #import <MapKit/MKFoundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class MKLocalSearchRequest;
 @class MKLocalSearchResponse;
 
-typedef void (^MKLocalSearchCompletionHandler)(MKLocalSearchResponse *response, NSError *error);
+typedef void (^MKLocalSearchCompletionHandler)(MKLocalSearchResponse * __nullable response, NSError * __nullable error);
 
-MK_CLASS_AVAILABLE(10_9, 6_1)
+MK_CLASS_AVAILABLE(10_9, 6_1) __WATCHOS_PROHIBITED
 @interface MKLocalSearch : NSObject
 
-// Designated initializer
-//
 // The request will be copied during initialization, so any changes made to the request
 // after this method returns do not affect the request used in -startWithCompletionHandler:
-- (id)initWithRequest:(MKLocalSearchRequest *)request;
+- (instancetype)initWithRequest:(MKLocalSearchRequest *)request NS_DESIGNATED_INITIALIZER;
 
 // Any calls to -startWithCompletionHandler: while -[MKLocalSearch isSearching] will fail.
 // completionHandler will be called on the main queue
@@ -29,3 +29,5 @@ MK_CLASS_AVAILABLE(10_9, 6_1)
 @property (nonatomic, readonly, getter=isSearching) BOOL searching;
 
 @end
+
+NS_ASSUME_NONNULL_END

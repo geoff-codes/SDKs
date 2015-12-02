@@ -3,20 +3,21 @@
 	
 	Framework:  AVFoundation
 
-	Copyright 2008-2013 Apple Inc. All rights reserved.
+	Copyright 2008-2015 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
-#import <Foundation/NSObject.h>
-#import <Foundation/NSArray.h>
-#import <Foundation/NSDate.h>  /* for NSTimeInterval */
+#import <Foundation/Foundation.h>
 #import <AVFoundation/AVAudioSettings.h>
 #import <Availability.h>
 
-@protocol AVAudioRecorderDelegate;
-@class NSDictionary, NSURL, NSError;
+NS_ASSUME_NONNULL_BEGIN
 
-NS_CLASS_AVAILABLE(10_7, 3_0)
+@protocol AVAudioRecorderDelegate;
+@class NSURL, NSError;
+
+
+NS_CLASS_AVAILABLE(10_7, 3_0) __TVOS_UNAVAILABLE
 @interface AVAudioRecorder : NSObject {
 @private
     void *_impl;
@@ -24,7 +25,7 @@ NS_CLASS_AVAILABLE(10_7, 3_0)
 
 
 /* The file type to record is inferred from the file extension. Will overwrite a file at the specified url if a file exists */
-- (id)initWithURL:(NSURL *)url settings:(NSDictionary *)settings error:(NSError **)outError;
+- (nullable instancetype)initWithURL:(NSURL *)url settings:(NSDictionary<NSString *, id> *)settings error:(NSError **)outError;
 
 /* transport control */
 /* methods that return BOOL return YES on success and NO on failure. */
@@ -45,10 +46,10 @@ NS_CLASS_AVAILABLE(10_7, 3_0)
 @property(readonly) NSURL *url; /* URL of the recorded file */
 
 /* these settings are fully valid only when prepareToRecord has been called */
-@property(readonly) NSDictionary *settings;
+@property(readonly) NSDictionary<NSString *, id> *settings;
 
 /* the delegate will be sent messages from the AVAudioRecorderDelegate protocol */ 
-@property(assign) id<AVAudioRecorderDelegate> delegate;  
+@property(assign, nullable) id<AVAudioRecorderDelegate> delegate;
 
 /* get the current time of the recording - only valid while recording */
 @property(readonly) NSTimeInterval currentTime;
@@ -68,13 +69,14 @@ NS_CLASS_AVAILABLE(10_7, 3_0)
 /* The channels property lets you assign the output to record specific channels as described by AVAudioSession's channels property */
 /* This property is nil valued until set. */
 /* The array must have the same number of channels as returned by the numberOfChannels property. */
-@property(nonatomic, copy) NSArray* channelAssignments NS_AVAILABLE(10_9, 7_0); /* Array of AVAudioSessionChannelDescription objects */
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *channelAssignments NS_AVAILABLE(10_9, 7_0); /* Array of AVAudioSessionChannelDescription objects */
 #endif
 
 @end
 
 
 /* A protocol for delegates of AVAudioRecorder */
+__TVOS_UNAVAILABLE
 @protocol AVAudioRecorderDelegate <NSObject>
 @optional 
 
@@ -82,16 +84,18 @@ NS_CLASS_AVAILABLE(10_7, 3_0)
 - (void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag;
 
 /* if an error occurs while encoding it will be reported to the delegate. */
-- (void)audioRecorderEncodeErrorDidOccur:(AVAudioRecorder *)recorder error:(NSError *)error;
+- (void)audioRecorderEncodeErrorDidOccur:(AVAudioRecorder *)recorder error:(NSError * __nullable)error;
 
 #if TARGET_OS_IPHONE
 
+/* AVAudioRecorder INTERRUPTION NOTIFICATIONS ARE DEPRECATED - Use AVAudioSession instead. */
+
 /* audioRecorderBeginInterruption: is called when the audio session has been interrupted while the recorder was recording. The recorded file will be closed. */
-- (void)audioRecorderBeginInterruption:(AVAudioRecorder *)recorder;
+- (void)audioRecorderBeginInterruption:(AVAudioRecorder *)recorder NS_DEPRECATED_IOS(2_2, 8_0);
 
 /* audioRecorderEndInterruption:withOptions: is called when the audio session interruption has ended and this recorder had been interrupted while recording. */
 /* Currently the only flag is AVAudioSessionInterruptionFlags_ShouldResume. */
-- (void)audioRecorderEndInterruption:(AVAudioRecorder *)recorder withOptions:(NSUInteger)flags NS_AVAILABLE_IOS(6_0);
+- (void)audioRecorderEndInterruption:(AVAudioRecorder *)recorder withOptions:(NSUInteger)flags NS_DEPRECATED_IOS(6_0, 8_0);
 
 - (void)audioRecorderEndInterruption:(AVAudioRecorder *)recorder withFlags:(NSUInteger)flags NS_DEPRECATED_IOS(4_0, 6_0);
 
@@ -102,3 +106,4 @@ NS_CLASS_AVAILABLE(10_7, 3_0)
 
 @end
 
+NS_ASSUME_NONNULL_END

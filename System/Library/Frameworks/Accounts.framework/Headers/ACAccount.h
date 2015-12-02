@@ -17,7 +17,7 @@ ACCOUNTS_CLASS_AVAILABLE(NA, 5_0)
 @interface ACAccount : NSObject
 
 // Creates a new account object with a specified account type.
-- (id)initWithAccountType:(ACAccountType *)type;
+- (instancetype)initWithAccountType:(ACAccountType *)type NS_DESIGNATED_INITIALIZER;
 
 // This identifier can be used to look up the account using [ACAccountStore accountWithIdentifier:].
 @property (readonly, weak, NS_NONATOMIC_IOSONLY) NSString      *identifier;

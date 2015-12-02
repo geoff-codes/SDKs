@@ -8,20 +8,20 @@
 #import <EventKit/EKObject.h>
 #import <EventKit/EventKitDefines.h>
 
-@class EKRecurrenceRule, EKAlarm, EKCalendar;
+NS_ASSUME_NONNULL_BEGIN
 
-EVENTKIT_CLASS_AVAILABLE(10_8, 5_0)
-@interface EKCalendarItem : EKObject {
+@class EKRecurrenceRule, EKAlarm, EKCalendar, EKParticipant;
 
-}
+NS_CLASS_AVAILABLE(10_8, 5_0)
+@interface EKCalendarItem : EKObject
 
 /*!
     @property   UUID
     @discussion This is now deprecated; use calendarItemIdentifier instead.
  */
-@property(nonatomic, readonly) NSString *UUID __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_6_0);
+@property(nonatomic, readonly) NSString *UUID NS_DEPRECATED(NA, NA, 5_0, 6_0);
 
-@property(nonatomic, retain) EKCalendar *calendar;
+@property(nonatomic, strong) EKCalendar *calendar;
 
 /*!
     @property   calendarItemIdentifier
@@ -31,7 +31,7 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 5_0)
                 with a reminder that is no longer fetchable by this property, e.g. by title, etc.
                 Use [EKEventStore calendarItemWithIdentifier:] to look up the item by this value.
 */
-@property(nonatomic, readonly) NSString *calendarItemIdentifier __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0);
+@property(nonatomic, readonly) NSString *calendarItemIdentifier NS_AVAILABLE(10_8, 6_0);
 
 /*!
     @property   calendarItemExternalIdentifier
@@ -48,7 +48,7 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 5_0)
                 - A subscribed calendar was added to multiple accounts
                 In such cases, you should choose between calendar items based on other factors, such as
                 the calendar or source.
-             
+
                 This identifier is the same for all occurrences of a recurring event. If you wish to differentiate
                 between occurrences, you may want to use the start date.
  
@@ -56,32 +56,33 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 5_0)
                 - This identifier will be different between EventKit on iOS versus OS X
                 - This identifier will be different between devices for EKReminders
 */
-@property(nonatomic, readonly) NSString *calendarItemExternalIdentifier __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_6_0);
+@property(nonatomic, readonly) NSString *calendarItemExternalIdentifier NS_AVAILABLE(10_8, 6_0);
 
 @property(nonatomic, copy) NSString *title;
-@property(nonatomic, copy) NSString *location;
-@property(nonatomic, copy) NSString *notes;
-@property(nonatomic, copy) NSURL *URL __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0);
+@property(nonatomic, copy, nullable) NSString *location;
+@property(nonatomic, copy, nullable) NSString *notes;
+@property(nonatomic, copy, nullable) NSURL *URL NS_AVAILABLE(10_8, 5_0);
 
-@property(nonatomic, readonly) NSDate *lastModifiedDate;
-@property(nonatomic, readonly) NSDate *creationDate __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0); // might be nil
-@property(nonatomic, copy) NSTimeZone *timeZone  __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0);
+@property(nonatomic, readonly, nullable) NSDate *lastModifiedDate;
+@property(nonatomic, readonly, nullable) NSDate *creationDate NS_AVAILABLE(10_8, 5_0);
+@property(nonatomic, copy, nullable) NSTimeZone *timeZone  NS_AVAILABLE(10_8, 5_0);
 
 // These exist to do simple checks for the presence of data without
 // loading said data. While at present only hasRecurrenceRules has a
 // fast path, it is a good idea to use these if you only need to know
 // the data exists anyway since at some point they will all be a
 // simple check.
-@property(nonatomic, readonly) BOOL hasAlarms  __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0);
-@property(nonatomic, readonly) BOOL hasRecurrenceRules  __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0);
-@property(nonatomic, readonly) BOOL hasAttendees  __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0);
-@property(nonatomic, readonly) BOOL hasNotes  __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0);
+@property(nonatomic, readonly) BOOL hasAlarms  NS_AVAILABLE(10_8, 5_0);
+@property(nonatomic, readonly) BOOL hasRecurrenceRules  NS_AVAILABLE(10_8, 5_0);
+@property(nonatomic, readonly) BOOL hasAttendees  NS_AVAILABLE(10_8, 5_0);
+@property(nonatomic, readonly) BOOL hasNotes  NS_AVAILABLE(10_8, 5_0);
 
 // An array of EKParticipant objects
-@property(nonatomic, readonly) NSArray *attendees;
+@property(nonatomic, readonly, nullable) NSArray<__kindof EKParticipant *> *attendees;
+
 
 // An array of EKAlarm objects
-@property(nonatomic, copy) NSArray *alarms;
+@property(nonatomic, copy, nullable) NSArray<EKAlarm *> *alarms;
 
 /*!
     @method     addAlarm:
@@ -98,14 +99,15 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 5_0)
 */
 - (void)removeAlarm:(EKAlarm *)alarm;
 
-
 /*!
     @property   recurrenceRules
     @abstract   An array of EKRecurrenceRules, or nil if none.
 */
-@property(nonatomic, copy) NSArray *recurrenceRules __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0);
+@property(nonatomic, copy, nullable) NSArray<EKRecurrenceRule *> *recurrenceRules NS_AVAILABLE(10_8, 5_0);
 
 - (void)addRecurrenceRule:(EKRecurrenceRule *)rule;
 - (void)removeRecurrenceRule:(EKRecurrenceRule *)rule;
 
 @end
+
+NS_ASSUME_NONNULL_END

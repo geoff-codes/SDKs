@@ -9,9 +9,11 @@
 #import <EventKit/EKObject.h>
 #import <EventKit/EKTypes.h>
 
-@class EKEventStore;
+NS_ASSUME_NONNULL_BEGIN
 
-EVENTKIT_CLASS_AVAILABLE(10_8, 5_0)
+@class EKCalendar;
+
+NS_CLASS_AVAILABLE(10_8, 5_0)
 @interface EKSource : EKObject
 
 @property(nonatomic, readonly) NSString        *sourceIdentifier;
@@ -21,7 +23,7 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 5_0)
  @property    calendars
  @abstract    This is now deprecated in favor of -[EKSource calendarsForEntityType:]
  */
-@property(nonatomic, readonly) NSSet           *calendars __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_0,__IPHONE_6_0);
+@property(nonatomic, readonly) NSSet<EKCalendar *> *calendars NS_DEPRECATED(NA, NA, 4_0, 6_0);
 
 
 /*!
@@ -29,6 +31,8 @@ EVENTKIT_CLASS_AVAILABLE(10_8, 5_0)
  @abstract    Returns the calendars that belong to this source that 
               support a given entity type (reminders, events)
  */
-- (NSSet *)calendarsForEntityType:(EKEntityType)entityType __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0);
+- (NSSet<EKCalendar *> *)calendarsForEntityType:(EKEntityType)entityType NS_AVAILABLE(10_8, 6_0);
 
 @end
+
+NS_ASSUME_NONNULL_END

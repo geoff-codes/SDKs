@@ -11,27 +11,31 @@
 #import <MediaPlayer/MPMediaItem.h>
 #import <MediaPlayer/MPMediaItemCollection.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol MPMediaPickerControllerDelegate;
 
 // MPMediaPickerController is a UIViewController for visually selecting media items.
 // To display it, present it modally on an existing view controller.
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPickerController : UIViewController
+MP_EXTERN_CLASS_AVAILABLE(3_0)
+__TVOS_PROHIBITED
+@interface MPMediaPickerController : UIViewController
 
-- (instancetype)init; // defaults to MPMediaTypeAny
-- (instancetype)initWithMediaTypes:(MPMediaType)mediaTypes;
+- (instancetype)initWithMediaTypes:(MPMediaType)mediaTypes NS_DESIGNATED_INITIALIZER;
 @property (nonatomic, readonly) MPMediaType mediaTypes;
 
-@property (nonatomic, weak) id<MPMediaPickerControllerDelegate> delegate;
+@property (nonatomic, weak, nullable) id<MPMediaPickerControllerDelegate> delegate;
 
 @property (nonatomic) BOOL allowsPickingMultipleItems; // default is NO
 
 @property (nonatomic) BOOL showsCloudItems NS_AVAILABLE_IOS(6_0); // default is YES
 
-@property (nonatomic, copy) NSString *prompt; // displays a prompt for the user above the navigation bar buttons
+@property (nonatomic, copy, nullable) NSString *prompt; // displays a prompt for the user above the navigation bar buttons
 
 @end
 
+__TVOS_PROHIBITED
 @protocol MPMediaPickerControllerDelegate<NSObject>
 @optional
 
@@ -41,3 +45,5 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPickerController : UIViewContro
 - (void)mediaPickerDidCancel:(MPMediaPickerController *)mediaPicker;
 
 @end
+
+NS_ASSUME_NONNULL_END

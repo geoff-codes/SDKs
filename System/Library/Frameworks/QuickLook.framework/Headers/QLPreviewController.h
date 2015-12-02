@@ -7,6 +7,7 @@
 
 
 #import <UIKit/UIKit.h>
+#import <QuickLook/QLBase.h>
 
 @protocol QLPreviewItem;
 @protocol QLPreviewControllerDelegate;
@@ -14,7 +15,9 @@
 
 @class QLPreviewControllerReserved;
 
-NS_CLASS_AVAILABLE(NA, 4_0)
+NS_ASSUME_NONNULL_BEGIN
+
+NS_CLASS_AVAILABLE(NA, 4_0) QL_EXPORT
 @interface QLPreviewController : UIViewController {
     QLPreviewControllerReserved * _reserved;
 }
@@ -31,7 +34,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 /*!
  * @abstract The Preview Panel data source.
  */
-@property(assign) id <QLPreviewControllerDataSource> dataSource;
+@property(weak, nullable) id <QLPreviewControllerDataSource> dataSource;
 
 /*!
  * @abstract Asks the Preview Controller to reload its data from its data source.
@@ -52,7 +55,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 /*!
  * @abstract The currently previewed item in the preview panel or nil if there is none.
  */
-@property(readonly) id <QLPreviewItem> currentPreviewItem;
+@property(readonly, nullable) id <QLPreviewItem> currentPreviewItem;
 
 
 
@@ -64,15 +67,14 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  * @abstract The Preview Controller delegate.
  * @discussion Should implement the <QLPreviewControllerDelegate> protocol
  */
-@property(assign) id <QLPreviewControllerDelegate> delegate;
+@property(weak, nullable) id <QLPreviewControllerDelegate> delegate;
 
 @end
-
 
 /*!
  * @abstract The QLPreviewControllerDataSource protocol declares the methods that the Preview Controller uses to access the contents of its data source object.
  */
-@protocol QLPreviewControllerDataSource
+QL_EXPORT @protocol QLPreviewControllerDataSource
 
 @required
 
@@ -96,7 +98,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 
 
 
-@protocol QLPreviewControllerDelegate <NSObject>
+QL_EXPORT @protocol QLPreviewControllerDelegate <NSObject>
 @optional
 
 /*!
@@ -120,7 +122,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
  * @abstract Invoked when the preview controller is about to be presented full screen or dismissed from full screen, to provide a zoom effect.
  * @discussion Return the origin of the zoom. It should be relative to view, or screen based if view is not set. The controller will fade in/out if the rect is CGRectZero.
  */
-- (CGRect)previewController:(QLPreviewController *)controller frameForPreviewItem:(id <QLPreviewItem>)item inSourceView:(UIView **)view;
+- (CGRect)previewController:(QLPreviewController *)controller frameForPreviewItem:(id <QLPreviewItem>)item inSourceView:(UIView * __nullable * __nonnull)view;
 
 /*!
  * @abstract Invoked when the preview controller is about to be presented full screen or dismissed from full screen, to provide a smooth transition when zooming.
@@ -131,4 +133,5 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 
 @end
 
+NS_ASSUME_NONNULL_END
 

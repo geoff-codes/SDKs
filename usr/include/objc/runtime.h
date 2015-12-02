@@ -140,6 +140,18 @@ OBJC_EXPORT Class object_getClass(id obj)
 OBJC_EXPORT Class object_setClass(id obj, Class cls) 
      __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
 
+
+/** 
+ * Returns whether an object is a class object.
+ * 
+ * @param obj An Objective-C object.
+ * 
+ * @return true if the object is a class or metaclass, false otherwise.
+ */
+OBJC_EXPORT BOOL object_isClass(id obj)
+    __OSX_AVAILABLE_STARTING(__MAC_10_10, __IPHONE_8_0);
+
+
 /** 
  * Returns the class name of a given object.
  * 
@@ -759,15 +771,6 @@ OBJC_EXPORT Class objc_getFutureClass(const char *name)
      __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0)
      OBJC_ARC_UNAVAILABLE;
 
-/** 
- * Used by CoreFoundation's toll-free bridging.
- * 
- * @warning Do not call this function yourself.
- */
-OBJC_EXPORT void objc_setFutureClass(Class cls, const char *name) 
-     __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0)
-     OBJC_ARC_UNAVAILABLE;
-
 
 /* Instantiating Classes */
 
@@ -1162,7 +1165,7 @@ OBJC_EXPORT const char *protocol_getName(Protocol *p)
  *  If the protocol does not contain the specified method, returns an \c objc_method_description structure
  *  with the value \c {NULL, \c NULL}.
  * 
- * @note Methods in other protocols adopted by this protocol are not included.
+ * @note This function recursively searches any protocols that this protocol conforms to.
  */
 OBJC_EXPORT struct objc_method_description protocol_getMethodDescription(Protocol *p, SEL aSel, BOOL isRequiredMethod, BOOL isInstanceMethod)
      __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
@@ -1485,7 +1488,7 @@ OBJC_EXPORT id objc_storeWeak(id *location, id obj)
  * Policies related to associative references.
  * These are options to objc_setAssociatedObject()
  */
-enum {
+typedef OBJC_ENUM(uintptr_t, objc_AssociationPolicy) {
     OBJC_ASSOCIATION_ASSIGN = 0,           /**< Specifies a weak reference to the associated object. */
     OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1, /**< Specifies a strong reference to the associated object. 
                                             *   The association is not made atomically. */
@@ -1496,9 +1499,6 @@ enum {
     OBJC_ASSOCIATION_COPY = 01403          /**< Specifies that the associated object is copied.
                                             *   The association is made atomically. */
 };
-
-/// Type to specify the behavior of an association.
-typedef uintptr_t objc_AssociationPolicy;
 
 /** 
  * Sets an associated value for a given object using a given key and association policy.

@@ -2,7 +2,7 @@
 //  MPMoviePlayerViewController.h
 //  MediaPlayer
 //
-//  Copyright 2009-2010 Apple, Inc. All rights reserved.
+//  Copyright 2009-2015 Apple, Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,17 +11,15 @@
 
 @class MPMoviePlayerController;
 
-MP_EXTERN_CLASS_AVAILABLE(3_2) @interface MPMoviePlayerViewController : UIViewController {
-@private
-    id _internal;
-}
+MP_EXTERN_CLASS_AVAILABLE(3_2)
+NS_DEPRECATED_IOS(3_2, 9_0, "Use AVPlayerViewController in AVKit.")
+__TVOS_PROHIBITED
+@interface MPMoviePlayerViewController : UIViewController
 
-- (id)initWithContentURL:(NSURL *)contentURL;
+- (instancetype)initWithContentURL:(NSURL *)contentURL NS_DESIGNATED_INITIALIZER;
 
-@property(nonatomic, readonly) MPMoviePlayerController *moviePlayer;
+@property (nonatomic, readonly) MPMoviePlayerController *moviePlayer;
 
-- (BOOL)shouldAutorotate; // Default is YES.
-- (NSUInteger)supportedInterfaceOrientations; // Default is UIInterfaceOrientationMaskAll.
 @end
 
 // -----------------------------------------------------------------------------
@@ -30,7 +28,7 @@ MP_EXTERN_CLASS_AVAILABLE(3_2) @interface MPMoviePlayerViewController : UIViewCo
 
 @interface UIViewController (MPMoviePlayerViewController)
 
-- (void)presentMoviePlayerViewControllerAnimated:(MPMoviePlayerViewController *)moviePlayerViewController;
-- (void)dismissMoviePlayerViewControllerAnimated;
+- (void)presentMoviePlayerViewControllerAnimated:(MPMoviePlayerViewController *)moviePlayerViewController NS_DEPRECATED_IOS(3_2, 9_0, "Use AVPlayerViewController in AVKit.") __TVOS_PROHIBITED;
+- (void)dismissMoviePlayerViewControllerAnimated NS_DEPRECATED_IOS(3_2, 9_0, "Use AVPlayerViewController in AVKit.") __TVOS_PROHIBITED;
 
 @end

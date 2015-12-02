@@ -1,6 +1,6 @@
 /*	
     NSURLCredential.h
-    Copyright (c) 2003-2013, Apple Inc. All rights reserved.    
+    Copyright (c) 2003-2015, Apple Inc. All rights reserved.    
     
     Public header file.
 */
@@ -10,6 +10,8 @@
 
 @class NSString;
 @class NSArray;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /*!
     @enum NSURLCredentialPersistence
@@ -47,7 +49,7 @@ typedef NS_ENUM(NSUInteger, NSURLCredentialPersistence) {
     @abstract Determine whether this credential is or should be stored persistently
     @result A value indicating whether this credential is stored permanently, per session or not at all.
  */
-- (NSURLCredentialPersistence)persistence;
+@property (readonly) NSURLCredentialPersistence persistence;
 
 @end
 
@@ -65,7 +67,7 @@ typedef NS_ENUM(NSUInteger, NSURLCredentialPersistence) {
     @param persistence enum that says to store per session, permanently or not at all
     @result The initialized NSURLCredential
 */
-- (id)initWithUser:(NSString *)user password:(NSString *)password persistence:(NSURLCredentialPersistence)persistence;
+- (instancetype)initWithUser:(NSString *)user password:(NSString *)password persistence:(NSURLCredentialPersistence)persistence;
 
 /*!
     @method credentialWithUser:password:persistence:
@@ -82,7 +84,7 @@ typedef NS_ENUM(NSUInteger, NSURLCredentialPersistence) {
     @abstract Get the username
     @result The user string
 */
-- (NSString *)user;
+@property (nullable, readonly, copy) NSString *user;
 
 /*!
     @method password
@@ -92,7 +94,7 @@ typedef NS_ENUM(NSUInteger, NSURLCredentialPersistence) {
     password from an external store, possible resulting in prompting,
     so do not call it unless needed.
 */
-- (NSString *)password;
+@property (nullable, readonly, copy) NSString *password;
 
 /*!
     @method hasPassword
@@ -103,7 +105,7 @@ typedef NS_ENUM(NSUInteger, NSURLCredentialPersistence) {
     method returns YES, since getting the password may fail, or the
     user may refuse access.
 */
-- (BOOL)hasPassword;
+@property (readonly) BOOL hasPassword;
 
 @end
 
@@ -121,7 +123,7 @@ typedef NS_ENUM(NSUInteger, NSURLCredentialPersistence) {
     @param persistence enum that says to store per session, permanently or not at all
     @result the Initialized NSURLCredential
  */
-- (id)initWithIdentity:(SecIdentityRef)identity certificates:(NSArray *)certArray persistence:(NSURLCredentialPersistence)persistence NS_AVAILABLE(10_6, 3_0);
+- (instancetype)initWithIdentity:(SecIdentityRef)identity certificates:(nullable NSArray *)certArray persistence:(NSURLCredentialPersistence)persistence NS_AVAILABLE(10_6, 3_0);
 
 /*!
     @method credentialWithIdentity:certificates:persistence:
@@ -131,21 +133,21 @@ typedef NS_ENUM(NSUInteger, NSURLCredentialPersistence) {
     @param persistence enum that says to store per session, permanently or not at all
     @result The new autoreleased NSURLCredential
  */
-+ (NSURLCredential *)credentialWithIdentity:(SecIdentityRef)identity certificates:(NSArray *)certArray persistence:(NSURLCredentialPersistence)persistence NS_AVAILABLE(10_6, 3_0);
++ (NSURLCredential *)credentialWithIdentity:(SecIdentityRef)identity certificates:(nullable NSArray *)certArray persistence:(NSURLCredentialPersistence)persistence NS_AVAILABLE(10_6, 3_0);
 
 /*!
     @method identity
     @abstract Returns the SecIdentityRef of this credential, if it was created with a certificate and identity
     @result A SecIdentityRef or NULL if this is a username/password credential
  */
-- (SecIdentityRef)identity;
+@property (nullable, readonly) SecIdentityRef identity;
 
 /*!
     @method certificates
     @abstract Returns an NSArray of SecCertificateRef objects representing the client certificate for this credential, if this credential was created with an identity and certificate.
     @result an NSArray of SecCertificateRef or NULL if this is a username/password credential
  */
-- (NSArray *)certificates NS_AVAILABLE(10_6, 3_0);
+@property (readonly, copy) NSArray *certificates NS_AVAILABLE(10_6, 3_0);
 
 @end
 
@@ -156,7 +158,7 @@ typedef NS_ENUM(NSUInteger, NSURLCredentialPersistence) {
     @abstract Initialize a new NSURLCredential which specifies that the specified trust has been accepted.
     @result the Initialized NSURLCredential
  */
-- (id)initWithTrust:(SecTrustRef)trust NS_AVAILABLE(10_6, 3_0);
+- (instancetype)initWithTrust:(SecTrustRef)trust NS_AVAILABLE(10_6, 3_0);
 
 /*!
     @method credentialForTrust:
@@ -167,3 +169,4 @@ typedef NS_ENUM(NSUInteger, NSURLCredentialPersistence) {
 
 @end
 
+NS_ASSUME_NONNULL_END
