@@ -1,23 +1,29 @@
 /*
- * Copyright (c) 2000-2005 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 2000-2008 Apple Inc. All rights reserved.
  *
- * @APPLE_LICENSE_HEADER_START@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
- * The contents of this file constitute Original Code as defined in and
- * are subject to the Apple Public Source License Version 1.1 (the
- * "License").  You may not use this file except in compliance with the
- * License.  Please obtain a copy of the License at
- * http://www.apple.com/publicsource and read it before using this file.
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. The rights granted to you under the License
+ * may not be used to create, or enable the creation or redistribution of,
+ * unlawful or unlicensed copies of an Apple operating system, or to
+ * circumvent, violate, or enable the circumvention or violation of, any
+ * terms of an Apple operating system software license agreement.
  * 
- * This Original Code and all software distributed under the License are
- * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ * 
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
  * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
- * License for the specific language governing rights and limitations
- * under the License.
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
  * 
- * @APPLE_LICENSE_HEADER_END@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
 /* Copyright (c) 1995 NeXT Computer, Inc. All Rights Reserved */
 /*
@@ -54,6 +60,13 @@
  *
  *	@(#)mount.h	8.21 (Berkeley) 5/20/95
  */
+/*
+ * NOTICE: This file was modified by SPARTA, Inc. in 2005 to introduce
+ * support for mandatory and extensible security protections.  This notice
+ * is included in support of clause 2.2 (b) of the Apple Public License,
+ * Version 2.0.
+ */
+
 
 #ifndef _SYS_MOUNT_H_
 #define	_SYS_MOUNT_H_
@@ -65,6 +78,7 @@
 #include <stdint.h>
 #include <sys/ucred.h>
 #include <sys/queue.h>		/* XXX needed for user builds */
+#include <Availability.h>
 
 typedef struct fsid { int32_t val[2]; } fsid_t;	/* file system id type */
 
@@ -73,7 +87,44 @@ typedef struct fsid { int32_t val[2]; } fsid_t;	/* file system id type */
  */
 
 #define	MFSNAMELEN	15	/* length of fs type name, not inc. null */
-#define	MNAMELEN	90	/* length of buffer for returned name */
+#define	MFSTYPENAMELEN	16	/* length of fs type name including null */
+
+#if __DARWIN_64_BIT_INO_T
+#define	MNAMELEN	MAXPATHLEN	/* length of buffer for returned name */
+#else /* ! __DARWIN_64_BIT_INO_T */
+#define	MNAMELEN	90		/* length of buffer for returned name */
+#endif /* __DARWIN_64_BIT_INO_T */
+
+#define __DARWIN_STRUCT_STATFS64 { \
+	uint32_t	f_bsize;	/* fundamental file system block size */ \
+	int32_t		f_iosize;	/* optimal transfer block size */ \
+	uint64_t	f_blocks;	/* total data blocks in file system */ \
+	uint64_t	f_bfree;	/* free blocks in fs */ \
+	uint64_t	f_bavail;	/* free blocks avail to non-superuser */ \
+	uint64_t	f_files;	/* total file nodes in file system */ \
+	uint64_t	f_ffree;	/* free file nodes in fs */ \
+	fsid_t		f_fsid;		/* file system id */ \
+	uid_t		f_owner;	/* user that mounted the filesystem */ \
+	uint32_t	f_type;		/* type of filesystem */ \
+	uint32_t	f_flags;	/* copy of mount exported flags */ \
+	uint32_t	f_fssubtype;	/* fs sub-type (flavor) */ \
+	char		f_fstypename[MFSTYPENAMELEN];	/* fs type name */ \
+	char		f_mntonname[MAXPATHLEN];	/* directory on which mounted */ \
+	char		f_mntfromname[MAXPATHLEN];	/* mounted filesystem */ \
+	uint32_t	f_reserved[8];	/* For future use */ \
+}
+
+#if !__DARWIN_ONLY_64_BIT_INO_T
+
+struct statfs64 __DARWIN_STRUCT_STATFS64;
+
+#endif /* !__DARWIN_ONLY_64_BIT_INO_T */
+
+#if __DARWIN_64_BIT_INO_T
+
+struct statfs __DARWIN_STRUCT_STATFS64;
+
+#else /* !__DARWIN_64_BIT_INO_T */
 
 /*
  * LP64 - WARNING - must be kept in sync with struct user_statfs in mount_internal.h.
@@ -92,22 +143,16 @@ struct statfs {
 	uid_t	f_owner;		/* user that mounted the filesystem */
 	short	f_reserved1;	/* spare for later */
 	short	f_type;			/* type of filesystem */
-    long	f_flags;		/* copy of mount exported flags */
+	long	f_flags;		/* copy of mount exported flags */
 	long    f_reserved2[2];	/* reserved for future use */
 	char	f_fstypename[MFSNAMELEN]; /* fs type name */
 	char	f_mntonname[MNAMELEN];	/* directory on which mounted */
 	char	f_mntfromname[MNAMELEN];/* mounted filesystem */
-#if COMPAT_GETFSSTAT
-	char	f_reserved3[0];	/* For alignment */
-	long	f_reserved4[0];	/* For future use */
-#else
 	char	f_reserved3;	/* For alignment */
 	long	f_reserved4[4];	/* For future use */
-#endif
 };
 
-
-#define	MFSTYPENAMELEN	16	/* length of fs type name including null */
+#endif /* __DARWIN_64_BIT_INO_T */
 
 #pragma pack(4)
 
@@ -132,82 +177,6 @@ struct vfsstatfs {
 
 #pragma pack()
 
-#define VFSATTR_INIT(s)			((s)->f_supported = (s)->f_active = 0LL)
-#define VFSATTR_SET_SUPPORTED(s, a)	((s)->f_supported |= VFSATTR_ ## a)
-#define VFSATTR_IS_SUPPORTED(s, a)	((s)->f_supported & VFSATTR_ ## a)
-#define VFSATTR_CLEAR_ACTIVE(s, a)	((s)->f_active &= ~VFSATTR_ ## a)
-#define VFSATTR_IS_ACTIVE(s, a)		((s)->f_active & VFSATTR_ ## a)
-#define VFSATTR_ALL_SUPPORTED(s)	(((s)->f_active & (s)->f_supported) == (s)->f_active)
-#define VFSATTR_WANTED(s, a)		((s)->f_active |= VFSATTR_ ## a)
-#define VFSATTR_RETURN(s, a, x)		do { (s)-> a = (x); VFSATTR_SET_SUPPORTED(s, a);} while(0)
-
-#define VFSATTR_f_objcount		(1LL<<  0)
-#define VFSATTR_f_filecount		(1LL<<  1)
-#define VFSATTR_f_dircount		(1LL<<  2)
-#define VFSATTR_f_maxobjcount		(1LL<<  3)
-#define VFSATTR_f_bsize			(1LL<< 4)
-#define VFSATTR_f_iosize		(1LL<<  5)
-#define VFSATTR_f_blocks		(1LL<<  6)
-#define VFSATTR_f_bfree			(1LL<<  7)
-#define VFSATTR_f_bavail		(1LL<<  8)
-#define VFSATTR_f_bused			(1LL<<  9)
-#define VFSATTR_f_files			(1LL<< 10)
-#define VFSATTR_f_ffree			(1LL<< 11)
-#define VFSATTR_f_fsid			(1LL<< 12)
-#define VFSATTR_f_owner			(1LL<< 13)
-#define VFSATTR_f_capabilities		(1LL<< 14)
-#define VFSATTR_f_attributes		(1LL<< 15)
-#define VFSATTR_f_create_time		(1LL<< 16)
-#define VFSATTR_f_modify_time		(1LL<< 17)
-#define VFSATTR_f_access_time		(1LL<< 18)
-#define VFSATTR_f_backup_time		(1LL<< 19)
-#define VFSATTR_f_fssubtype		(1LL<< 20)
-#define VFSATTR_f_vol_name		(1LL<< 21)
-#define VFSATTR_f_signature		(1LL<< 22)
-#define VFSATTR_f_carbon_fsid		(1LL<< 23)
-
-/*
- * New VFS_STAT argument structure.
- */
-#pragma pack(4)
-
-struct vfs_attr {
-	uint64_t	f_supported;
-	uint64_t	f_active;
-
-	uint64_t	f_objcount;	/* number of filesystem objects in volume */
-	uint64_t	f_filecount;	/* ... files */
-	uint64_t	f_dircount;	/* ... directories */
-	uint64_t	f_maxobjcount;	/* maximum number of filesystem objects */
-	
-	uint32_t	f_bsize;	/* block size for the below size values */
-	size_t		f_iosize;	/* optimal transfer block size */
-	uint64_t	f_blocks;	/* total data blocks in file system */
-	uint64_t	f_bfree;	/* free blocks in fs */
-	uint64_t	f_bavail;	/* free blocks avail to non-superuser */
-	uint64_t	f_bused;	/* blocks in use */
-	uint64_t	f_files;	/* total file nodes in file system */
-	uint64_t	f_ffree;	/* free file nodes in fs */
-	fsid_t		f_fsid;		/* file system id */
-	uid_t		f_owner;	/* user that mounted the filesystem */
-
- 	vol_capabilities_attr_t f_capabilities;
-	vol_attributes_attr_t f_attributes;
-
-	struct timespec	f_create_time;	/* creation time */
-	struct timespec	f_modify_time;	/* last modification time */
-	struct timespec f_access_time;	/* time of last access */
-	struct timespec	f_backup_time;	/* last backup time */
-
-	uint32_t	f_fssubtype;	/* filesystem subtype */
-
-	char		*f_vol_name;	/* volume name */
-
-	uint16_t	f_signature;	/* used for ATTR_VOL_SIGNATURE, Carbon's FSVolumeInfo.signature */
-	uint16_t	f_carbon_fsid;	/* same as Carbon's FSVolumeInfo.filesystemID */
-};
-
-#pragma pack()
 
 /*
  * User specifiable flags.
@@ -221,16 +190,6 @@ struct vfs_attr {
 #define	MNT_NODEV	0x00000010	/* don't interpret special files */
 #define	MNT_UNION	0x00000020	/* union with underlying filesystem */
 #define	MNT_ASYNC	0x00000040	/* file system written asynchronously */
-#define MNT_DONTBROWSE	0x00100000	/* file system is not appropriate path to user data */
-#define MNT_IGNORE_OWNERSHIP 0x00200000 /* VFS will ignore ownership information on filesystem
-					 * objects */
-#define MNT_AUTOMOUNTED 0x00400000	/* filesystem was mounted by automounter */
-#define MNT_JOURNALED   0x00800000  /* filesystem is journaled */
-#define MNT_NOUSERXATTR	0x01000000	/* Don't allow user extended attributes */
-#define MNT_DEFWRITE	0x02000000	/* filesystem should defer writes */
-
-/* backwards compatibility only */
-#define MNT_UNKNOWNPERMISSIONS MNT_IGNORE_OWNERSHIP
 
 /*
  * NFS export related mount flags.
@@ -238,12 +197,31 @@ struct vfs_attr {
 #define	MNT_EXPORTED	0x00000100	/* file system is exported */
 
 /*
+ * MAC labeled / "quarantined" flag
+ */
+#define MNT_QUARANTINE	0x00000400	/* file system is quarantined */
+
+/*
  * Flags set by internal operations.
  */
 #define	MNT_LOCAL	0x00001000	/* filesystem is stored locally */
 #define	MNT_QUOTA	0x00002000	/* quotas are enabled on filesystem */
 #define	MNT_ROOTFS	0x00004000	/* identifies the root filesystem */
-#define	MNT_DOVOLFS	0x00008000	/* FS supports volfs */
+#define	MNT_DOVOLFS	0x00008000	/* FS supports volfs (deprecated flag in Mac OS X 10.5) */
+
+
+#define MNT_DONTBROWSE	0x00100000	/* file system is not appropriate path to user data */
+#define MNT_IGNORE_OWNERSHIP 0x00200000 /* VFS will ignore ownership information on filesystem objects */
+#define MNT_AUTOMOUNTED 0x00400000	/* filesystem was mounted by automounter */
+#define MNT_JOURNALED   0x00800000  	/* filesystem is journaled */
+#define MNT_NOUSERXATTR	0x01000000	/* Don't allow user extended attributes */
+#define MNT_DEFWRITE	0x02000000	/* filesystem should defer writes */
+#define MNT_MULTILABEL	0x04000000	/* MAC support for individual labels */
+#define MNT_NOATIME	0x10000000	/* disable update of file access time */
+
+/* backwards compatibility only */
+#define MNT_UNKNOWNPERMISSIONS MNT_IGNORE_OWNERSHIP
+
 
 /*
  * XXX I think that this could now become (~(MNT_CMDFLAGS))
@@ -251,11 +229,11 @@ struct vfs_attr {
  */
 #define	MNT_VISFLAGMASK	(MNT_RDONLY	| MNT_SYNCHRONOUS | MNT_NOEXEC	| \
 			MNT_NOSUID	| MNT_NODEV	| MNT_UNION	| \
-			MNT_ASYNC	| MNT_EXPORTED	| \
-			MNT_LOCAL	|		MNT_QUOTA	| \
+			MNT_ASYNC	| MNT_EXPORTED	| MNT_QUARANTINE | \
+			MNT_LOCAL	| MNT_QUOTA | \
 			MNT_ROOTFS	| MNT_DOVOLFS	| MNT_DONTBROWSE | \
-			MNT_UNKNOWNPERMISSIONS | MNT_AUTOMOUNTED | MNT_JOURNALED | \
-			MNT_DEFWRITE)
+			MNT_IGNORE_OWNERSHIP | MNT_AUTOMOUNTED | MNT_JOURNALED | \
+			MNT_NOUSERXATTR | MNT_DEFWRITE	| MNT_MULTILABEL | MNT_NOATIME)
 /*
  * External filesystem command modifier flags.
  * Unmount can use the MNT_FORCE flag.
@@ -292,8 +270,9 @@ struct vfs_attr {
  *
  * waitfor flags to vfs_sync() and getfsstat()
  */
-#define MNT_WAIT	1	/* synchronously wait for I/O to complete */
+#define MNT_WAIT	1	/* synchronized I/O file integrity completion */
 #define MNT_NOWAIT	2	/* start all I/O, but do not wait for it */
+#define	MNT_DWAIT	4	/* synchronized I/O data integrity completion */
 
 
 struct mount;
@@ -301,14 +280,15 @@ typedef struct mount * mount_t;
 struct vnode;
 typedef struct vnode * vnode_t;
 
+/* Reserved fields preserve binary compatibility */
 struct vfsconf {
-	struct	vfsops *vfc_vfsops;	/* filesystem operations vector */
+	uint32_t vfc_reserved1;		/* opaque */
 	char	vfc_name[MFSNAMELEN];	/* filesystem type name */
 	int	vfc_typenum;		/* historic filesystem type number */
 	int	vfc_refcount;		/* number mounted of this type */
 	int	vfc_flags;		/* permanent flags */
-	int	(*vfc_mountroot)(mount_t, vnode_t);	/* if != NULL, routine to mount root */
-	struct	vfsconf *vfc_next;	/* next in list */
+	uint32_t vfc_reserved2;		/* opaque */
+	uint32_t vfc_reserved3;		/* opaque */
 };
 
 struct vfsidctl {
@@ -350,7 +330,7 @@ struct vfsquery {
 #define VQ_ASSIST	0x0040	/* filesystem needs assistance from external program */
 #define VQ_NOTRESPLOCK	0x0080	/* server lockd down */
 #define VQ_UPDATE	0x0100	/* filesystem information has changed */
-#define VQ_FLAG0200	0x0200	/* placeholder */
+#define VQ_VERYLOWDISK	0x0200	/* file system has *very* little disk space left */
 #define VQ_FLAG0400	0x0400	/* placeholder */
 #define VQ_FLAG0800	0x0800	/* placeholder */
 #define VQ_FLAG1000	0x1000	/* placeholder */
@@ -364,7 +344,9 @@ struct vfsquery {
 /*
  * Generic file handle
  */
-#define	NFS_MAX_FH_SIZE		64
+#define	NFS_MAX_FH_SIZE		NFSV4_MAX_FH_SIZE
+#define	NFSV4_MAX_FH_SIZE	128
+#define	NFSV3_MAX_FH_SIZE	64
 #define	NFSV2_MAX_FH_SIZE	32
 struct fhandle {
 	int		fh_len;				/* length of file handle */
@@ -375,12 +357,24 @@ typedef struct fhandle	fhandle_t;
 
 __BEGIN_DECLS
 int	fhopen(const struct fhandle *, int);
-int	fstatfs(int, struct statfs *);
+int	fstatfs(int, struct statfs *) __DARWIN_INODE64(fstatfs);
+#if !__DARWIN_ONLY_64_BIT_INO_T
+int	fstatfs64(int, struct statfs64 *) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_6,__IPHONE_NA,__IPHONE_NA);
+#endif /* !__DARWIN_ONLY_64_BIT_INO_T */
 int	getfh(const char *, fhandle_t *);
-int	getfsstat(struct statfs *, int, int);
-int	getmntinfo(struct statfs **, int);
+int	getfsstat(struct statfs *, int, int) __DARWIN_INODE64(getfsstat);
+#if !__DARWIN_ONLY_64_BIT_INO_T
+int	getfsstat64(struct statfs64 *, int, int) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_6,__IPHONE_NA,__IPHONE_NA);
+#endif /* !__DARWIN_ONLY_64_BIT_INO_T */
+int	getmntinfo(struct statfs **, int) __DARWIN_INODE64(getmntinfo);
+#if !__DARWIN_ONLY_64_BIT_INO_T
+int	getmntinfo64(struct statfs64 **, int) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_6,__IPHONE_NA,__IPHONE_NA);
+#endif /* !__DARWIN_ONLY_64_BIT_INO_T */
 int	mount(const char *, const char *, int, void *);
-int	statfs(const char *, struct statfs *);
+int	statfs(const char *, struct statfs *) __DARWIN_INODE64(statfs);
+#if !__DARWIN_ONLY_64_BIT_INO_T
+int	statfs64(const char *, struct statfs64 *) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_6,__IPHONE_NA,__IPHONE_NA);
+#endif /* !__DARWIN_ONLY_64_BIT_INO_T */
 int	unmount(const char *, int);
 int	getvfsbyname(const char *, struct vfsconf *);
 __END_DECLS

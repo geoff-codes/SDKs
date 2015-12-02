@@ -1,32 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>isBaseSDK</key>
-	<string>YES</string>
+	<key>AlternateSDK</key>
+	<string>iphonesimulator3.1.3</string>
+	<key>CanonicalName</key>
+	<string>iphoneos3.1.3</string>
 	<key>CustomProperties</key>
-	<dict>
-		<key>KERNEL_EXTENSION_HEADER_SEARCH_PATHS</key>
-		<string>$(KERNEL_FRAMEWORK)/PrivateHeaders $(KERNEL_FRAMEWORK_HEADERS)</string>
-	</dict>
+	<dict/>
 	<key>DefaultProperties</key>
 	<dict>
+		<key>AD_HOC_CODE_SIGNING_ALLOWED</key>
+		<string>NO</string>
+		<key>CODE_SIGNING_REQUIRED</key>
+		<string>YES</string>
+		<key>CODE_SIGN_ENTITLEMENTS</key>
+		<string></string>
+		<key>DEAD_CODE_STRIPPING</key>
+		<string>YES</string>
+		<key>ENTITLEMENTS_REQUIRED</key>
+		<string>YES</string>
+		<key>GCC_THUMB_SUPPORT</key>
+		<string>YES</string>
+		<key>GCC_VERSION</key>
+		<string>4.2</string>
+		<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+		<string>3.1.3</string>
 		<key>MACOSX_DEPLOYMENT_TARGET</key>
-		<string>10.4</string>
+		<string>10.5</string>
 		<key>PLATFORM_NAME</key>
-		<string>macosx</string>
+		<string>iphoneos</string>
+		<key>SUPPORTED_PRODUCT_TYPES</key>
+		<array>
+			<string>1</string>
+		</array>
 	</dict>
-	<key>MaximumDeploymentTarget</key>
-	<string>10.4</string>
-	<key>Version</key>
-	<string>10.4</string>
 	<key>DisplayName</key>
-	<string>Mac OS X 10.4</string>
-	<key>CanonicalName</key>
-	<string>macosx10.4</string>
+	<string>Device - iPhone OS 3.1.3</string>
+	<key>DocSetFeedName</key>
+	<string>Apple iPhone OS 3.1.3</string>
+	<key>DocSetFeedURL</key>
+	<string>http://developer.apple.com/rss/com.apple.adc.documentation.AppleiPhone3_1_3.atom</string>
+	<key>IsBaseSDK</key>
+	<string>YES</string>
+	<key>MaximumOSDeploymentTarget</key>
+	<string>10.5</string>
 	<key>MinimalDisplayName</key>
-	<string>10.4</string>
-	<key>SupportedBuildToolComponents</key>
-	<array/>
+	<string>Device - 3.1.3</string>
+	<key>MinimumSupportedToolsVersion</key>
+	<string>3.1.3</string>
+	<key>Version</key>
+	<string>3.1.3</string>
 </dict>
 </plist>

@@ -1,23 +1,29 @@
 /*
  * Copyright (c) 2000 Apple Computer, Inc. All rights reserved.
  *
- * @APPLE_LICENSE_HEADER_START@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
- * The contents of this file constitute Original Code as defined in and
- * are subject to the Apple Public Source License Version 1.1 (the
- * "License").  You may not use this file except in compliance with the
- * License.  Please obtain a copy of the License at
- * http://www.apple.com/publicsource and read it before using this file.
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. The rights granted to you under the License
+ * may not be used to create, or enable the creation or redistribution of,
+ * unlawful or unlicensed copies of an Apple operating system, or to
+ * circumvent, violate, or enable the circumvention or violation of, any
+ * terms of an Apple operating system software license agreement.
  * 
- * This Original Code and all software distributed under the License are
- * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ * 
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
  * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
- * License for the specific language governing rights and limitations
- * under the License.
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
  * 
- * @APPLE_LICENSE_HEADER_END@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
 /*	$KAME: pfkeyv2.h,v 1.10 2000/03/22 07:04:20 sakane Exp $	*/
 
@@ -96,7 +102,8 @@ you leave this credit intact on any copies of this file.
 #define SADB_X_SPDSETIDX  20
 #define SADB_X_SPDEXPIRE  21
 #define SADB_X_SPDDELETE2 22	/* by policy id */
-#define SADB_MAX          22
+#define SADB_GETSASTAT    23
+#define SADB_MAX          23
 
 struct sadb_msg {
   u_int8_t sadb_msg_version;
@@ -279,6 +286,30 @@ struct sadb_x_ipsecrequest {
    */
 };
 
+struct sadb_session_id {
+        u_int16_t            sadb_session_id_len;
+        u_int16_t            sadb_session_id_exttype;
+       /* [0] is an arbitrary handle that means something only for requester
+        * [1] is a global session id for lookups in the kernel and racoon.
+        */
+        u_int64_t            sadb_session_id_v[2];
+} __attribute__ ((aligned(8)));
+
+struct sastat {
+	u_int32_t            spi;		/* SPI Value, network byte order */
+	u_int32_t            created;	        /* for lifetime */
+	struct sadb_lifetime lft_c;	        /* CURRENT lifetime. */
+}; // no need to align
+
+struct sadb_sastat {
+        u_int16_t            sadb_sastat_len;
+        u_int16_t            sadb_sastat_exttype;
+        u_int32_t            sadb_sastat_dir;
+        u_int32_t            sadb_sastat_reserved;
+        u_int32_t            sadb_sastat_list_len;
+        /* list of struct sastat comes after */
+} __attribute__ ((aligned(8)));
+
 #define SADB_EXT_RESERVED             0
 #define SADB_EXT_SA                   1
 #define SADB_EXT_LIFETIME_CURRENT     2
@@ -299,7 +330,9 @@ struct sadb_x_ipsecrequest {
 #define SADB_X_EXT_KMPRIVATE          17
 #define SADB_X_EXT_POLICY             18
 #define SADB_X_EXT_SA2                19
-#define SADB_EXT_MAX                  19
+#define SADB_EXT_SESSION_ID           20
+#define SADB_EXT_SASTAT               21
+#define SADB_EXT_MAX                  21
 
 #define SADB_SATYPE_UNSPEC	0
 #define SADB_SATYPE_AH		2
@@ -344,6 +377,7 @@ struct sadb_x_ipsecrequest {
 #define SADB_X_EALG_CAST128CBC	5	/*6*/
 #define SADB_X_EALG_BLOWFISHCBC	4	/*7*/
 #define SADB_X_EALG_RIJNDAELCBC	12
+#define SADB_X_EALG_AESCBC      12
 #define SADB_X_EALG_AES		12
 /* private allocations should use 249-255 (RFC2407) */
 

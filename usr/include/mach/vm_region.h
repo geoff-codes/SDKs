@@ -1,23 +1,29 @@
 /*
- * Copyright (c) 2000-2005 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 2000-2006 Apple Computer, Inc. All rights reserved.
  *
- * @APPLE_LICENSE_HEADER_START@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
- * The contents of this file constitute Original Code as defined in and
- * are subject to the Apple Public Source License Version 1.1 (the
- * "License").  You may not use this file except in compliance with the
- * License.  Please obtain a copy of the License at
- * http://www.apple.com/publicsource and read it before using this file.
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. The rights granted to you under the License
+ * may not be used to create, or enable the creation or redistribution of,
+ * unlawful or unlicensed copies of an Apple operating system, or to
+ * circumvent, violate, or enable the circumvention or violation of, any
+ * terms of an Apple operating system software license agreement.
  * 
- * This Original Code and all software distributed under the License are
- * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ * 
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
  * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
- * License for the specific language governing rights and limitations
- * under the License.
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
  * 
- * @APPLE_LICENSE_HEADER_END@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
 /*
  * @OSF_COPYRIGHT@
@@ -45,6 +51,11 @@
 #include <sys/cdefs.h>
 
 #pragma pack(4)
+
+// LP64todo: all the current tools are 32bit, obviously never worked for 64b
+// so probably should be a real 32b ID vs. ptr.
+// Current users just check for equality
+typedef uint32_t vm32_object_id_t;
 
 /*
  *	Types defined:
@@ -198,7 +209,7 @@ struct vm_region_submap_info {
         unsigned char           share_mode;	/* see enumeration */
 	boolean_t		is_submap;	/* submap vs obj */
 	vm_behavior_t		behavior;	/* access behavior hint */
-	vm_offset_t		object_id;	/* obj/map name, not a handle */
+	vm32_object_id_t		object_id;	/* obj/map name, not a handle */
 	unsigned short		user_wired_count; 
 };
 
@@ -224,7 +235,7 @@ struct vm_region_submap_info_64 {
         unsigned char           share_mode;	/* see enumeration */
 	boolean_t		is_submap;	/* submap vs obj */
 	vm_behavior_t		behavior;	/* access behavior hint */
-	vm_offset_t		object_id;	/* obj/map name, not a handle */
+	vm32_object_id_t		object_id;	/* obj/map name, not a handle */
 	unsigned short		user_wired_count; 
 };
 
@@ -233,6 +244,29 @@ typedef struct vm_region_submap_info_64		 vm_region_submap_info_data_64_t;
 
 #define VM_REGION_SUBMAP_INFO_COUNT_64		((mach_msg_type_number_t) \
 	(sizeof(vm_region_submap_info_data_64_t)/sizeof(int)))
+
+struct vm_region_submap_short_info_64 {
+	vm_prot_t		protection;     /* present access protection */
+	vm_prot_t		max_protection; /* max avail through vm_prot */
+	vm_inherit_t		inheritance;/* behavior of map/obj on fork */
+	memory_object_offset_t	offset;		/* offset into object/map */
+        unsigned int            user_tag;	/* user tag on map entry */
+        unsigned int            ref_count;	 /* obj/map mappers, etc */
+        unsigned short          shadow_depth; 	/* only for obj */
+        unsigned char           external_pager;  /* only for obj */
+        unsigned char           share_mode;	/* see enumeration */
+	boolean_t		is_submap;	/* submap vs obj */
+	vm_behavior_t		behavior;	/* access behavior hint */
+	vm32_object_id_t		object_id;	/* obj/map name, not a handle */
+	unsigned short		user_wired_count; 
+};
+
+typedef struct vm_region_submap_short_info_64	*vm_region_submap_short_info_64_t;
+typedef struct vm_region_submap_short_info_64	 vm_region_submap_short_info_data_64_t;
+
+#define VM_REGION_SUBMAP_SHORT_INFO_COUNT_64	((mach_msg_type_number_t) \
+	(sizeof(vm_region_submap_short_info_data_64_t)/sizeof(int)))
+
 
 struct mach_vm_read_entry {
 	mach_vm_address_t address;
@@ -244,11 +278,43 @@ struct vm_read_entry {
 	vm_size_t	size;
 };
 
+#if VM32_SUPPORT
+struct vm32_read_entry {
+	vm32_address_t	address;
+	vm32_size_t	size;
+};
+#endif
+
+
 #define VM_MAP_ENTRY_MAX  (256)
 
 typedef struct mach_vm_read_entry	mach_vm_read_entry_t[VM_MAP_ENTRY_MAX];
 typedef struct vm_read_entry		vm_read_entry_t[VM_MAP_ENTRY_MAX];
+#if VM32_SUPPORT
+typedef struct vm32_read_entry		vm32_read_entry_t[VM_MAP_ENTRY_MAX];
+#endif
 
 #pragma pack()
+
+
+#define VM_PAGE_INFO_MAX 
+typedef int *vm_page_info_t;
+typedef int vm_page_info_data_t[VM_PAGE_INFO_MAX];
+typedef int vm_page_info_flavor_t;
+
+#define VM_PAGE_INFO_BASIC		1
+struct vm_page_info_basic {
+	int			disposition;
+	int			ref_count;
+	vm_object_id_t		object_id;
+	memory_object_offset_t	offset;
+	int			depth;
+};
+typedef struct vm_page_info_basic		*vm_page_info_basic_t;
+typedef struct vm_page_info_basic		vm_page_info_basic_data_t;
+
+#define VM_PAGE_INFO_BASIC_COUNT	((mach_msg_type_number_t) \
+	(sizeof(vm_page_info_basic_data_t)/sizeof(int)))
+
 
 #endif	/*_MACH_VM_REGION_H_*/

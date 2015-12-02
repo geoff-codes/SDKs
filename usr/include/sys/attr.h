@@ -1,23 +1,29 @@
 /*
- * Copyright (c) 2000-2005 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 2000-2008 Apple Computer, Inc. All rights reserved.
  *
- * @APPLE_LICENSE_HEADER_START@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
- * The contents of this file constitute Original Code as defined in and
- * are subject to the Apple Public Source License Version 1.1 (the
- * "License").  You may not use this file except in compliance with the
- * License.  Please obtain a copy of the License at
- * http://www.apple.com/publicsource and read it before using this file.
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. The rights granted to you under the License
+ * may not be used to create, or enable the creation or redistribution of,
+ * unlawful or unlicensed copies of an Apple operating system, or to
+ * circumvent, violate, or enable the circumvention or violation of, any
+ * terms of an Apple operating system software license agreement.
  * 
- * This Original Code and all software distributed under the License are
- * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ * 
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
  * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
- * License for the specific language governing rights and limitations
- * under the License.
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
  * 
- * @APPLE_LICENSE_HEADER_END@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
 
 /*
@@ -40,6 +46,8 @@
 #define FSOPT_NOFOLLOW 		0x00000001
 #define FSOPT_NOINMEMUPDATE 	0x00000002
 #define FSOPT_REPORT_FULLSIZE	0x00000004
+/* The following option only valid when requesting ATTR_CMN_RETURNED_ATTRS */
+#define FSOPT_PACK_INVAL_ATTRS	0x00000008
 
 /* we currently aren't anywhere near this amount for a valid
  * fssearchblock.sizeofsearchparams1 or fssearchblock.sizeofsearchparams2
@@ -173,10 +181,33 @@ typedef struct vol_capabilities_attr {
  * A volume that must always read from disk or always perform a network
  * transaction should not set this bit.  
  * 
- * VOL_CAP_FMT_2TB_FILESIZE: When set, the volume format supports file 
- * size upto 2TB.  This bit does not necessarily mean that the file 
- * system does not support file size more than 2TB.   This bit does 
- * not mean that the currently available space on the volume is 2TB. 
+ * VOL_CAP_FMT_2TB_FILESIZE: If this bit is set the volume format supports
+ * file sizes larger than 4GB, and potentially up to 2TB; it does not
+ * indicate whether the filesystem supports files larger than that.
+ *
+ * VOL_CAP_FMT_OPENDENYMODES: When set, the volume supports open deny
+ * modes (e.g. "open for read write, deny write"; effectively, mandatory
+ * file locking based on open modes).
+ *
+ * VOL_CAP_FMT_HIDDEN_FILES: When set, the volume supports the UF_HIDDEN
+ * file flag, and the UF_HIDDEN flag is mapped to that volume's native
+ * "hidden" or "invisible" bit (which may be the invisible bit from the
+ * Finder Info extended attribute).
+ *
+ * VOL_CAP_FMT_PATH_FROM_ID:  When set, the volume supports the ability
+ * to derive a pathname to the root of the file system given only the
+ * id of an object.  This also implies that object ids on this file
+ * system are persistent and not recycled.  This is a very specialized
+ * capability and it is assumed that most file systems will not support
+ * it.  Its use is for legacy non-posix APIs like ResolveFileIDRef.
+ * 
+ * VOL_CAP_FMT_NO_VOLUME_SIZES: When set, the volume does not support 
+ * returning values for total data blocks, available blocks, or free blocks
+ * (as in f_blocks, f_bavail, or f_bfree in "struct statfs").  Historically,
+ * those values were set to 0xFFFFFFFF for volumes that did not support them.
+ * 
+ * VOL_CAP_FMT_DECMPFS_COMPRESSION: When set, the volume supports transparent
+ * decompression of compressed files using decmpfs.
  */
 #define VOL_CAP_FMT_PERSISTENTOBJECTIDS		0x00000001
 #define VOL_CAP_FMT_SYMBOLICLINKS 		0x00000002
@@ -190,6 +221,11 @@ typedef struct vol_capabilities_attr {
 #define VOL_CAP_FMT_CASE_PRESERVING		0x00000200
 #define VOL_CAP_FMT_FAST_STATFS 		0x00000400
 #define VOL_CAP_FMT_2TB_FILESIZE		0x00000800
+#define VOL_CAP_FMT_OPENDENYMODES		0x00001000
+#define VOL_CAP_FMT_HIDDEN_FILES		0x00002000
+#define VOL_CAP_FMT_PATH_FROM_ID		0x00004000
+#define VOL_CAP_FMT_NO_VOLUME_SIZES		0x00008000
+#define VOL_CAP_FMT_DECMPFS_COMPRESSION	0x00010000
 
 
 /*
@@ -233,6 +269,21 @@ typedef struct vol_capabilities_attr {
  * style locks via vnop_advlock.  This includes the O_EXLOCK and O_SHLOCK
  * flags of the open(2) call.
  *
+ * VOL_CAP_INT_EXTENDED_SECURITY: When set, the volume implements
+ * extended security (ACLs).
+ *
+ * VOL_CAP_INT_USERACCESS:  When set, the volume supports the
+ * ATTR_CMN_USERACCESS attribute (used to get the user's access
+ * mode to the file).
+ *
+ * VOL_CAP_INT_MANLOCK: When set, the volume supports AFP-style
+ * mandatory byte range locks via an ioctl().
+ *
+ * VOL_CAP_INT_EXTENDED_ATTR: When set, the volume implements
+ * native extended attribues.
+ *
+ * VOL_CAP_INT_NAMEDSTREAMS: When set, the volume supports
+ * native named streams.
  */
 #define VOL_CAP_INT_SEARCHFS			0x00000001
 #define VOL_CAP_INT_ATTRLIST			0x00000002
@@ -246,6 +297,9 @@ typedef struct vol_capabilities_attr {
 #define VOL_CAP_INT_FLOCK			0x00000200
 #define VOL_CAP_INT_EXTENDED_SECURITY		0x00000400
 #define VOL_CAP_INT_USERACCESS			0x00000800
+#define VOL_CAP_INT_MANLOCK			0x00001000
+#define VOL_CAP_INT_NAMEDSTREAMS		0x00002000
+#define VOL_CAP_INT_EXTENDED_ATTR		0x00004000
 
 typedef struct vol_attributes_attr {
 	attribute_set_t validattr;
@@ -271,12 +325,22 @@ typedef struct vol_attributes_attr {
 #define ATTR_CMN_GRPID				0x00010000
 #define ATTR_CMN_ACCESSMASK			0x00020000
 #define ATTR_CMN_FLAGS				0x00040000
+/*  #define ATTR_CMN_NAMEDATTRCOUNT		0x00080000	 not implemented */
+/*  #define ATTR_CMN_NAMEDATTRLIST		0x00100000	 not implemented */
 #define ATTR_CMN_USERACCESS			0x00200000
 #define ATTR_CMN_EXTENDED_SECURITY		0x00400000
 #define ATTR_CMN_UUID				0x00800000
 #define ATTR_CMN_GRPUUID			0x01000000
+#define ATTR_CMN_FILEID				0x02000000
+#define ATTR_CMN_PARENTID			0x04000000
+#define ATTR_CMN_FULLPATH			0x08000000
+/*
+ * ATTR_CMN_RETURNED_ATTRS is only valid with getattrlist(2).
+ * It is always the first attribute in the return buffer.
+ */
+#define ATTR_CMN_RETURNED_ATTRS			0x80000000
 
-#define ATTR_CMN_VALIDMASK			0x003FFFFF
+#define ATTR_CMN_VALIDMASK			0x8FE7FFFF
 #define ATTR_CMN_SETMASK			0x01C7FF00
 #define ATTR_CMN_VOLSETMASK			0x00006700
 
@@ -298,10 +362,11 @@ typedef struct vol_attributes_attr {
 #define ATTR_VOL_MOUNTEDDEVICE			0x00008000
 #define ATTR_VOL_ENCODINGSUSED			0x00010000
 #define ATTR_VOL_CAPABILITIES			0x00020000
+#define ATTR_VOL_UUID				0x00040000
 #define ATTR_VOL_ATTRIBUTES			0x40000000
 #define ATTR_VOL_INFO				0x80000000
 
-#define ATTR_VOL_VALIDMASK			0xC003FFFF
+#define ATTR_VOL_VALIDMASK			0xC007FFFF
 #define ATTR_VOL_SETMASK			0x80002000
 
 
@@ -326,7 +391,7 @@ typedef struct vol_attributes_attr {
 #define ATTR_FILE_RSRCLENGTH			0x00001000
 #define ATTR_FILE_RSRCALLOCSIZE			0x00002000
 
-#define ATTR_FILE_VALIDMASK			0x00007FFF
+#define ATTR_FILE_VALIDMASK			0x000037FF
 #define ATTR_FILE_SETMASK			0x00000020
 
 #define ATTR_FORK_TOTALSIZE			0x00000001

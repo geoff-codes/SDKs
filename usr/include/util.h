@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 2000, 2007, 2008 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -64,7 +64,7 @@
 #include <stdio.h>
 #include <pwd.h>
 #include <termios.h>
-#include <utmp.h>
+#include <Availability.h>
 
 #define	PIDLOCK_NONBLOCK	1
 #define PIDLOCK_USEHOSTNAME	2
@@ -85,10 +85,8 @@
 #define OPENDEV_BLCK	0x04		/* Open block, not character device. */
 
 __BEGIN_DECLS
-void	login(struct utmp *);
 int	login_tty(int);
-int	logout(const char *);
-void	logwtmp(const char *, const char *, const char *);
+void	logwtmp(const char *, const char *, const char *) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_0,__MAC_10_5,__IPHONE_2_0,__IPHONE_2_0);
 int	opendev(char *, int, int, char **);
 int	openpty(int *, int *, char *, struct termios *,
 		     struct winsize *);

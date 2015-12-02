@@ -1,23 +1,29 @@
 /*
- * Copyright (c) 2003-2005 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 2003-2006 Apple Computer, Inc. All rights reserved.
  *
- * @APPLE_LICENSE_HEADER_START@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
  * 
- * The contents of this file constitute Original Code as defined in and
- * are subject to the Apple Public Source License Version 1.1 (the
- * "License").  You may not use this file except in compliance with the
- * License.  Please obtain a copy of the License at
- * http://www.apple.com/publicsource and read it before using this file.
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. The rights granted to you under the License
+ * may not be used to create, or enable the creation or redistribution of,
+ * unlawful or unlicensed copies of an Apple operating system, or to
+ * circumvent, violate, or enable the circumvention or violation of, any
+ * terms of an Apple operating system software license agreement.
  * 
- * This Original Code and all software distributed under the License are
- * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ * 
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
  * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
- * License for the specific language governing rights and limitations
- * under the License.
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
  * 
- * @APPLE_LICENSE_HEADER_END@
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
 /*-
  * Copyright (c) 1999,2000,2001 Jonathan Lemon <jlemon@FreeBSD.org>
@@ -61,25 +67,36 @@
 #define EVFILT_PROC		(-5)	/* attached to struct proc */
 #define EVFILT_SIGNAL		(-6)	/* attached to struct proc */
 #define EVFILT_TIMER		(-7)	/* timers */
-#define EVFILT_MACHPORT		(-8)	/* Mach ports */
+#define EVFILT_MACHPORT         (-8)	/* Mach portsets */
 #define EVFILT_FS		(-9)	/* Filesystem events */
+#define EVFILT_USER             (-10)   /* User events */
 
-#define EVFILT_SYSCOUNT		9
+#define EVFILT_SYSCOUNT		10
 #define EVFILT_THREADMARKER	EVFILT_SYSCOUNT /* Internal use only */
 
 #pragma pack(4)
 
 struct kevent {
 	uintptr_t	ident;		/* identifier for this event */
-	short		filter;		/* filter for event */
-	unsigned short	flags;		/* general flags */
-	unsigned int	fflags;		/* filter-specific flags */
+	int16_t		filter;		/* filter for event */
+	uint16_t	flags;		/* general flags */
+	uint32_t	fflags;		/* filter-specific flags */
 	intptr_t	data;		/* filter-specific data */
 	void		*udata;		/* opaque user data identifier */
 };
 
 
 #pragma pack()
+
+struct kevent64_s {
+	uint64_t	ident;		/* identifier for this event */
+	int16_t		filter;		/* filter for event */
+	uint16_t	flags;		/* general flags */
+	uint32_t	fflags;		/* filter-specific flags */
+	int64_t		data;		/* filter-specific data */
+	uint64_t	udata;		/* opaque user data identifier */
+	uint64_t	ext[2];		/* filter-specific extensions */
+};
 
 #define EV_SET(kevp, a, b, c, d, e, f) do {	\
 	struct kevent *__kevp__ = (kevp);	\
@@ -91,15 +108,29 @@ struct kevent {
 	__kevp__->udata = (f);			\
 } while(0)
 
+#define EV_SET64(kevp, a, b, c, d, e, f, g, h) do {	\
+	struct kevent64_s *__kevp__ = (kevp);		\
+	__kevp__->ident = (a);				\
+	__kevp__->filter = (b);				\
+	__kevp__->flags = (c);				\
+	__kevp__->fflags = (d);				\
+	__kevp__->data = (e);				\
+	__kevp__->udata = (f);				\
+	__kevp__->ext[0] = (g);				\
+	__kevp__->ext[1] = (h);				\
+} while(0)
+
 /* actions */
 #define EV_ADD		0x0001		/* add event to kq (implies enable) */
 #define EV_DELETE	0x0002		/* delete event from kq */
 #define EV_ENABLE	0x0004		/* enable event */
 #define EV_DISABLE	0x0008		/* disable event (not reported) */
+#define EV_RECEIPT	0x0040		/* force EV_ERROR on success, data == 0 */
 
 /* flags */
 #define EV_ONESHOT	0x0010		/* only report one occurrence */
 #define EV_CLEAR	0x0020		/* clear event state after reporting */
+#define EV_DISPATCH     0x0080          /* disable event after reporting */
 
 #define EV_SYSFLAGS	0xF000		/* reserved by system */
 #define EV_FLAG0	0x1000		/* filter-specific flag */
@@ -131,6 +162,29 @@ struct kevent {
 #define EV_OOBAND	EV_FLAG1
 
 /*
+ * Filter specific flags for EVFILT_USER
+ * 
+ * On input, EV_TRIGGER causes the event to be triggered for output.
+ */
+#define EV_TRIGGER      0x0100
+
+/*
+ * data/hint fflags for EVFILT_USER, shared with userspace
+ *
+ * On input, the top two bits of fflags specifies how the remaining thirty
+ * bits should be applied to the stored value of fflags.
+ *
+ * On output, the top two bits will always be set to NOTE_FFNOP and the
+ * remaining thirty bits will contain the stored fflags value.
+ */
+#define NOTE_FFNOP      0x00000000              /* ignore input fflags */
+#define NOTE_FFAND      0x40000000              /* and fflags */
+#define NOTE_FFOR       0x80000000              /* or fflags */
+#define NOTE_FFCOPY     0xc0000000              /* copy fflags */
+#define NOTE_FFCTRLMASK 0xc0000000              /* mask for operations */
+#define NOTE_FFLAGSMASK (~NOTE_FFCTRLMASK)      /* mask for user fflags */
+
+/*
  * data/hint fflags for EVFILT_{READ|WRITE}, shared with userspace
  *
  * The default behavior for EVFILT_READ is to make the determination
@@ -147,15 +201,24 @@ struct kevent {
 #define	NOTE_LINK	0x00000010		/* link count changed */
 #define	NOTE_RENAME	0x00000020		/* vnode was renamed */
 #define	NOTE_REVOKE	0x00000040		/* vnode access was revoked */
+#define NOTE_NONE	0x00000080		/* No specific vnode event: to test for EVFILT_READ activation*/
 
 /*
  * data/hint fflags for EVFILT_PROC, shared with userspace
+ *
+ * Please note that EVFILT_PROC and EVFILT_SIGNAL share the same knote list
+ * that hangs off the proc structure. They also both play games with the hint
+ * passed to KNOTE(). If NOTE_SIGNAL is passed as a hint, then the lower bits
+ * of the hint contain the signal. IF NOTE_FORK is passed, then the lower bits
+ * contain the PID of the child.
  */
 #define	NOTE_EXIT	0x80000000		/* process exited */
 #define	NOTE_FORK	0x40000000		/* process forked */
 #define	NOTE_EXEC	0x20000000		/* process exec'd */
-#define	NOTE_PCTRLMASK	0xf0000000		/* mask for hint bits */
-#define	NOTE_PDATAMASK	0x000fffff		/* mask for pid */
+#define	NOTE_REAP	0x10000000		/* process reaped */
+#define	NOTE_SIGNAL	0x08000000		/* shared with EVFILT_SIGNAL */
+#define	NOTE_PDATAMASK	0x000fffff		/* mask for pid/signal */
+#define	NOTE_PCTRLMASK	(~NOTE_PDATAMASK)
 
 /*
  * data/hint fflags for EVFILT_TIMER, shared with userspace.
@@ -169,7 +232,34 @@ struct kevent {
 #define NOTE_NSECONDS	0x00000004		/* data is nanoseconds     */
 #define NOTE_ABSOLUTE	0x00000008		/* absolute timeout        */
 						/* ... implicit EV_ONESHOT */
- 
+/*
+ * data/hint fflags for EVFILT_MACHPORT, shared with userspace.
+ *
+ * Only portsets are support at this time.
+ *
+ * The fflags field can optionally contain the MACH_RCV_MSG, MACH_RCV_LARGE,
+ * and related trailer receive options as defined in <mach/message.h>.
+ * The presence of these flags directs the kevent64() call to attempt to receive
+ * the message during kevent delivery, rather than just indicate that a message exists.
+ * The data field contains the size of the receive buffer and ext[0] contains the
+ * receive buffer pointer (as with mach_msg(), the buffer must be large enough to
+ * receive the message and the message trailers).
+ *
+ * If message receipt options were provided on input, on output fflags contains
+ * the return code normally returned by mach_msg() for such a receive.
+ *
+ * On output, the data field contains the size of the message await receipt (or,
+ * in the case of direct message receipt options being used, the size of the message
+ * that acutally was received).
+ */
+
+
+
+
+/*
+ * DEPRECATED!!!!!!!!!
+ * NOTE_TRACK, NOTE_TRACKERR, and NOTE_CHILD are no longer supported as of 10.5
+ */
 /* additional flags for EVFILT_PROC */
 #define	NOTE_TRACK	0x00000001		/* follow across forks */
 #define	NOTE_TRACKERR	0x00000002		/* could not track child */
@@ -191,8 +281,11 @@ int     kqueue(void);
 int     kevent(int kq, const struct kevent *changelist, int nchanges,
 		    struct kevent *eventlist, int nevents,
 		    const struct timespec *timeout);
+int     kevent64(int kq, const struct kevent64_s *changelist, 
+		    int nchanges, struct kevent64_s *eventlist, 
+		    int nevents, unsigned int flags, 
+		    const struct timespec *timeout);
 __END_DECLS
-
 
 
 

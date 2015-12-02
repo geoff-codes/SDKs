@@ -36,6 +36,7 @@
 
 #ifndef _NETINET6_IPSEC_H_
 #define _NETINET6_IPSEC_H_
+#include <sys/cdefs.h>
 #include <sys/appleapiopts.h>
 
 #include <net/pfkeyv2.h>
@@ -73,6 +74,7 @@
 #define IPSEC_POLICY_IPSEC	2	/* do IPsec */
 #define IPSEC_POLICY_ENTRUST	3	/* consulting SPD if present. */
 #define IPSEC_POLICY_BYPASS	4	/* only for privileged socket. */
+#define IPSEC_POLICY_GENERATE   5       /* same as discard - IKE daemon can override with generated policy */
 
 /* Security protocol level */
 #define	IPSEC_LEVEL_DEFAULT	0	/* reference to system default */
@@ -124,10 +126,12 @@ struct ipsecstat {
 };
 
 
+__BEGIN_DECLS
 extern caddr_t ipsec_set_policy(char *, int);
 extern int ipsec_get_policylen(caddr_t);
 extern char *ipsec_dump_policy(caddr_t, char *);
 
 extern const char *ipsec_strerror(void);
+__END_DECLS
 
 #endif /* _NETINET6_IPSEC_H_ */

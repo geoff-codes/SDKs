@@ -51,6 +51,8 @@ typedef struct _malloc_zone_t {
 
     struct malloc_introspection_t	*introspect;
     unsigned	version;
+	/* aligned memory allocation; may be NULL */
+	void *(*memalign)(struct _malloc_zone_t *zone, size_t alignment, size_t size);
 } malloc_zone_t;
 
 /*********	Creation and destruction	************/
@@ -88,6 +90,16 @@ extern malloc_zone_t *malloc_zone_from_ptr(const void *ptr);
 extern size_t malloc_size(const void *ptr);
     /* Returns size of given ptr */
 
+extern size_t malloc_good_size(size_t size);
+    /* Returns number of bytes greater than or equal to size that can be allocated without padding */
+
+extern void *malloc_zone_memalign(malloc_zone_t *zone, size_t alignment, size_t size);
+    /* 
+     * Allocates a new pointer of size size whose address is an exact multiple of alignment.
+	 * alignment must be a power of two and at least as large as sizeof(void *).
+	 * zone must be non-NULL.
+	 */
+
 /*********	Batch methods	************/
 
 extern unsigned malloc_zone_batch_malloc(malloc_zone_t *zone, size_t size, void **results, unsigned num_requested);
@@ -95,6 +107,19 @@ extern unsigned malloc_zone_batch_malloc(malloc_zone_t *zone, size_t size, void 
 
 extern void malloc_zone_batch_free(malloc_zone_t *zone, void **to_be_freed, unsigned num);
     /* frees all the pointers in to_be_freed; note that to_be_freed may be overwritten during the process; This function will always free even if the zone has no batch callback */
+
+/*********	Functions for libcache	************/
+
+extern malloc_zone_t *malloc_default_purgeable_zone(void);
+    /* Returns a pointer to the default purgeable_zone. */
+
+extern void malloc_make_purgeable(void *ptr);
+    /* Make an allocation from the purgeable zone purgeable if possible.  */
+
+extern int malloc_make_nonpurgeable(void *ptr);
+    /* Makes an allocation from the purgeable zone nonpurgeable.
+     * Returns zero if the contents were not purged since the last
+     * call to malloc_make_purgeable, else returns non-zero. */
 
 /*********	Functions for zone implementors	************/
 
@@ -131,6 +156,7 @@ local_memory: set to a contiguous chunk of memory; validity of local_memory is a
 #define MALLOC_PTR_IN_USE_RANGE_TYPE	1	/* for allocated pointers */
 #define MALLOC_PTR_REGION_RANGE_TYPE	2	/* for region containing pointers */
 #define MALLOC_ADMIN_REGION_RANGE_TYPE	4	/* for region used internally */
+#define MALLOC_ZONE_SPECIFIC_FLAGS	0xff00	/* bits reserved for zone-specific purposes */
 
 typedef void vm_range_recorder_t(task_t, void *, unsigned type, vm_range_t *, unsigned);
     /* given a task and context, "records" the specified addresses */

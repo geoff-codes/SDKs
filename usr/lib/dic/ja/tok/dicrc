@@ -1,0 +1,10 @@
+;
+; Configuration file of mecab
+;
+; $Id: dicrc,v 1.1.1.1 2009/02/07 04:02:37 guo1 Exp $;
+;
+
+cost-factor = 800
+bos-feature = BOS/EOS,*,*,*,*,*
+eval-size = 5
+unk-eval-size = 3

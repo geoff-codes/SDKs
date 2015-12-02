@@ -1,9 +1,7 @@
 /*
- * Copyright (c) 1999 Apple Computer, Inc. All rights reserved.
- *
- * @APPLE_LICENSE_HEADER_START@
+ * Copyright (c) 2002, 2006 Apple Inc.  All Rights Reserved.
  * 
- * Copyright (c) 1999-2003 Apple Computer, Inc.  All Rights Reserved.
+ * @APPLE_LICENSE_HEADER_START@
  * 
  * This file contains Original Code and/or Modifications of Original Code
  * as defined in and that are subject to the Apple Public Source License
@@ -22,11 +20,6 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-//
-//  objc_sync.h
-//
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
 
 #ifndef __OBJC_SNYC_H_
 #define __OBJC_SNYC_H_
@@ -42,17 +35,9 @@ OBJC_EXPORT  int objc_sync_enter(id obj);
 // Returns OBJC_SYNC_SUCCESS or OBJC_SYNC_NOT_OWNING_THREAD_ERROR
 OBJC_EXPORT  int objc_sync_exit(id obj);
 
-// Temporarily release lock on 'obj' and wait for another thread to notify on 'obj'
-// Return OBJC_SYNC_SUCCESS, OBJC_SYNC_NOT_OWNING_THREAD_ERROR, OBJC_SYNC_TIMED_OUT
-OBJC_EXPORT  int objc_sync_wait(id obj, long long milliSecondsMaxWait);
-
-// Wake up another thread waiting on 'obj'
-// Return OBJC_SYNC_SUCCESS, OBJC_SYNC_NOT_OWNING_THREAD_ERROR
-OBJC_EXPORT  int objc_sync_notify(id obj);
-
-// Wake up all threads waiting on 'obj'
-// Return OBJC_SYNC_SUCCESS, OBJC_SYNC_NOT_OWNING_THREAD_ERROR
-OBJC_EXPORT  int objc_sync_notifyAll(id obj);
+OBJC_EXPORT  int objc_sync_wait(id obj, long long milliSecondsMaxWait) DEPRECATED_ATTRIBUTE;
+OBJC_EXPORT  int objc_sync_notify(id obj) DEPRECATED_ATTRIBUTE;
+OBJC_EXPORT  int objc_sync_notifyAll(id obj) DEPRECATED_ATTRIBUTE;
 
 enum {
 	OBJC_SYNC_SUCCESS                 = 0,

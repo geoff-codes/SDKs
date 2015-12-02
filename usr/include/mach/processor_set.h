@@ -21,7 +21,7 @@ typedef struct {
         char            *name;
         function_ptr_t  function;
 } function_table_entry;
-typedef function_table_entry 	*function_table_t;
+typedef function_table_entry   *function_table_t;
 #endif /* FUNCTION_PTR_T */
 #endif /* AUTOTEST */
 
@@ -154,7 +154,7 @@ extern
 kern_return_t processor_set_stack_usage
 (
 	processor_set_t pset,
-	unsigned *total,
+	unsigned *ltotal,
 	vm_size_t *space,
 	vm_size_t *resident,
 	vm_size_t *maxusage,
@@ -449,7 +449,7 @@ union __RequestUnion__processor_set_subsystem {
 		mach_msg_header_t Head;
 		NDR_record_t NDR;
 		kern_return_t RetCode;
-		unsigned total;
+		unsigned ltotal;
 		vm_size_t space;
 		vm_size_t resident;
 		vm_size_t maxusage;

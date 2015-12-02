@@ -50,7 +50,7 @@
 
 /*
  *	@(#)resolv.h	8.1 (Berkeley) 6/2/93
- *	$Id: resolv.h,v 1.6 2004/05/13 19:37:48 majka Exp $
+ *	$Id: resolv.h,v 1.1 2006/03/01 19:01:39 majka Exp $
  */
 
 /*
@@ -68,10 +68,6 @@
 #ifndef _RESOLV_9_H_
 #define	_RESOLV_9_H_
 
-#ifdef BIND_8_COMPAT
-#include <resolv8_compat.h>
-#else
-
 #include <sys/param.h>
 #if (!defined(BSD)) || (BSD < 199306)
 # include <sys/bitypes.h>
@@ -80,9 +76,9 @@
 #endif
 #include <sys/cdefs.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <stdio.h>
-#include <arpa/nameser.h>
-
+#include <nameser.h>
 
 /*
  * Revision information.  This is the release date in YYYYMMDD format.
@@ -494,5 +490,4 @@ void		res_setservers __P((res_state, const union res_sockaddr_union *, int));
 int		res_getservers __P((res_state, union res_sockaddr_union *, int));
 __END_DECLS
 
-#endif /* !BIND_8_COMPAT */
 #endif /* !_RESOLV_9_H_ */
