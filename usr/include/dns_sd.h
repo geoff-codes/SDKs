@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 4 -*-
  *
- * Copyright (c) 2003-2004, Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 2003-2013 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -77,7 +77,7 @@
  */
 
 #ifndef _DNS_SD_H
-#define _DNS_SD_H 3973600
+#define _DNS_SD_H 5391001
 
 #ifdef  __cplusplus
 extern "C" {
@@ -170,7 +170,7 @@ struct sockaddr;
  * With the exception of kDNSServiceFlagsValidate, each flag can be valid(be set) 
  * EITHER only as an input to one of the DNSService*() APIs OR only as an output
  * (provide status) through any of the callbacks used. For example, kDNSServiceFlagsAdd
- * can be set only as an output in the callback, whereas the kDNSServiceFlagsIncludeP2P is 
+ * can be set only as an output in the callback, whereas the kDNSServiceFlagsIncludeP2P
  * can be set only as an input to the DNSService*() APIs. See comments on kDNSServiceFlagsValidate  
  * defined in enum below.
  */
@@ -237,14 +237,13 @@ enum
      * DNS, even for a name in a domain (e.g. foo.apple.com.) that would normally imply unicast DNS.
      */
 
-    kDNSServiceFlagsForce               = 0x800,
-    /* Flag for signifying a "stronger" variant of an operation.
-     * Currently defined only for DNSServiceReconfirmRecord(), where it forces a record to
-     * be removed from the cache immediately, instead of querying for a few seconds before
-     * concluding that the record is no longer valid and then removing it. This flag should
-     * be used with caution because if a service browsing PTR record is indeed still valid
-     * on the network, forcing its removal will result in a user-interface flap -- the
-     * discovered service instance will disappear, and then re-appear moments later.
+    kDNSServiceFlagsForce               = 0x800,    // This flag is deprecated.
+
+    kDNSServiceFlagsKnownUnique         = 0x800,
+    /* 
+     * Client guarantees that record names are unique, so we can skip sending out initial
+     * probe messages.  Standard name conflict resolution is still done if a conflict is discovered.
+     * Currently only valid for a DNSServiceRegister call.
      */
 
     kDNSServiceFlagsReturnIntermediates = 0x1000,
@@ -437,22 +436,79 @@ enum
     * There is no valid trust anchor that can be used to determine whether a response is secure or not.
     */
 
-    kDNSServiceFlagsUnicastResponse        = 0x400000
+    kDNSServiceFlagsUnicastResponse        = 0x400000,
    /*
     * Request unicast response to query.
     */
+    kDNSServiceFlagsValidateOptional       = 0x800000,
+
+    /*
+     * This flag is identical to kDNSServiceFlagsValidate except for the case where the response
+     * cannot be validated. If this flag is set in DNSServiceQueryRecord or DNSServiceGetAddrInfo,
+     * the DNSSEC records will be requested for validation. If they cannot be received for some reason
+     * during the validation (e.g., zone is not signed, zone is signed but cannot be traced back to
+     * root, recursive server does not understand DNSSEC etc.), then this will fallback to the default
+     * behavior where the validation will not be performed and no DNSSEC results will be provided.
+     *
+     * If the zone is signed and there is a valid path to a known trust anchor configured in the system
+     * and the application requires DNSSEC validation irrespective of the DNSSEC awareness in the current
+     * network, then this option MUST not be used. This is only intended to be used during the transition
+     * period where the different nodes participating in the DNS resolution may not understand DNSSEC or
+     * managed properly (e.g. missing DS record) but still want to be able to resolve DNS successfully.
+     */
+
+    kDNSServiceFlagsWakeOnlyService        = 0x1000000,
+    /*
+     * This flag is meaningful only in DNSServiceRegister. When set, the service will not be registered
+     * with sleep proxy server during sleep.
+     */
+
+    kDNSServiceFlagsThresholdOne           = 0x2000000,
+    kDNSServiceFlagsThresholdFinder        = 0x4000000,
+    kDNSServiceFlagsThresholdReached       = kDNSServiceFlagsThresholdOne,
+    /*
+     * kDNSServiceFlagsThresholdOne is meaningful only in DNSServiceBrowse. When set,
+     * the system will stop issuing browse queries on the network once the number
+     * of answers returned is one or more.  It will issue queries on the network
+     * again if the number of answers drops to zero.
+     * This flag is for Apple internal use only. Third party developers
+     * should not rely on this behavior being supported in any given software release.
+     *
+     * kDNSServiceFlagsThresholdFinder is meaningful only in DNSServiceBrowse. When set,
+     * the system will stop issuing browse queries on the network once the number
+     * of answers has reached the threshold set for Finder.
+     * It will issue queries on the network again if the number of answers drops below
+     * this threshold.
+     * This flag is for Apple internal use only. Third party developers
+     * should not rely on this behavior being supported in any given software release.
+     *
+     * When kDNSServiceFlagsThresholdReached is set in the client callback add or remove event,
+     * it indicates that the browse answer threshold has been reached and no 
+     * browse requests will be generated on the network until the number of answers falls
+     * below the threshold value.  Add and remove events can still occur based
+     * on incoming Bonjour traffic observed by the system.
+     * The set of services return to the client is not guaranteed to represent the 
+     * entire set of services present on the network once the threshold has been reached.
+     *
+     * Note, while kDNSServiceFlagsThresholdReached and kDNSServiceFlagsThresholdOne
+     * have the same value, there  isn't a conflict because kDNSServiceFlagsThresholdReached
+     * is only set in the callbacks and kDNSServiceFlagsThresholdOne is only set on
+     * input to a DNSServiceBrowse call.
+     */
 };
 
-#define kDNSServiceOutputFlags (kDNSServiceFlagsValidate | kDNSServiceFlagsMoreComing | kDNSServiceFlagsAdd | kDNSServiceFlagsDefault)
+#define kDNSServiceOutputFlags (kDNSServiceFlagsValidate | kDNSServiceFlagsValidateOptional | kDNSServiceFlagsMoreComing | kDNSServiceFlagsAdd | kDNSServiceFlagsDefault)
    /* All the output flags excluding the DNSSEC Status flags. Typically used to check DNSSEC Status */
 
-/* Possible protocols for DNSServiceNATPortMappingCreate(). */
+/* Possible protocol values */
 enum
 {
+    /* for DNSServiceGetAddrInfo() */
     kDNSServiceProtocol_IPv4 = 0x01,
     kDNSServiceProtocol_IPv6 = 0x02,
     /* 0x04 and 0x08 reserved for future internetwork protocols */
 
+    /* for DNSServiceNATPortMappingCreate() */
     kDNSServiceProtocol_UDP  = 0x10,
     kDNSServiceProtocol_TCP  = 0x20
                                /* 0x40 and 0x80 reserved for future transport protocols, e.g. SCTP [RFC 2960]
@@ -578,8 +634,8 @@ enum
     kDNSServiceErr_BadKey                    = -65561,
     kDNSServiceErr_Transient                 = -65562,
     kDNSServiceErr_ServiceNotRunning         = -65563,  /* Background daemon not running */
-    kDNSServiceErr_NATPortMappingUnsupported = -65564,  /* NAT doesn't support NAT-PMP or UPnP */
-    kDNSServiceErr_NATPortMappingDisabled    = -65565,  /* NAT supports NAT-PMP or UPnP but it's disabled by the administrator */
+    kDNSServiceErr_NATPortMappingUnsupported = -65564,  /* NAT doesn't support PCP, NAT-PMP or UPnP */
+    kDNSServiceErr_NATPortMappingDisabled    = -65565,  /* NAT supports PCP, NAT-PMP or UPnP, but it's disabled by the administrator */
     kDNSServiceErr_NoRouter                  = -65566,  /* No router currently configured (probably no network connectivity) */
     kDNSServiceErr_PollingMode               = -65567,
     kDNSServiceErr_Timeout                   = -65568
@@ -680,11 +736,15 @@ enum
  * to their DNSServiceBrowseReply() callback function, and discarding those
  * where the interface index is not kDNSServiceInterfaceIndexLocalOnly.
  *
- * kDNSServiceInterfaceIndexP2P is meaningful only in Browse, QueryRecord,
+ * kDNSServiceInterfaceIndexP2P is meaningful only in Browse, QueryRecord, Register,
  * and Resolve operations. It should not be used in other DNSService APIs.
  *
  * - If kDNSServiceInterfaceIndexP2P is passed to DNSServiceBrowse or
  *   DNSServiceQueryRecord, it restricts the operation to P2P.
+ *
+ * - If kDNSServiceInterfaceIndexP2P is passed to DNSServiceRegister, it is
+ *   mapped internally to kDNSServiceInterfaceIndexAny with the kDNSServiceFlagsIncludeP2P
+ *   set.
  *
  * - If kDNSServiceInterfaceIndexP2P is passed to DNSServiceResolve, it is
  *   mapped internally to kDNSServiceInterfaceIndexAny with the kDNSServiceFlagsIncludeP2P
@@ -859,9 +919,7 @@ DNSServiceErrorType DNSSD_API DNSServiceProcessResult(DNSServiceRef sdRef);
  * is invalidated when this function is called - the DNSRecordRef may not be used in subsequent
  * functions.
  *
- * Note: This call is to be used only with the DNSServiceRef defined by this API. It is
- * not compatible with dns_service_discovery_ref objects defined in the legacy Mach-based
- * DNSServiceDiscovery.h API.
+ * Note: This call is to be used only with the DNSServiceRef defined by this API.
  *
  * sdRef:           A DNSServiceRef initialized by any of the DNSService calls.
  *
@@ -1071,6 +1129,31 @@ typedef void (DNSSD_API *DNSServiceRegisterReply)
  *                  dots ('.'), commas (','), backslashes ('\') and zero bytes, as shown below:
  *
  *                  % dns-sd -R Test '_test._tcp,s\.one,s\,two,s\\three,s\000four' local 123
+ *
+ *                  When a service is registered, all the clients browsing for the registered
+ *                  type ("regtype") will discover it. If the discovery should be
+ *                  restricted to a smaller set of well known peers, the service can be
+ *                  registered with additional data (group identifier) that is known
+ *                  only to a smaller set of peers. The group identifier should follow primary
+ *                  service type using a colon (":") as a delimeter. If subtypes are also present,
+ *                  it should be given before the subtype as shown below.
+ *
+ *                  % dns-sd -R _test1 _http._tcp:mygroup1 local 1001 
+ *                  % dns-sd -R _test2 _http._tcp:mygroup2 local 1001 
+ *                  % dns-sd -R _test3 _http._tcp:mygroup3,HasFeatureA local 1001 
+ *
+ *                  Now:
+ *                  % dns-sd -B _http._tcp:"mygroup1"                # will discover only test1
+ *                  % dns-sd -B _http._tcp:"mygroup2"                # will discover only test2
+ *                  % dns-sd -B _http._tcp:"mygroup3",HasFeatureA    # will discover only test3
+ *                  
+ *                  By specifying the group information, only the members of that group are
+ *                  discovered.
+ *
+ *                  The group identifier itself is not sent in clear. Only a hash of the group
+ *                  identifier is sent and the clients discover them anonymously. The group identifier
+ *                  may be up to 256 bytes long and may contain any eight bit values except comma which
+ *                  should be escaped.
  *
  * domain:          If non-NULL, specifies the domain on which to advertise the service.
  *                  Most applications will not specify a domain, instead automatically
@@ -1328,7 +1411,10 @@ typedef void (DNSSD_API *DNSServiceBrowseReply)
  *                  A client may optionally specify a single subtype to perform filtered browsing:
  *                  e.g. browsing for "_primarytype._tcp,_subtype" will discover only those
  *                  instances of "_primarytype._tcp" that were registered specifying "_subtype"
- *                  in their list of registered subtypes.
+ *                  in their list of registered subtypes. Additionally, a group identifier may
+ *                  also be specified before the subtype e.g., _primarytype._tcp:GroupID, which
+ *                  will discover only the members that register the service with GroupID. See
+ *                  DNSServiceRegister for more details.
  *
  * domain:          If non-NULL, specifies the domain on which to browse for services.
  *                  Most applications will not specify a domain, instead browsing on the
@@ -1732,7 +1818,6 @@ DNSServiceErrorType DNSSD_API DNSServiceGetAddrInfo
 
 DNSServiceErrorType DNSSD_API DNSServiceCreateConnection(DNSServiceRef *sdRef);
 
-
 /* DNSServiceRegisterRecord
  *
  * Register an individual resource record on a connected DNSServiceRef.
@@ -1841,8 +1926,7 @@ DNSServiceErrorType DNSSD_API DNSServiceRegisterRecord
  *
  * Parameters:
  *
- * flags:           Pass kDNSServiceFlagsForce to force immediate deletion of record,
- *                  instead of after some number of reconfirmation queries have gone unanswered.
+ * flags:           Not currently used.
  *
  * interfaceIndex:  Specifies the interface of the record in question.
  *                  The caller must specify the interface.
@@ -1935,8 +2019,12 @@ DNSServiceErrorType DNSSD_API PeerConnectionRelease
 /* DNSServiceNATPortMappingCreate
  *
  * Request a port mapping in the NAT gateway, which maps a port on the local machine
- * to an external port on the NAT. The NAT should support either the NAT-PMP or the UPnP IGD
- * protocol for this API to create a successful mapping.
+ * to an external port on the NAT. The NAT should support either PCP, NAT-PMP or the
+ * UPnP/IGD protocol for this API to create a successful mapping. Note that this API
+ * currently supports IPv4 addresses/mappings only. If the NAT gateway supports PCP and
+ * returns an IPv6 address (incorrectly, since this API specifically requests IPv4
+ * addresses), the DNSServiceNATPortMappingReply callback will be invoked with errorCode
+ * kDNSServiceErr_NATPortMappingUnsupported.
  *
  * The port mapping will be renewed indefinitely until the client process exits, or
  * explicitly terminates the port mapping request by calling DNSServiceRefDeallocate().
@@ -2564,6 +2652,34 @@ DNSServiceErrorType DNSSD_API DNSServiceSleepKeepalive
     DNSServiceSleepKeepaliveReply callBack,
     void                                *context
 );
+#endif
+
+#ifdef APPLE_OSX_mDNSResponder
+/* DNSServiceCreateDelegateConnection()
+ *
+ * Create a delegate connection to the daemon allowing efficient registration of
+ * multiple individual records.
+ *
+ * Parameters:
+ *
+ * sdRef:           A pointer to an uninitialized DNSServiceRef. Deallocating
+ *                  the reference (via DNSServiceRefDeallocate()) severs the
+ *                  connection and deregisters all records registered on this connection.
+ *
+ * pid :            Process ID of the delegate
+ *
+ * uuid:            UUID of the delegate
+ *
+ *                  Note that only one of the two arguments (pid or uuid) can be specified. If pid
+ *                  is zero, uuid will be assumed to be a valid value; otherwise pid will be used.
+ *
+ * return value:    Returns kDNSServiceErr_NoError on success, otherwise returns
+ *                  an error code indicating the specific failure that occurred (in which
+ *                  case the DNSServiceRef is not initialized). kDNSServiceErr_NotAuth is
+ *                  returned to indicate that the calling process does not have entitlements
+ *                  to use this API.
+ */
+DNSServiceErrorType DNSSD_API DNSServiceCreateDelegateConnection(DNSServiceRef *sdRef, int32_t pid, uuid_t uuid);
 #endif
 
 #ifdef __APPLE_API_PRIVATE

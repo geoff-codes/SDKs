@@ -2,7 +2,7 @@
 //  UIImage.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -33,6 +33,13 @@ typedef NS_ENUM(NSInteger, UIImageResizingMode) {
     UIImageResizingModeStretch,
 };
 
+typedef NS_ENUM(NSInteger, UIImageRenderingMode) {
+    UIImageRenderingModeAutomatic,          // Use the default rendering mode for the context where the image is used
+    
+    UIImageRenderingModeAlwaysOriginal,     // Always draw the original image, without treating it as a template
+    UIImageRenderingModeAlwaysTemplate,     // Always draw the image as a template image, ignoring its color information
+} NS_ENUM_AVAILABLE_IOS(7_0);
+
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UIImage : NSObject <NSCoding> {
   @package
     CFTypeRef _imageRef;
@@ -44,6 +51,8 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIImage : NSObject <NSCoding> {
 	unsigned int hasPattern:1;
 	unsigned int isCIImage:1;
         unsigned int imageSetIdentifer:16;
+	unsigned int renderingMode:2;
+        unsigned int suppressesAccessibilityHairlineThickening:1;
     } _imageFlags;
 }
 
@@ -67,6 +76,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIImage : NSObject <NSCoding> {
 
 @property(nonatomic,readonly) CGSize             size;             // reflects orientation setting. In iOS 4.0 and later, this is measured in points. In 3.x and earlier, measured in pixels
 @property(nonatomic,readonly) CGImageRef         CGImage;          // returns underlying CGImageRef or nil if CIImage based
+- (CGImageRef)CGImage NS_RETURNS_INNER_POINTER;
 @property(nonatomic,readonly) CIImage           *CIImage NS_AVAILABLE_IOS(5_0); // returns underlying CIImage or nil if CGImageRef based
 @property(nonatomic,readonly) UIImageOrientation imageOrientation; // this will affect how the image is composited
 @property(nonatomic,readonly) CGFloat            scale NS_AVAILABLE_IOS(4_0);
@@ -103,6 +113,10 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIImage : NSObject <NSCoding> {
 // The default alignmentRectInsets are UIEdgeInsetsZero.
 - (UIImage *)imageWithAlignmentRectInsets:(UIEdgeInsets)alignmentInsets NS_AVAILABLE_IOS(6_0);
 @property(nonatomic,readonly) UIEdgeInsets alignmentRectInsets NS_AVAILABLE_IOS(6_0);
+
+// Create a version of this image with the specified rendering mode. By default, images have a rendering mode of UIImageRenderingModeAutomatic.
+- (UIImage *)imageWithRenderingMode:(UIImageRenderingMode)renderingMode NS_AVAILABLE_IOS(7_0);
+@property(nonatomic, readonly) UIImageRenderingMode renderingMode NS_AVAILABLE_IOS(7_0);
 
 @end
 

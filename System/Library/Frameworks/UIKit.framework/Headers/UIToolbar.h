@@ -2,7 +2,7 @@
 //  UIToolbar.h
 //  UIKit
 //
-//  Copyright (c) 2006-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,49 +11,60 @@
 #import <UIKit/UIInterface.h>
 #import <UIKit/UIApplication.h>
 #import <UIKit/UIBarButtonItem.h>
-
-typedef NS_ENUM(NSInteger, UIToolbarPosition) {
-    UIToolbarPositionAny = 0,
-    UIToolbarPositionBottom = 1,
-    UIToolbarPositionTop = 2,
-};
+#import <UIKit/UIBarCommon.h>
 
 @class UIBarButtonItem, UIColor;
+@protocol UIToolbarDelegate;
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UIToolbar : UIView {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIToolbar : UIView <UIBarPositioning> {
   @private
     id                     _delegate;
     NSArray               *_items;
-    UIColor               *_tintColor;
+    UIColor               *_barTintColor;
     struct {
-        unsigned int barStyle:2;
+        unsigned int barStyle:3;
         unsigned int mode:2;
         unsigned int wasEnabled:1;
         unsigned int downButtonSentAction:1;
-        unsigned int isTranslucent:1;
-        unsigned int forceTopBarAppearance:1;
-        unsigned int autolayoutIsLocked:1;
+        unsigned int barTranslucence:3;
+        unsigned int isLocked:1;
+        unsigned int backgroundLayoutNeedsUpdate:1;
+        unsigned int hasCustomBackgroundView:1;
     } _toolbarFlags;
     CFMutableDictionaryRef _groups;
     NSArray               *_buttonItems;
     NSInteger              _currentButtonGroup;
     NSInteger              _pressedTag;
     CGFloat                _extraEdgeInsets;
-    UIView                *_backgroundView;
     id                     _appearanceStorage;
-    id                     _currentAlert;
 }
 
 @property(nonatomic)        UIBarStyle barStyle;    // default is UIBarStyleDefault (blue)
 @property(nonatomic,copy)   NSArray   *items;       // get/set visible UIBarButtonItem. default is nil. changes not animated. shown in order
-@property(nonatomic,assign,getter=isTranslucent) BOOL translucent NS_AVAILABLE_IOS(3_0); // Default is NO. Always YES if barStyle is set to UIBarStyleBlackTranslucent
+
+/*
+ New behavior on iOS 7.
+ Default is YES.
+ You may force an opaque background by setting the property to NO.
+ If the toolbar has a custom background image, the default is inferred
+ from the alpha values of the image—YES if it has any pixel with alpha < 1.0
+ If you send setTranslucent:YES to a bar with an opaque custom background image
+ it will apply a system opacity less than 1.0 to the image.
+ If you send setTranslucent:NO to a bar with a translucent custom background image
+ it will provide an opaque background for the image using the bar's barTintColor if defined, or black
+ for UIBarStyleBlack or white for UIBarStyleDefault if barTintColor is nil.
+ */
+@property(nonatomic,assign,getter=isTranslucent) BOOL translucent NS_AVAILABLE_IOS(3_0); // Default is NO on iOS 6 and earlier. Always YES if barStyle is set to UIBarStyleBlackTranslucent
 
 - (void)setItems:(NSArray *)items animated:(BOOL)animated;   // will fade in or out or reorder and adjust spacing
 
-/* Default tintColor is nil. When non-nil, bordered buttons and segmented controls in the toolbar
- will pick up the same tint unless their tints are independently set.
+/*
+ The behavior of tintColor for bars has changed on iOS 7.0. It no longer affects the bar's background
+ and behaves as described for the tintColor property added to UIView.
+ To tint the bar's background, please use -barTintColor.
  */
-@property(nonatomic,retain) UIColor   *tintColor  UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *tintColor;
+@property(nonatomic,retain) UIColor *barTintColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;  // default is nil
 
 /* Use these methods to set and access custom background images for toolbars.
       Default is nil. When non-nil the image will be used instead of the system image for toolbars in the
@@ -65,12 +76,16 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIToolbar : UIView {
  the bar buttons (unless otherwise customized) will inherit the underlying
  barStyle or tintColor.
  */
-- (void)setBackgroundImage:(UIImage *)backgroundImage forToolbarPosition:(UIToolbarPosition)topOrBottom barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-- (UIImage *)backgroundImageForToolbarPosition:(UIToolbarPosition)topOrBottom barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+- (void)setBackgroundImage:(UIImage *)backgroundImage forToolbarPosition:(UIBarPosition)topOrBottom barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+- (UIImage *)backgroundImageForToolbarPosition:(UIBarPosition)topOrBottom barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 /* Default is nil. When non-nil, a custom shadow image to show instead of the default shadow image. For a custom shadow to be shown, a custom background image must also be set with -setBackgroundImage:forToolbarPosition:barMetrics: (if the default background image is used, the default shadow image will be used).
  */
-- (void)setShadowImage:(UIImage *)shadowImage forToolbarPosition:(UIToolbarPosition)topOrBottom NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
-- (UIImage *)shadowImageForToolbarPosition:(UIToolbarPosition)topOrBottom NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
+- (void)setShadowImage:(UIImage *)shadowImage forToolbarPosition:(UIBarPosition)topOrBottom NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
+- (UIImage *)shadowImageForToolbarPosition:(UIBarPosition)topOrBottom NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
 
+@property(nonatomic,assign) id<UIToolbarDelegate> delegate NS_AVAILABLE_IOS(7_0); // You may not set the delegate when the toolbar is managed by a UINavigationController.
+@end
+
+@protocol UIToolbarDelegate <UIBarPositioningDelegate>
 @end

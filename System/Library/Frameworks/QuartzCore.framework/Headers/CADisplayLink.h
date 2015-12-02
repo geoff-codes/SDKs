@@ -1,6 +1,6 @@
 /* CoreAnimation - CADisplayLink.h
 
-   Copyright (c) 2009 Apple Inc.
+   Copyright (c) 2009-2012 Apple Inc.
    All rights reserved. */
 
 #import <QuartzCore/CABase.h>

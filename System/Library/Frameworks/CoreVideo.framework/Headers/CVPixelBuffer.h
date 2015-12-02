@@ -404,7 +404,7 @@ CV_EXPORT void CVPixelBufferGetExtendedPixels(CVPixelBufferRef pixelBuffer,
 
 /*!
     @function   CVPixelBufferFillExtendedPixels
-    @abstract   Fills the extended pixels of the PixelBuffer with Zero.   This function replicates edge pixels to fill the entire extended region of the image.
+    @abstract   Fills the extended pixels of the PixelBuffer.   This function replicates edge pixels to fill the entire extended region of the image.
     @param      pixelBuffer Target PixelBuffer.
 */
 CV_EXPORT CVReturn CVPixelBufferFillExtendedPixels(CVPixelBufferRef pixelBuffer) __OSX_AVAILABLE_STARTING(__MAC_10_4,__IPHONE_4_0);

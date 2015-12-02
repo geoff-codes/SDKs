@@ -2,7 +2,7 @@
  *  GKMatchmakerViewController.h
  *  GameKit
  *
- *  Copyright 2010 Apple, Inc. All rights reserved.
+ *  Copyright 2010 Apple Inc. All rights reserved.
  *
  */
 
@@ -14,8 +14,7 @@
 
 // View controller to invite friends, respond to invites, and perform auto-matching. Present modally from the top view controller.
 NS_CLASS_AVAILABLE(NA, 4_1)
-@interface GKMatchmakerViewController : UINavigationController {
-}
+@interface GKMatchmakerViewController : UINavigationController
 
 @property(nonatomic, assign) id<GKMatchmakerViewControllerDelegate>     matchmakerDelegate;
 @property(nonatomic, readonly, retain) GKMatchRequest                   *matchRequest;
@@ -39,24 +38,24 @@ NS_CLASS_AVAILABLE(NA, 4_1)
 
 
 // deprecated, set the message on the match request instead
-@property(nonatomic, copy) NSString                                     *defaultInvitationMessage __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0); // default message to use when inviting friends. Can be edited by the user.
+@property(nonatomic, copy) NSString *defaultInvitationMessage __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0); // default message to use when inviting friends. Can be edited by the user.
 
 @end
 
 @protocol GKMatchmakerViewControllerDelegate <NSObject>
 @required
 // The user has cancelled matchmaking
-- (void)matchmakerViewControllerWasCancelled:(GKMatchmakerViewController *)viewController;
+- (void)matchmakerViewControllerWasCancelled:(GKMatchmakerViewController *)viewController NS_AVAILABLE_IOS(4_1);
 
 // Matchmaking has failed with an error
-- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFailWithError:(NSError *)error;
+- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFailWithError:(NSError *)error NS_AVAILABLE_IOS(4_1);
 
 @optional
 // A peer-to-peer match has been found, the game should start
-- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindMatch:(GKMatch *)match;
+- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindMatch:(GKMatch *)match NS_AVAILABLE_IOS(4_1);
 
 // Players have been found for a server-hosted game, the game should start
-- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindPlayers:(NSArray *)playerIDs;
+- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindPlayers:(NSArray *)playerIDs NS_AVAILABLE_IOS(4_1);
 
 // An invited player has accepted a hosted invite.  Apps should connect through the hosting server and then update the player's connected state (using setConnected:forHostedPlayer:)
 - (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didReceiveAcceptFromHostedPlayer:(NSString *)playerID __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);

@@ -2,14 +2,14 @@
 //  GLKTextureLoader.h
 //  GLKit
 //
-//  Copyright (c) 2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2012, Apple Inc. All rights reserved.
 //
 
 /*
  Convenience library for loading textures into OpenGL
 
  - Synchronous and asynchronous loading of textures
- - Supports most ImageIO formats and PVR files.
+ - Supports most ImageIO formats as well as PVR files on iOS
 
  Default Texture Parameters
  
@@ -28,11 +28,18 @@
 
 #import <Foundation/Foundation.h>
 
+#if TARGET_OS_IPHONE
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
+#else // !TARGET_OS_IPHONE
+#import <OpenGL/gl3.h>
+#import <AppKit/AppKit.h>
+#endif // !TARGET_OS_IPHONE
+
+#import <GLKit/GLKitBase.h>
 
 #pragma mark -
 #pragma mark Definitions
@@ -41,42 +48,66 @@
 /*
  Dictionary keys for texture loader properties
  */
-extern NSString *const GLKTextureLoaderApplyPremultiplication;			/* A boolean NSNumber. */
-                                                                        /* Non-alpha channels are premultiplied by corresponding alpha channel values. */
-                                                                        /* For compressed formats, this option must be omitted, or false. */
-                                                                        /* False by default. */
+/* 
+ GLKTextureLoaderApplyPremultiplication - A boolean NSNumber.
+ Non-alpha channels are premultiplied by corresponding alpha channel values.
+ For compressed formats, this option must be omitted, or false.
+ False by default.
+ */
+GLK_EXTERN NSString *const GLKTextureLoaderApplyPremultiplication NS_AVAILABLE(10_8, 5_0);
 
-extern NSString *const GLKTextureLoaderGenerateMipmaps;					/* A boolean NSNumber */
-                                                                        /* Generates all levels of mipmaps for the current image being loaded as a texture. */
-                                                                        /* Generates mipmap levels for all faces when used with cube maps. */
-                                                                        /* Sets GL_TEXTURE_MIN_FILTER parameter to GL_LINEAR_MIPMAP_LINEAR when true. */
-                                                                        /* False by default. */
+/* 
+ GLKTextureLoaderGenerateMipmaps - A boolean NSNumber
+ Generates all levels of mipmaps for the current image being loaded as a texture.
+ Generates mipmap levels for all faces when used with cube maps.
+ Sets GL_TEXTURE_MIN_FILTER parameter to GL_LINEAR_MIPMAP_LINEAR when true.
+ False by default. */
+GLK_EXTERN NSString *const GLKTextureLoaderGenerateMipmaps NS_AVAILABLE(10_8, 5_0);
 
-extern NSString *const GLKTextureLoaderOriginBottomLeft;				/* A boolean NSNumber. */
-                                                                        /* Transform image data to match OpenGL's bottom left orientation specification. */
-                                                                        /* False by default. */
+/* 
+ GLKTextureLoaderOriginBottomLeft - A boolean NSNumber.
+ Transform image data to match OpenGL's bottom left orientation specification.
+ False by default. */
+GLK_EXTERN NSString *const GLKTextureLoaderOriginBottomLeft NS_AVAILABLE(10_8, 5_0);
 
-extern NSString *const GLKTextureLoaderGrayscaleAsAlpha;                /* A boolean NSNumber. */
-                                                                        /* If true, a single channel grayscale image is loaded as GL_ALPHA. */
-                                                                        /* If false, it will be loaded as GL_LUMINANCE. */
-                                                                        /* Has no effect on non-grayscale images */
-                                                                        /* False by default. */
+/*
+ GLKTextureLoaderGrayscaleAsAlpha - A boolean NSNumber.
+ If true, a single channel grayscale image is loaded as GL_ALPHA.
+ If false, it will be loaded as GL_LUMINANCE.
+ Has no effect on non-grayscale images and on OS X.
+ False by default. 
+ */
+GLK_EXTERN NSString *const GLKTextureLoaderGrayscaleAsAlpha NS_AVAILABLE_IOS(5_0);
+
+
+/*
+ GLKTextureLoaderSRGB - A boolean NSNumber.
+ If true, the texture will be loaded as sRGB.
+ If false, it will be loaded as linear.
+ False by default.
+ */
+#if TARGET_OS_IPHONE || defined(MAC_OS_X_VERSION_10_9)
+GLK_EXTERN NSString *const GLKTextureLoaderSRGB NS_AVAILABLE(10_9, 7_0);
+#else
+GLK_EXTERN NSString *const GLKTextureLoaderSRGB;
+#endif
 
 /*
  Error domain for GLKTextureLoader
  */
-extern NSString *const GLKTextureLoaderErrorDomain;
+GLK_EXTERN NSString *const GLKTextureLoaderErrorDomain NS_AVAILABLE(10_8, 5_0);
 
 /*
  Error keys for obtaining more error information
  */
-extern NSString *const GLKTextureLoaderErrorKey;
-extern NSString *const GLKTextureLoaderGLErrorKey;
+GLK_EXTERN NSString *const GLKTextureLoaderErrorKey NS_AVAILABLE(10_8, 5_0);
+GLK_EXTERN NSString *const GLKTextureLoaderGLErrorKey NS_AVAILABLE(10_8, 5_0);
 
 /*
  Error codes
  */
-enum {
+typedef NS_ENUM(GLuint, GLKTextureLoaderError)
+{
     GLKTextureLoaderErrorFileOrURLNotFound = 0,
     GLKTextureLoaderErrorInvalidNSData = 1,
     GLKTextureLoaderErrorInvalidCGImage = 2,
@@ -94,9 +125,9 @@ enum {
     GLKTextureLoaderErrorUnsupportedOrientation = 14,
     GLKTextureLoaderErrorReorientationFailure = 15,
     GLKTextureLoaderErrorAlphaPremultiplicationFailure = 16,
-    GLKTextureLoaderErrorInvalidEAGLContext = 17
-};
-typedef NSUInteger GLKTextureLoaderError;
+    GLKTextureLoaderErrorInvalidEAGLContext = 17,
+    GLKTextureLoaderErrorIncompatibleFormatSRGB = 18
+} NS_ENUM_AVAILABLE(10_8, 5_0);
 
 #pragma mark -
 #pragma mark GLKTextureInfo
@@ -105,27 +136,27 @@ typedef NSUInteger GLKTextureLoaderError;
 /*
  Alpha state of loaded texture
  */
-enum {
+typedef NS_ENUM(GLint, GLKTextureInfoAlphaState)
+{
     GLKTextureInfoAlphaStateNone = 0,
     GLKTextureInfoAlphaStateNonPremultiplied,
     GLKTextureInfoAlphaStatePremultiplied
-};
-typedef NSUInteger GLKTextureInfoAlphaState;
+} NS_ENUM_AVAILABLE(10_8, 5_0);
 
 /*
  Image origin of loaded texture
  */
-enum {
+typedef NS_ENUM(GLint, GLKTextureInfoOrigin)
+{
     GLKTextureInfoOriginUnknown = 0,
     GLKTextureInfoOriginTopLeft,
     GLKTextureInfoOriginBottomLeft
-};
-typedef NSUInteger GLKTextureInfoOrigin;
+} NS_ENUM_AVAILABLE(10_8, 5_0);
 
 /*
  Immutable Texture Object Data
  */
-NS_CLASS_AVAILABLE(NA, 5_0)
+NS_CLASS_AVAILABLE(10_8, 5_0)
 @interface GLKTextureInfo : NSObject <NSCopying>
 {
 @private
@@ -154,7 +185,7 @@ NS_CLASS_AVAILABLE(NA, 5_0)
 
 typedef void (^GLKTextureLoaderCallback) (GLKTextureInfo *textureInfo, NSError *outError);
 
-NS_CLASS_AVAILABLE(NA, 5_0)
+NS_CLASS_AVAILABLE(10_8, 5_0)
 @interface GLKTextureLoader : NSObject  
 {
 
@@ -228,7 +259,11 @@ NS_CLASS_AVAILABLE(NA, 5_0)
  Internally creates a new shared context that will handle the texture creation operations.
  The sharegroup will be released upon releasing the GLKTextureLoader object. 
  */
-- (id)initWithSharegroup:(EAGLSharegroup*)sharegroup;
+#if TARGET_OS_IPHONE
+- (id)initWithSharegroup:(EAGLSharegroup *)sharegroup;
+#else
+- (id)initWithShareContext:(NSOpenGLContext *)context;
+#endif
 
 /*
  Asynchronously load an image from disk into an OpenGL texture.

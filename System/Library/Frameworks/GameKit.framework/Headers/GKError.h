@@ -2,7 +2,7 @@
  *  GKError.h
  *  GameKit
  *
- *  Copyright 2010 Apple, Inc. All rights reserved.
+ *  Copyright 2010 Apple Inc. All rights reserved.
  *
  */
 
@@ -36,6 +36,7 @@ enum {
     GKErrorTurnBasedInvalidParticipant          = 22,
     GKErrorTurnBasedInvalidTurn                 = 23,
     GKErrorTurnBasedInvalidState                = 24,
+    GKErrorInvitationsDisabled                  = 25,
 };
 typedef NSInteger GKErrorCode;
 

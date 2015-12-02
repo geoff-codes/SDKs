@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2008-2012 Apple Inc. All rights reserved.
+	Copyright 2008-2013 Apple Inc. All rights reserved.
 
 	To report bugs, go to:  http://developer.apple.com/bugreporter/
 
@@ -26,11 +26,13 @@
 #import <AVFoundation/AVAssetReaderOutput.h>
 #import <AVFoundation/AVAssetResourceLoader.h>
 #import <AVFoundation/AVAssetTrack.h>
+#import <AVFoundation/AVAssetTrackGroup.h>
 #import <AVFoundation/AVAssetTrackSegment.h>
 #import <AVFoundation/AVAssetWriter.h>
 #import <AVFoundation/AVAssetWriterInput.h>
 #import <AVFoundation/AVAsynchronousKeyValueLoading.h>
 #import <AVFoundation/AVAudioMix.h>
+#import <AVFoundation/AVAudioProcessingSettings.h>
 
 #if (TARGET_OS_IPHONE || defined(__MAC_10_7))
 #import <AVFoundation/AVCaptureDevice.h>
@@ -51,6 +53,7 @@
 #if TARGET_OS_IPHONE
 #import <AVFoundation/AVMetadataObject.h>
 #endif
+#import <AVFoundation/AVOutputSettingsAssistant.h>
 #import <AVFoundation/AVPlayer.h>
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerItemOutput.h>
@@ -59,8 +62,12 @@
 #endif
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <AVFoundation/AVPlayerLayer.h>
+#import <AVFoundation/AVPlayerMediaSelectionCriteria.h>
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
+#endif
+#if TARGET_OS_IPHONE
+#import <AVFoundation/AVSpeechSynthesis.h>
 #endif
 #import <AVFoundation/AVSynchronizedLayer.h>
 #import <AVFoundation/AVTextStyleRule.h>

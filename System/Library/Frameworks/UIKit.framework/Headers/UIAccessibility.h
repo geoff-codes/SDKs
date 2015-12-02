@@ -2,18 +2,20 @@
 //  UIAccessibility.h
 //  UIKit
 //
-//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2013, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKitDefines.h>
+#import <UIKit/UIBezierPath.h>
 
 #import <UIKit/UIAccessibilityAdditions.h>
 #import <UIKit/UIAccessibilityConstants.h>
 #import <UIKit/UIAccessibilityElement.h>
 #import <UIKit/UIAccessibilityIdentification.h>
 #import <UIKit/UIAccessibilityZoom.h>
+#import <UIKit/UIGuidedAccessRestrictions.h>
 
 /*
  UIAccessibility
@@ -90,6 +92,24 @@
  Setting the property will change the frame that is returned to the accessibility client. 
  */
 @property(nonatomic) CGRect accessibilityFrame;
+
+// The accessibilityFrame is expected to be in screen coordinates.
+// To help convert the frame to screen coordinates, use the following method.
+// The rect should exist in the view space of the UIView argument.
+UIKIT_EXTERN CGRect UIAccessibilityConvertFrameToScreenCoordinates(CGRect rect, UIView *view) NS_AVAILABLE_IOS(7_0);
+
+/*
+ Returns the path of the element in screen coordinates.
+ default == nil
+ Setting the property, or overriding the method, will cause the assistive technology to prefer the path over the accessibility.
+ frame when highlighting the element.
+ */
+@property (nonatomic, copy) UIBezierPath *accessibilityPath NS_AVAILABLE_IOS(7_0);
+
+// The accessibilityPath is expected to be in screen coordinates.
+// To help convert the path to screen coordinates, use the following method.
+// The path should exist in the view space of the UIView argument.
+UIKIT_EXTERN UIBezierPath *UIAccessibilityConvertPathToScreenCoordinates(UIBezierPath *path, UIView *view) NS_AVAILABLE_IOS(7_0);
 
 /*
  Returns the activation point for an accessible element in screen coordinates.
@@ -191,6 +211,15 @@
  An element should implement methods in this category if it supports the action.
  */
 @interface NSObject (UIAccessibilityAction)
+
+/*
+ Implement accessibilityActivate on an element in order to handle the default action.
+ For example, if a native control requires a swipe gesture, you may implement this method so that a
+ VoiceOver user will perform a double-tap to activate the item.
+ If your implementation successfully handles activate, return YES, otherwise return NO.
+ default == NO
+ */
+- (BOOL)accessibilityActivate NS_AVAILABLE_IOS(7_0);
 
 /* 
  If an element has the UIAccessibilityTraitAdjustable trait, it must also implement
@@ -300,4 +329,10 @@ UIKIT_EXTERN NSString *const UIAccessibilityInvertColorsStatusDidChangeNotificat
 UIKIT_EXTERN BOOL UIAccessibilityIsGuidedAccessEnabled() NS_AVAILABLE_IOS(6_0);
 UIKIT_EXTERN NSString *const UIAccessibilityGuidedAccessStatusDidChangeNotification NS_AVAILABLE_IOS(6_0);
 
-
+/*
+ Use UIAccessibilityRequestGuidedAccessSession() to request this app be locked into or released
+ from Single App mode. The request to lock this app into Single App mode will only succeed if the device is Supervised,
+ and the app's bundle identifier has been whitelisted using Mobile Device Management. If you successfully request Single
+ App mode, it is your responsibility to release the device by balancing this call.
+ */
+UIKIT_EXTERN void UIAccessibilityRequestGuidedAccessSession(BOOL enable, void(^completionHandler)(BOOL didSucceed)) NS_AVAILABLE_IOS(7_0);

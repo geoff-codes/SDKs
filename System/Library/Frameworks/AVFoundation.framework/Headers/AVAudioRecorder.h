@@ -3,7 +3,7 @@
 	
 	Framework:  AVFoundation
 
-	Copyright 2008-2012 Apple Inc. All rights reserved.
+	Copyright 2008-2013 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
@@ -30,9 +30,9 @@ NS_CLASS_AVAILABLE(10_7, 3_0)
 /* methods that return BOOL return YES on success and NO on failure. */
 - (BOOL)prepareToRecord; /* creates the file and gets ready to record. happens automatically on record. */
 - (BOOL)record; /* start or resume recording to file. */
-- (BOOL)recordAtTime: (NSTimeInterval)time NS_AVAILABLE_IOS(6_0); /* start recording at specified time */
-- (BOOL)recordForDuration: (NSTimeInterval) duration; /* record a file of a specified duration. the recorder will stop when it has recorded this length of audio */
-- (BOOL)recordAtTime: (NSTimeInterval)time forDuration:(NSTimeInterval) duration NS_AVAILABLE_IOS(6_0); /* record a file of a specified duration starting at specified time */
+- (BOOL)recordAtTime:(NSTimeInterval)time NS_AVAILABLE_IOS(6_0); /* start recording at specified time in the future. time is an absolute time based on and greater than deviceCurrentTime. */
+- (BOOL)recordForDuration:(NSTimeInterval) duration; /* record a file of a specified duration. the recorder will stop when it has recorded this length of audio */
+- (BOOL)recordAtTime:(NSTimeInterval)time forDuration:(NSTimeInterval) duration NS_AVAILABLE_IOS(6_0); /* record a file of a specified duration starting at specified time. time is an absolute time based on and greater than deviceCurrentTime. */
 - (void)pause; /* pause recording */
 - (void)stop; /* stops recording. closes the file. */
 
@@ -68,7 +68,7 @@ NS_CLASS_AVAILABLE(10_7, 3_0)
 /* The channels property lets you assign the output to record specific channels as described by AVAudioSession's channels property */
 /* This property is nil valued until set. */
 /* The array must have the same number of channels as returned by the numberOfChannels property. */
-@property(nonatomic, copy) NSArray* channelAssignments; /* Array of AVAudioSessionChannelDescription objects */
+@property(nonatomic, copy) NSArray* channelAssignments NS_AVAILABLE(10_9, 7_0); /* Array of AVAudioSessionChannelDescription objects */
 #endif
 
 @end

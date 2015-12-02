@@ -2,7 +2,7 @@
 //  UIApplication.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,9 +14,11 @@
 #import <UIKit/UIAlert.h>
 
 typedef NS_ENUM(NSInteger, UIStatusBarStyle) {
-    UIStatusBarStyleDefault,
-    UIStatusBarStyleBlackTranslucent,
-    UIStatusBarStyleBlackOpaque
+    UIStatusBarStyleDefault                                     = 0, // Dark content, for use on light backgrounds
+    UIStatusBarStyleLightContent     NS_ENUM_AVAILABLE_IOS(7_0) = 1, // Light content, for use on dark backgrounds
+    
+    UIStatusBarStyleBlackTranslucent NS_ENUM_DEPRECATED_IOS(2_0, 7_0, "Use UIStatusBarStyleLightContent") = 1,
+    UIStatusBarStyleBlackOpaque      NS_ENUM_DEPRECATED_IOS(2_0, 7_0, "Use UIStatusBarStyleLightContent") = 2,
 };
 
 typedef NS_ENUM(NSInteger, UIStatusBarAnimation) {
@@ -63,6 +65,18 @@ typedef NS_OPTIONS(NSUInteger, UIRemoteNotificationType) {
     UIRemoteNotificationTypeNewsstandContentAvailability = 1 << 3,
 } NS_ENUM_AVAILABLE_IOS(3_0);
 
+typedef NS_ENUM(NSUInteger, UIBackgroundFetchResult) {
+    UIBackgroundFetchResultNewData,
+    UIBackgroundFetchResultNoData,
+    UIBackgroundFetchResultFailed
+} NS_ENUM_AVAILABLE_IOS(7_0);
+
+typedef NS_ENUM(NSInteger, UIBackgroundRefreshStatus) {
+    UIBackgroundRefreshStatusRestricted, //< unavailable on this system due to device configuration; the user cannot enable the feature
+    UIBackgroundRefreshStatusDenied,     //< explicitly disabled by the user for this application
+    UIBackgroundRefreshStatusAvailable   //< enabled for this application
+} NS_ENUM_AVAILABLE_IOS(7_0);
+    
 typedef NS_ENUM(NSInteger, UIApplicationState) {
     UIApplicationStateActive,
     UIApplicationStateInactive,
@@ -72,12 +86,14 @@ typedef NS_ENUM(NSInteger, UIApplicationState) {
 typedef NSUInteger UIBackgroundTaskIdentifier;
 UIKIT_EXTERN const UIBackgroundTaskIdentifier UIBackgroundTaskInvalid  NS_AVAILABLE_IOS(4_0);
 UIKIT_EXTERN const NSTimeInterval UIMinimumKeepAliveTimeout  NS_AVAILABLE_IOS(4_0);
+UIKIT_EXTERN const NSTimeInterval UIApplicationBackgroundFetchIntervalMinimum NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN const NSTimeInterval UIApplicationBackgroundFetchIntervalNever NS_AVAILABLE_IOS(7_0);
 
 typedef NS_ENUM(NSInteger, UIUserInterfaceLayoutDirection) {
     UIUserInterfaceLayoutDirectionLeftToRight,
     UIUserInterfaceLayoutDirectionRightToLeft,
 } NS_ENUM_AVAILABLE_IOS(5_0);
-
+    
 @class UIView, UIWindow, UIStatusBar, UIStatusBarWindow, UILocalNotification;
 @protocol UIApplicationDelegate;
 
@@ -85,7 +101,6 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionShee
 {
   @package
     id <UIApplicationDelegate>  _delegate;
-    CFMutableDictionaryRef      _touchMap;
     NSMutableSet               *_exclusiveTouchWindows;
     UIEvent                    *_event;
     UIEvent                    *_touchesEvent;
@@ -100,11 +115,12 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionShee
     UIStatusBarStyle            _statusBarRequestedStyle;
     UIStatusBarWindow          *_statusBarWindow;
     NSMutableArray             *_observerBlocks;
-    NSMutableArray             *_deferredAnimationBlocks;    
+    NSMutableArray             *_postCommitActions;    
     NSString                   *_mainStoryboardName;
     NSMutableArray             *_tintViewDurationStack;
     NSMutableArray             *_statusBarTintColorLockingControllers;
     NSInteger                   _statusBarTintColorLockingCount;
+    NSString                   *_preferredContentSizeCategory;
     struct {
         unsigned int deactivatingReasonFlags:8;
         unsigned int isSuspended:1;
@@ -114,6 +130,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionShee
         unsigned int isHandlingURL:1;
         unsigned int isHandlingRemoteNotification:1;
         unsigned int isHandlingLocalNotification:1;
+        unsigned int isHandlingBackgroundContentFetch:1;
         unsigned int statusBarShowsProgress:1;
         unsigned int statusBarHidden:1;
         unsigned int blockInteractionEvents:4;
@@ -181,7 +198,14 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionShee
         unsigned int isUpdatingTintViewColor:1;
         unsigned int isHandlingMemoryWarning:1;
         unsigned int forceStatusBarTintColorChanges:1;
-        unsigned int disableLegacyAutorotation:1;               
+        unsigned int disableLegacyAutorotation:1;
+        unsigned int isFakingForegroundTransitionForBackgroundFetch:1;
+        unsigned int couldNotRestoreStateWhenLocked:1;
+        unsigned int disableStyleOverrides:1;
+        unsigned int legibilityAccessibilitySettingEnabled:1;
+        unsigned int viewControllerBasedStatusBarAppearance:1;
+        unsigned int fakingRequiresHighResolution:1;
+        unsigned int isStatusBarFading:1;
     } _applicationFlags;
 }
 
@@ -207,9 +231,11 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionShee
 
 @property(nonatomic,getter=isNetworkActivityIndicatorVisible) BOOL networkActivityIndicatorVisible; // showing network spinning gear in status bar. default is NO
 
+// Setting the statusBarStyle does nothing if your application is using the default UIViewController-based status bar system.
 @property(nonatomic) UIStatusBarStyle statusBarStyle; // default is UIStatusBarStyleDefault
 - (void)setStatusBarStyle:(UIStatusBarStyle)statusBarStyle animated:(BOOL)animated;
 
+// Setting statusBarHidden does nothing if your application is using the default UIViewController-based status bar system.
 @property(nonatomic,getter=isStatusBarHidden) BOOL statusBarHidden;
 - (void)setStatusBarHidden:(BOOL)hidden withAnimation:(UIStatusBarAnimation)animation NS_AVAILABLE_IOS(3_2);
 
@@ -239,7 +265,23 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionShee
 @property(nonatomic,readonly) NSTimeInterval backgroundTimeRemaining NS_AVAILABLE_IOS(4_0);
 
 - (UIBackgroundTaskIdentifier)beginBackgroundTaskWithExpirationHandler:(void(^)(void))handler  NS_AVAILABLE_IOS(4_0);
+- (UIBackgroundTaskIdentifier)beginBackgroundTaskWithName:(NSString *)taskName expirationHandler:(void(^)(void))handler NS_AVAILABLE_IOS(7_0);
 - (void)endBackgroundTask:(UIBackgroundTaskIdentifier)identifier NS_AVAILABLE_IOS(4_0);
+
+/*! The system guarantees that it will not wake up your application for a background fetch more
+    frequently than the interval provided. Set to UIApplicationBackgroundFetchIntervalMinimum to be
+    woken as frequently as the system desires, or to UIApplicationBackgroundFetchIntervalNever (the
+    default) to never be woken for a background fetch.
+ 
+    This setter will have no effect unless your application has the "fetch" 
+    UIBackgroundMode. See the UIApplicationDelegate method
+    `application:performFetchWithCompletionHandler:` for more. */
+- (void)setMinimumBackgroundFetchInterval:(NSTimeInterval)minimumBackgroundFetchInterval NS_AVAILABLE_IOS(7_0);
+
+/*! When background refresh is available for an application, it may launched or resumed in the background to handle significant
+    location changes, remote notifications, background fetches, etc. Observe UIApplicationBackgroundRefreshStatusDidChangeNotification to
+    be notified of changes. */
+@property (nonatomic, readonly) UIBackgroundRefreshStatus backgroundRefreshStatus NS_AVAILABLE_IOS(7_0);
 
 - (BOOL)setKeepAliveTimeout:(NSTimeInterval)timeout handler:(void(^)(void))keepAliveHandler NS_AVAILABLE_IOS(4_0);
 - (void)clearKeepAliveTimeout NS_AVAILABLE_IOS(4_0);
@@ -247,6 +289,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionShee
 @property(nonatomic,readonly,getter=isProtectedDataAvailable) BOOL protectedDataAvailable NS_AVAILABLE_IOS(4_0);
 
 @property(nonatomic,readonly) UIUserInterfaceLayoutDirection userInterfaceLayoutDirection NS_AVAILABLE_IOS(5_0);
+
+// Return the size category
+@property(nonatomic,readonly) NSString *preferredContentSizeCategory NS_AVAILABLE_IOS(7_0);
 
 @end
 
@@ -282,13 +327,25 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionShee
 - (void)setNewsstandIconImage:(UIImage *)image;
 @end
 
+@protocol UIStateRestoring;
 @interface UIApplication (UIStateRestoration)
 // These methods are used to inform the system that state restoration is occuring asynchronously after the application
 // has processed its restoration archive on launch. In the even of a crash, the system will be able to detect that it may
 // have been caused by a bad restoration archive and arrange to ignore it on a subsequent application launch.
 - (void)extendStateRestoration  NS_AVAILABLE_IOS(6_0);
 - (void)completeStateRestoration  NS_AVAILABLE_IOS(6_0);
+
+// Indicate the application should not use the snapshot on next launch, even if there is a valid state restoration archive.
+// This should only be called from methods invoked from State Preservation, else it is ignored.
+- (void)ignoreSnapshotOnNextApplicationLaunch NS_AVAILABLE_IOS(7_0);
+
+// Register non-View/ViewController objects for state restoration so other objects can reference them within state restoration archives.
+// If the object implements encode/decode, those methods will be called during save/restore.
+// Obj and identifier must not be nil, or will raise UIRestorationObjectRegistrationException.
+// Objects do not need to be unregistered when they are deleted, the State Restoration system will notice and stop tracking the object.
++ (void) registerObjectForStateRestoration:(id<UIStateRestoring>)object restorationIdentifier:(NSString *)restorationIdentifier NS_AVAILABLE_IOS(7_0);
 @end
+
 
 @protocol UIApplicationDelegate<NSObject>
 
@@ -319,6 +376,21 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIApplication : UIResponder <UIActionShee
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo NS_AVAILABLE_IOS(3_0);
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification NS_AVAILABLE_IOS(4_0);
+
+/*! This delegate method offers an opportunity for applications with the "remote-notification" background mode to fetch appropriate new data in response to an incoming remote notification. You should call the fetchCompletionHandler as soon as you're finished performing that operation, so the system can accurately estimate its power and data cost.
+ 
+ This method will be invoked even if the application was launched or resumed because of the remote notification. The respective delegate methods will be invoked first. Note that this behavior is in contrast to application:didReceiveRemoteNotification:, which is not called in those cases, and which will not be invoked if this method is implemented. !*/
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler NS_AVAILABLE_IOS(7_0);
+
+/// Applications with the "fetch" background mode may be given opportunities to fetch updated content in the background or when it is convenient for the system. This method will be called in these situations. You should call the fetchCompletionHandler as soon as you're finished performing that operation, so the system can accurately estimate its power and data cost.
+- (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler NS_AVAILABLE_IOS(7_0);
+
+// Applications using an NSURLSession with a background configuration may be launched or resumed in the background in order to handle the
+// completion of tasks in that session, or to handle authentication. This method will be called with the identifier of the session needing
+// attention. Once a session has been created from a configuration object with that identifier, the session's delegate will begin receiving
+// callbacks. If such a session has already been created (if the app is being resumed, for instance), then the delegate will start receiving
+// callbacks without any action by the application. You should call the completionHandler as soon as you're finished handling the callbacks.
+- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)())completionHandler NS_AVAILABLE_IOS(7_0);
 
 - (void)applicationDidEnterBackground:(UIApplication *)application NS_AVAILABLE_IOS(4_0);
 - (void)applicationWillEnterForeground:(UIApplication *)application NS_AVAILABLE_IOS(4_0);
@@ -367,13 +439,38 @@ UIKIT_EXTERN NSString *const UIApplicationStatusBarOrientationUserInfoKey;      
 UIKIT_EXTERN NSString *const UIApplicationWillChangeStatusBarFrameNotification;       // userInfo contains NSValue with new frame
 UIKIT_EXTERN NSString *const UIApplicationDidChangeStatusBarFrameNotification;        // userInfo contains NSValue with old frame
 UIKIT_EXTERN NSString *const UIApplicationStatusBarFrameUserInfoKey;                  // userInfo dictionary key for status bar frame
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsURLKey                NS_AVAILABLE_IOS(3_0); // userInfo contains NSURL with launch URL
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsSourceApplicationKey  NS_AVAILABLE_IOS(3_0); // userInfo contains NSString with launch app bundle ID
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsRemoteNotificationKey NS_AVAILABLE_IOS(3_0); // userInfo contains NSDictionary with payload
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocalNotificationKey  NS_AVAILABLE_IOS(4_0); // userInfo contains a UILocalNotification
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsAnnotationKey         NS_AVAILABLE_IOS(3_2); // userInfo contains object with annotation property list
-UIKIT_EXTERN NSString *const UIApplicationProtectedDataWillBecomeUnavailable NS_AVAILABLE_IOS(4_0);
-UIKIT_EXTERN NSString *const UIApplicationProtectedDataDidBecomeAvailable    NS_AVAILABLE_IOS(4_0);
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocationKey           NS_AVAILABLE_IOS(4_0); // app was launched in response to a CoreLocation event.
-UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsNewsstandDownloadsKey NS_AVAILABLE_IOS(5_0); // userInfo contains an NSArray of NKAssetDownload identifiers
+UIKIT_EXTERN NSString *const UIApplicationBackgroundRefreshStatusDidChangeNotification NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsURLKey                   NS_AVAILABLE_IOS(3_0); // userInfo contains NSURL with launch URL
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsSourceApplicationKey     NS_AVAILABLE_IOS(3_0); // userInfo contains NSString with launch app bundle ID
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsRemoteNotificationKey    NS_AVAILABLE_IOS(3_0); // userInfo contains NSDictionary with payload
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocalNotificationKey     NS_AVAILABLE_IOS(4_0); // userInfo contains a UILocalNotification
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsAnnotationKey            NS_AVAILABLE_IOS(3_2); // userInfo contains object with annotation property list
+UIKIT_EXTERN NSString *const UIApplicationProtectedDataWillBecomeUnavailable    NS_AVAILABLE_IOS(4_0);
+UIKIT_EXTERN NSString *const UIApplicationProtectedDataDidBecomeAvailable       NS_AVAILABLE_IOS(4_0);
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsLocationKey              NS_AVAILABLE_IOS(4_0); // app was launched in response to a CoreLocation event.
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsNewsstandDownloadsKey    NS_AVAILABLE_IOS(5_0); // userInfo contains an NSArray of NKAssetDownload identifiers
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsBluetoothCentralsKey     NS_AVAILABLE_IOS(7_0); // userInfo contains an NSArray of CBCentralManager restore identifiers
+UIKIT_EXTERN NSString *const UIApplicationLaunchOptionsBluetoothPeripheralsKey  NS_AVAILABLE_IOS(7_0); // userInfo contains an NSArray of CBPeripheralManager restore identifiers
 
+// Content size category constants
+UIKIT_EXTERN NSString *const UIContentSizeCategoryExtraSmall NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategorySmall NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategoryMedium NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategoryLarge NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategoryExtraLarge NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategoryExtraExtraLarge NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategoryExtraExtraExtraLarge NS_AVAILABLE_IOS(7_0);
+
+// Accessibility sizes
+UIKIT_EXTERN NSString *const UIContentSizeCategoryAccessibilityMedium NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategoryAccessibilityLarge NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategoryAccessibilityExtraLarge NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategoryAccessibilityExtraExtraLarge NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIContentSizeCategoryAccessibilityExtraExtraExtraLarge NS_AVAILABLE_IOS(7_0);
+
+// Notification is emitted when the user has changed the preferredContentSizeCategory for the system
+UIKIT_EXTERN NSString *const UIContentSizeCategoryDidChangeNotification NS_AVAILABLE_IOS(7_0); // userInfo dictionary will contain new value for UIContentSizeCategoryNewValueKey
+UIKIT_EXTERN NSString *const UIContentSizeCategoryNewValueKey NS_AVAILABLE_IOS(7_0); // NSString instance with new content size category in userInfo
+
+// This notification is posted after the user takes a screenshot (for example by pressing both the home and lock screen buttons)
+UIKIT_EXTERN NSString *const UIApplicationUserDidTakeScreenshotNotification NS_AVAILABLE_IOS(7_0);

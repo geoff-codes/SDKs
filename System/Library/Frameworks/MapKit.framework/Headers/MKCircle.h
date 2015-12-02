@@ -2,7 +2,7 @@
 //  MKCircle.h
 //  MapKit
 //
-//  Copyright (c) 2010-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2013, Apple Inc. All rights reserved.
 //
 
 #import <MapKit/MKShape.h>
@@ -10,14 +10,8 @@
 #import <MapKit/MKGeometry.h>
 #import <MapKit/MKFoundation.h>
 
-MK_CLASS_AVAILABLE(NA, 4_0)
-@interface MKCircle : MKShape <MKOverlay> {
-@package
-    CLLocationCoordinate2D _coordinate;
-    CLLocationDistance _radius;
-    
-    MKMapRect _boundingMapRect;
-}
+MK_CLASS_AVAILABLE(10_9, 4_0)
+@interface MKCircle : MKShape <MKOverlay>
 
 + (MKCircle *)circleWithCenterCoordinate:(CLLocationCoordinate2D)coord
                                   radius:(CLLocationDistance)radius;

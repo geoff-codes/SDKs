@@ -2,7 +2,7 @@
 //  MKOverlayPathView.h
 //  MapKit
 //
-//  Copyright (c) 2010-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2013, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -10,44 +10,33 @@
 #import <MapKit/MKOverlayView.h>
 #import <MapKit/MKFoundation.h>
 
+// Prefer MKOverlayPathRenderer
 MK_CLASS_AVAILABLE(NA, 4_0)
-@interface MKOverlayPathView : MKOverlayView {
-@package
-    UIColor *_fillColor;
-    UIColor *_strokeColor;
-    CGFloat _lineWidth;
-    CGLineJoin _lineJoin;
-    CGLineCap _lineCap;
-    CGFloat _miterLimit;
-    CGFloat _lineDashPhase;
-    NSArray *_lineDashPattern;
-    
-    CGPathRef _path;
-}
+@interface MKOverlayPathView : MKOverlayView
 
-@property (retain) UIColor *fillColor;
-@property (retain) UIColor *strokeColor;
+@property (strong) UIColor *fillColor NS_DEPRECATED_IOS(4_0, 7_0);
+@property (strong) UIColor *strokeColor NS_DEPRECATED_IOS(4_0, 7_0);
 
-@property CGFloat lineWidth; // defaults to 0, which is MKRoadWidthAtZoomScale(currentZoomScale)
-@property CGLineJoin lineJoin; // defaults to kCGLineJoinRound
-@property CGLineCap lineCap; // defaults to kCGLineCapRound
-@property CGFloat miterLimit; // defaults to 10
-@property CGFloat lineDashPhase; // defaults to 0
-@property (copy) NSArray *lineDashPattern; // an array of NSNumbers, defaults to nil
+@property CGFloat lineWidth NS_DEPRECATED_IOS(4_0, 7_0); // defaults to 0, which is MKRoadWidthAtZoomScale(currentZoomScale)
+@property CGLineJoin lineJoin NS_DEPRECATED_IOS(4_0, 7_0); // defaults to kCGLineJoinRound
+@property CGLineCap lineCap NS_DEPRECATED_IOS(4_0, 7_0); // defaults to kCGLineCapRound
+@property CGFloat miterLimit NS_DEPRECATED_IOS(4_0, 7_0); // defaults to 10
+@property CGFloat lineDashPhase NS_DEPRECATED_IOS(4_0, 7_0); // defaults to 0
+@property (copy) NSArray *lineDashPattern NS_DEPRECATED_IOS(4_0, 7_0); // an array of NSNumbers, defaults to nil
 
 // subclassers should override this to create a path and then set it on
 // themselves with self.path = newPath;
-- (void)createPath;
+- (void)createPath NS_DEPRECATED_IOS(4_0, 7_0);
 // returns cached path or calls createPath if path has not yet been created
-@property CGPathRef path; // path will be retained
-- (void)invalidatePath;
+@property CGPathRef path NS_DEPRECATED_IOS(4_0, 7_0); // path will be retained
+- (void)invalidatePath NS_DEPRECATED_IOS(4_0, 7_0);
 
 // subclassers may override these
 - (void)applyStrokePropertiesToContext:(CGContextRef)context
-                           atZoomScale:(MKZoomScale)zoomScale;
+                           atZoomScale:(MKZoomScale)zoomScale NS_DEPRECATED_IOS(4_0, 7_0);
 - (void)applyFillPropertiesToContext:(CGContextRef)context
-                         atZoomScale:(MKZoomScale)zoomScale;
-- (void)strokePath:(CGPathRef)path inContext:(CGContextRef)context;
-- (void)fillPath:(CGPathRef)path inContext:(CGContextRef)context;
+                         atZoomScale:(MKZoomScale)zoomScale NS_DEPRECATED_IOS(4_0, 7_0);
+- (void)strokePath:(CGPathRef)path inContext:(CGContextRef)context NS_DEPRECATED_IOS(4_0, 7_0);
+- (void)fillPath:(CGPathRef)path inContext:(CGContextRef)context NS_DEPRECATED_IOS(4_0, 7_0);
 
 @end

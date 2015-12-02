@@ -3,12 +3,13 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2013 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
 #import <Foundation/Foundation.h>
 #import <CoreMedia/CMFormatDescription.h>
+#import <CoreMedia/CMSync.h>
 #if TARGET_OS_MAC && ! (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_OS_WIN32)
 	#import <ApplicationServices/../Frameworks/CoreGraphics.framework/Headers/CGDirectDisplay.h>
 #endif
@@ -126,6 +127,16 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     during capture. The default value is YES.
 */
 @property(nonatomic, getter=isEnabled) BOOL enabled;
+
+/*!
+ @property clock
+ @abstract
+ Provides access to the "native" clock used by the input port.
+ @discussion
+ The clock is read-only.
+ */
+@property(nonatomic, readonly) __attribute__((NSObject)) CMClockRef clock NS_AVAILABLE(10_9, 7_0);
+
 
 @end
 

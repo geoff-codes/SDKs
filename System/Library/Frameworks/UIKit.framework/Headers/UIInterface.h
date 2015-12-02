@@ -2,7 +2,7 @@
 //  UIInterface.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -31,9 +31,9 @@ typedef NS_ENUM(NSInteger, UIBarStyle) {
 // then you should create an empty table view and place it behind your content.
 + (UIColor *)groupTableViewBackgroundColor; // This method will be deprecated during the 6.0 seed program
 
-+ (UIColor *)viewFlipsideBackgroundColor;
-+ (UIColor *)scrollViewTexturedBackgroundColor NS_AVAILABLE_IOS(3_2);
-+ (UIColor *)underPageBackgroundColor NS_AVAILABLE_IOS(5_0);
++ (UIColor *)viewFlipsideBackgroundColor NS_DEPRECATED_IOS(2_0, 7_0);
++ (UIColor *)scrollViewTexturedBackgroundColor NS_DEPRECATED_IOS(3_2, 7_0);
++ (UIColor *)underPageBackgroundColor NS_DEPRECATED_IOS(5_0, 7_0);
 @end
 
 // System fonts

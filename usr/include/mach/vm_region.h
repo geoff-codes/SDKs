@@ -147,14 +147,20 @@ struct vm_region_extended_info {
         unsigned short          shadow_depth;
         unsigned char           external_pager;
         unsigned char           share_mode;
+	unsigned int		pages_reusable;
 };
 
 typedef struct vm_region_extended_info		*vm_region_extended_info_t;
 typedef struct vm_region_extended_info		 vm_region_extended_info_data_t;
 
-#define VM_REGION_EXTENDED_INFO_COUNT	((mach_msg_type_number_t) \
-	(sizeof(vm_region_extended_info_data_t)/sizeof(int)))
+#define VM_REGION_EXTENDED_INFO_V1_SIZE		(sizeof (vm_region_extended_info_data_t))
+#define VM_REGION_EXTENDED_INFO_V0_SIZE		(VM_REGION_EXTENDED_INFO_V1_SIZE - sizeof (unsigned int) /* pages_reusable */)
 
+#define VM_REGION_EXTENDED_INFO_V1_COUNT	((mach_msg_type_number_t)(VM_REGION_EXTENDED_INFO_V1_SIZE / sizeof (int)))
+#define VM_REGION_EXTENDED_INFO_V0_COUNT	((mach_msg_type_number_t)(VM_REGION_EXTENDED_INFO_V0_SIZE / sizeof (int)))
+
+/* set this to the latest version */
+#define VM_REGION_EXTENDED_INFO_COUNT		VM_REGION_EXTENDED_INFO_V1_COUNT
 
 #define VM_REGION_TOP_INFO	12
 
@@ -237,14 +243,21 @@ struct vm_region_submap_info_64 {
 	boolean_t		is_submap;	/* submap vs obj */
 	vm_behavior_t		behavior;	/* access behavior hint */
 	vm32_object_id_t		object_id;	/* obj/map name, not a handle */
-	unsigned short		user_wired_count; 
+	unsigned short		user_wired_count;
+	unsigned int		pages_reusable;
 };
 
 typedef struct vm_region_submap_info_64		*vm_region_submap_info_64_t;
 typedef struct vm_region_submap_info_64		 vm_region_submap_info_data_64_t;
 
-#define VM_REGION_SUBMAP_INFO_COUNT_64		((mach_msg_type_number_t) \
-	(sizeof(vm_region_submap_info_data_64_t)/sizeof(int)))
+#define VM_REGION_SUBMAP_INFO_V1_SIZE		(sizeof (vm_region_submap_info_data_64_t))
+#define VM_REGION_SUBMAP_INFO_V0_SIZE		(VM_REGION_SUBMAP_INFO_V1_SIZE - sizeof (unsigned int) /* pages_reusable */)
+
+#define VM_REGION_SUBMAP_INFO_V1_COUNT_64	((mach_msg_type_number_t)(VM_REGION_SUBMAP_INFO_V1_SIZE / sizeof (int)))
+#define VM_REGION_SUBMAP_INFO_V0_COUNT_64	((mach_msg_type_number_t)(VM_REGION_SUBMAP_INFO_V0_SIZE / sizeof (int)))
+
+/* set this to the latest version */
+#define VM_REGION_SUBMAP_INFO_COUNT_64		VM_REGION_SUBMAP_INFO_V1_COUNT_64
 
 struct vm_region_submap_short_info_64 {
 	vm_prot_t		protection;     /* present access protection */

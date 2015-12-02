@@ -2,7 +2,7 @@
 //  UIRefreshControl.h
 //  UIKit
 //
-//  Copyright 2012 Apple Inc. All rights reserved.
+//  Copyright 2012-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -20,7 +20,7 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface UIRefreshControl : UIControl
 
 @property (nonatomic, readonly, getter=isRefreshing) BOOL refreshing;
 
-@property (nonatomic, retain) UIColor *tintColor UI_APPEARANCE_SELECTOR;
+@property (nonatomic, retain) UIColor *tintColor;
 @property (nonatomic, retain) NSAttributedString *attributedTitle UI_APPEARANCE_SELECTOR;
 
 // May be used to indicate to the refreshControl that an external event has initiated the refresh action

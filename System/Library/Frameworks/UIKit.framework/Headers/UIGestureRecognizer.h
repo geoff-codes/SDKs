@@ -2,7 +2,7 @@
 //  UIGestureRecognizer.h
 //  UIKit
 //
-//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -26,51 +26,7 @@ typedef NS_ENUM(NSInteger, UIGestureRecognizerState) {
     UIGestureRecognizerStateRecognized = UIGestureRecognizerStateEnded // the recognizer has received touches recognized as the gesture. the action method will be called at the next turn of the run loop and the recognizer will be reset to UIGestureRecognizerStatePossible
 };
 
-NS_CLASS_AVAILABLE_IOS(3_2) @interface UIGestureRecognizer : NSObject {
-  @package
-    NSMutableArray                   *_targets;
-    NSMutableArray                   *_delayedTouches;
-    UIView                           *_view;
-    UIEvent                          *_updateEvent;
-    
-    id <UIGestureRecognizerDelegate>  _delegate;
-    
-    NSMutableSet                     *_failureRequirements;
-    NSMutableSet                     *_failureDependents;
-    NSMutableSet                     *_dynamicFailureRequirements;
-    NSMutableSet                     *_dynamicFailureDependents;
-    id                                _failureMap;
-    
-    NSMutableSet                     *_friends;
-    
-    UIGestureRecognizerState          _state;
-    
-    struct {
-        unsigned int delegateShouldBegin:1;
-        unsigned int delegateCanPrevent:1;
-        unsigned int delegateCanBePrevented:1;
-        unsigned int delegateShouldRecognizeSimultaneously:1;
-        unsigned int delegateShouldReceiveTouch:1;
-        unsigned int delegateShouldRequireFailure:1;
-        unsigned int delegateShouldBeRequiredToFail:1;
-        unsigned int delegateFailed:1;
-        unsigned int privateDelegateShouldBegin:1;
-        unsigned int privateDelegateCanPrevent:1;
-        unsigned int privateDelegateCanBePrevented:1;
-        unsigned int privateDelegateShouldRecognizeSimultaneously:1;
-        unsigned int privateDelegateShouldReceiveTouch:1;
-        unsigned int subclassShouldRequireFailure:1;
-        unsigned int cancelsTouchesInView:1;
-        unsigned int delaysTouchesBegan:1;
-        unsigned int delaysTouchesEnded:1;
-        unsigned int disabled:1;
-        unsigned int dirty:1;
-        unsigned int queriedFailureRequirements:1;
-        unsigned int delivered:1;
-        unsigned int continuous:1;
-        unsigned int requiresDelayedBegan:1;
-    } _gestureFlags;
-}
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UIGestureRecognizer : NSObject
 
 // Valid action method signatures:
 //     -(void)handleGesture;
@@ -117,6 +73,13 @@ NS_CLASS_AVAILABLE_IOS(3_2) @interface UIGestureRecognizer : NSObject {
 //
 // note: returning YES is guaranteed to allow simultaneous recognition. returning NO is not guaranteed to prevent simultaneous recognition, as the other gesture's delegate may return YES
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
+
+// called once per attempt to recognize, so failure requirements can be determined lazily and may be set up between recognizers across view hierarchies
+// return YES to set up a dynamic failure requirement between gestureRecognizer and otherGestureRecognizer
+//
+// note: returning YES is guaranteed to set up the failure requirement. returning NO does not guarantee that there will not be a failure requirement as the other gesture's counterpart delegate or subclass methods may return YES
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer NS_AVAILABLE_IOS(7_0);
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer NS_AVAILABLE_IOS(7_0);
 
 // called before touchesBegan:withEvent: is called on the gesture recognizer for a new touch. return NO to prevent the gesture recognizer from seeing this touch
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch;

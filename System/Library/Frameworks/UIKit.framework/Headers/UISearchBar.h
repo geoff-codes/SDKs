@@ -2,7 +2,7 @@
 //  UISearchBar.h
 //  UIKit
 //
-//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,6 +11,8 @@
 #import <UIKit/UIGeometry.h>
 #import <UIKit/UITextField.h>
 #import <UIKit/UIKitDefines.h>
+#import <UIKit/UIBarButtonItem.h>
+#import <UIKit/UIBarCommon.h>
 
 typedef NS_ENUM(NSInteger, UISearchBarIcon) {
     UISearchBarIconSearch, // The magnifying glass
@@ -19,42 +21,17 @@ typedef NS_ENUM(NSInteger, UISearchBarIcon) {
     UISearchBarIconResultsList, // The list lozenge icon
 };
 
+typedef NS_ENUM(NSUInteger, UISearchBarStyle) {
+    UISearchBarStyleDefault,    // currently UISearchBarStyleProminent
+    UISearchBarStyleProminent,  // used my Mail, Messages and Contacts
+    UISearchBarStyleMinimal     // used by Calendar, Notes and Music
+} NS_ENUM_AVAILABLE_IOS(7_0);
+
+
 @protocol UISearchBarDelegate;
 @class UITextField, UILabel, UIButton, UIColor;
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UISearchBar : UIView { 
-  @private
-    UITextField            *_searchField;
-    UILabel                *_promptLabel;
-    UIButton               *_cancelButton;
-    id<UISearchBarDelegate> _delegate;
-    id                      _controller;
-    UIColor                *_tintColor;
-    UIImageView            *_separator;
-    NSString               *_cancelButtonText;
-    NSArray                *_scopes;
-    NSInteger               _selectedScope;
-    UIView                 *_background;
-    UIView                 *_scopeBar;
-    UIEdgeInsets            _contentInset;
-    UIImageView            *_shadowView;
-    id                      _appearanceStorage;
-    struct {
-        unsigned int barStyle:3;
-        unsigned int showsBookmarkButton:1;
-        unsigned int showsCancelButton:1;
-        unsigned int isTranslucent:1;
-        unsigned int autoDisableCancelButton:1;
-        unsigned int showsScopeBar:1;
-        unsigned int hideBackground:1;
-        unsigned int combinesLandscapeBars:1;
-        unsigned int usesEmbeddedAppearance:1;
-        unsigned int showsSearchResultsButton:1;
-        unsigned int searchResultsButtonSelected:1;
-        unsigned int pretendsIsInBar:1;
-        unsigned int disabled:1;
-    } _searchBarFlags;
-}
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UISearchBar : UIView <UIBarPositioning>
 
 @property(nonatomic)        UIBarStyle              barStyle;              // default is UIBarStyleDefault (blue)
 @property(nonatomic,assign) id<UISearchBarDelegate> delegate;              // weak reference. default is nil
@@ -67,8 +44,29 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISearchBar : UIView {
 @property(nonatomic, getter=isSearchResultsButtonSelected) BOOL searchResultsButtonSelected NS_AVAILABLE_IOS(3_2); // default is NO
 - (void)setShowsCancelButton:(BOOL)showsCancelButton animated:(BOOL)animated NS_AVAILABLE_IOS(3_0);
 
-@property(nonatomic,retain) UIColor                *tintColor;             // default is nil
-@property(nonatomic,assign,getter=isTranslucent) BOOL translucent NS_AVAILABLE_IOS(3_0); // Default is NO. Always YES if barStyle is set to UIBarStyleBlackTranslucent
+/*
+ The behavior of tintColor for bars has changed on iOS 7.0. It no longer affects the bar's background
+ and behaves as described for the tintColor property added to UIView.
+ To tint the bar's background, please use -barTintColor.
+ */
+@property(nonatomic,retain) UIColor *tintColor;
+@property(nonatomic,retain) UIColor *barTintColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;  // default is nil
+
+@property (nonatomic) UISearchBarStyle searchBarStyle NS_AVAILABLE_IOS(7_0);
+
+/*
+ New behavior on iOS 7.
+ Default is YES.
+ You may force an opaque background by setting the property to NO.
+ If the search bar has a custom background image, the default is inferred
+ from the alpha values of the image—YES if it has any pixel with alpha < 1.0
+ If you send setTranslucent:YES to a bar with an opaque custom background image
+ it will apply a system opacity less than 1.0 to the image.
+ If you send setTranslucent:NO to a bar with a translucent custom background image
+ it will provide an opaque background for the image using the bar's barTintColor if defined, or black
+ for UIBarStyleBlack or white for UIBarStyleDefault if barTintColor is nil.
+ */
+@property(nonatomic,assign,getter=isTranslucent) BOOL translucent NS_AVAILABLE_IOS(3_0); // Default is NO on iOS 6 and earlier. Always YES if barStyle is set to UIBarStyleBlackTranslucent
 
 // available text input traits
 @property(nonatomic) UITextAutocapitalizationType autocapitalizationType;  // default is UITextAutocapitalizationTypeNone
@@ -87,6 +85,10 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISearchBar : UIView {
 // 1pt wide images and resizable images will be scaled or tiled according to the resizable area, otherwise the image will be tiled
 @property(nonatomic,retain) UIImage *backgroundImage NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 @property(nonatomic,retain) UIImage *scopeBarBackgroundImage NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+
+
+- (void)setBackgroundImage:(UIImage *)backgroundImage forBarPosition:(UIBarPosition)barPosition barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;  // Use UIBarMetricsDefaultPrompt to set a separate backgroundImage for a search bar with a prompt
+- (UIImage *)backgroundImageForBarPosition:(UIBarPosition)barPosition barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
 
 /* In general, you should specify a value for the normal state to be used by other states which don't have a custom value set
  */
@@ -113,7 +115,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISearchBar : UIView {
 - (void)setScopeBarButtonDividerImage:(UIImage *)dividerImage forLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 - (UIImage *)scopeBarButtonDividerImageForLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
-/* You may specify the font, text color, text shadow color, and text shadow offset for the title in the text attributes dictionary, using the keys found in UIStringDrawing.h.
+/* You may specify the font, text color, and shadow properties for the title in the text attributes dictionary, using the keys found in NSAttributedString.h.
  */
 - (void)setScopeBarButtonTitleTextAttributes:(NSDictionary *)attributes forState:(UIControlState)state NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 - (NSDictionary *)scopeBarButtonTitleTextAttributesForState:(UIControlState)state NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
@@ -132,7 +134,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISearchBar : UIView {
 - (UIOffset)positionAdjustmentForSearchBarIcon:(UISearchBarIcon)icon NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 @end
 
-@protocol UISearchBarDelegate <NSObject>
+@protocol UISearchBarDelegate <UIBarPositioningDelegate>
 
 @optional
 

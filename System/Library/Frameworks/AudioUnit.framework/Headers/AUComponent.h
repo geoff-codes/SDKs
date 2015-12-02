@@ -212,6 +212,10 @@ typedef AudioComponentInstance AudioUnit;
 					apply in the normalisation process can be estimated. As such, offline effects 
 					also have a notion of a priming stage that can be performed before the actual 
 					rendering/processing phase is executed.
+
+    @constant		kAudioUnitType_MIDIProcessor
+                    Plugins of this type process midi input and produce midi output. They do not produce audio.
+
 */
 enum
 {
@@ -223,8 +227,49 @@ enum
 	kAudioUnitType_Mixer					= 'aumx',
 	kAudioUnitType_Panner					= 'aupn',
 	kAudioUnitType_Generator				= 'augn',
-	kAudioUnitType_OfflineEffect			= 'auol'
+	kAudioUnitType_OfflineEffect			= 'auol',
+	kAudioUnitType_MIDIProcessor			= 'aumi'
 };
+
+#if TARGET_OS_IPHONE
+/*!
+    @enum           Audio Unit Types (for inter-app audio)
+    @abstract		types of inter-app audio units
+
+    @constant       kAudioUnitType_RemoteEffect
+    @constant       kAudioUnitType_RemoteGenerator
+    @constant       kAudioUnitType_RemoteInstrument
+    @constant       kAudioUnitType_RemoteMusicEffect
+	
+	@discussion
+        These Audio Unit types are identical to the corresponding "non-remote" types (e.g.
+        kAudioUnitType_Effect, etc.), with the exception that they are the types that must be
+        used for AudioUnits defined by applications calling AudioOutputUnitPublish.
+
+		When Audio Components of these types are instantiated via AudioComponentInstanceNew,
+		a connection is made to the process which published the component via AudioOutputUnitPublish.
+
+		When using Audio Units which are instances of these components, one must take care to
+		initialize the unit only immediately before beginning a series of render operations, and
+		uninitialize it immediately afterwards, since while initialized, the Audio Unit's background
+		process is being kept awake and is consuming system resources.
+		
+		When using AudioUnitGetProperty and AudioUnitSetProperty, only Apple-defined properties
+		are supported.
+
+		For kAudioUnitProperty_HostCallbacks, hosts can set this property on any remote audio unit.
+		This will cause the host callbacks to be called on each render cycle and the results 
+		communicated to the remote AU's process. The owner of the published AU ("node") can *get*
+		this property on its output units, obtaining the structure of function pointers, and call
+		the host callbacks during the render cycle.
+*/
+enum {
+    kAudioUnitType_RemoteEffect         = 'aurx',
+    kAudioUnitType_RemoteGenerator      = 'aurg',
+    kAudioUnitType_RemoteInstrument     = 'auri',
+    kAudioUnitType_RemoteMusicEffect    = 'aurm'
+};
+#endif
 
 //================================================================================================
 #pragma mark -
@@ -353,6 +398,9 @@ enum {
 					An audio unit that provides good quality time stretching and pitch shifting 
 					while still being very fast.
 
+	@constant		kAudioUnitSubType_AUiPodTimeOther
+					An audio unit that provides time domain time stretching.
+
 	@constant		kAudioUnitSubType_AUiPodTime
 						- iPhone only
 					An audio unit that provides simple (and limited) control over playback rate 
@@ -365,13 +413,13 @@ enum {
 	kAudioUnitSubType_Splitter				= 'splt',
 	kAudioUnitSubType_Merger				= 'merg',
 	kAudioUnitSubType_NewTimePitch			= 'nutp',
+	kAudioUnitSubType_AUiPodTimeOther		= 'ipto',
 	
 #if !TARGET_OS_IPHONE
 	kAudioUnitSubType_TimePitch				= 'tmpt',
 	kAudioUnitSubType_RoundTripAAC			= 'raac'
 #else
-	kAudioUnitSubType_AUiPodTime			= 'iptm',
-	kAudioUnitSubType_AUiPodTimeOther		= 'ipto'
+	kAudioUnitSubType_AUiPodTime			= 'iptm'
 #endif
 };
 
@@ -432,9 +480,6 @@ enum {
 						- desktop only
 					A filter unit that combines 5 different filters (low, 3 mids, high)
 					
-	@constant		kAudioUnitSubType_DCFilter				
-					A filter unit that leaks away the DC component of a signal.
-					
 	@constant		kAudioUnitSubType_NetSend				
 						- desktop only
 					An audio unit that is used in conjunction with _NetReceive to send audio 
@@ -453,7 +498,6 @@ enum {
 					A simple graphic EQ with common presets
 	
 	@constant		kAudioUnitSubType_NBandEQ
-						- iPhone only
 					A generalized N-band graphic EQ with specifiable filter types per-band
 	
 	@constant		kAudioUnitSubType_Reverb2
@@ -468,7 +512,6 @@ enum {
 	kAudioUnitSubType_BandPassFilter		= 'bpas',
 	kAudioUnitSubType_HighShelfFilter		= 'hshf',
 	kAudioUnitSubType_LowShelfFilter		= 'lshf',
-	kAudioUnitSubType_DCFilter				= 'dcfl',
 	kAudioUnitSubType_ParametricEQ			= 'pmeq',
 	kAudioUnitSubType_Distortion			= 'dist',
 	kAudioUnitSubType_Delay					= 'dely',
@@ -484,8 +527,8 @@ enum {
 #else
 	kAudioUnitSubType_Reverb2				= 'rvb2',
 	kAudioUnitSubType_AUiPodEQ				= 'ipeq',
-	kAudioUnitSubType_NBandEQ				= 'nbeq'
 #endif
+	kAudioUnitSubType_NBandEQ				= 'nbeq'
 };
 
 /*!
@@ -730,6 +773,38 @@ enum
 	kAudioUnitErr_InvalidOfflineRender		= -10848,
 	kAudioUnitErr_Unauthorized				= -10847
 };
+
+#if TARGET_OS_IPHONE
+/*!
+    @enum       AudioComponent errors for inter-app audio
+    
+    @constant   kAudioComponentErr_DuplicateDescription
+        a non-unique component description was provided to AudioOutputUnitPublish
+    @constant   kAudioComponentErr_UnsupportedType
+        an unsupported component type was provided to AudioOutputUnitPublish
+    @constant   kAudioComponentErr_TooManyInstances
+        components published via AudioOutputUnitPublish may only have one instance
+    @constant   kAudioComponentErr_InstanceInvalidated
+        the component instance's implementation is not available, most likely because the process
+        that published it is no longer running
+    @constant   kAudioComponentErr_NotPermitted
+		app needs "inter-app-audio" entitlement or host app needs "audio" in its UIBackgroundModes.
+		Or app is trying to register a component not declared in its Info.plist.
+    @constant   kAudioComponentErr_InitializationTimedOut
+        host did not render in a timely manner; must uninitialize and reinitialize.
+	@constant	kAudioComponentErr_InvalidFormat
+		inter-app AU element formats must have sample rates matching the hardware.
+*/
+enum {
+    kAudioComponentErr_DuplicateDescription     = -66752,
+    kAudioComponentErr_UnsupportedType          = -66751,
+    kAudioComponentErr_TooManyInstances         = -66750,
+    kAudioComponentErr_InstanceInvalidated      = -66749,
+    kAudioComponentErr_NotPermitted             = -66748,
+	kAudioComponentErr_InitializationTimedOut	= -66747,
+	kAudioComponentErr_InvalidFormat			= -66746
+};
+#endif
 
 /*!
 	@typedef			AudioUnitPropertyID
@@ -977,6 +1052,18 @@ typedef void
 									const AudioTimeStamp *		inOutputTimeStamp,
 									Float64						inInputSample,
 									Float64						inNumberInputSamples);
+
+#if TARGET_OS_IPHONE
+/*!
+	@const kAudioComponentRegistrationsChangedNotification
+	@abstract Notification generated when the set of available AudioComponents changes.
+	@discussion
+		Register for this notification name with [NSNotificationCenter defaultCenter] or
+		CFNotificationCenterGetLocalCenter(), using an object of NULL.
+*/
+extern const CFStringRef kAudioComponentRegistrationsChangedNotification
+												__OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_7_0);
+#endif
 
 //================================================================================================
 #pragma mark -
@@ -1420,6 +1507,65 @@ AudioUnitReset(						AudioUnit			inUnit,
 									AudioUnitScope		inScope,
 									AudioUnitElement	inElement)					
 												__OSX_AVAILABLE_STARTING(__MAC_10_0,__IPHONE_2_0);
+
+#if TARGET_OS_IPHONE
+/*!
+    @function       AudioOutputUnitPublish
+
+    @abstract       Register an audio output unit as available to be used as an audio unit by
+                    other applications.
+
+    @param          inOutputUnit
+                        The audio output unit to be published.
+    @param          inDesc
+                        The AudioComponentDescription under which to register the application.
+    @param          inName  
+                        The application or component name.
+    @result         An OSStatus result code.
+    
+    @discussion
+        This allows a publishing application to register its audio (input/)output unit as being able
+        to be redirected and repurposed as an audio unit effect, generator, music device or music
+        effect by another host application.
+*/
+extern OSStatus
+AudioOutputUnitPublish(         const AudioComponentDescription *   inDesc,
+                                CFStringRef                         inName,
+                                UInt32                              inVersion,
+								AudioUnit                           inOutputUnit)
+                                                __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_7_0);
+
+
+#if defined(__OBJC__)
+@class UIImage;
+
+extern UIImage *
+AudioOutputUnitGetHostIcon(AudioUnit au, float desiredPointSize)
+                                                __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_7_0);
+extern UIImage *
+AudioComponentGetIcon(AudioComponent comp, float desiredPointSize)
+                                                __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_7_0);
+
+#endif // __OBJC__
+
+
+/*!
+    @function       AudioComponentGetLastActiveTime
+    @abstract       Fetches the time at which the application publishing the component was last active.
+	@discussion
+		Inter-app audio hosts can use this to sort the list of available nodes by how recently
+		the user interacted with them.
+	
+    @param          inComponent
+                        The AudioComponent being queried.
+    @result         The CFAbsoluteTime at which the node was last active (0 if never).
+*/
+extern CFAbsoluteTime
+AudioComponentGetLastActiveTime(AudioComponent comp)
+                                                __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_7_0);
+#endif // TARGET_OS_IPHONE
+
+
 
 
 /*!

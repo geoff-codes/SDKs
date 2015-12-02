@@ -2,7 +2,7 @@
 //  UIEvent.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -36,6 +36,7 @@ typedef NS_ENUM(NSInteger, UIEventSubtype) {
     UIEventSubtypeRemoteControlBeginSeekingForward  = 108,
     UIEventSubtypeRemoteControlEndSeekingForward    = 109,
 };
+
 
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UIEvent : NSObject
 {

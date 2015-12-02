@@ -2,7 +2,7 @@
  GKPublicProtocols.h
  GameKit
  
- Copyright 2010 Apple, Inc. All rights reserved.
+ Copyright 2010 Apple Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
@@ -20,7 +20,10 @@
 
 /* Indicates a state change for the given peer.
 */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)session:(GKSession *)session peer:(NSString *)peerID didChangeState:(GKPeerConnectionState)state;
+#pragma clang diagnostic pop
 
 /* Indicates a connection request was received from another peer. 
  

@@ -263,7 +263,7 @@
     Headers and implementation files can use the following macros to make their
     source more portable by hiding the calling convention details:
 
-    EXTERN_APIÅ 
+    EXTERN_API*
     These macros are used to specify the calling convention on a function prototype.
 
         EXTERN_API              - Classic 68k: pascal, Win32: __cdecl
@@ -272,7 +272,7 @@
         EXTERN_API_C_STDCALL    - Classic 68k: C,      Win32: __stdcall
 
 
-    DEFINE_APIÅ 
+    DEFINE_API*
     These macros are used to specify the calling convention on a function definition.
 
         DEFINE_API              - Classic 68k: pascal, Win32: __cdecl
@@ -281,7 +281,7 @@
         DEFINE_API_C_STDCALL    - Classic 68k: C,      Win32: __stdcall
 
 
-    CALLBACK_APIÅ   
+    CALLBACK_API*
     These macros are used to specify the calling convention of a function pointer.
 
         CALLBACK_API            - Classic 68k: pascal, Win32: __stdcall
@@ -398,7 +398,7 @@
 
 /****************************************************************************************************
     
-    Set up TARGET_API_Å_Å values
+    Set up TARGET_API_*_* values
 
 ****************************************************************************************************/
 #if !defined(TARGET_API_MAC_OS8) && !defined(TARGET_API_MAC_OSX) && !defined(TARGET_API_MAC_CARBON)

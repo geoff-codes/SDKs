@@ -2,7 +2,7 @@
 //  UICollectionViewFlowLayout.h
 //  UIKit
 //
-//  Copyright (c) 2011 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2013, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UICollectionViewLayout.h>
@@ -17,6 +17,13 @@ typedef NS_ENUM(NSInteger, UICollectionViewScrollDirection) {
     UICollectionViewScrollDirectionVertical,
     UICollectionViewScrollDirectionHorizontal
 };
+
+NS_CLASS_AVAILABLE_IOS(7_0) @interface UICollectionViewFlowLayoutInvalidationContext : UICollectionViewLayoutInvalidationContext
+
+@property (nonatomic) BOOL invalidateFlowLayoutDelegateMetrics; // if set to NO, flow layout will not requery the collection view delegate for size information etc.
+@property (nonatomic) BOOL invalidateFlowLayoutAttributes; // if set to NO, flow layout will keep all layout information, effectively not invalidating - useful for a subclass which invalidates only a piece of itself
+
+@end
 
 @protocol UICollectionViewDelegateFlowLayout <UICollectionViewDelegate>
 @optional
@@ -38,7 +45,6 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface UICollectionViewFlowLayout : UICollection
 @property (nonatomic) UICollectionViewScrollDirection scrollDirection; // default is UICollectionViewScrollDirectionVertical
 @property (nonatomic) CGSize headerReferenceSize;
 @property (nonatomic) CGSize footerReferenceSize;
-
 @property (nonatomic) UIEdgeInsets sectionInset;
 
 @end

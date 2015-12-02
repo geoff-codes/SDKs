@@ -2,7 +2,7 @@
 //  UITextView.h
 //  UIKit
 //
-//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,18 +13,7 @@
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UIDataDetectors.h>
 
-@class DOMHTMLElement;
-@class UIDelayedAction;
-@class UIEvent, UITouch, UIFont, UIColor;
-@class UITextInputTraits;
-@class UITextInteractionAssistant;
-@class UIWebDocumentView;
-@class WebCoreFrameBridge;
-@class WebFrame;
-@class UITextInteractionAssistant;
-@class UITextSelectionView;
-@class UITextView;
-
+@class UIFont, UIColor, UITextView, NSTextContainer, NSLayoutManager, NSTextStorage, NSTextAttachment;
 
 @protocol UITextViewDelegate <NSObject, UIScrollViewDelegate>
 
@@ -41,41 +30,12 @@
 
 - (void)textViewDidChangeSelection:(UITextView *)textView;
 
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange NS_AVAILABLE_IOS(7_0);
+- (BOOL)textView:(UITextView *)textView shouldInteractWithTextAttachment:(NSTextAttachment *)textAttachment inRange:(NSRange)characterRange NS_AVAILABLE_IOS(7_0);
+
 @end
 
-
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UITextView : UIScrollView <UITextInput> 
-{
-  @package
-    WebFrame           *m_frame;
-    DOMHTMLElement     *m_body;
-    int                 m_marginTop;
-    UIDelayedAction    *m_selectionTimer;
-    UIDelayedAction    *m_longPressAction;
-    BOOL                m_editable;
-    BOOL                m_editing;
-    BOOL                m_becomesEditableWithGestures;
-    BOOL                m_reentrancyGuard;
-    BOOL                m_readyForScroll;
-    BOOL                m_hasExplicitTextAlignment;
-    BOOL                m_hasExplicitLineHeight;
-    
-    // Gesture recognition.
-    UITextInteractionAssistant *m_interactionAssistant;
-    
-    // property ivars
-    UIWebDocumentView  *m_webView;
-    UIFont             *m_font;
-    UIColor            *m_textColor;
-    NSTextAlignment     m_textAlignment;
-    UIView             *m_inputView;
-    UIView             *m_inputAccessoryView;
-    CGFloat             m_lineHeight;
-    BOOL                m_skipScrollContainingView;
-    BOOL                m_allowsEditingTextAttributes;
-    BOOL                m_usesAttributedText;
-    BOOL                m_clearsOnInsertion;
-}
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UITextView : UIScrollView <UITextInput>
 
 @property(nonatomic,assign) id<UITextViewDelegate> delegate;
 @property(nonatomic,copy) NSString *text;
@@ -84,13 +44,13 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITextView : UIScrollView <UITextInput>
 @property(nonatomic) NSTextAlignment textAlignment;    // default is NSLeftTextAlignment
 @property(nonatomic) NSRange selectedRange;
 @property(nonatomic,getter=isEditable) BOOL editable;
+@property(nonatomic,getter=isSelectable) BOOL selectable NS_AVAILABLE_IOS(7_0); // toggle selectability, which controls the ability of the user to select content and interact with URLs & attachments
 @property(nonatomic) UIDataDetectorTypes dataDetectorTypes NS_AVAILABLE_IOS(3_0);
 
 @property(nonatomic) BOOL allowsEditingTextAttributes NS_AVAILABLE_IOS(6_0); // defaults to NO
 @property(nonatomic,copy) NSAttributedString *attributedText NS_AVAILABLE_IOS(6_0); // default is nil
 @property(nonatomic,copy) NSDictionary *typingAttributes NS_AVAILABLE_IOS(6_0); // automatically resets when the selection changes
 
-- (BOOL)hasText;
 - (void)scrollRangeToVisible:(NSRange)range;
 
 
@@ -100,6 +60,21 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITextView : UIScrollView <UITextInput>
 @property (readwrite, retain) UIView *inputAccessoryView;
 
 @property(nonatomic) BOOL clearsOnInsertion NS_AVAILABLE_IOS(6_0); // defaults to NO. if YES, the selection UI is hidden, and inserting text will replace the contents of the field. changing the selection will automatically set this to NO.
+
+// Create a new text view with the specified text container (can be nil) - this is the new designated initializer for this class
+- (instancetype)initWithFrame:(CGRect)frame textContainer:(NSTextContainer *)textContainer NS_AVAILABLE_IOS(7_0);
+
+// Get the text container for the text view
+@property(nonatomic,readonly) NSTextContainer *textContainer NS_AVAILABLE_IOS(7_0);
+// Inset the text container's layout area within the text view's content area
+@property(nonatomic, assign) UIEdgeInsets textContainerInset NS_AVAILABLE_IOS(7_0);
+
+// Convenience accessors (access through the text container)
+@property(nonatomic,readonly) NSLayoutManager *layoutManager NS_AVAILABLE_IOS(7_0);
+@property(nonatomic,readonly,retain) NSTextStorage *textStorage NS_AVAILABLE_IOS(7_0);
+
+// Style for links
+@property(nonatomic, copy) NSDictionary *linkTextAttributes NS_AVAILABLE_IOS(7_0);
 
 @end
 

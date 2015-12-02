@@ -2,7 +2,6 @@
 #define __gl_es20ext_h_
 
 #include <inttypes.h>
-
 #include <OpenGLES/ES2/gl.h>
 #include <Availability.h>
 
@@ -59,13 +58,17 @@ extern "C" {
 #define GL_EXT_debug_label                                      1
 #define GL_EXT_debug_marker                                     1
 #define GL_EXT_discard_framebuffer                              1
+#define GL_EXT_draw_instanced                                   1
+#define GL_EXT_instanced_arrays                                 1
 #define GL_EXT_map_buffer_range                                 1
 #define GL_EXT_occlusion_query_boolean                          1
+#define GL_EXT_pvrtc_sRGB                                       1
 #define GL_EXT_read_format_bgra                                 1
 #define GL_EXT_separate_shader_objects                          1
 #define GL_EXT_shader_framebuffer_fetch                         1
 #define GL_EXT_shader_texture_lod                               1
 #define GL_EXT_shadow_samplers                                  1
+#define GL_EXT_sRGB                                             1
 #define GL_EXT_texture_filter_anisotropic                       1
 #define GL_EXT_texture_rg                                       1
 #define GL_EXT_texture_storage                                  1
@@ -81,6 +84,7 @@ extern "C" {
 #define GL_OES_standard_derivatives                             1
 #define GL_OES_texture_float                                    1
 #define GL_OES_texture_half_float                               1
+#define GL_OES_texture_half_float_linear                        1
 #define GL_OES_vertex_array_object                              1
 
 /**************************************************************************/
@@ -182,6 +186,10 @@ typedef struct __GLsync *GLsync;
 #define GL_STENCIL_EXT                                          0x1802
 #endif
 
+#if GL_EXT_instanced_arrays
+#define GL_VERTEX_ATTRIB_ARRAY_DIVISOR_EXT                      0x88FE
+#endif
+
 #if GL_EXT_map_buffer_range
 #define GL_MAP_READ_BIT_EXT                                     0x0001
 #define GL_MAP_WRITE_BIT_EXT                                    0x0002
@@ -197,6 +205,13 @@ typedef struct __GLsync *GLsync;
 #define GL_CURRENT_QUERY_EXT                                    0x8865
 #define GL_QUERY_RESULT_EXT                                     0x8866
 #define GL_QUERY_RESULT_AVAILABLE_EXT                           0x8867
+#endif
+
+#if GL_EXT_pvrtc_sRGB
+#define GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT                     0x8A54
+#define GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT                     0x8A55
+#define GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT               0x8A56
+#define GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT               0x8A57
 #endif
 
 #if GL_EXT_read_format_bgra
@@ -227,6 +242,13 @@ typedef struct __GLsync *GLsync;
 #define GL_TEXTURE_COMPARE_FUNC_EXT                             0x884D
 #define GL_COMPARE_REF_TO_TEXTURE_EXT                           0x884E
 #define GL_SAMPLER_2D_SHADOW_EXT                                0x8B62
+#endif
+
+#if GL_EXT_sRGB
+#define GL_SRGB_EXT                                             0x8C40
+#define GL_SRGB_ALPHA_EXT                                       0x8C42
+#define GL_SRGB8_ALPHA8_EXT                                     0x8C43
+#define GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT            0x8210
 #endif
 
 #if GL_EXT_texture_filter_anisotropic
@@ -355,6 +377,15 @@ GL_API GLvoid glPopGroupMarkerEXT(void)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPH
 GL_API GLvoid GL_APIENTRY glDiscardFramebufferEXT(GLenum target, GLsizei numAttachments, const GLenum *attachments)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 #endif
 
+#if GL_EXT_draw_instanced
+GL_API GLvoid glDrawArraysInstancedEXT(GLenum mode, GLint first, GLsizei count, GLsizei instanceCount)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+GL_API GLvoid glDrawElementsInstancedEXT(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei instanceCount)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+#endif
+
+#if GL_EXT_instanced_arrays
+GL_API GLvoid glVertexAttribDivisorEXT(GLuint index, GLuint divisor)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+#endif
+
 #if GL_EXT_map_buffer_range
 GL_API GLvoid *glMapBufferRangeEXT(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 GL_API GLvoid glFlushMappedBufferRangeEXT(GLenum target, GLintptr offset, GLsizeiptr length) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
@@ -373,7 +404,7 @@ GL_API GLvoid glGetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params)  _
 #if GL_EXT_separate_shader_objects
 GL_API GLvoid glUseProgramStagesEXT(GLuint pipeline, GLbitfield stages, GLuint program)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glActiveShaderProgramEXT(GLuint pipeline, GLuint program)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-GL_API GLuint glCreateShaderProgramvEXT(GLenum type, GLsizei count, const GLchar **strings)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+GL_API GLuint glCreateShaderProgramvEXT(GLenum type, GLsizei count, const GLchar* const *strings)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glBindProgramPipelineEXT(GLuint pipeline)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glDeleteProgramPipelinesEXT(GLsizei n, const GLuint *pipelines)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 GL_API GLvoid glGenProgramPipelinesEXT(GLsizei n, GLuint *pipelines)  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);

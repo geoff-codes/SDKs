@@ -3,17 +3,17 @@
  	
  	Framework:  AVFoundation
  
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2013 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVCaptureSession.h>
-#import <AVFoundation/AVMetadataObject.h>
 #import <CoreMedia/CMSampleBuffer.h>
 #import <QuartzCore/CALayer.h>
 #import <dispatch/dispatch.h>
 
+@class AVMetadataObject;
 @class AVCaptureOutputInternal;
 
 /*!
@@ -101,7 +101,50 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     connection.  I.e., for video data output, adjusted metadata object coordinates are rotated/mirrored.  For still image 
     and movie file output, they are not.
 */
-- (AVMetadataObject *)transformedMetadataObjectForMetadataObject:(AVMetadataObject *)metadataObject connection:(AVCaptureConnection *)connection NS_AVAILABLE(NA, 6_0);
+- (AVMetadataObject *)transformedMetadataObjectForMetadataObject:(AVMetadataObject *)metadataObject connection:(AVCaptureConnection *)connection NS_AVAILABLE_IOS(6_0);
+
+/*!
+ @method metadataOutputRectOfInterestForRect:
+ @abstract
+	Converts a rectangle in the receiver's coordinate space to a rectangle of interest in the coordinate space of an AVCaptureMetadataOutput
+	whose capture device is providing input to the receiver.
+ 
+ @param rectInOutputCoordinates
+	A CGRect in the receiver's coordinates.
+ 
+ @result
+	A CGRect in the coordinate space of the metadata output whose capture device is providing input to the receiver.
+ 
+ @discussion
+	AVCaptureMetadataOutput rectOfInterest is expressed as a CGRect where {0,0} represents the top left of the picture area,
+	and {1,1} represents the bottom right on an unrotated picture.  This convenience method converts a rectangle in
+	the coordinate space of the receiver to a rectangle of interest in the coordinate space of an AVCaptureMetadataOutput
+	whose AVCaptureDevice is providing input to the receiver.  The conversion takes orientation, mirroring, and scaling into 
+	consideration.  See -transformedMetadataObjectForMetadataObject:connection: for a full discussion of how orientation and mirroring
+	are applied to sample buffers passing through the output.	
+ */
+- (CGRect)metadataOutputRectOfInterestForRect:(CGRect)rectInOutputCoordinates NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @method rectForMetadataOutputRectOfInterest:
+ @abstract
+	Converts a rectangle of interest in the coordinate space of an AVCaptureMetadataOutput whose capture device is
+	providing input to the receiver to a rectangle in the receiver's coordinates.
+ 
+ @param rectInMetadataOutputCoordinates
+	A CGRect in the coordinate space of the metadata output whose capture device is providing input to the receiver.
+ 
+ @result
+	A CGRect in the receiver's coordinates.
+ 
+ @discussion
+	AVCaptureMetadataOutput rectOfInterest is expressed as a CGRect where {0,0} represents the top left of the picture area,
+	and {1,1} represents the bottom right on an unrotated picture.  This convenience method converts a rectangle in the coordinate 
+	space of an AVCaptureMetadataOutput whose AVCaptureDevice is providing input to the coordinate space of the receiver.  The 
+	conversion takes orientation, mirroring, and scaling into consideration. See -transformedMetadataObjectForMetadataObject:connection: 
+	for a full discussion of how orientation and mirroring are applied to sample buffers passing through the output.
+ */
+- (CGRect)rectForMetadataOutputRectOfInterest:(CGRect)rectInMetadataOutputCoordinates NS_AVAILABLE_IOS(7_0);
 
 @end
 
@@ -196,6 +239,33 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange and kCVPixelFormatType_32BGRA.
 */
 @property(nonatomic, copy) NSDictionary *videoSettings;
+
+/*!
+ @method recommendedVideoSettingsForAssetWriterWithOutputFileType:
+ @abstract
+    Specifies the recommended settings for use with an AVAssetWriterInput.
+
+ @param outputFileType
+    Specifies the UTI of the file type to be written (see AVMediaFormat.h for a list of file format UTIs).
+ 
+ @return
+    A fully populated dictionary of keys and values that are compatible with AVAssetWriter.
+ 
+ @discussion
+    The value of this property is an NSDictionary containing values for compression settings keys defined in
+    AVVideoSettings.h.  This dictionary is suitable for use as the "outputSettings" parameter when creating an AVAssetWriterInput, such as,
+        
+       [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:outputSettings sourceFormatHint:hint];
+    
+	The dictionary returned contains all necessary keys and values needed by AVAssetWriter (see AVAssetWriterInput.h, 
+    -initWithMediaType:outputSettings: for a more in depth discussion). For QuickTime movie and ISO file types,
+    the recommended video settings will produce output comparable to that of AVCaptureMovieFileOutput.
+
+    Note that the dictionary of settings is dependent on the current configuration of the receiver's AVCaptureSession
+    and its inputs.  The settings dictionary may change if the session's configuration changes.  As such, you should
+    configure your session first, then query the recommended video settings.
+*/
+- (NSDictionary *)recommendedVideoSettingsForAssetWriterWithOutputFileType:(NSString *)outputFileType NS_AVAILABLE_IOS(7_0);
 
 /*!
  @property availableVideoCVPixelFormatTypes
@@ -412,6 +482,33 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 
 #endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
+/*!
+ @method recommendedAudioSettingsForAssetWriterWithOutputFileType:
+ @abstract
+    Specifies the recommended settings for use with an AVAssetWriterInput.
+
+ @param outputFileType
+    Specifies the UTI of the file type to be written (see AVMediaFormat.h for a list of file format UTIs).
+ 
+ @return
+    A fully populated dictionary of keys and values that are compatible with AVAssetWriter.
+ 
+ @discussion
+    The value of this property is an NSDictionary containing values for compression settings keys defined in
+    AVAudioSettings.h.  This dictionary is suitable for use as the "outputSettings" parameter when creating an AVAssetWriterInput, such as,
+        
+       [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:outputSettings sourceFormatHint:hint];
+    
+	The dictionary returned contains all necessary keys and values needed by AVAssetWriter (see AVAssetWriterInput.h, 
+    -initWithMediaType:outputSettings: for a more in depth discussion).  For QuickTime movie and ISO files, the 
+    recommended audio settings will always produce output comparable to that of AVCaptureMovieFileOutput.
+
+	Note that the dictionary of settings is dependent on the current configuration of the receiver's AVCaptureSession
+    and its inputs.  The settings dictionary may change if the session's configuration changes.  As such, you should
+    configure your session first, then query the recommended audio settings.
+*/
+- (NSDictionary *)recommendedAudioSettingsForAssetWriterWithOutputFileType:(NSString *)outputFileType NS_AVAILABLE_IOS(7_0);
+
 @end
 
 /*!
@@ -453,7 +550,10 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 
 @class AVCaptureFileOutputInternal;
 @protocol AVCaptureFileOutputRecordingDelegate;
+
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 @protocol AVCaptureFileOutputDelegate;
+#endif
 
 /*!
  @class AVCaptureFileOutput
@@ -828,6 +928,8 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 
 @end
 
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+
 /*!
  @protocol AVCaptureFileOutputDelegate
  @abstract
@@ -835,8 +937,6 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     boundaries.
 */
 @protocol AVCaptureFileOutputDelegate <NSObject>
-
-#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
 @required
 
@@ -908,9 +1008,9 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 */
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection NS_AVAILABLE(10_7, NA);
 
-#endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
-
 @end
+
+#endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
 
 @class AVCaptureMovieFileOutputInternal;
@@ -1164,6 +1264,44 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 @property(nonatomic, readonly) NSArray *availableImageDataCodecTypes;
 
 /*!
+ @property stillImageStabilizationSupported
+ @abstract
+    Indicates whether the receiver supports still image stabilization.
+ 
+ @discussion
+    The receiver's automaticallyEnablesStillImageStabilizationWhenAvailable property can only be set 
+    if this property returns YES.  Its value may change as the session's -sessionPreset or input device's
+    -activeFormat changes.
+*/
+@property(nonatomic, readonly, getter=isStillImageStabilizationSupported) BOOL stillImageStabilizationSupported NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property automaticallyEnablesStillImageStabilizationWhenAvailable
+ @abstract
+    Indicates whether the receiver should automatically use still image stabilization when necessary.
+ 
+ @discussion
+    On a receiver where -isStillImageStabilizationSupported returns YES, image stabilization
+    may be applied to reduce blur commonly found in low light photos. When stabilization is enabled, still 
+    image captures incur additional latency. The default value is YES when supported, NO otherwise. Setting 
+    this property throws an NSInvalidArgumentException if -isStillImageStabilizationSupported returns NO.
+*/
+@property(nonatomic) BOOL automaticallyEnablesStillImageStabilizationWhenAvailable NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property stillImageStabilizationActive
+ @abstract
+    Indicates whether still image stabilization is in use for the current capture.
+ 
+ @discussion
+    On a receiver where -isStillImageStabilizationSupported returns YES, and
+    automaticallyEnablesStillImageStabilizationWhenAvailable is set to YES, this property may be key-value
+    observed, or queried from inside your key-value observation callback for the @"capturingStillImage"
+	property, to find out if still image stabilization is being applied to the current capture.
+*/
+@property(nonatomic, readonly, getter=isStillImageStabilizationActive) BOOL stillImageStabilizationActive NS_AVAILABLE_IOS(7_0);
+
+/*!
  @property capturingStillImage
  @abstract
     A boolean value that becomes true when a still image is being captured.
@@ -1355,14 +1493,25 @@ NS_CLASS_AVAILABLE(NA, 6_0)
     Specifies the types of metadata objects that the receiver should present to the client.
 
  @discussion
-    AVCaptureMetadataOutput may detect and emit multiple metadata object types.  By default
-    the receiver captures all available metadata objects (see -availableMetadataObjectTypes).  To
-    exclude undesired object types, clients may call -setMetadataObjectTypes: specifying
-    a subset of the types present in -availableMetadataObjectTypes.  -setMetadataObjectTypes:
-    throws an NSInvalidArgumentException if any elements in the array are not present in the
-    -availableMetadataObjectTypes array.
+	AVCaptureMetadataOutput may detect and emit multiple metadata object types.  For apps linked before iOS 7.0, the 
+	receiver defaults to capturing face metadata objects if supported (see -availableMetadataObjectTypes).  For apps 
+	linked on or after iOS 7.0, the receiver captures no metadata objects by default.  -setMetadataObjectTypes: throws 
+	an NSInvalidArgumentException if any elements in the array are not present in the -availableMetadataObjectTypes array.
 */
 @property(nonatomic, copy) NSArray *metadataObjectTypes;
+
+/*!
+ @property rectOfInterest
+ @abstract
+	Specifies a rectangle of interest for limiting the search area for visual metadata.
+ 
+ @discussion
+	The value of this property is a CGRect that determines the receiver's rectangle of interest for each frame of video.  
+	The rectangle's origin is top left and is relative to the coordinate space of the device providing the metadata.  Specifying 
+	a rectOfInterest may improve detection performance for certain types of metadata. The default value of this property is the 
+	value CGRectMake(0, 0, 1, 1).  Metadata objects whose bounds do not intersect with the rectOfInterest will not be returned.
+ */
+@property(nonatomic) CGRect rectOfInterest NS_AVAILABLE_IOS(7_0);
 
 @end
 

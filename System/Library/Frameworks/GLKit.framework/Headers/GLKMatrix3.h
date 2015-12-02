@@ -2,7 +2,7 @@
 //  GLKMatrix3.h
 //  GLKit
 //
-//  Copyright (c) 2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2012, Apple Inc. All rights reserved.
 //
 
 #ifndef __GLK_MATRIX_3_H
@@ -13,13 +13,13 @@
 #include <string.h>
 #include <math.h>
 
-#if defined(__ARM_NEON__)
-#include <arm_neon.h>
-#endif
-
 #include <GLKit/GLKMathTypes.h>
 #include <GLKit/GLKVector3.h>
 #include <GLKit/GLKQuaternion.h>
+
+#if defined(__ARM_NEON__)
+#include <arm_neon.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,86 +31,86 @@ extern "C" {
     
 extern const GLKMatrix3 GLKMatrix3Identity;
 
-static __inline__ GLKMatrix3 GLKMatrix3Make(float m00, float m01, float m02,
+GLK_INLINE GLKMatrix3 GLKMatrix3Make(float m00, float m01, float m02,
                                             float m10, float m11, float m12,
                                             float m20, float m21, float m22);
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeAndTranspose(float m00, float m01, float m02,
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeAndTranspose(float m00, float m01, float m02,
                                                         float m10, float m11, float m12,
                                                         float m20, float m21, float m22);
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithArray(float values[9]);
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithArray(float values[9]);
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithArrayAndTranspose(float values[9]);
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithArrayAndTranspose(float values[9]);
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithRows(GLKVector3 row0,
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithRows(GLKVector3 row0,
                                                     GLKVector3 row1, 
                                                     GLKVector3 row2);
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithColumns(GLKVector3 column0,
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithColumns(GLKVector3 column0,
                                                        GLKVector3 column1, 
                                                        GLKVector3 column2);
 
 /*
  The quaternion will be normalized before conversion.
  */
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithQuaternion(GLKQuaternion quaternion);
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithQuaternion(GLKQuaternion quaternion);
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeScale(float sx, float sy, float sz);	
-static __inline__ GLKMatrix3 GLKMatrix3MakeRotation(float radians, float x, float y, float z);
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeScale(float sx, float sy, float sz);	
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeRotation(float radians, float x, float y, float z);
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeXRotation(float radians);
-static __inline__ GLKMatrix3 GLKMatrix3MakeYRotation(float radians);
-static __inline__ GLKMatrix3 GLKMatrix3MakeZRotation(float radians);
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeXRotation(float radians);
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeYRotation(float radians);
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeZRotation(float radians);
 
 /*
  Returns the upper left 2x2 portion of the 3x3 matrix.
  */
-static __inline__ GLKMatrix2 GLKMatrix3GetMatrix2(GLKMatrix3 matrix);
+GLK_INLINE GLKMatrix2 GLKMatrix3GetMatrix2(GLKMatrix3 matrix);
 
-static __inline__ GLKVector3 GLKMatrix3GetRow(GLKMatrix3 matrix, int row);
-static __inline__ GLKVector3 GLKMatrix3GetColumn(GLKMatrix3 matrix, int column);
+GLK_INLINE GLKVector3 GLKMatrix3GetRow(GLKMatrix3 matrix, int row);
+GLK_INLINE GLKVector3 GLKMatrix3GetColumn(GLKMatrix3 matrix, int column);
 
-static __inline__ GLKMatrix3 GLKMatrix3SetRow(GLKMatrix3 matrix, int row, GLKVector3 vector);
-static __inline__ GLKMatrix3 GLKMatrix3SetColumn(GLKMatrix3 matrix, int column, GLKVector3 vector);
+GLK_INLINE GLKMatrix3 GLKMatrix3SetRow(GLKMatrix3 matrix, int row, GLKVector3 vector);
+GLK_INLINE GLKMatrix3 GLKMatrix3SetColumn(GLKMatrix3 matrix, int column, GLKVector3 vector);
     
-static __inline__ GLKMatrix3 GLKMatrix3Transpose(GLKMatrix3 matrix);
+GLK_INLINE GLKMatrix3 GLKMatrix3Transpose(GLKMatrix3 matrix);
 
 GLKMatrix3 GLKMatrix3Invert(GLKMatrix3 matrix, bool *isInvertible);
 GLKMatrix3 GLKMatrix3InvertAndTranspose(GLKMatrix3 matrix, bool *isInvertible);
 
-static __inline__ GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight);
+GLK_INLINE GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight);
 
-static __inline__ GLKMatrix3 GLKMatrix3Add(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight);
-static __inline__ GLKMatrix3 GLKMatrix3Subtract(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight);
+GLK_INLINE GLKMatrix3 GLKMatrix3Add(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight);
+GLK_INLINE GLKMatrix3 GLKMatrix3Subtract(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight);
     
-static __inline__ GLKMatrix3 GLKMatrix3Scale(GLKMatrix3 matrix, float sx, float sy, float sz);
-static __inline__ GLKMatrix3 GLKMatrix3ScaleWithVector3(GLKMatrix3 matrix, GLKVector3 scaleVector);
+GLK_INLINE GLKMatrix3 GLKMatrix3Scale(GLKMatrix3 matrix, float sx, float sy, float sz);
+GLK_INLINE GLKMatrix3 GLKMatrix3ScaleWithVector3(GLKMatrix3 matrix, GLKVector3 scaleVector);
 /*
  The last component of the GLKVector4, scaleVector, is ignored.
  */
-static __inline__ GLKMatrix3 GLKMatrix3ScaleWithVector4(GLKMatrix3 matrix, GLKVector4 scaleVector);
+GLK_INLINE GLKMatrix3 GLKMatrix3ScaleWithVector4(GLKMatrix3 matrix, GLKVector4 scaleVector);
 
-static __inline__ GLKMatrix3 GLKMatrix3Rotate(GLKMatrix3 matrix, float radians, float x, float y, float z);
-static __inline__ GLKMatrix3 GLKMatrix3RotateWithVector3(GLKMatrix3 matrix, float radians, GLKVector3 axisVector);
+GLK_INLINE GLKMatrix3 GLKMatrix3Rotate(GLKMatrix3 matrix, float radians, float x, float y, float z);
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateWithVector3(GLKMatrix3 matrix, float radians, GLKVector3 axisVector);
 /*
  The last component of the GLKVector4, axisVector, is ignored.
  */
-static __inline__ GLKMatrix3 GLKMatrix3RotateWithVector4(GLKMatrix3 matrix, float radians, GLKVector4 axisVector);
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateWithVector4(GLKMatrix3 matrix, float radians, GLKVector4 axisVector);
 
-static __inline__ GLKMatrix3 GLKMatrix3RotateX(GLKMatrix3 matrix, float radians);
-static __inline__ GLKMatrix3 GLKMatrix3RotateY(GLKMatrix3 matrix, float radians);
-static __inline__ GLKMatrix3 GLKMatrix3RotateZ(GLKMatrix3 matrix, float radians);
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateX(GLKMatrix3 matrix, float radians);
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateY(GLKMatrix3 matrix, float radians);
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateZ(GLKMatrix3 matrix, float radians);
 
-static __inline__ GLKVector3 GLKMatrix3MultiplyVector3(GLKMatrix3 matrixLeft, GLKVector3 vectorRight);
+GLK_INLINE GLKVector3 GLKMatrix3MultiplyVector3(GLKMatrix3 matrixLeft, GLKVector3 vectorRight);
 
-static __inline__ void GLKMatrix3MultiplyVector3Array(GLKMatrix3 matrix, GLKVector3 *vectors, size_t vectorCount);
+GLK_INLINE void GLKMatrix3MultiplyVector3Array(GLKMatrix3 matrix, GLKVector3 *vectors, size_t vectorCount);
 
 #pragma mark -
 #pragma mark Implementations
 #pragma mark -
 
-static __inline__ GLKMatrix3 GLKMatrix3Make(float m00, float m01, float m02,
+GLK_INLINE GLKMatrix3 GLKMatrix3Make(float m00, float m01, float m02,
                                             float m10, float m11, float m12,
                                             float m20, float m21, float m22)
 {
@@ -120,7 +120,7 @@ static __inline__ GLKMatrix3 GLKMatrix3Make(float m00, float m01, float m02,
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeAndTranspose(float m00, float m01, float m02,
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeAndTranspose(float m00, float m01, float m02,
                                                         float m10, float m11, float m12,
                                                         float m20, float m21, float m22)
 {
@@ -130,7 +130,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeAndTranspose(float m00, float m01, fl
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithArray(float values[9])
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithArray(float values[9])
 {
     GLKMatrix3 m = { values[0], values[1], values[2],
                      values[3], values[4], values[5],
@@ -138,7 +138,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeWithArray(float values[9])
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithArrayAndTranspose(float values[9])
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithArrayAndTranspose(float values[9])
 {
     GLKMatrix3 m = { values[0], values[3], values[6],
                      values[1], values[4], values[7],
@@ -146,7 +146,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeWithArrayAndTranspose(float values[9]
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithRows(GLKVector3 row0,
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithRows(GLKVector3 row0,
                                                     GLKVector3 row1, 
                                                     GLKVector3 row2)
 {
@@ -156,7 +156,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeWithRows(GLKVector3 row0,
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithColumns(GLKVector3 column0,
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithColumns(GLKVector3 column0,
                                                        GLKVector3 column1, 
                                                        GLKVector3 column2)
 {
@@ -166,7 +166,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeWithColumns(GLKVector3 column0,
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeWithQuaternion(GLKQuaternion quaternion)
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeWithQuaternion(GLKQuaternion quaternion)
 {
     quaternion = GLKQuaternionNormalize(quaternion);
     
@@ -195,7 +195,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeWithQuaternion(GLKQuaternion quaterni
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeScale(float sx, float sy, float sz)
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeScale(float sx, float sy, float sz)
 {
     GLKMatrix3 m = GLKMatrix3Identity;
     m.m[0] = sx;
@@ -204,7 +204,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeScale(float sx, float sy, float sz)
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeRotation(float radians, float x, float y, float z)
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeRotation(float radians, float x, float y, float z)
 {
     GLKVector3 v = GLKVector3Normalize(GLKVector3Make(x, y, z));
     float cos = cosf(radians);
@@ -226,7 +226,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeRotation(float radians, float x, floa
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeXRotation(float radians)
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeXRotation(float radians)
 {
     float cos = cosf(radians);
     float sin = sinf(radians);
@@ -238,7 +238,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeXRotation(float radians)
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeYRotation(float radians)
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeYRotation(float radians)
 {
     float cos = cosf(radians);
     float sin = sinf(radians);
@@ -250,7 +250,7 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeYRotation(float radians)
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3MakeZRotation(float radians)
+GLK_INLINE GLKMatrix3 GLKMatrix3MakeZRotation(float radians)
 {
     float cos = cosf(radians);
     float sin = sinf(radians);
@@ -262,26 +262,26 @@ static __inline__ GLKMatrix3 GLKMatrix3MakeZRotation(float radians)
     return m;
 }
 
-static __inline__ GLKMatrix2 GLKMatrix3GetMatrix2(GLKMatrix3 matrix)
+GLK_INLINE GLKMatrix2 GLKMatrix3GetMatrix2(GLKMatrix3 matrix)
 {
     GLKMatrix2 m = { matrix.m[0], matrix.m[1],
                      matrix.m[3], matrix.m[4] };
     return m;
 }
 
-static __inline__ GLKVector3 GLKMatrix3GetRow(GLKMatrix3 matrix, int row)
+GLK_INLINE GLKVector3 GLKMatrix3GetRow(GLKMatrix3 matrix, int row)
 {
     GLKVector3 v = { matrix.m[row], matrix.m[3 + row], matrix.m[6 + row] };
     return v;
 }
 
-static __inline__ GLKVector3 GLKMatrix3GetColumn(GLKMatrix3 matrix, int column)
+GLK_INLINE GLKVector3 GLKMatrix3GetColumn(GLKMatrix3 matrix, int column)
 {
     GLKVector3 v = { matrix.m[column * 3 + 0], matrix.m[column * 3 + 1], matrix.m[column * 3 + 2] };
     return v;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3SetRow(GLKMatrix3 matrix, int row, GLKVector3 vector)
+GLK_INLINE GLKMatrix3 GLKMatrix3SetRow(GLKMatrix3 matrix, int row, GLKVector3 vector)
 {
     matrix.m[row] = vector.v[0];
     matrix.m[row + 3] = vector.v[1];
@@ -290,7 +290,7 @@ static __inline__ GLKMatrix3 GLKMatrix3SetRow(GLKMatrix3 matrix, int row, GLKVec
     return matrix;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3SetColumn(GLKMatrix3 matrix, int column, GLKVector3 vector)
+GLK_INLINE GLKMatrix3 GLKMatrix3SetColumn(GLKMatrix3 matrix, int column, GLKVector3 vector)
 {
     matrix.m[column * 3 + 0] = vector.v[0];
     matrix.m[column * 3 + 1] = vector.v[1];
@@ -299,7 +299,7 @@ static __inline__ GLKMatrix3 GLKMatrix3SetColumn(GLKMatrix3 matrix, int column, 
     return matrix;
 }
     
-static __inline__ GLKMatrix3 GLKMatrix3Transpose(GLKMatrix3 matrix)
+GLK_INLINE GLKMatrix3 GLKMatrix3Transpose(GLKMatrix3 matrix)
 {
     GLKMatrix3 m = { matrix.m[0], matrix.m[3], matrix.m[6],
                      matrix.m[1], matrix.m[4], matrix.m[7],
@@ -307,7 +307,7 @@ static __inline__ GLKMatrix3 GLKMatrix3Transpose(GLKMatrix3 matrix)
     return m;
 }
  
-static __inline__ GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight)
+GLK_INLINE GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight)
 {
 #if defined(__ARM_NEON__)
     GLKMatrix3 m;
@@ -315,14 +315,14 @@ static __inline__ GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix
     float32x4x3_t iMatrixRight;
     float32x4x3_t mm;
     
-    memcpy(&(iMatrixLeft.val[0]), (char *)&(matrixLeft.m[0]), 16); // 0 1 2 3
-    memcpy(&(iMatrixLeft.val[1]), (char *)&(matrixLeft.m[3]), 16); // 3 4 5 6
-    memcpy(&(iMatrixLeft.val[2]), (char *)&(matrixLeft.m[5]), 16); // 5 6 7 8
-    
-    memcpy(&(iMatrixRight.val[0]), (char *)&(matrixRight.m[0]), 16);
-    memcpy(&(iMatrixRight.val[1]), (char *)&(matrixRight.m[3]), 16);
-    memcpy(&(iMatrixRight.val[2]), (char *)&(matrixRight.m[5]), 16);
-    
+    iMatrixLeft.val[0] = vld1q_f32(&matrixLeft.m[0]); // 0 1 2 3
+    iMatrixLeft.val[1] = vld1q_f32(&matrixLeft.m[3]); // 3 4 5 6
+    iMatrixLeft.val[2] = vld1q_f32(&matrixLeft.m[5]); // 5 6 7 8
+
+    iMatrixRight.val[0] = vld1q_f32(&matrixRight.m[0]); // 0 1 2 3
+    iMatrixRight.val[1] = vld1q_f32(&matrixRight.m[3]); // 3 4 5 6
+    iMatrixRight.val[2] = vld1q_f32(&matrixRight.m[5]); // 5 6 7 8
+        
     iMatrixLeft.val[2] = vextq_f32(iMatrixLeft.val[2], iMatrixLeft.val[2], 1); // 6 7 8 x
     
     mm.val[0] = vmulq_n_f32(iMatrixLeft.val[0], vgetq_lane_f32(iMatrixRight.val[0], 0));
@@ -344,6 +344,38 @@ static __inline__ GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix
     m.m[8] = vgetq_lane_f32(mm.val[2], 2);
     
     return m;
+#elif defined(GLK_SSE3_INTRINSICS)
+	struct {
+		GLKMatrix3 m;
+		char pad[16*4 - sizeof(GLKMatrix3)];
+	} ret;
+    
+    const __m128 iMatrixLeft0 = _mm_loadu_ps(&matrixLeft.m[0]); // 0 1 2 3 // unaligned load
+    const __m128 iMatrixLeft1 = _mm_loadu_ps(&matrixLeft.m[3]); // 3 4 5 6 // unaligned load
+    const __m128 iMatrixLeft2Tmp = _mm_loadu_ps(&matrixLeft.m[5]); // 5 6 7 8 // unaligned load
+    const __m128 iMatrixLeft2 = _mm_shuffle_ps(iMatrixLeft2Tmp, iMatrixLeft2Tmp, _MM_SHUFFLE(0, 3, 2, 1)); // 6 7 8 x
+    
+    const __m128 iMatrixRight0 = _mm_loadu_ps(&matrixRight.m[0]);
+    const __m128 iMatrixRight1 = _mm_loadu_ps(&matrixRight.m[3]);
+    const __m128 iMatrixRight2 = _mm_loadu_ps(&matrixRight.m[5]);
+    
+    const __m128 mm0 = iMatrixLeft0 * _mm_shuffle_ps(iMatrixRight0, iMatrixRight0, _MM_SHUFFLE(0, 0, 0, 0))  // mm0 = L0*R0 L1*R0 L2*R0 L3*R0
+                     + iMatrixLeft1 * _mm_shuffle_ps(iMatrixRight0, iMatrixRight0, _MM_SHUFFLE(1, 1, 1, 1))  // mm0 = L0*R0+L3*R1 L1*R0+L4*R1 L2*R0+L5*R1 L3*R0+L6*R1
+                     + iMatrixLeft2 * _mm_shuffle_ps(iMatrixRight0, iMatrixRight0, _MM_SHUFFLE(2, 2, 2, 2));
+		
+    const __m128 mm1 = iMatrixLeft0 * _mm_shuffle_ps(iMatrixRight0, iMatrixRight0, _MM_SHUFFLE(3, 3, 3, 3))  // mm1 = L0*R3 L1*R3 L2*R3 L3*R3
+                     + iMatrixLeft1 * _mm_shuffle_ps(iMatrixRight1, iMatrixRight1, _MM_SHUFFLE(1, 1, 1, 1))  // mm1 = L0*R3+L3*R4 L1*R3+L4*R4 L2*R3+L5*R4 L3*R3+
+                     + iMatrixLeft2 * _mm_shuffle_ps(iMatrixRight1, iMatrixRight1, _MM_SHUFFLE(2, 2, 2, 2));
+	
+    const __m128 mm2 = iMatrixLeft0 * _mm_shuffle_ps(iMatrixRight1, iMatrixRight1, _MM_SHUFFLE(3, 3, 3, 3)) // mm2 = L0*R6 L1*R6 L2*R6 L3*R6
+                     + iMatrixLeft1 * _mm_shuffle_ps(iMatrixRight2, iMatrixRight2, _MM_SHUFFLE(2, 2, 2, 2))
+                     + iMatrixLeft2 * _mm_shuffle_ps(iMatrixRight2, iMatrixRight2, _MM_SHUFFLE(3, 3, 3, 3));
+    
+    _mm_storeu_ps(&ret.m.m[0], mm0); //unaligned store to indices: 0 1 2 3
+    _mm_storeu_ps(&ret.m.m[3], mm1); //unaligned store to indices: 3 4 5 6
+    _mm_storeu_ps(&ret.m.m[6], mm2); //unaligned store to indices: 6 7 8
+		
+    return ret.m;
 #else
     GLKMatrix3 m;
     
@@ -363,8 +395,17 @@ static __inline__ GLKMatrix3 GLKMatrix3Multiply(GLKMatrix3 matrixLeft, GLKMatrix
 #endif
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3Add(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight)
+GLK_INLINE GLKMatrix3 GLKMatrix3Add(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight)
 {
+#if defined(GLK_SSE3_INTRINSICS)
+    GLKMatrix3 m;
+    
+    _mm_storeu_ps(&m.m[0], _mm_loadu_ps(&matrixLeft.m[0]) + _mm_loadu_ps(&matrixRight.m[0]));
+    _mm_storeu_ps(&m.m[4], _mm_loadu_ps(&matrixLeft.m[4]) + _mm_loadu_ps(&matrixRight.m[4]));
+    m.m[8] = matrixLeft.m[8] + matrixRight.m[8];
+    
+    return m;
+#else
     GLKMatrix3 m;
     
     m.m[0] = matrixLeft.m[0] + matrixRight.m[0];
@@ -380,10 +421,20 @@ static __inline__ GLKMatrix3 GLKMatrix3Add(GLKMatrix3 matrixLeft, GLKMatrix3 mat
     m.m[8] = matrixLeft.m[8] + matrixRight.m[8];
     
     return m;
+#endif
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3Subtract(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight)
+GLK_INLINE GLKMatrix3 GLKMatrix3Subtract(GLKMatrix3 matrixLeft, GLKMatrix3 matrixRight)
 {
+#if defined(GLK_SSE3_INTRINSICS)
+    GLKMatrix3 m;
+    
+    _mm_storeu_ps(&m.m[0], _mm_loadu_ps(&matrixLeft.m[0]) - _mm_loadu_ps(&matrixRight.m[0]));
+    _mm_storeu_ps(&m.m[4], _mm_loadu_ps(&matrixLeft.m[4]) - _mm_loadu_ps(&matrixRight.m[4]));
+    m.m[8] = matrixLeft.m[8] - matrixRight.m[8];
+    
+    return m;
+#else
     GLKMatrix3 m;
     
     m.m[0] = matrixLeft.m[0] - matrixRight.m[0];
@@ -399,9 +450,10 @@ static __inline__ GLKMatrix3 GLKMatrix3Subtract(GLKMatrix3 matrixLeft, GLKMatrix
     m.m[8] = matrixLeft.m[8] - matrixRight.m[8];
     
     return m;
+#endif
 }
     
-static __inline__ GLKMatrix3 GLKMatrix3Scale(GLKMatrix3 matrix, float sx, float sy, float sz)
+GLK_INLINE GLKMatrix3 GLKMatrix3Scale(GLKMatrix3 matrix, float sx, float sy, float sz)
 {
     GLKMatrix3 m = { matrix.m[0] * sx, matrix.m[1] * sx, matrix.m[2] * sx,
                      matrix.m[3] * sy, matrix.m[4] * sy, matrix.m[5] * sy,
@@ -409,7 +461,7 @@ static __inline__ GLKMatrix3 GLKMatrix3Scale(GLKMatrix3 matrix, float sx, float 
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3ScaleWithVector3(GLKMatrix3 matrix, GLKVector3 scaleVector)
+GLK_INLINE GLKMatrix3 GLKMatrix3ScaleWithVector3(GLKMatrix3 matrix, GLKVector3 scaleVector)
 {
     GLKMatrix3 m = { matrix.m[0] * scaleVector.v[0], matrix.m[1] * scaleVector.v[0], matrix.m[2] * scaleVector.v[0],
                      matrix.m[3] * scaleVector.v[1], matrix.m[4] * scaleVector.v[1], matrix.m[5] * scaleVector.v[1],
@@ -417,7 +469,7 @@ static __inline__ GLKMatrix3 GLKMatrix3ScaleWithVector3(GLKMatrix3 matrix, GLKVe
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3ScaleWithVector4(GLKMatrix3 matrix, GLKVector4 scaleVector)
+GLK_INLINE GLKMatrix3 GLKMatrix3ScaleWithVector4(GLKMatrix3 matrix, GLKVector4 scaleVector)
 {
     GLKMatrix3 m = { matrix.m[0] * scaleVector.v[0], matrix.m[1] * scaleVector.v[0], matrix.m[2] * scaleVector.v[0],
                      matrix.m[3] * scaleVector.v[1], matrix.m[4] * scaleVector.v[1], matrix.m[5] * scaleVector.v[1],
@@ -425,43 +477,43 @@ static __inline__ GLKMatrix3 GLKMatrix3ScaleWithVector4(GLKMatrix3 matrix, GLKVe
     return m;
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3Rotate(GLKMatrix3 matrix, float radians, float x, float y, float z)
+GLK_INLINE GLKMatrix3 GLKMatrix3Rotate(GLKMatrix3 matrix, float radians, float x, float y, float z)
 {
     GLKMatrix3 rm = GLKMatrix3MakeRotation(radians, x, y, z);
     return GLKMatrix3Multiply(matrix, rm);
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3RotateWithVector3(GLKMatrix3 matrix, float radians, GLKVector3 axisVector)
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateWithVector3(GLKMatrix3 matrix, float radians, GLKVector3 axisVector)
 {
     GLKMatrix3 rm = GLKMatrix3MakeRotation(radians, axisVector.v[0], axisVector.v[1], axisVector.v[2]);
     return GLKMatrix3Multiply(matrix, rm);
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3RotateWithVector4(GLKMatrix3 matrix, float radians, GLKVector4 axisVector)
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateWithVector4(GLKMatrix3 matrix, float radians, GLKVector4 axisVector)
 {
     GLKMatrix3 rm = GLKMatrix3MakeRotation(radians, axisVector.v[0], axisVector.v[1], axisVector.v[2]);
     return GLKMatrix3Multiply(matrix, rm);
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3RotateX(GLKMatrix3 matrix, float radians)
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateX(GLKMatrix3 matrix, float radians)
 {
     GLKMatrix3 rm = GLKMatrix3MakeXRotation(radians);
     return GLKMatrix3Multiply(matrix, rm);
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3RotateY(GLKMatrix3 matrix, float radians)
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateY(GLKMatrix3 matrix, float radians)
 {
     GLKMatrix3 rm = GLKMatrix3MakeYRotation(radians);
     return GLKMatrix3Multiply(matrix, rm);
 }
 
-static __inline__ GLKMatrix3 GLKMatrix3RotateZ(GLKMatrix3 matrix, float radians)
+GLK_INLINE GLKMatrix3 GLKMatrix3RotateZ(GLKMatrix3 matrix, float radians)
 {
     GLKMatrix3 rm = GLKMatrix3MakeZRotation(radians);
     return GLKMatrix3Multiply(matrix, rm);
 }
 
-static __inline__ GLKVector3 GLKMatrix3MultiplyVector3(GLKMatrix3 matrixLeft, GLKVector3 vectorRight)
+GLK_INLINE GLKVector3 GLKMatrix3MultiplyVector3(GLKMatrix3 matrixLeft, GLKVector3 vectorRight)
 {
     GLKVector3 v = { matrixLeft.m[0] * vectorRight.v[0] + matrixLeft.m[3] * vectorRight.v[1] + matrixLeft.m[6] * vectorRight.v[2],
                      matrixLeft.m[1] * vectorRight.v[0] + matrixLeft.m[4] * vectorRight.v[1] + matrixLeft.m[7] * vectorRight.v[2],
@@ -469,7 +521,7 @@ static __inline__ GLKVector3 GLKMatrix3MultiplyVector3(GLKMatrix3 matrixLeft, GL
     return v;
 }
 
-static __inline__ void GLKMatrix3MultiplyVector3Array(GLKMatrix3 matrix, GLKVector3 *vectors, size_t vectorCount)
+GLK_INLINE void GLKMatrix3MultiplyVector3Array(GLKMatrix3 matrix, GLKVector3 *vectors, size_t vectorCount)
 {
     int i;
     for (i=0; i < vectorCount; i++)

@@ -2,7 +2,7 @@
 //  UIKit.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKitDefines.h>
@@ -23,6 +23,7 @@
 #import <UIKit/UICollectionViewController.h>
 #import <UIKit/UICollectionViewFlowLayout.h>
 #import <UIKit/UICollectionViewLayout.h>
+#import <UIKit/UICollectionViewTransitionLayout.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIControl.h>
 #import <UIKit/UIDataDetectors.h>
@@ -32,12 +33,14 @@
 #import <UIKit/UIDocumentInteractionController.h>
 #import <UIKit/UIEvent.h>
 #import <UIKit/UIFont.h>
+#import <UIKit/UIFontDescriptor.h>
 #import <UIKit/UIGeometry.h>
 #import <UIKit/UIGestureRecognizer.h>
 #import <UIKit/UIGraphics.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIImagePickerController.h>
 #import <UIKit/UIImageView.h>
+#import <UIKit/UIInputView.h>
 #import <UIKit/UIInterface.h>
 #import <UIKit/UILabel.h>
 #import <UIKit/UILocalNotification.h>
@@ -45,6 +48,7 @@
 #import <UIKit/UILongPressGestureRecognizer.h>
 #import <UIKit/UIManagedDocument.h>
 #import <UIKit/UIMenuController.h>
+#import <UIKit/UIMotionEffect.h>
 #import <UIKit/UINavigationBar.h>
 #import <UIKit/UINavigationController.h>
 #import <UIKit/UINib.h>
@@ -70,6 +74,7 @@
 #import <UIKit/UIResponder.h>
 #import <UIKit/UIRotationGestureRecognizer.h>
 #import <UIKit/UIScreen.h>
+#import <UIKit/UIScreenEdgePanGestureRecognizer.h>
 #import <UIKit/UIScreenMode.h>
 #import <UIKit/UIScrollView.h>
 #import <UIKit/UISearchBar.h>
@@ -105,10 +110,23 @@
 #import <UIKit/UIWebView.h>
 #import <UIKit/UIWindow.h>
 #import <UIKit/NSAttributedString.h>
-#import <UIKit/NSText.h>
+#import <UIKit/NSLayoutConstraint.h>
+#import <UIKit/NSLayoutManager.h>
 #import <UIKit/NSParagraphStyle.h>
 #import <UIKit/NSShadow.h>
 #import <UIKit/NSStringDrawing.h>
-#import <UIKit/NSLayoutConstraint.h>
+#import <UIKit/NSText.h>
+#import <UIKit/NSTextAttachment.h>
+#import <UIKit/NSTextContainer.h>
+#import <UIKit/NSTextStorage.h>
 #import <UIKit/UIStateRestoration.h>
-
+#import <UIKit/UIViewControllerTransitioning.h>
+#import <UIKit/UIViewControllerTransitionCoordinator.h>
+#import <UIKit/UIDynamicAnimator.h>
+#import <UIKit/UIDynamicBehavior.h>
+#import <UIKit/UIPushBehavior.h>
+#import <UIKit/UISnapBehavior.h>
+#import <UIKit/UIDynamicItemBehavior.h>
+#import <UIKit/UIGravityBehavior.h>
+#import <UIKit/UIAttachmentBehavior.h>
+#import <UIKit/UICollisionBehavior.h>

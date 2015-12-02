@@ -29,7 +29,8 @@ typedef NS_ENUM(NSInteger, CBError) {
 	CBErrorConnectionTimeout NS_ENUM_AVAILABLE(NA, 6_0)			= 6,
 	CBErrorPeripheralDisconnected NS_ENUM_AVAILABLE(NA, 6_0)	= 7,
 	CBErrorUUIDNotAllowed NS_ENUM_AVAILABLE(NA, 6_0)			= 8,
-    CBErrorAlreadyAdvertising NS_ENUM_AVAILABLE(NA, 6_0)		= 9
+	CBErrorAlreadyAdvertising NS_ENUM_AVAILABLE(NA, 6_0)		= 9,
+	CBErrorConnectionFailed NS_ENUM_AVAILABLE(NA, 7_1)			= 10
 };
 
 CB_EXTERN NSString * const CBATTErrorDomain;

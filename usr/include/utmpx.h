@@ -64,17 +64,10 @@
 #include <sys/time.h>
 #include <sys/cdefs.h>
 #include <Availability.h>
-
-#ifndef _PID_T
-#define _PID_T
-typedef __darwin_pid_t     pid_t;
-#endif
+#include <sys/_types/_pid_t.h>
 
 #if !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)
-#ifndef _UID_T
-#define _UID_T
-typedef __darwin_uid_t     uid_t;
-#endif
+#include <sys/_types/_uid_t.h>
 #endif /* !_POSIX_C_SOURCE || _DARWIN_C_SOURCE */
 
 #define	_PATH_UTMPX		"/var/run/utmpx"

@@ -2,7 +2,7 @@
 //  UIColor.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,7 +12,7 @@
 
 @class UIImage;
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UIColor : NSObject <NSCoding, NSCopying> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIColor : NSObject <NSSecureCoding, NSCopying> {
   @private
 }
 
@@ -68,7 +68,8 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIColor : NSObject <NSCoding, NSCopying> 
 
 // Access the underlying CGColor or CIColor.
 @property(nonatomic,readonly) CGColorRef CGColor;
-@property(nonatomic,readonly) CIColor   *CIColor;
+- (CGColorRef)CGColor NS_RETURNS_INNER_POINTER;
+@property(nonatomic,readonly) CIColor   *CIColor NS_AVAILABLE_IOS(5_0);
 
 @end
 

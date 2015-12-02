@@ -11,5 +11,6 @@ extern NSString * const PKErrorDomain;
 typedef enum PKErrorCode {
     PKErrorUnknown = 1,
     PKErrorPassSignatureInvalid,
-    PKErrorNotEntitled
+    PKErrorNotEntitled,
+    PKErrorPermissionDenied
 } PKErrorCode;

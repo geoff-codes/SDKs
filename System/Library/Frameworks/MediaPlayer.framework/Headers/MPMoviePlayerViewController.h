@@ -20,7 +20,8 @@ MP_EXTERN_CLASS_AVAILABLE(3_2) @interface MPMoviePlayerViewController : UIViewCo
 
 @property(nonatomic, readonly) MPMoviePlayerController *moviePlayer;
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation; // Default is YES.
+- (BOOL)shouldAutorotate; // Default is YES.
+- (NSUInteger)supportedInterfaceOrientations; // Default is UIInterfaceOrientationMaskAll.
 @end
 
 // -----------------------------------------------------------------------------

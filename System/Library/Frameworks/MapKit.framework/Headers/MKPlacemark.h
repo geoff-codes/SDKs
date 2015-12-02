@@ -2,19 +2,16 @@
 //  MKPlacemark.h
 //  MapKit
 //
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <MapKit/MKAnnotation.h>
 #import <MapKit/MKFoundation.h>
+#import <MapKit/MKAnnotation.h>
 #import <CoreLocation/CLLocation.h>
 #import <CoreLocation/CLPlacemark.h>
 
-MK_CLASS_AVAILABLE(NA, 3_0)
-@interface MKPlacemark : CLPlacemark <MKAnnotation> {
-    
-}
+MK_CLASS_AVAILABLE(10_9, 3_0)
+@interface MKPlacemark : CLPlacemark <MKAnnotation>
 
 // An address dictionary is a dictionary in the same form as returned by 
 // ABRecordCopyValue(person, kABPersonAddressProperty).

@@ -12,44 +12,13 @@
 
 @protocol ABPeoplePickerNavigationControllerDelegate;
 
-@class ABModel;
-
     // The ABPeoplePickerNavigationController allows the user to select a person or value by presenting
     // the entire address book.
 
 NS_CLASS_AVAILABLE(NA, 2_0)
 @interface ABPeoplePickerNavigationController : UINavigationController
-{
-    @package
-        ABAddressBookRef        _addressBook;
-        id                      _peoplePickerDelegate;
-        
-        ABModel                *_model;
-        int                     _behavior;
-        
-        CFArrayRef              _displayedProperties;
-        id                     _reserved1,
-                               _reserved2,
-                               _reserved3,
-                               _reserved4;
-        NSArray               *_defaultToolbarItems;
-        
-        id                      _insertionValue;
-        ABPropertyID            _insertionProperty;
-    
-        struct {
-            unsigned            allowsEditing:1;
-            unsigned            allowsCancel:1;
-            unsigned            allowsActions:1;
-            unsigned            allowsConferencing:1;
-            unsigned            allowsSounds:1;
-            unsigned            allowsVibrations:1;
-            unsigned            hidesSearchableSources:1;
-            unsigned            hidesPromptInLandscape:1;
-        } _flags;
-    
-        BOOL                    _navigationBarIsAnimating;
-}
+
+// ABPeoplePickerNavigationController does not support subclassing in iOS 7.0 and later. In the future, a nil instance will be returned.
 
 @property(nonatomic,assign)    id<ABPeoplePickerNavigationControllerDelegate>    peoplePickerDelegate;
 

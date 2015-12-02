@@ -352,6 +352,7 @@ typedef	unsigned int mach_msg_trailer_type_t;
 #define	MACH_MSG_TRAILER_FORMAT_0	0
 
 typedef	unsigned int mach_msg_trailer_size_t;
+typedef char *mach_msg_trailer_info_t;
 
 typedef struct 
 {
@@ -412,6 +413,8 @@ typedef struct
   mach_port_context_t		msgh_context;
 } mach_msg_context_trailer_t;
 
+
+
 typedef struct
 {
   mach_port_name_t sender;
@@ -434,6 +437,7 @@ typedef struct
   msg_labels_t                  msgh_labels;
 } mach_msg_mac_trailer_t;
 
+
 #define MACH_MSG_TRAILER_MINIMUM_SIZE  sizeof(mach_msg_trailer_t)
 
 /*
@@ -445,6 +449,7 @@ typedef struct
  * another module may exceed the local modules notion of
  * MAX_TRAILER_SIZE.
  */
+
 typedef mach_msg_mac_trailer_t mach_msg_max_trailer_t;
 #define MAX_TRAILER_SIZE ((mach_msg_size_t)sizeof(mach_msg_max_trailer_t))
 
@@ -568,18 +573,22 @@ typedef integer_t mach_msg_option_t;
 
 #define	MACH_SEND_MSG		0x00000001
 #define	MACH_RCV_MSG		0x00000002
-#define MACH_RCV_LARGE		0x00000004
+
+#define MACH_RCV_LARGE		0x00000004	/* report large message sizes */
+#define MACH_RCV_LARGE_IDENTITY	0x00000008	/* identify source of large messages */
 
 #define MACH_SEND_TIMEOUT	0x00000010	/* timeout value applies to send */
-#define MACH_SEND_INTERRUPT	0x00000040	/* restart interrupted sends */
+#define MACH_SEND_INTERRUPT	0x00000040	/* don't restart interrupted sends */
 #define MACH_SEND_NOTIFY	0x00000080	/* arm send-possible notify */
 #define MACH_SEND_ALWAYS	0x00010000	/* ignore qlimits - kernel only */
 #define MACH_SEND_TRAILER	0x00020000	/* sender-provided trailer */
-#define MACH_SEND_NOIMPORTANCE	0x00040000	/* msg wont carry importance */
+#define MACH_SEND_NOIMPORTANCE  0x00040000      /* msg won't carry importance */
+#define MACH_SEND_IMPORTANCE	0x00080000	/* msg carries importance - kernel only */
+
 
 #define MACH_RCV_TIMEOUT	0x00000100	/* timeout value applies to receive */	
 #define MACH_RCV_NOTIFY		0x00000200	/* reserved - legacy */
-#define MACH_RCV_INTERRUPT	0x00000400	/* restart interrupted receive */
+#define MACH_RCV_INTERRUPT	0x00000400	/* don't restart interrupted receive */
 #define MACH_RCV_OVERWRITE	0x00001000	/* scatter receive */
 
 /* 

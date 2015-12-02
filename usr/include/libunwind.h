@@ -104,7 +104,6 @@ extern int         unw_get_proc_name(unw_cursor_t*, char*, size_t, unw_word_t*) 
 //extern int       unw_get_save_loc(unw_cursor_t*, int, unw_save_loc_t*);
 #endif
 
-
 #if UNW_REMOTE
 /* 
  * Mac OS X "remote" API for unwinding other processes on same machine
@@ -176,6 +175,74 @@ enum {
     UNW_X86_64_R15 = 15
 };
 
+// 64-bit ARM64 registers
+enum {
+    UNW_ARM64_X0   =  0,
+    UNW_ARM64_X1   =  1,
+    UNW_ARM64_X2   =  2,
+    UNW_ARM64_X3   =  3,
+    UNW_ARM64_X4   =  4,
+    UNW_ARM64_X5   =  5,
+    UNW_ARM64_X6   =  6,
+    UNW_ARM64_X7   =  7,
+    UNW_ARM64_X8   =  8,
+    UNW_ARM64_X9   =  9,
+    UNW_ARM64_X10  = 10,
+    UNW_ARM64_X11  = 11,
+    UNW_ARM64_X12  = 12,
+    UNW_ARM64_X13  = 13,
+    UNW_ARM64_X14  = 14,
+    UNW_ARM64_X15  = 15,
+    UNW_ARM64_X16  = 16,
+    UNW_ARM64_X17  = 17,
+    UNW_ARM64_X18  = 18,
+    UNW_ARM64_X19  = 19,
+    UNW_ARM64_X20  = 20,
+    UNW_ARM64_X21  = 21,
+    UNW_ARM64_X22  = 22,
+    UNW_ARM64_X23  = 23,
+    UNW_ARM64_X24  = 24,
+    UNW_ARM64_X25  = 25,
+    UNW_ARM64_X26  = 26,
+    UNW_ARM64_X27  = 27,
+    UNW_ARM64_X28  = 28,
+    UNW_ARM64_X29  = 29,  UNW_ARM64_FP   = 29,
+    UNW_ARM64_X30  = 30,  UNW_ARM64_LR   = 30,
+    UNW_ARM64_X31  = 31,  UNW_ARM64_SP   = 31,
+	// reserved block
+    UNW_ARM64_D0   = 64,
+    UNW_ARM64_D1   = 65,
+    UNW_ARM64_D2   = 66,
+    UNW_ARM64_D3   = 67,
+    UNW_ARM64_D4   = 68,
+    UNW_ARM64_D5   = 69,
+    UNW_ARM64_D6   = 70,
+    UNW_ARM64_D7   = 71,
+    UNW_ARM64_D8   = 72,
+    UNW_ARM64_D9   = 73,
+    UNW_ARM64_D10  = 74,
+    UNW_ARM64_D11  = 75,
+    UNW_ARM64_D12  = 76,
+    UNW_ARM64_D13  = 77,
+    UNW_ARM64_D14  = 78,
+    UNW_ARM64_D15  = 79,
+    UNW_ARM64_D16  = 80,
+    UNW_ARM64_D17  = 81,
+    UNW_ARM64_D18  = 82,
+    UNW_ARM64_D19  = 83,
+    UNW_ARM64_D20  = 84,
+    UNW_ARM64_D21  = 85,
+    UNW_ARM64_D22  = 86,
+    UNW_ARM64_D23  = 87,
+    UNW_ARM64_D24  = 88,
+    UNW_ARM64_D25  = 89,
+    UNW_ARM64_D26  = 90,
+    UNW_ARM64_D27  = 91,
+    UNW_ARM64_D28  = 92,
+    UNW_ARM64_D29  = 93,
+    UNW_ARM64_D30  = 94,
+    UNW_ARM64_D31  = 95,
+};
 
 // 32-bit ppc register numbers
 enum {

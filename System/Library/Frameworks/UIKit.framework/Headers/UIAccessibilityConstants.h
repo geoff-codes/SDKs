@@ -2,7 +2,7 @@
 //  UIAccessibilityConstants.h
 //  UIKit
 //
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -145,4 +145,27 @@ UIKIT_EXTERN NSString *const UIAccessibilityAnnouncementKeyWasSuccessful NS_AVAI
  The argument is a NSString.
  */
 UIKIT_EXTERN UIAccessibilityNotifications UIAccessibilityPageScrolledNotification NS_AVAILABLE_IOS(4_2);
+
+/*
+ Accessibility Speech Attributes
+ 
+ The following attributes can be used in an NSAttributedString to modify how
+ an assistive technology like VoiceOver will pronounce the string.
+ */
+
+// Use an NSNumber with a YES or NO value.
+// If YES, then all punctuation will be spoken (e.g. when displaying code).
+// If NO, then no punctuation will be spoken.
+// By default, if this attribute is not present, the user's settings will be used.
+UIKIT_EXTERN NSString *const UIAccessibilitySpeechAttributePunctuation NS_AVAILABLE_IOS(7_0);
+
+// Use an NSString with a BCP-47 language code to identify the language of a segment of a string.
+UIKIT_EXTERN NSString *const UIAccessibilitySpeechAttributeLanguage NS_AVAILABLE_IOS(7_0);
+
+// Use an NSNumber with a value between [0-2] that specifies the pitch.
+// For example, you may want to lower the pitch when an object is deleted, or raise the pitch if an object is inserted.
+// Default value == 1.0f.
+UIKIT_EXTERN NSString *const UIAccessibilitySpeechAttributePitch NS_AVAILABLE_IOS(7_0);
+
+
 

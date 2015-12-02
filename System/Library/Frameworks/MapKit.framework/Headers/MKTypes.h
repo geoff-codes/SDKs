@@ -2,27 +2,24 @@
 //  MKTypes.h
 //  MapKit
 //
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <MapKit/MKFoundation.h>
 
-enum {
+typedef NS_ENUM(NSUInteger, MKMapType) {
     MKMapTypeStandard = 0,
     MKMapTypeSatellite,
     MKMapTypeHybrid
-};
-typedef NSUInteger MKMapType;
-
+} NS_ENUM_AVAILABLE(10_9, 3_0);
 
 MK_EXTERN NSString *MKErrorDomain;
 
-enum MKErrorCode {
+typedef NS_ENUM(NSUInteger, MKErrorCode) {
     MKErrorUnknown = 1,
     MKErrorServerFailure,
     MKErrorLoadingThrottled,
     MKErrorPlacemarkNotFound,
-};
-
+    MKErrorDirectionsNotFound NS_ENUM_AVAILABLE(10_9, 7_0)
+} NS_ENUM_AVAILABLE(10_9, 3_0);
 

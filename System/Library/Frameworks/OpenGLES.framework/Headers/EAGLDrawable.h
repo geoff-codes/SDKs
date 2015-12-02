@@ -1,5 +1,5 @@
 /*
-    Copyright:  (c) 2006-2008 Apple Inc. All rights reserved.
+    Copyright:  (c) 2006-2013 Apple Inc. All rights reserved.
 */
 
 #ifndef _EAGL_DRAWABLE_H_
@@ -31,6 +31,7 @@ EAGL_EXTERN NSString * const kEAGLDrawablePropertyColorFormat;
 /************************************************************************/
 EAGL_EXTERN NSString * const kEAGLColorFormatRGBA8;
 EAGL_EXTERN NSString * const kEAGLColorFormatRGB565;
+EAGL_EXTERN NSString * const kEAGLColorFormatSRGBA8 NS_AVAILABLE_IOS(7_0);
 
 /************************************************************************/
 /* EAGLDrawable Interface                                               */

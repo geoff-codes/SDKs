@@ -5,6 +5,14 @@
 
 /* Threading contract: no concurrent usage.
  */
+
+typedef NS_ENUM(NSInteger, PKPassLibraryAddPassesStatus) {
+    PKPassLibraryDidAddPasses,
+    PKPassLibraryShouldReviewPasses,
+    PKPassLibraryDidCancelAddPasses,
+} NS_ENUM_AVAILABLE_IOS(7_0);
+
+
 NS_CLASS_AVAILABLE_IOS(6_0)
 @interface PKPassLibrary : NSObject
 
@@ -27,6 +35,10 @@ NS_CLASS_AVAILABLE_IOS(6_0)
  To add a completely new pass, use PKAddPassesViewController.
  */
 - (BOOL)replacePassWithPass:(PKPass *)pass;
+
+/* The user will be prompted to grant permission for the calling process to add passes to the Pass Library. The user may respond by allowing the passes to be added, or requesting to review the passes. The selection will be returned in the completionHandler as a PKPassLibraryAddPassesStatus. If PKPassLibraryPassesPresentReview is returned, you must present a PKPAddPassesViewController initialized with the passes so that the user may review and add the passes manually. The completion handler for this method is called on an arbitrary queue - dispatch to the main queue if you're presenting UI.
+ */
+- (void)addPasses:(NSArray *)passes withCompletionHandler:(void(^)(PKPassLibraryAddPassesStatus status))completion NS_AVAILABLE_IOS(7_0);
 
 @end
 

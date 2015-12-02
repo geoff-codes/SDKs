@@ -24,6 +24,7 @@ NS_CLASS_AVAILABLE_IOS(6_0)
 @property (nonatomic,copy,readonly) NSString     *localizedDescription; // e.g. "SFO -> LHR"
 @property (nonatomic,copy,readonly) NSString     *organizationName; // e.g. "Great Airways"
 @property (nonatomic,copy,readonly) NSDate       *relevantDate; // may be useful for sorting
+@property (nonatomic,copy,readonly) NSDictionary *userInfo NS_AVAILABLE_IOS(7_0);
 
 @property (nonatomic,copy,readonly) NSURL        *passURL; // open to view pass in Passbook.app
 

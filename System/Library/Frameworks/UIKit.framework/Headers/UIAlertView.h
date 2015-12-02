@@ -45,6 +45,13 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIAlertView : UIView {
     UIView *_table;
     UIView *_dimView;
     UIView *_backgroundImageView;
+    UIView *_contentViewNeue;
+    UIView *_textFieldBackgroundView;
+    UIWindow *_blurWindow;
+    UIView *_backdropView;
+    
+    NSMutableDictionary *_separatorsViews;
+    
     struct {
         unsigned int numberOfRows:7;
         unsigned int delegateAlertSheetButtonClicked:1;
@@ -98,8 +105,23 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIAlertView : UIView {
         unsigned int cancelWhenDoneAnimating:1;
         unsigned int alertViewStyle:3;
         unsigned int isSBAlert:1;
-        unsigned int isBeingDismissed:1; 
+        unsigned int isBeingDismissed:1;
+        unsigned int useLookNeue:1;
     } _modalViewFlags;
+
+    /// suport for backward compatitbilty with alert neue
+    
+    
+    NSMutableArray *_buttonTitlesNeue;
+    
+    NSString   *_titleTextNeue;
+    NSString   *_messageTextNeue;
+    
+    UIViewController *_hostingViewControllerNeue;
+    UIWindow *_windowFOrSBNeueCompatibility;
+    UIView *_accessoryView;
+    UIViewController *_accessoryViewController;
+    BOOL _textFieldsHidden;
 }
 
 - (id)initWithTitle:(NSString *)title message:(NSString *)message delegate:(id /*<UIAlertViewDelegate>*/)delegate cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSString *)otherButtonTitles, ... NS_REQUIRES_NIL_TERMINATION;
@@ -132,6 +154,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIAlertView : UIView {
 /* Retrieve a text field at an index - raises NSRangeException when textFieldIndex is out-of-bounds. 
    The field at index 0 will be the first text field (the single field or the login field), the field at index 1 will be the password field. */
 - (UITextField *)textFieldAtIndex:(NSInteger)textFieldIndex NS_AVAILABLE_IOS(5_0);
+
 
 @end
 

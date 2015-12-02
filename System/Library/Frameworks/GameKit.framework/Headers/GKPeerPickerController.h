@@ -2,7 +2,7 @@
  GKPeerPickerController.h
  Game Kit
  
- Copyright 2010 Apple, Inc. All rights reserved.
+ Copyright 2010 Apple Inc. All rights reserved.
  
  This API provides a system-supplied user interface for selecting and connecting to another device for a multiplayer game.  The API introduces GKPeerPickerController for this purpose, and should be used in conjunction with the GKSession API.
  
@@ -20,7 +20,7 @@
 enum {
 	GKPeerPickerConnectionTypeOnline = 1 << 0,		// Online (Internet) based multiplayer connection
 	GKPeerPickerConnectionTypeNearby = 1 << 1		// Nearby (Bluetooth) based multiplayer connection
-};
+} NS_ENUM_DEPRECATED_IOS(3_0, 7_0);
 typedef NSUInteger GKPeerPickerConnectionType;
 
 /* callbacks to the GKPeerPickerController delegate
@@ -37,11 +37,14 @@ typedef NSUInteger GKPeerPickerConnectionType;
  
  You should return a valid GKSession object for use by the picker. If this method is not implemented or returns 'nil', a default GKSession is created on the delegate's behalf.
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (GKSession *)peerPickerController:(GKPeerPickerController *)picker sessionForConnectionType:(GKPeerPickerConnectionType)type;
 
 /* Notifies delegate that the peer was connected to a GKSession.
  */
 - (void)peerPickerController:(GKPeerPickerController *)picker didConnectPeer:(NSString *)peerID toSession:(GKSession *)session;
+#pragma clang diagnostic pop
 
 /* Notifies delegate that the user cancelled the picker.
  */
@@ -56,7 +59,7 @@ typedef NSUInteger GKPeerPickerConnectionType;
  
  You must provide a delegate that conforms to the GKPeerPickerControllerDelegate protocol in order to use this class. After the user interface starts, this class notifies your delegate of the user’s actions.
  */
-NS_CLASS_AVAILABLE(NA, 4_1)
+NS_CLASS_DEPRECATED_IOS(3_0, 7_0)
 GK_EXTERN_CLASS @interface GKPeerPickerController : NSObject {
 @private
 	id _picker;

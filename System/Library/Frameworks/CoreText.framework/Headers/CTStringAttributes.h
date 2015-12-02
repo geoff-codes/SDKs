@@ -35,7 +35,7 @@ extern "C" {
     @discussion Value must be a CTFontRef. Default is Helvetica 12.
 */
 
-extern const CFStringRef kCTFontAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTFontAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -53,7 +53,7 @@ extern const CFStringRef kCTFontAttributeName CT_AVAILABLE_STARTING( __MAC_10_5,
                 overrides the foreground color.
 */
 
-extern const CFStringRef kCTForegroundColorFromContextAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTForegroundColorFromContextAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -70,7 +70,7 @@ extern const CFStringRef kCTForegroundColorFromContextAttributeName CT_AVAILABLE
                 set to 0.0, no kerning will be done at all.
 */
 
-extern const CFStringRef kCTKernAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTKernAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -98,7 +98,7 @@ extern const CFStringRef kCTKernAttributeName CT_AVAILABLE_STARTING( __MAC_10_5,
                 attribute is explicitly specified with the default value of 1.
 */
 
-extern const CFStringRef kCTLigatureAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTLigatureAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -108,7 +108,7 @@ extern const CFStringRef kCTLigatureAttributeName CT_AVAILABLE_STARTING( __MAC_1
     @discussion Value must be a CGColorRef. Default value is black.
 */
 
-extern const CFStringRef kCTForegroundColorAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTForegroundColorAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -121,7 +121,7 @@ extern const CFStringRef kCTForegroundColorAttributeName CT_AVAILABLE_STARTING( 
                 information.
 */
 
-extern const CFStringRef kCTParagraphStyleAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTParagraphStyleAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -135,7 +135,7 @@ extern const CFStringRef kCTParagraphStyleAttributeName CT_AVAILABLE_STARTING( _
                 typical value for outlined text is 3.0.
 */
 
-extern const CFStringRef kCTStrokeWidthAttributeName CT_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_3_2);
+extern const CFStringRef kCTStrokeWidthAttributeName CT_AVAILABLE(10_6, 3_2);
 
 
 /*!
@@ -145,7 +145,7 @@ extern const CFStringRef kCTStrokeWidthAttributeName CT_AVAILABLE_STARTING( __MA
     @discussion Value must be a CGColorRef. Default is the foreground color.
 */
 
-extern const CFStringRef kCTStrokeColorAttributeName CT_AVAILABLE_STARTING( __MAC_10_6, __IPHONE_3_2);
+extern const CFStringRef kCTStrokeColorAttributeName CT_AVAILABLE(10_6, 3_2);
 
 
 /*!
@@ -160,7 +160,7 @@ extern const CFStringRef kCTStrokeColorAttributeName CT_AVAILABLE_STARTING( __MA
                 will be determined by the text's foreground color.
 */
 
-extern const CFStringRef kCTUnderlineStyleAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTUnderlineStyleAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -172,7 +172,7 @@ extern const CFStringRef kCTUnderlineStyleAttributeName CT_AVAILABLE_STARTING( _
                 value of -1 enables subscripting.
 */
 
-extern const CFStringRef kCTSuperscriptAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTSuperscriptAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -182,7 +182,7 @@ extern const CFStringRef kCTSuperscriptAttributeName CT_AVAILABLE_STARTING( __MA
     @discussion Value must be a CGColorRef. Default is the foreground color.
 */
 
-extern const CFStringRef kCTUnderlineColorAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTUnderlineColorAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -194,7 +194,7 @@ extern const CFStringRef kCTUnderlineColorAttributeName CT_AVAILABLE_STARTING( _
                 indicates that vertical glyph forms are to be used.
 */
 
-extern const CFStringRef kCTVerticalFormsAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_4_3);
+extern const CFStringRef kCTVerticalFormsAttributeName CT_AVAILABLE(10_5, 4_3);
 
 
 /*!
@@ -208,7 +208,7 @@ extern const CFStringRef kCTVerticalFormsAttributeName CT_AVAILABLE_STARTING( __
                 kCTFontAttributeName. See CTGlyphInfo.h for more information.
 */
 
-extern const CFStringRef kCTGlyphInfoAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTGlyphInfoAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -221,7 +221,20 @@ extern const CFStringRef kCTGlyphInfoAttributeName CT_AVAILABLE_STARTING( __MAC_
                 an attribute value of 1 corresponds to kTraditionalCharactersSelector.
 */
 
-extern const CFStringRef kCTCharacterShapeAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTCharacterShapeAttributeName CT_AVAILABLE(10_5, 3_2);
+
+
+/*!
+    @const      kCTLanguageAttributeName
+    @abstract   Specifies text language.
+
+    @discussion Value must be a CFStringRef containing a locale identifier. Default
+                is unset. When this attribute is set to a valid identifier, it will
+                be used to select localized glyphs (if supported by the font) and
+                locale-specific line breaking rules.
+*/
+
+extern const CFStringRef kCTLanguageAttributeName CT_AVAILABLE(10_9, 7_0);
 
 
 /*!
@@ -240,7 +253,7 @@ extern const CFStringRef kCTCharacterShapeAttributeName CT_AVAILABLE_STARTING( _
                 CTRunDelegate.h for more information.
 */
 
-extern const CFStringRef kCTRunDelegateAttributeName CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+extern const CFStringRef kCTRunDelegateAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -295,7 +308,7 @@ typedef CF_OPTIONS(int32_t, CTUnderlineStyleModifiers) {
     @seealso    kCTBaselineClassMath
 */
 
-extern const CFStringRef kCTBaselineClassAttributeName CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+extern const CFStringRef kCTBaselineClassAttributeName CT_AVAILABLE(10_8, 6_0);
 
 
 /*!
@@ -317,7 +330,7 @@ extern const CFStringRef kCTBaselineClassAttributeName CT_AVAILABLE_STARTING( __
     @seealso    kCTBaselineClassMath
 */
 
-extern const CFStringRef kCTBaselineInfoAttributeName CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+extern const CFStringRef kCTBaselineInfoAttributeName CT_AVAILABLE(10_8, 6_0);
 
 
 /*!
@@ -341,7 +354,7 @@ extern const CFStringRef kCTBaselineInfoAttributeName CT_AVAILABLE_STARTING( __M
     @seealso    kCTBaselineReferenceFont
 */
 
-extern const CFStringRef kCTBaselineReferenceInfoAttributeName CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+extern const CFStringRef kCTBaselineReferenceInfoAttributeName CT_AVAILABLE(10_8, 6_0);
 
 
 /*!
@@ -371,7 +384,7 @@ extern const CFStringRef kCTBaselineReferenceInfoAttributeName CT_AVAILABLE_STAR
     @seealso    kCTWritingDirectionOverride
 */
 
-extern const CFStringRef kCTWritingDirectionAttributeName CT_AVAILABLE_STARTING( __MAC_10_8, __IPHONE_6_0);
+extern const CFStringRef kCTWritingDirectionAttributeName CT_AVAILABLE(10_8, 6_0);
 
 
 /*!

@@ -2,7 +2,7 @@
 //  UIActivityViewController.h
 //  UIKit
 //
-//  Copyright 2012 Apple, Inc. All rights reserved.
+//  Copyright 2012-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

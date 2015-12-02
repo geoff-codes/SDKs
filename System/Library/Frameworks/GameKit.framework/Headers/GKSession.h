@@ -2,7 +2,7 @@
  GKSession.h
  GameKit
  
- Copyright 2010 Apple, Inc. All rights reserved.
+ Copyright 2010 Apple Inc. All rights reserved.
  
  The Game Connectivity Kit (GCK) is a framework for handling connectivity and data transport in multiplayer network games.  
  
@@ -19,10 +19,10 @@
  
  This a not a Game Center feature. To support Game Center and online play, see GKMatch.
 */
-NS_CLASS_AVAILABLE(10_8, 4_1)
+NS_CLASS_DEPRECATED_IOS(3_0, 7_0)
 GK_EXTERN_CLASS @interface GKSession : NSObject {
 @private
-	id _session;
+    id _session;
 }
 
 /* Creating a GKSession requires a unique identifier, sessionID, and mode.  All instances of the application must have the same sessionID in order to be able to join a game network.  Additionally, the GKSession requires a name, which is used to identify the specific instances of the application.
@@ -37,7 +37,7 @@ If name = nil then GKSession will use the device name.
 @property(readonly) NSString *sessionID;
 @property(readonly) NSString *displayName;
 @property(readonly) GKSessionMode sessionMode;
-@property(readonly) NSString *peerID;			// session's peerID
+@property(readonly) NSString *peerID;            // session's peerID
 
 /* Toggle availability on the network based on session mode and search criteria.  Delegate will get a callback -session:didReceiveConnectionRequestFromPeer: when a peer attempts a connection.
 */
@@ -57,7 +57,7 @@ If name = nil then GKSession will use the device name.
 
 /* Asynchronous delivery to all peers.  Returns YES if delivery started, NO if unable to start sending, and error will be set.  Delivery will be reliable or unreliable as set by mode.
 */
-- (BOOL)sendDataToAllPeers:(NSData *) data withDataMode:(GKSendDataMode)mode error:(NSError **)error;	// errors: buffer full, data too big
+- (BOOL)sendDataToAllPeers:(NSData *) data withDataMode:(GKSendDataMode)mode error:(NSError **)error;    // errors: buffer full, data too big
 
 /* Set the handler to receive data sent from remote peers.
 */
@@ -73,7 +73,7 @@ Failure results in a call to delegate -session:connectionWithPeerFailed:withErro
 
 /* Methods to accept or deny a prior connection request from -session:didReceiveConnectionRequestFromPeer:
 */
-- (BOOL)acceptConnectionFromPeer:(NSString *)peerID error:(NSError **)error;	// errors: cancelled, or timeout
+- (BOOL)acceptConnectionFromPeer:(NSString *)peerID error:(NSError **)error;    // errors: cancelled, or timeout
 - (void)denyConnectionFromPeer:(NSString *)peerID;
 
 /* Disconnect a peer from the session (the peer gets disconnected from all connected peers).

@@ -1,7 +1,3 @@
-/*
-	Copyright:  (c) 2006-2008 by Apple Computer, Inc., all rights reserved.
-*/
-
 #ifndef ES1_GLEXT_H_GUARD
 #define ES1_GLEXT_H_GUARD
 
@@ -201,6 +197,10 @@ extern "C" {
 #define GL_DEPTH_COMPONENT24_OES                                0x81A6
 #endif
 
+#if GL_OES_element_index_uint
+#define GL_UNSIGNED_INT_OES                                     0x1405
+#endif
+
 #if GL_OES_framebuffer_object
 #define GL_FRAMEBUFFER_OES                                      0x8D40
 #define GL_RENDERBUFFER_OES                                     0x8D41
@@ -269,10 +269,6 @@ extern "C" {
 
 #if GL_OES_vertex_array_object
 #define GL_VERTEX_ARRAY_BINDING_OES                             0x85B5
-#endif
-
-#if GL_OES_element_index_uint
-#define GL_UNSIGNED_INT_OES                                     0x1405
 #endif
 
 /**************************************************************************/

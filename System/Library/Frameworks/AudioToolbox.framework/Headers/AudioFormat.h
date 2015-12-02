@@ -375,10 +375,6 @@ typedef struct AudioFormatListItem AudioFormatListItem;
 					The specifier is the entire ID3 tag
 					Caller must call CFRelease for the returned dictionary
 					
-					
-					
-					
-					
 */
 enum
 {
@@ -576,12 +572,12 @@ AudioFormatGetProperty(	AudioFormatPropertyID	inPropertyID,
 //-----------------------------------------------------------------------------
 
 enum {
-        kAudioFormatUnspecifiedError						= 'what',
-        kAudioFormatUnsupportedPropertyError 				= 'prop',
-        kAudioFormatBadPropertySizeError 					= '!siz',
-        kAudioFormatBadSpecifierSizeError 					= '!spc',
-        kAudioFormatUnsupportedDataFormatError 				= 'fmt?',
-        kAudioFormatUnknownFormatError 						= '!fmt'
+        kAudioFormatUnspecifiedError						= 'what',	// 0x77686174, 2003329396
+        kAudioFormatUnsupportedPropertyError 				= 'prop',	// 0x70726F70, 1886547824
+        kAudioFormatBadPropertySizeError 					= '!siz',	// 0x2173697A, 561211770
+        kAudioFormatBadSpecifierSizeError 					= '!spc',	// 0x21737063, 561213539
+        kAudioFormatUnsupportedDataFormatError 				= 'fmt?',	// 0x666D743F, 1718449215
+        kAudioFormatUnknownFormatError 						= '!fmt'	// 0x21666D74, 560360820
 };
 
 

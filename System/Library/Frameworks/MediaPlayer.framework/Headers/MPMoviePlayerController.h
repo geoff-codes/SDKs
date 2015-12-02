@@ -84,10 +84,7 @@ typedef NSInteger MPMovieSourceType;
 // 
 // See MPMediaPlayback.h for the playback methods.
 
-MP_EXTERN_CLASS_AVAILABLE(2_0) @interface MPMoviePlayerController : NSObject <MPMediaPlayback> {
-@private
-    void *_internal;
-}
+MP_EXTERN_CLASS_AVAILABLE(2_0) @interface MPMoviePlayerController : NSObject <MPMediaPlayback>
 
 - (id)initWithContentURL:(NSURL *)url;
 
@@ -220,14 +217,15 @@ typedef NSInteger MPMovieTimeOption;
 @interface MPMoviePlayerController (MPMoviePlayerThumbnailGeneration)
 
 // Returns a thumbnail at the given time.
-- (UIImage *)thumbnailImageAtTime:(NSTimeInterval)playbackTime timeOption:(MPMovieTimeOption)option;
+// Deprecated.  Use -requestThumbnailImagesAtTimes:timeOption: / MPMoviePlayerThumbnailImageRequestDidFinishNotification instead.
+- (UIImage *)thumbnailImageAtTime:(NSTimeInterval)playbackTime timeOption:(MPMovieTimeOption)option NS_DEPRECATED_IOS(3_2, 7_0);
 
 // Asynchronously request thumbnails for one or more times, provided as an array of NSNumbers (double).
 // Posts MPMoviePlayerThumbnailImageRequestDidFinishNotification on completion.
-- (void)requestThumbnailImagesAtTimes:(NSArray *)playbackTimes timeOption:(MPMovieTimeOption)option;
+- (void)requestThumbnailImagesAtTimes:(NSArray *)playbackTimes timeOption:(MPMovieTimeOption)option NS_AVAILABLE_IOS(3_2);
 
 // Cancels all pending asynchronous thumbnail requests.
-- (void)cancelAllThumbnailImageRequests;
+- (void)cancelAllThumbnailImageRequests NS_AVAILABLE_IOS(3_2);
 
 @end
 
@@ -247,10 +245,7 @@ MP_EXTERN NSString *const MPMoviePlayerThumbnailErrorKey NS_AVAILABLE_IOS(3_2); 
 
 @end
 
-MP_EXTERN_CLASS_AVAILABLE(4_0) @interface MPTimedMetadata : NSObject {
-@private
-    void *_internal;
-}
+MP_EXTERN_CLASS_AVAILABLE(4_0) @interface MPTimedMetadata : NSObject
 
 // A key which identifies a piece of timed metadata.
 @property(nonatomic, readonly) NSString *key;

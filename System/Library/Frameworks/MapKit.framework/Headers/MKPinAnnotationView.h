@@ -2,26 +2,20 @@
 //  MKPinAnnotationView.h
 //  MapKit
 //
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
+#import <MapKit/MKFoundation.h>
 #import <MapKit/MKAnnotationView.h>
 
-enum {
+typedef NS_ENUM(NSUInteger, MKPinAnnotationColor) {
     MKPinAnnotationColorRed = 0,
     MKPinAnnotationColorGreen,
     MKPinAnnotationColorPurple
-};
-typedef NSUInteger MKPinAnnotationColor;
+} NS_ENUM_AVAILABLE(10_9, 3_0);
 
-@class MKPinAnnotationViewInternal;
-
-MK_CLASS_AVAILABLE(NA, 3_0)
+MK_CLASS_AVAILABLE(10_9, 3_0)
 @interface MKPinAnnotationView : MKAnnotationView
-{
-@private
-    MKPinAnnotationViewInternal *_pinInternal;
-}
 
 @property (nonatomic) MKPinAnnotationColor pinColor;
 

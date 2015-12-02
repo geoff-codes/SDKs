@@ -2,7 +2,7 @@
 //  UIResponder.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -40,8 +40,34 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIResponder : NSObject {
 - (void)remoteControlReceivedWithEvent:(UIEvent *)event NS_AVAILABLE_IOS(4_0);
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender NS_AVAILABLE_IOS(3_0);
+// Allows an action to be forwarded to another target. By default checks -canPerformAction:withSender: to either return self, or go up the responder chain.
+- (id)targetForAction:(SEL)action withSender:(id)sender NS_AVAILABLE_IOS(7_0);
+
 @property(nonatomic,readonly) NSUndoManager *undoManager NS_AVAILABLE_IOS(3_0);
 
+@end
+
+typedef NS_OPTIONS(NSInteger, UIKeyModifierFlags) {
+    UIKeyModifierAlphaShift     = 1 << 16,  // This bit indicates CapsLock
+    UIKeyModifierShift          = 1 << 17,
+    UIKeyModifierControl        = 1 << 18,
+    UIKeyModifierAlternate      = 1 << 19,
+    UIKeyModifierCommand        = 1 << 20,
+    UIKeyModifierNumericPad     = 1 << 21,
+} NS_ENUM_AVAILABLE_IOS(7_0);
+
+NS_CLASS_AVAILABLE_IOS(7_0) @interface UIKeyCommand : NSObject <NSCopying, NSSecureCoding>
+
+@property (nonatomic,readonly) NSString *input;
+@property (nonatomic,readonly) UIKeyModifierFlags modifierFlags;
+
+// the action for UIKeyCommands should accept a single (id)sender, as do the UIResponderStandardEditActions below
++ (UIKeyCommand *)keyCommandWithInput:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags action:(SEL)action;
+
+@end
+
+@interface UIResponder (UIResponderKeyCommands)
+@property (nonatomic,readonly) NSArray *keyCommands NS_AVAILABLE_IOS(7_0); // returns an array of UIKeyCommand objects
 @end
 
 @interface NSObject(UIResponderStandardEditActions)   // these methods are not implemented in NSObject
@@ -58,15 +84,37 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIResponder : NSObject {
 - (void)toggleItalics:(id)sender NS_AVAILABLE_IOS(6_0);
 - (void)toggleUnderline:(id)sender NS_AVAILABLE_IOS(6_0);
 
+- (void)increaseSize:(id)sender NS_AVAILABLE_IOS(7_0);
+- (void)decreaseSize:(id)sender NS_AVAILABLE_IOS(7_0);
+
 @end
+
+@class UITextInputMode;
 
 @interface UIResponder (UIResponderInputViewAdditions)
 
 // Called and presented when object becomes first responder.  Goes up the responder chain.
 @property (readonly, retain) UIView *inputView NS_AVAILABLE_IOS(3_2);            
 @property (readonly, retain) UIView *inputAccessoryView NS_AVAILABLE_IOS(3_2); 
+/* When queried, returns the current UITextInputMode, from which the keyboard language can be determined.
+ * When overridden it should return a previously-queried UITextInputMode object, which will attempt to be
+ * set inside that app, but not persistently affect the user's system-wide keyboard settings. */
+@property (readonly, retain) UITextInputMode *textInputMode NS_AVAILABLE_IOS(7_0);
+/* When the first responder changes and an identifier is queried, the system will establish a context to 
+ * track the textInputMode automatically. The system will save and restore the state of that context to
+ * the user defaults via the app identifier. Use of -textInputMode above will supercede use of -textInputContextIdentifier. */
+@property (readonly, retain) NSString *textInputContextIdentifier NS_AVAILABLE_IOS(7_0);
+// This call is to remove stored app identifier state that is no longer needed.
++ (void)clearTextInputContextIdentifier:(NSString *)identifier NS_AVAILABLE_IOS(7_0);
 
-// If called while object is first responder, reloads inputView and inputAccessoryView.  Otherwise ignored.
+// If called while object is first responder, reloads inputView, inputAccessoryView, and textInputMode.  Otherwise ignored.
 - (void)reloadInputViews NS_AVAILABLE_IOS(3_2);
 
 @end
+
+// These are pre-defined constants for use with the input property of UIKeyCommand objects.
+UIKIT_EXTERN NSString *const UIKeyInputUpArrow         NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIKeyInputDownArrow       NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIKeyInputLeftArrow       NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIKeyInputRightArrow      NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIKeyInputEscape          NS_AVAILABLE_IOS(7_0);

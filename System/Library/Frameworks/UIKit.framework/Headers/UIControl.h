@@ -2,7 +2,7 @@
 //  UIControl.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -81,6 +81,8 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIControl : UIView {
         unsigned int selected:1;
 	unsigned int verticalAlignment:2;
 	unsigned int horizontalAlignment:2;
+        unsigned int wasLastHighlightSuccessful:1;
+        unsigned int touchHasHighlighted:1;
     } _controlFlags;
 }
 

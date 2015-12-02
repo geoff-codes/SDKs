@@ -34,9 +34,11 @@ NS_DEPRECATED(NA, NA, 5_0, 6_0) __attribute__((visibility("default")))
 // Returns if Twitter is accessible and at least one account has been setup.
 + (BOOL)canSendTweet;
 
-// Sets the initial text to be tweeted. Returns NO if the specified text will
-// not fit within the character space currently available, or if the sheet
-// has already been presented to the user.
+// Sets the initial text to be posted. Returns NO if the sheet has already been
+// presented to the user. On iOS 6.x, this returns NO if the specified text
+// will not fit within the character space currently available; on iOS 7.0 and
+// later, you may supply text with a length greater than the service supports,
+// and the sheet will allow the user to edit it accordingly.
 - (BOOL)setInitialText:(NSString *)text;
 
 // Adds an image to the tweet. Returns NO if the additional image will not fit

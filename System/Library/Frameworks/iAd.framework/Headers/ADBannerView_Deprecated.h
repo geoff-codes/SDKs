@@ -7,17 +7,34 @@
 
 #import <iAd/ADBannerView.h>
 
+/*!
+ * @category ADBannerView (Deprecated)
+ *
+ * @discussion
+ * These banner view resizing APIs have been deprecated and should no longer be
+ * used when targeting iOS 6.0 or later.
+ *
+ * To resize a banner view on iOS 6.0 or later, call -sizeThatFits: on the banner
+ * view, specifying the bounds of the view that contains your banner, and use the
+ * returned size to resize the banner view. Based on the size you provide, the
+ * banner will be sized to the correct width and height for the current device
+ * type and orientation, as per the ADAdTypeBanner documentation.
+ *
+ * A full example of this - including how to handle resizing on devices running
+ * older versions of iOS - can be found in the 'iAdSuite' sample project on the
+ * ADC website <http://developer.apple.com>.
+ */
 @interface ADBannerView (Deprecated)
 
-@property (nonatomic, copy) NSSet *requiredContentSizeIdentifiers __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_0,__IPHONE_6_0);
+@property (nonatomic, copy) NSSet *requiredContentSizeIdentifiers NS_DEPRECATED_IOS(4_0, 6_0);
 
-@property (nonatomic, copy) NSString *currentContentSizeIdentifier __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_0,__IPHONE_6_0);
+@property (nonatomic, copy) NSString *currentContentSizeIdentifier NS_DEPRECATED_IOS(4_0, 6_0);
 
-+ (CGSize)sizeFromBannerContentSizeIdentifier:(NSString *)contentSizeIdentifier __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_0,__IPHONE_6_0);
++ (CGSize)sizeFromBannerContentSizeIdentifier:(NSString *)contentSizeIdentifier NS_DEPRECATED_IOS(4_0, 6_0);
 
 @end
 
-extern NSString * const ADBannerContentSizeIdentifier320x50 __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_0,__IPHONE_4_2);
-extern NSString * const ADBannerContentSizeIdentifier480x32 __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_0,__IPHONE_4_2);
-extern NSString * const ADBannerContentSizeIdentifierPortrait __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_2,__IPHONE_6_0);
-extern NSString * const ADBannerContentSizeIdentifierLandscape __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_2,__IPHONE_6_0);
+extern NSString * const ADBannerContentSizeIdentifier320x50 NS_DEPRECATED_IOS(4_0, 4_2);
+extern NSString * const ADBannerContentSizeIdentifier480x32 NS_DEPRECATED_IOS(4_0, 4_2);
+extern NSString * const ADBannerContentSizeIdentifierPortrait NS_DEPRECATED_IOS(4_2, 6_0);
+extern NSString * const ADBannerContentSizeIdentifierLandscape NS_DEPRECATED_IOS(4_2, 6_0);

@@ -14,7 +14,8 @@
 typedef NS_ENUM(NSInteger, SLRequestMethod)  {
     SLRequestMethodGET,
     SLRequestMethodPOST,
-    SLRequestMethodDELETE
+    SLRequestMethodDELETE,
+    SLRequestMethodPUT
 };
 
 
@@ -39,17 +40,18 @@ SOCIAL_CLASS_AVAILABLE(10_8, 6_0)
 // The parameters 
 @property (readonly, NS_NONATOMIC_IOSONLY) NSDictionary *parameters;
 
-#if (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR)
-// Specify a named MIME multi-part value. As of iOS 6.0, if you set parameters,
+// Specify a named MIME multi-part value. If you set parameters,
 // the parameters will automatically be added as form data in the multi-part data.
 - (void)addMultipartData:(NSData *)data
                 withName:(NSString *)name
                     type:(NSString *)type
-                filename:(NSString *)filename NS_AVAILABLE_IOS(6_0);
-#else
+                filename:(NSString *)filename;
+
+#if !(TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR)
+// DEPRECATED: Please use addMultipartData:withName:type:filename: instead.
 - (void)addMultipartData:(NSData *)data
                 withName:(NSString *)name
-                    type:(NSString*)type NS_AVAILABLE_MAC(10_8);
+                    type:(NSString*)type __attribute__((deprecated));
 #endif
 
 // Returns a NSURLRequest for use with NSURLConnection.

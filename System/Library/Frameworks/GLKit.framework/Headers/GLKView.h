@@ -2,7 +2,7 @@
 //  GLKView.h
 //  GLKit
 //
-//  Copyright (c) 2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2012, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,39 +12,40 @@
 /*
  Enums for color buffer formats.
  */
-typedef enum
+typedef NS_ENUM(GLint, GLKViewDrawableColorFormat)
 {
 	GLKViewDrawableColorFormatRGBA8888 = 0,
 	GLKViewDrawableColorFormatRGB565,
-} GLKViewDrawableColorFormat;
+	GLKViewDrawableColorFormatSRGBA8888,
+} NS_ENUM_AVAILABLE(10_8, 5_0);
 
 /*
  Enums for depth buffer formats.
  */
-typedef enum
+typedef NS_ENUM(GLint, GLKViewDrawableDepthFormat)
 {
 	GLKViewDrawableDepthFormatNone = 0,
 	GLKViewDrawableDepthFormat16,
 	GLKViewDrawableDepthFormat24,
-} GLKViewDrawableDepthFormat;
+} NS_ENUM_AVAILABLE(10_8, 5_0);
 
 /*
  Enums for stencil buffer formats.
  */
-typedef enum
+typedef NS_ENUM(GLint, GLKViewDrawableStencilFormat)
 {
 	GLKViewDrawableStencilFormatNone = 0,
 	GLKViewDrawableStencilFormat8,
-} GLKViewDrawableStencilFormat;
+} NS_ENUM_AVAILABLE(10_8, 5_0);
 
 /*
  Enums for MSAA.
  */
-typedef enum
+typedef NS_ENUM(GLint, GLKViewDrawableMultisample)
 {
 	GLKViewDrawableMultisampleNone = 0,
 	GLKViewDrawableMultisample4X,
-} GLKViewDrawableMultisample;
+} NS_ENUM_AVAILABLE(10_8, 5_0);
 
 @class EAGLContext;
 @protocol GLKViewDelegate;

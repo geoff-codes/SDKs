@@ -2,7 +2,7 @@
 //  UIWebView.h
 //  UIKit
 //
-//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2013, Apple Inc. All rights reserved.
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIView.h>
@@ -17,6 +17,19 @@ typedef NS_ENUM(NSInteger, UIWebViewNavigationType) {
     UIWebViewNavigationTypeReload,
     UIWebViewNavigationTypeFormResubmitted,
     UIWebViewNavigationTypeOther
+};
+
+typedef NS_ENUM(NSInteger, UIWebPaginationMode) {
+    UIWebPaginationModeUnpaginated,
+    UIWebPaginationModeLeftToRight,
+    UIWebPaginationModeTopToBottom,
+    UIWebPaginationModeBottomToTop,
+    UIWebPaginationModeRightToLeft
+};
+
+typedef NS_ENUM(NSInteger, UIWebPaginationBreakingMode) {
+    UIWebPaginationBreakingModePage,
+    UIWebPaginationBreakingModeColumn
 };
 
 @class UIWebViewInternal;
@@ -62,6 +75,12 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIWebView : UIView <NSCoding, UIScrollVie
 @property (nonatomic) BOOL suppressesIncrementalRendering NS_AVAILABLE_IOS(6_0); // iPhone and iPad Safari both default to NO
 
 @property (nonatomic) BOOL keyboardDisplayRequiresUserAction NS_AVAILABLE_IOS(6_0); // default is YES
+
+@property (nonatomic) UIWebPaginationMode paginationMode NS_AVAILABLE_IOS(7_0);
+@property (nonatomic) UIWebPaginationBreakingMode paginationBreakingMode NS_AVAILABLE_IOS(7_0);
+@property (nonatomic) CGFloat pageLength NS_AVAILABLE_IOS(7_0);
+@property (nonatomic) CGFloat gapBetweenPages NS_AVAILABLE_IOS(7_0);
+@property (nonatomic, readonly) NSUInteger pageCount NS_AVAILABLE_IOS(7_0);
 
 @end
 

@@ -2,7 +2,7 @@
 //  UISegmentedControl.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -18,7 +18,7 @@ typedef NS_ENUM(NSInteger, UISegmentedControlStyle) {
     UISegmentedControlStyleBordered,  // large bordered
     UISegmentedControlStyleBar,       // small button/nav bar style. tintable
     UISegmentedControlStyleBezeled,   // DEPRECATED. Do not use this style.
-};
+} NS_DEPRECATED_IOS(2_0, 7_0, "The segmentedControlStyle property no longer has any effect");
 
 enum {
     UISegmentedControlNoSegment = -1   // segment index for no selected segment
@@ -42,8 +42,6 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISegmentedControl : UIControl <NSCoding>
     NSInteger       _selectedSegment;
     NSInteger       _highlightedSegment;
     UIView*         _removedSegment;
-    id              _delegate;
-    UIColor        *_tintColor;
     UIBarStyle      _barStyle;
     id              _appearanceStorage;
     UIView         *_backgroundBarView;
@@ -51,14 +49,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISegmentedControl : UIControl <NSCoding>
     struct {
         unsigned int style:3;
         unsigned int size:2;
-        unsigned int showsDisclosure:1;
-        unsigned int delegateSelectedSegmentChanged:1;
-        unsigned int delegateDisclosureButtonClicked:1;
         unsigned int delegateAlwaysNotifiesDelegateOfSegmentClicks:1;
         unsigned int momentaryClick:1;
-        unsigned int dontAlwaysToggleForTwoSegments:1;
         unsigned int tracking:1;
-        unsigned int mouseInside:1;
         unsigned int autosizeToFitSegments:1;
         unsigned int isSizingToFit:1;
         unsigned int autosizeText:1;
@@ -66,12 +59,13 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISegmentedControl : UIControl <NSCoding>
         unsigned int useProportionalWidthSegments:1;
         unsigned int translucentBackground:1;
         unsigned int appearanceNeedsUpdate:1;
+        unsigned int contentTextPaddingEnabled:1;
     } _segmentedControlFlags;
 }
 
 - (id)initWithItems:(NSArray *)items; // items can be NSStrings or UIImages. control is automatically sized to fit content
 
-@property(nonatomic) UISegmentedControlStyle segmentedControlStyle; // default is UISegmentedControlStylePlain
+@property(nonatomic) UISegmentedControlStyle segmentedControlStyle NS_DEPRECATED_IOS(2_0, 7_0, "The segmentedControlStyle property no longer has any effect");
 @property(nonatomic,getter=isMomentary) BOOL momentary;             // if set, then we don't keep showing selected state after tracking ends. default is NO
 @property(nonatomic,readonly) NSUInteger numberOfSegments;
 
@@ -102,9 +96,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISegmentedControl : UIControl <NSCoding>
 // the UIControlEventValueChanged action is invoked when the segment changes via a user event. set to UISegmentedControlNoSegment to turn off selection
 @property(nonatomic) NSInteger selectedSegmentIndex;
 
-/* Default tintColor is nil. Only used if style is UISegmentedControlStyleBar or UISegmentedControlStyleBezeled
+/* Default tintColor is nil. The tintColor is inherited through the superview hierarchy. See UIView for more information.
  */
-@property(nonatomic,retain) UIColor *tintColor UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *tintColor;
 
 /* If backgroundImage is an image returned from -[UIImage resizableImageWithCapInsets:] the cap widths will be calculated from that information, otherwise, the cap width will be calculated by subtracting one from the image's width then dividing by 2. The cap widths will also be used as the margins for text placement. To adjust the margin use the margin adjustment methods.
  
@@ -121,7 +115,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISegmentedControl : UIControl <NSCoding>
 - (void)setDividerImage:(UIImage *)dividerImage forLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 - (UIImage *)dividerImageForLeftSegmentState:(UIControlState)leftState rightSegmentState:(UIControlState)rightState barMetrics:(UIBarMetrics)barMetrics  NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
-/* You may specify the font, text color, text shadow color, and text shadow offset for the title in the text attributes dictionary, using the keys found in UIStringDrawing.h.
+/* You may specify the font, text color, and shadow properties for the title in the text attributes dictionary, using the keys found in NSAttributedString.h.
  */
 - (void)setTitleTextAttributes:(NSDictionary *)attributes forState:(UIControlState)state NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 - (NSDictionary *)titleTextAttributesForState:(UIControlState)state NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;

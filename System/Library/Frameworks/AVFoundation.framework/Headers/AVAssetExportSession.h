@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2013 Apple Inc. All rights reserved.
 
 */
 
@@ -105,6 +105,8 @@ AVF_EXPORT NSString *const AVAssetExportPresetAppleProRes422LPCM	NS_AVAILABLE(10
 @class AVAssetExportSessionInternal;
 @class AVAudioMix;
 @class AVVideoComposition;
+@class AVMetadataItemFilter;
+@protocol AVVideoCompositing;
 
 enum {
 	AVAssetExportSessionStatusUnknown,
@@ -161,7 +163,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 	@param outputFileType		An NSString indicating a file type to check; or nil, to query whether there are any compatible types.
 	@param completionHandler	A block called with the compatibility result.
  */
-+ (void)determineCompatibilityOfExportPreset:(NSString *)presetName withAsset:(AVAsset *)asset outputFileType:(NSString *)outputFileType completionHandler:(void (^)(BOOL compatible))handler NS_AVAILABLE(TBD, 6_0);
++ (void)determineCompatibilityOfExportPreset:(NSString *)presetName withAsset:(AVAsset *)asset outputFileType:(NSString *)outputFileType completionHandler:(void (^)(BOOL compatible))handler NS_AVAILABLE(10_9, 6_0);
 
 /*!
 	@method						exportSessionWithAsset:presetName:
@@ -216,10 +218,10 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 /* Provides an estimate of the maximum duration of exported media that is possible given the source asset, the export preset, and the current value of fileLengthLimit.  The export will not stop when it reaches this maximum duration; set the timeRange property to export only a certain time range.  */
 @property (nonatomic, readonly) CMTime maxDuration;
 
-/* indicates the estimated byte size of exported file */
-@property (nonatomic, readonly) long long estimatedOutputFileLength NS_AVAILABLE_IOS(5_0);
-
 #endif
+
+/* Indicates the estimated byte size of exported file. Returns zero when export preset is AVAssetExportPresetPassthrough or AVAssetExportPresetAppleProRes422LPCM. This property will also return zero if a numeric value (ie. not invalid, indefinite, or infinite) for the timeRange property has not been set. */
+@property (nonatomic, readonly) long long estimatedOutputFileLength NS_AVAILABLE(10_9, 5_0);
 
 /* Specifies a time range to be exported from the source.  The default timeRange of an export session is kCMTimeZero..kCMTimePositiveInfinity, meaning that the full duration of the asset will be exported. */
 @property (nonatomic) CMTimeRange timeRange;
@@ -229,16 +231,29 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
    the appropriate metadata keyspace for the output file and written to the output. */
 @property (nonatomic, copy) NSArray *metadata; 
 
+/* Specifies a filter object to be used during export to determine which metadata items should be transferred from the source asset.
+   If the value of this key is nil, no filter will be applied.  This is the default.
+   The filter will not be applied to metadata set with via the metadata property.  To apply the filter to metadata before it is set on the metadata property, see the methods in AVMetadataItem's AVMetadataItemArrayFiltering category. */
+@property (nonatomic, retain) AVMetadataItemFilter *metadataItemFilter NS_AVAILABLE(10_9, 7_0);
+
 #if TARGET_OS_IPHONE
 /* Indicates the file length that the output of the session should not exceed.  Depending on the content of the source asset, it is possible for the output to slightly exceed the file length limit.  The length of the output file should be tested if you require that a strict limit be observed before making use of the output.  See also maxDuration and timeRange. */
 @property (nonatomic) long long fileLengthLimit; 
 #endif
 
-/* indicates whether non-default audio mixing is enabled for export and supplies the parameters for audio mixing */
+/* Indicates the processing algorithm used to manage audio pitch for scaled audio edits.
+   Constants for various time pitch algorithms, e.g. AVAudioTimePitchAlgorithmSpectral, are defined in AVAudioProcessingSettings.h. An NSInvalidArgumentException will be raised if this property is set to a value other than the constants defined in that file.
+   The default value is AVAudioTimePitchAlgorithmSpectral. */
+@property (nonatomic, copy) NSString *audioTimePitchAlgorithm NS_AVAILABLE(10_9, 7_0);
+
+/* Indicates whether non-default audio mixing is enabled for export and supplies the parameters for audio mixing.  Ignored when export preset is AVAssetExportPresetPassthrough. */
 @property (nonatomic, copy) AVAudioMix *audioMix;
 
-/* indicates whether video composition is enabled for export and supplies the instructions for video composition */
+/* Indicates whether video composition is enabled for export and supplies the instructions for video composition.  Ignored when export preset is AVAssetExportPresetPassthrough. */
 @property (nonatomic, copy) AVVideoComposition *videoComposition;
+
+/* Indicates the custom video compositor instance used, if any */
+@property (nonatomic, readonly) id<AVVideoCompositing>customVideoCompositor NS_AVAILABLE(10_9, 7_0);
 
 /* indicates the movie should be optimized for network use */
 @property (nonatomic) BOOL shouldOptimizeForNetworkUse;
@@ -251,7 +266,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 	@discussion					This method is different than the supportedFileTypes property in that it performs an inspection of the AVAsset in order to determine its
 								compatibility with each of the session's supported file types.
 */
-- (void)determineCompatibleFileTypesWithCompletionHandler:(void (^)(NSArray *compatibleFileTypes))handler NS_AVAILABLE(TBD, 6_0);
+- (void)determineCompatibleFileTypesWithCompletionHandler:(void (^)(NSArray *compatibleFileTypes))handler NS_AVAILABLE(10_9, 6_0);
 
 /*!
 	@method						exportAsynchronouslyWithCompletionHandler:

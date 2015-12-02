@@ -47,7 +47,10 @@ NS_CLASS_AVAILABLE_IOS(4_2) @interface UISimpleTextPrintFormatter : UIPrintForma
 }
 
 - (id)initWithText:(NSString *)text;
+- (instancetype)initWithAttributedText:(NSAttributedString *)attributedText NS_AVAILABLE_IOS(7_0);
+
 @property(nonatomic,copy)     NSString       *text;                   // cannot change once drawing started
+@property(nonatomic,copy)     NSAttributedString *attributedText NS_AVAILABLE_IOS(7_0);
 @property(nonatomic,retain)   UIFont         *font;
 @property(nonatomic,retain)   UIColor        *color;
 @property(nonatomic)          NSTextAlignment textAlignment;

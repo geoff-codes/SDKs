@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2012 Apple Inc. All rights reserved.
+	Copyright 2012-2013 Apple Inc. All rights reserved.
 
 */
 
@@ -18,7 +18,7 @@
 
 @class AVTextStyleRuleInternal;
 
-NS_CLASS_AVAILABLE(TBD, 6_0)
+NS_CLASS_AVAILABLE(10_9, 6_0)
 @interface AVTextStyleRule : NSObject <NSCopying> {
 @private
 	AVTextStyleRuleInternal *_textStyleRule;

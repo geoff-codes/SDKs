@@ -101,7 +101,7 @@ extern const CLLocationAccuracy kCLLocationAccuracyThreeKilometers;
  *  Discussion:
  *  	Used to specify the maximum CLLocationDistance
  */
-extern const CLLocationDistance CLLocationDistanceMax;
+extern const CLLocationDistance CLLocationDistanceMax __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 
 /*
  *  CLTimeIntervalMax
@@ -109,7 +109,7 @@ extern const CLLocationDistance CLLocationDistanceMax;
  *  Discussion:
  *  	Used to specify the maximum NSTimeInterval
  */
-extern const NSTimeInterval CLTimeIntervalMax;
+extern const NSTimeInterval CLTimeIntervalMax __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
 
 /*
  *  kCLLocationCoordinate2DInvalid
@@ -150,7 +150,7 @@ CLLocationCoordinate2D CLLocationCoordinate2DMake(CLLocationDegrees latitude, CL
  *    Represents a geographical coordinate along with accuracy and timestamp information.
  */
 NS_CLASS_AVAILABLE(10_6, 2_0)
-@interface CLLocation : NSObject <NSCopying, NSCoding>
+@interface CLLocation : NSObject <NSCopying, NSSecureCoding>
 {
 @private
 	id _internal;

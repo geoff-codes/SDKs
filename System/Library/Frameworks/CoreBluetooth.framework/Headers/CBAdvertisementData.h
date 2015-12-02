@@ -9,12 +9,50 @@
 #import <Foundation/Foundation.h>
 
 /*!
+ *  @constant CBAdvertisementDataLocalNameKey
+ *
+ *  @discussion A <code>NSString</code> containing the local name of a peripheral.
+ *
+ */
+CB_EXTERN NSString * const CBAdvertisementDataLocalNameKey;
+
+
+/*!
+ *  @constant CBAdvertisementDataTxPowerLevelKey
+ *
+ *  @discussion A <code>NSNumber</code> containing the transmit power of a peripheral.
+ *
+ */
+CB_EXTERN NSString * const CBAdvertisementDataTxPowerLevelKey;
+
+
+/*!
  *  @constant CBAdvertisementDataServiceUUIDsKey
  *
  *  @discussion A list of one or more <code>CBUUID</code> objects, representing <code>CBService</code> UUIDs.
  *
  */
 CB_EXTERN NSString * const CBAdvertisementDataServiceUUIDsKey;
+
+
+/*!
+ *  @constant CBAdvertisementDataServiceDataKey
+ *
+ *  @discussion A dictionary containing service-specific advertisement data. Keys are <code>CBUUID</code> objects, representing
+ *              <code>CBService</code> UUIDs. Values are <code>NSData</code> objects.
+ *
+ */
+CB_EXTERN NSString * const CBAdvertisementDataServiceDataKey;
+
+
+/*!
+ *  @constant CBAdvertisementDataManufacturerDataKey
+ *
+ *  @discussion A <code>NSData</code> object containing the manufacturer data of a peripheral.
+ *
+ */
+CB_EXTERN NSString * const CBAdvertisementDataManufacturerDataKey;
+
 
 /*!
  *  @constant CBAdvertisementDataOverflowServiceUUIDsKey
@@ -28,35 +66,21 @@ CB_EXTERN NSString * const CBAdvertisementDataServiceUUIDsKey;
  */
 CB_EXTERN NSString * const CBAdvertisementDataOverflowServiceUUIDsKey NS_AVAILABLE(NA, 6_0);
 
-/*!
- *  @constant CBAdvertisementDataLocalNameKey
- *
- *  @discussion A <code>NSString</code> containing the local name of a peripheral.
- *
- */
-CB_EXTERN NSString * const CBAdvertisementDataLocalNameKey;
 
 /*!
- *  @constant CBAdvertisementDataTxPowerLevelKey
+ *  @constant CBAdvertisementDataIsConnectable
  *
- *  @discussion A <code>NSNumber</code> containing the transmit power of a peripheral.
+ *  @discussion A NSNumber (Boolean) indicating whether or not the advertising event type was connectable. This can be used to determine
+ *				whether or not a peripheral is connectable in that instant.
  *
  */
-CB_EXTERN NSString * const CBAdvertisementDataTxPowerLevelKey;
+CB_EXTERN NSString * const CBAdvertisementDataIsConnectable NS_AVAILABLE(NA, 7_0);
+
 
 /*!
- *  @constant CBAdvertisementDataManufacturerDataKey
+ *  @constant CBAdvertisementDataSolicitedServiceUUIDsKey
  *
- *  @discussion A <code>NSData</code> object containing the manufacturer data of a peripheral.
- *
- */
-CB_EXTERN NSString * const CBAdvertisementDataManufacturerDataKey;
-
-/*!
- *  @constant CBAdvertisementDataServiceDataKey
- *
- *  @discussion A dictionary containing service-specific advertisement data. Keys are <code>CBUUID</code> objects, representing
- *              <code>CBService</code> UUIDs. Values are <code>NSData</code> objects.
+ *  @discussion A list of one or more <code>CBUUID</code> objects, representing <code>CBService</code> UUIDs.
  *
  */
-CB_EXTERN NSString * const CBAdvertisementDataServiceDataKey;
+CB_EXTERN NSString * const CBAdvertisementDataSolicitedServiceUUIDsKey NS_AVAILABLE(NA, 7_0);

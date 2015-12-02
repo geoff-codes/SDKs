@@ -2,17 +2,18 @@
 //  GLKEffectPropertyMaterial.h
 //  GLKEffects
 //
-//  Copyright 2011 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2012 Apple Inc. All rights reserved.
 //
 
 #import <GLKit/GLKEffectProperty.h>
 
-// GLKEffectPropertyMaterial
-//
-// GLKEffectPropertyMaterial encapsulates material properties for an GLKEffect in
-// accordance with the specification and lighting behavior of OpenGLES 1.1.
-//
+/*
+ GLKEffectPropertyMaterial
 
+ GLKEffectPropertyMaterial encapsulates material properties for an GLKEffect in
+ accordance with the specification and lighting behavior of OpenGL ES 1.1.
+*/
+NS_CLASS_AVAILABLE(10_8, 5_0)
 @interface GLKEffectPropertyMaterial : GLKEffectProperty
 {    
     @private

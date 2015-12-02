@@ -2,7 +2,7 @@
 //  UIDocument.h
 //  UIKit
 //
-//  Copyright (c) 1997-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 1997-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -46,11 +46,9 @@ NS_CLASS_AVAILABLE_IOS(5_0) @interface UIDocument : NSObject <NSFilePresenter> {
     id _differenceSinceSaving;
     NSTimer *_autosavingTimer;
     CFAbsoluteTime _lastSaveTime;
-    NSUInteger _fileContentsPreservationReason;
     CFAbsoluteTime _lastPreservationTime;
     id _versionWithoutRecentChanges;
     NSMutableArray *_versions;
-    void *_conflictObserver;
     NSLock* _documentPropertyLock;
     id _alertPresenter;
     struct __docFlags {

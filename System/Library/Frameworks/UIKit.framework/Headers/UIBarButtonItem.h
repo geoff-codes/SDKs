@@ -2,7 +2,7 @@
 //  UIBarButtonItem.h
 //  UIKit
 //
-//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2013, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -11,11 +11,7 @@
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UIAppearance.h>
 #import <UIKit/UIApplication.h>
-
-typedef NS_ENUM(NSInteger, UIBarMetrics) {
-    UIBarMetricsDefault,
-    UIBarMetricsLandscapePhone,
-};
+#import <UIKit/UIBarCommon.h>
 
 typedef NS_ENUM(NSInteger, UIBarButtonItemStyle) {
     UIBarButtonItemStylePlain,    // shows glow when pressed
@@ -117,7 +113,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIBarButtonItem : UIBarItem <NSCoding> {
 - (void)setBackgroundImage:(UIImage *)backgroundImage forState:(UIControlState)state style:(UIBarButtonItemStyle)style barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
 - (UIImage *)backgroundImageForState:(UIControlState)state style:(UIBarButtonItemStyle)style barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
 
-@property(nonatomic,retain) UIColor *tintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIColor *tintColor NS_AVAILABLE_IOS(5_0);
 
 /* For adjusting the vertical centering of bordered bar buttons within the bar 
  */

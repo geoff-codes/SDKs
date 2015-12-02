@@ -19,7 +19,7 @@
 // -----------------------------------------------------------------------------
 
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaLibrary : NSObject <NSCoding>
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaLibrary : NSObject <NSSecureCoding>
 
 + (MPMediaLibrary *)defaultMediaLibrary;
 

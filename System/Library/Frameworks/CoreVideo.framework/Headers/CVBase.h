@@ -22,7 +22,6 @@
 
 #if TARGET_OS_WIN32
 #pragma warning (disable: 4068)		// ignore unknown pragmas
-#define snprintf sprintf_s
 #endif
 
 #ifndef AVAILABLE_MAC_OS_X_VERSION_10_6_AND_LATER

@@ -157,13 +157,17 @@ format:(CIFormat)f colorSpace:(CGColorSpaceRef)c;
  * This method will return nil, if the color space cannot be determined. */
 - (CGColorSpaceRef)colorSpace __OSX_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_NA);
 
+/* Returns the rectangle of image 'im" that is required to render
+ * the rectangle 'r' of the receiver.  This may return a null rect. */
+- (CGRect)regionOfInterestForImage:(CIImage *)im inRect:(CGRect)r __OSX_AVAILABLE_STARTING(__MAC_NA, __IPHONE_6_0);
+
 @end
 
 @interface CIImage (AutoAdjustment)
 
 /* Image auto adjustment keys. */
 
-/* These are the options dictionarey keys which can be specified when calling 
+/* These are the options dictionary keys which can be specified when calling 
  * the autoAdjustmentFiltersWithOptions: method.
  */
 
@@ -179,10 +183,9 @@ CORE_IMAGE_EXPORT NSString *kCIImageAutoAdjustRedEye __OSX_AVAILABLE_STARTING(__
 
 /* If value is an array of detected CIFeatures, then use these features
  * to determine the AutoAdjustEnhance and or AutoAdjustRedEye filters.
- * If not specified, reciever will call CIDetector.
+ * If not specified, receiver will call CIDetector.
  */
 CORE_IMAGE_EXPORT NSString *kCIImageAutoAdjustFeatures __OSX_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_5_0);
-
 
 /* Return an array of filters to apply to an image to improve its 
  * skin tones, saturation, contrast, shadows and repair red-eyes or LED-eyes.

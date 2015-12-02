@@ -2,7 +2,7 @@
 //  UICollectionView.h
 //  UIKit
 //
-//  Copyright (c) 2011 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2013, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIScrollView.h>
@@ -27,10 +27,15 @@ typedef NS_OPTIONS(NSUInteger, UICollectionViewScrollPosition) {
 @class UICollectionView;
 @class UICollectionViewCell;
 @class UICollectionViewLayout;
+@class UICollectionViewTransitionLayout;
 @class UICollectionViewLayoutAttributes;
 @class UITouch;
 @class UINib;
 @class UICollectionReusableView;
+
+// layout transition block signature
+typedef void(^UICollectionViewLayoutInteractiveTransitionCompletion)(BOOL completed, BOOL finish);
+
 
 @protocol UICollectionViewDataSource <NSObject>
 @required
@@ -80,6 +85,9 @@ typedef NS_OPTIONS(NSUInteger, UICollectionViewScrollPosition) {
 - (BOOL)collectionView:(UICollectionView *)collectionView canPerformAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender;
 - (void)collectionView:(UICollectionView *)collectionView performAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender;
 
+// support for custom transition layout
+- (UICollectionViewTransitionLayout *)collectionView:(UICollectionView *)collectionView transitionLayoutForOldLayout:(UICollectionViewLayout *)fromLayout newLayout:(UICollectionViewLayout *)toLayout;
+
 @end
 
 NS_CLASS_AVAILABLE_IOS(6_0) @interface UICollectionView : UIScrollView
@@ -114,6 +122,11 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface UICollectionView : UIScrollView
 - (void)reloadData; // discard the dataSource and delegate data and requery as necessary
 
 - (void)setCollectionViewLayout:(UICollectionViewLayout *)layout animated:(BOOL)animated; // transition from one layout to another
+- (void)setCollectionViewLayout:(UICollectionViewLayout *)layout animated:(BOOL)animated completion:(void (^)(BOOL finished))completion NS_AVAILABLE_IOS(7_0);
+
+- (UICollectionViewTransitionLayout *)startInteractiveTransitionToCollectionViewLayout:(UICollectionViewLayout *)layout completion:(UICollectionViewLayoutInteractiveTransitionCompletion) completion NS_AVAILABLE_IOS(7_0);
+- (void)finishInteractiveTransition NS_AVAILABLE_IOS(7_0);
+- (void)cancelInteractiveTransition NS_AVAILABLE_IOS(7_0);
 
 // Information about the current state of the collection view.
 
@@ -151,8 +164,8 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface UICollectionView : UIScrollView
 
 @interface NSIndexPath (UICollectionViewAdditions)
 
-+ (NSIndexPath *)indexPathForItem:(NSInteger)item inSection:(NSInteger)section;
++ (NSIndexPath *)indexPathForItem:(NSInteger)item inSection:(NSInteger)section NS_AVAILABLE_IOS(6_0);
 
-@property (nonatomic, readonly) NSInteger item;
+@property (nonatomic, readonly) NSInteger item NS_AVAILABLE_IOS(6_0);
 
 @end

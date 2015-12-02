@@ -851,12 +851,16 @@
 	<integer>20</integer>
 	<key>GeniusSimilaritiesMinVersion</key>
 	<integer>1</integer>
+    <key>HomeScreenMaxPages</key>
+	<integer>15</integer>
 	<key>HomeScreenNewsstand</key>
 	<true/>
+	<key>HomeVideosSupported</key>
+	<true/>
 	<key>IconFolderColumns</key>
-	<integer>4</integer>
+	<integer>3</integer>
 	<key>IconFolderMaxPages</key>
-	<integer>1</integer>
+	<integer>15</integer>
 	<key>IconFolderRows</key>
 	<integer>3</integer>
 	<key>IconStateSaves</key>
@@ -1585,6 +1589,68 @@
 			<key>SupportsBFrames</key>
 			<true/>
 		</dict>
+		<key>H.264H_HDVideo42</key>
+		<dict>
+			<key>AppleVideoDRM</key>
+			<dict>
+				<key>MaximumEncryptionPercentage</key>
+				<integer>100</integer>
+			</dict>
+			<key>AudioCodecs</key>
+			<dict>
+				<key>AAC</key>
+				<dict>
+					<key>AppleDRM</key>
+					<true/>
+					<key>LC</key>
+					<dict>
+						<key>Multichannel</key>
+						<false/>
+						<key>VariableBitRate</key>
+						<true/>
+					</dict>
+					<key>MaximumBitRate</key>
+					<integer>256</integer>
+					<key>MaximumSampleRate</key>
+					<integer>48000</integer>
+				</dict>
+				<key>PCM</key>
+				<dict>
+					<key>Codec</key>
+					<string>pcm </string>
+					<key>MaximumBitDepth</key>
+					<integer>16</integer>
+					<key>MaximumSampleRate</key>
+					<integer>48000</integer>
+					<key>Mono</key>
+					<true/>
+					<key>Multichannel</key>
+					<false/>
+					<key>Stereo</key>
+					<true/>
+				</dict>
+			</dict>
+			<key>Codec</key>
+			<string>avc1</string>
+			<key>Level</key>
+			<integer>42</integer>
+			<key>MaximumHeight</key>
+			<integer>1920</integer>
+			<key>MaximumPixelsPerSecond</key>
+			<integer>124416000</integer>
+			<key>MaximumResolution</key>
+			<integer>2073600</integer>
+			<key>MaximumWidth</key>
+			<integer>1920</integer>
+			<key>MinimumHeight</key>
+			<integer>32</integer>
+			<key>MinimumWidth</key>
+			<integer>32</integer>
+			<key>NumericProfile</key>
+			<integer>100</integer>
+			<key>SupportsBFrames</key>
+			<true/>
+		</dict>
 		<key>H.264LC</key>
 		<dict>
 			<key>AppleVideoDRM</key>
@@ -1746,6 +1812,64 @@
 			<integer>1</integer>
 			<key>Level</key>
 			<integer>41</integer>
+			<key>MaximumHeight</key>
+			<integer>1920</integer>
+			<key>MaximumResolution</key>
+			<integer>2073600</integer>
+			<key>MaximumWidth</key>
+			<integer>1920</integer>
+			<key>MinimumHeight</key>
+			<integer>32</integer>
+			<key>MinimumWidth</key>
+			<integer>32</integer>
+			<key>Profile</key>
+			<string>B</string>
+		</dict>
+		<key>H.264LC_HDVideo42</key>
+		<dict>
+			<key>AppleVideoDRM</key>
+			<dict>
+				<key>MaximumEncryptionPercentage</key>
+				<integer>100</integer>
+			</dict>
+			<key>AudioCodecs</key>
+			<dict>
+				<key>AAC</key>
+				<dict>
+					<key>AppleDRM</key>
+					<true/>
+					<key>LC</key>
+					<dict>
+						<key>Multichannel</key>
+						<false/>
+						<key>VariableBitRate</key>
+						<true/>
+					</dict>
+					<key>MaximumBitRate</key>
+					<integer>256</integer>
+					<key>MaximumSampleRate</key>
+					<integer>48000</integer>
+				</dict>
+				<key>PCM</key>
+				<dict>
+					<key>Codec</key>
+					<string>pcm </string>
+					<key>MaximumBitDepth</key>
+					<integer>16</integer>
+					<key>MaximumSampleRate</key>
+					<integer>48000</integer>
+					<key>Mono</key>
+					<true/>
+					<key>Multichannel</key>
+					<false/>
+					<key>Stereo</key>
+					<true/>
+				</dict>
+			</dict>
+			<key>ComplexityLevel</key>
+			<integer>1</integer>
+			<key>Level</key>
+			<integer>42</integer>
 			<key>MaximumHeight</key>
 			<integer>1920</integer>
 			<key>MaximumResolution</key>
@@ -1945,6 +2069,68 @@
 			<key>SupportsBFrames</key>
 			<true/>
 		</dict>
+		<key>H.264M_HDVideo42</key>
+		<dict>
+			<key>AppleVideoDRM</key>
+			<dict>
+				<key>MaximumEncryptionPercentage</key>
+				<integer>100</integer>
+			</dict>
+			<key>AudioCodecs</key>
+			<dict>
+				<key>AAC</key>
+				<dict>
+					<key>AppleDRM</key>
+					<true/>
+					<key>LC</key>
+					<dict>
+						<key>Multichannel</key>
+						<false/>
+						<key>VariableBitRate</key>
+						<true/>
+					</dict>
+					<key>MaximumBitRate</key>
+					<integer>256</integer>
+					<key>MaximumSampleRate</key>
+					<integer>48000</integer>
+				</dict>
+				<key>PCM</key>
+				<dict>
+					<key>Codec</key>
+					<string>pcm </string>
+					<key>MaximumBitDepth</key>
+					<integer>16</integer>
+					<key>MaximumSampleRate</key>
+					<integer>48000</integer>
+					<key>Mono</key>
+					<true/>
+					<key>Multichannel</key>
+					<false/>
+					<key>Stereo</key>
+					<true/>
+				</dict>
+			</dict>
+			<key>Codec</key>
+			<string>avc1</string>
+			<key>Level</key>
+			<integer>42</integer>
+			<key>MaximumHeight</key>
+			<integer>1920</integer>
+			<key>MaximumPixelsPerSecond</key>
+			<integer>124416000</integer>
+			<key>MaximumResolution</key>
+			<integer>2073600</integer>
+			<key>MaximumWidth</key>
+			<integer>1920</integer>
+			<key>MinimumHeight</key>
+			<integer>32</integer>
+			<key>MinimumWidth</key>
+			<integer>32</integer>
+			<key>Profile</key>
+			<string>M</string>
+			<key>SupportsBFrames</key>
+			<true/>
+		</dict>
 		<key>H.264_HDVideo</key>
 		<dict>
 			<key>AppleVideoDRM</key>
@@ -2050,6 +2236,64 @@
 			<integer>1920</integer>
 			<key>MaximumPixelsPerSecond</key>
 			<integer>62208000</integer>
+			<key>MaximumResolution</key>
+			<integer>2073600</integer>
+			<key>MaximumWidth</key>
+			<integer>1920</integer>
+			<key>MinimumHeight</key>
+			<integer>32</integer>
+			<key>MinimumWidth</key>
+			<integer>32</integer>
+			<key>Profile</key>
+			<string>B</string>
+		</dict>
+		<key>H.264_HDVideo42</key>
+		<dict>
+			<key>AppleVideoDRM</key>
+			<dict>
+				<key>MaximumEncryptionPercentage</key>
+				<integer>100</integer>
+			</dict>
+			<key>AudioCodecs</key>
+			<dict>
+				<key>AAC</key>
+				<dict>
+					<key>AppleDRM</key>
+					<true/>
+					<key>LC</key>
+					<dict>
+						<key>Multichannel</key>
+						<false/>
+						<key>VariableBitRate</key>
+						<true/>
+					</dict>
+					<key>MaximumBitRate</key>
+					<integer>256</integer>
+					<key>MaximumSampleRate</key>
+					<integer>48000</integer>
+				</dict>
+				<key>PCM</key>
+				<dict>
+					<key>Codec</key>
+					<string>pcm </string>
+					<key>MaximumBitDepth</key>
+					<integer>16</integer>
+					<key>MaximumSampleRate</key>
+					<integer>48000</integer>
+					<key>Mono</key>
+					<true/>
+					<key>Multichannel</key>
+					<false/>
+					<key>Stereo</key>
+					<true/>
+				</dict>
+			</dict>
+			<key>Level</key>
+			<integer>42</integer>
+			<key>MaximumHeight</key>
+			<integer>1920</integer>
+			<key>MaximumPixelsPerSecond</key>
+			<integer>124416000</integer>
 			<key>MaximumResolution</key>
 			<integer>2073600</integer>
 			<key>MaximumWidth</key>

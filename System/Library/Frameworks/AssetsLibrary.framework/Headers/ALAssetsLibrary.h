@@ -20,7 +20,7 @@
 @class ALAsset;
 @class ALAssetsGroup;
 
-typedef enum {
+typedef NS_ENUM(NSInteger, ALAssetOrientation) {
     ALAssetOrientationUp,            // default orientation
     ALAssetOrientationDown,          // 180 deg rotation
     ALAssetOrientationLeft,          // 90 deg CCW
@@ -29,7 +29,7 @@ typedef enum {
     ALAssetOrientationDownMirrored,  // horizontal flip
     ALAssetOrientationLeftMirrored,  // vertical flip
     ALAssetOrientationRightMirrored, // vertical flip
-} ALAssetOrientation;
+};
 
 enum {
     ALAssetsGroupLibrary        = (1 << 0),         // The Library group that includes all assets.
@@ -40,8 +40,7 @@ enum {
 #if __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
     ALAssetsGroupPhotoStream    = (1 << 5),         // The PhotoStream album.
 #endif
-    ALAssetsGroupAll            = 0xFFFFFFFF,       // The same as ORing together all the available group types, 
-                                                    // with the exception that ALAssetsGroupLibrary is not included.
+    ALAssetsGroupAll            = 0xFFFFFFFF,       // The same as ORing together all the available group types,
 };
 typedef NSUInteger ALAssetsGroupType;
 

@@ -3,7 +3,7 @@
  
 	Framework:  AVFoundation
  
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2013 Apple Inc. All rights reserved.
 
  */
 
@@ -83,5 +83,6 @@ enum {
     AVErrorIncompatibleAsset                            = -11848,
     AVErrorFailedToLoadMediaData                        = -11849,
     AVErrorServerIncorrectlyConfigured                  = -11850,
-
+	AVErrorApplicationIsNotAuthorizedToUseDevice		= -11852,
+	
 };

@@ -2,7 +2,7 @@
  *  GKDefines.h
  *  GameKit
  *
- *  Copyright 2010 Apple, Inc. All rights reserved.
+ *  Copyright 2010 Apple Inc. All rights reserved.
  *
  */
 
@@ -14,8 +14,10 @@
 #endif
 #endif
 
-#define	GK_EXTERN_CLASS	__attribute__((visibility("default")))
+#define    GK_EXTERN_CLASS    __attribute__((visibility("default")))
 
 #ifndef GK_EXTERN_WEAK
 #define GK_EXTERN_WEAK  GK_EXTERN __attribute__((weak_import))
 #endif
+
+

@@ -25,11 +25,11 @@ typedef NSInteger MPMediaGrouping;
 
 // MPMediaQuery represents a collection of items or playlists determined by a chain of MPMediaPredicate objects.
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaQuery : NSObject <NSCoding, NSCopying>
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaQuery : NSObject <NSSecureCoding, NSCopying>
 
 - (id)init;
 - (id)initWithFilterPredicates:(NSSet *)filterPredicates;
-@property(nonatomic, retain) NSSet *filterPredicates;
+@property(nonatomic, strong) NSSet *filterPredicates;
 
 - (void)addFilterPredicate:(MPMediaPredicate *)predicate;
 - (void)removeFilterPredicate:(MPMediaPredicate *)predicate;
@@ -67,7 +67,7 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaQuery : NSObject <NSCoding, NSC
 // MPMediaPredicate is an abstract class that allows filtering media in an MPMediaQuery.
 // See the concrete subclass MPMediaPropertyPredicate for filtering options.
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPredicate : NSObject <NSCoding> {}
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPredicate : NSObject <NSSecureCoding> {}
 @end
 
 // ------------------------------------------------------------------------

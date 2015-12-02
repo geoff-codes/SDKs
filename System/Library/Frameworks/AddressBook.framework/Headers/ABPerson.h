@@ -46,7 +46,10 @@ enum  {
     kABPersonCompositeNameFormatLastNameFirst  = 1
 };
 
-AB_EXTERN ABPersonCompositeNameFormat ABPersonGetCompositeNameFormat(void);
+// Composite Names
+AB_EXTERN ABPersonCompositeNameFormat ABPersonGetCompositeNameFormat(void) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_7_0); // Deprecated. Call ABPersonGetCompositeNameFormatForRecord passing NULL for the record argument instead.
+AB_EXTERN ABPersonCompositeNameFormat ABPersonGetCompositeNameFormatForRecord(ABRecordRef record) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0); // The appropriate "First, Last" or "Last, First" order for the contact depending on the detected locale of the contact's name. If the record has no first, middle and last name, or if the record is NULL, then the Contacts Display Order preference is returned.
+AB_EXTERN CFStringRef ABPersonCopyCompositeNameDelimiterForRecord(ABRecordRef record) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0); // The delimiter that should be used to separate name components. If the record has no first, middle and last name, or if the record is NULL, then a default delimiter is returned.
 
 // Images
 typedef enum {

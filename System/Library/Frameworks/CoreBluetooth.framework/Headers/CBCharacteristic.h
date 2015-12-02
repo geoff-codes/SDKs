@@ -29,7 +29,7 @@
  *	@constant CBCharacteristicPropertyIndicateEncryptionRequired	If set, only trusted devices can enable indications of the characteristic value.
  *
  */
-typedef NS_ENUM(NSInteger, CBCharacteristicProperties) {
+typedef NS_OPTIONS(NSUInteger, CBCharacteristicProperties) {
 	CBCharacteristicPropertyBroadcast												= 0x01,
 	CBCharacteristicPropertyRead													= 0x02,
 	CBCharacteristicPropertyWriteWithoutResponse									= 0x04,
@@ -55,17 +55,6 @@ typedef NS_ENUM(NSInteger, CBCharacteristicProperties) {
  */
 NS_CLASS_AVAILABLE(10_7, 5_0)
 CB_EXTERN_CLASS @interface CBCharacteristic : NSObject
-{
-@package
-	CBService					*_service;
-	CBUUID						*_UUID;
-	CBCharacteristicProperties	 _properties;
-	
-	NSData						*_value;
-	NSArray						*_descriptors;
-	BOOL						 _isBroadcasted;
-	BOOL						 _isNotifying;
-}
 
 /*!
  * @property service
@@ -74,7 +63,7 @@ CB_EXTERN_CLASS @interface CBCharacteristic : NSObject
  *      A back-pointer to the service this characteristic belongs to.
  *
  */
-@property(readonly, nonatomic) CBService *service;
+@property(weak, readonly, nonatomic) CBService *service;
 
 /*!
  * @property UUID
@@ -143,7 +132,7 @@ CB_EXTERN_CLASS @interface CBCharacteristic : NSObject
  *	@constant CBAttributePermissionsWriteEncryptionRequired		Writeable by trusted devices.
  *
  */
-typedef NS_ENUM(NSInteger, CBAttributePermissions) {
+typedef NS_OPTIONS(NSUInteger, CBAttributePermissions) {
 	CBAttributePermissionsReadable					= 0x01,
 	CBAttributePermissionsWriteable					= 0x02,
 	CBAttributePermissionsReadEncryptionRequired	= 0x04,
@@ -158,16 +147,12 @@ typedef NS_ENUM(NSInteger, CBAttributePermissions) {
  *				is published, it is cached and can no longer be changed. 
  *				If a characteristic value is specified, it will be cached and marked <code>CBCharacteristicPropertyRead</code> and 
  *				<code>CBAttributePermissionsReadable</code>. If a characteristic value needs to be writeable, or may change during the lifetime of the
- *				published <code>CBService</code>, it is considered a dynamic value, and will be requested on-demand. Dynamic values are identified by a
+ *				published <code>CBService</code>, it is considered a dynamic value and will be requested on-demand. Dynamic values are identified by a
  *				<i>value</i> of <i>nil</i>.
  *
  */
 NS_CLASS_AVAILABLE(NA, 6_0)
 CB_EXTERN_CLASS @interface CBMutableCharacteristic : CBCharacteristic
-{
-@package
-	CBAttributePermissions _permissions;
-}
 
 /*!
  *	@property permissions
@@ -177,6 +162,13 @@ CB_EXTERN_CLASS @interface CBMutableCharacteristic : CBCharacteristic
  *	@see		CBAttributePermissions
  */
 @property(assign, readwrite, nonatomic) CBAttributePermissions permissions;
+
+/*!
+ *  @property subscribedCentrals
+ *
+ *  @discussion For notifying characteristics, the set of currently subscribed centrals.
+ */
+@property(retain, readonly) NSArray *subscribedCentrals NS_AVAILABLE(NA, 7_0);
 
 @property(retain, readwrite, nonatomic) CBUUID *UUID;
 @property(assign, readwrite, nonatomic) CBCharacteristicProperties properties;

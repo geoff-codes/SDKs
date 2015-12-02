@@ -2,9 +2,10 @@
 //  MKOverlay.h
 //  MapKit
 //
-//  Copyright (c) 2010-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2013, Apple Inc. All rights reserved.
 //
 
+#import <MapKit/MKFoundation.h>
 #import <MapKit/MKAnnotation.h>
 #import <MapKit/MKTypes.h>
 #import <MapKit/MKGeometry.h>
@@ -23,5 +24,8 @@
 // Implement intersectsMapRect to provide more precise control over when the view for the overlay should be shown.
 // If omitted, MKMapRectIntersectsRect([overlay boundingRect], mapRect) will be used instead.
 - (BOOL)intersectsMapRect:(MKMapRect)mapRect;
+
+// If this method is implemented and returns YES, MKMapView may use it as a hint to skip loading or drawing the built in map content in the area covered by this overlay.
+- (BOOL)canReplaceMapContent NS_AVAILABLE(10_9, 7_0);
 
 @end

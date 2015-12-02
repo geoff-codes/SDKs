@@ -8,7 +8,7 @@
     An example of this case is if you had an xmpp (jabber) client, and wanted to add voice chat.
 
  2) Or, you already have a peer-to-peer application that you want to add voice chat to.  
-	For instance, most networked games are peer-to-peer.  You could add voice chat to your game using this class.
+    For instance, most networked games are peer-to-peer.  You could add voice chat to your game using this class.
  
  This a not a Game Center feature. To support voice chat as part of Game Center online play, see GKVoiceChat.
  
@@ -100,10 +100,10 @@
 @class GKVoiceChatService;
 
 // GKVoiceChatService provides voice chat capabilities depending on your networking situation.
-NS_CLASS_AVAILABLE(NA, 4_1)
+NS_CLASS_DEPRECATED_IOS(3_0, 7_0)
 GK_EXTERN_CLASS @interface GKVoiceChatService : NSObject {
-	@private
-	id _voiceChatService;
+    @private
+    id _voiceChatService;
 }
 
 + (GKVoiceChatService *)defaultVoiceChatService;
@@ -148,5 +148,5 @@ GK_EXTERN_CLASS @interface GKVoiceChatService : NSObject {
 
 @end
 
-GK_EXTERN_WEAK	NSString *  const GKVoiceChatServiceErrorDomain;
+GK_EXTERN_WEAK    NSString *  const GKVoiceChatServiceErrorDomain;
 

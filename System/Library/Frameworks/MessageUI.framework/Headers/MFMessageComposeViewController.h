@@ -4,8 +4,8 @@
  @abstract   The MFMessageComposeViewController class provides an interface for editing and sending a text
 			 message.
  @discussion MFMessageComposeViewController is used for implementing a simple interface for users to enter
-			 and send a text message.
- @copyright  Copyright 2009, 2010 Apple Inc. All rights reserved.
+			 and send a text message including multimedia attachments.
+ @copyright  Copyright 2009 - 2012 Apple Inc. All rights reserved.
  */
 #import <UIKit/UIKit.h>
 
@@ -28,6 +28,16 @@ enum MessageComposeResult {
     MessageComposeResultFailed
 };
 typedef enum MessageComposeResult MessageComposeResult;   // available in iPhone 4.0
+
+/*!
+ @constant  MFMessageComposeViewControllerAttachmentURL   The url for the given attachment.
+*/
+extern NSString *const MFMessageComposeViewControllerAttachmentURL;
+
+/*!
+ @constant  MFMessageComposeViewControllerAttachmentAlternateFilename   The alternate filename for the given attachment.
+ */
+extern NSString *const MFMessageComposeViewControllerAttachmentAlternateFilename;
 
 /*!
  @const      MFMessageComposeViewControllerTextMessageAvailabilityDidChangeNotification
@@ -61,10 +71,6 @@ extern NSString *const MFMessageComposeViewControllerTextMessageAvailabilityKey 
  */
 NS_CLASS_AVAILABLE(NA, 4_0)
 @interface MFMessageComposeViewController : UINavigationController {
-@private
-	id<MFMessageComposeViewControllerDelegate> _messageComposeDelegate;
-	NSArray *_recipients;
-	NSString *_body;
 }
 
 /*!
@@ -77,10 +83,37 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 + (BOOL)canSendText  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
 
 /*!
+ @method     canSendSubject
+ @abstract   Returns <tt>YES</tt> if the user has set up the device for including subjects in messages.</tt>.
+ */
++ (BOOL)canSendSubject __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+
+/*!
+ @method     canSendAttachments
+ @abstract   Returns <tt>YES</tt> if the user has set up the device for including attachments in messages.</tt>.
+ */
++ (BOOL)canSendAttachments __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+
+/*!
+ @method     isSupportedAttachmentUTI:
+ @abstract   Returns <tt>YES</tt>if the attachment at the specified URL could be accepted by the current composition.
+ @discussion If the return value is YES, the UTI is acceptable for attachment to a message, a return value of NO
+ indicates that the given UTI is unsupported.
+ */
++ (BOOL)isSupportedAttachmentUTI:(NSString *)uti __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+
+/*!
  @property   messageComposeDelegate
  @abstract   This property is the delegate for the MFMessageComposeViewController method callbacks.
  */
 @property(nonatomic,assign) id<MFMessageComposeViewControllerDelegate> messageComposeDelegate /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0)*/;
+
+/*!
+ @method     disableUserAttachments;
+ @abstract   Calling this method will disable the camera/attachment button in the view controller.  After the controller has been presented,
+             this call will have no effect.  The camera / attachment button is visible by default.
+ */
+- (void)disableUserAttachments __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 
 /*!
  @property   recipients
@@ -90,7 +123,7 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 			 to display.
 			 </p>After the view has been presented to the user, this property will no longer change the value.
  */
-@property(nonatomic,copy) NSArray *recipients;
+@property(nonatomic,copy) NSArray *recipients /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0)*/;
 
 /*!
  @property   body
@@ -99,9 +132,45 @@ NS_CLASS_AVAILABLE(NA, 4_0)
 			 to display.
 			 </p>After the view has been presented to the user, this property will no longer change the value.
  */
-@property(nonatomic,copy) NSString *body;
+@property(nonatomic,copy) NSString *body /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0)*/;
+
+/*!
+ @property   subject
+ @abstract   This property sets the initial value of the subject of the message to the specified content.
+ @discussion This property will set the initial value of the subject of the message.  This should be called prior
+ to display.
+ </p>After the view has been presented to the user, this property will no longer change the value.
+ */
+@property(nonatomic,copy) NSString *subject /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0)*/;
+
+/*!
+ @property   attachments
+ @abstract   This property returns an NSArray of NSDictionaries describing the properties of the current attachments.
+ @discussion This property returns an NSArray of NSDictionaries describing the properties of the current attachments.
+             See MFMessageComposeViewControllerAttachmentURL, MFMessageComposeViewControllerAttachmentAlternateFilename.
+ */
+@property(nonatomic,copy, readonly) NSArray *attachments /*__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0)*/;
+
+/*!
+ @method     addAttachmentURL:withAlternateFilename:
+ @abstract   Returns <tt>YES</tt>if the attachment at the specified URL was added to the composition successfully.
+ @discussion If the return value is YES, the attachment was added to the composition. If the return value is NO,
+             the attachment was not added to the composition.  All attachment URLs must be file urls.  The file
+             URL must not be NIL.  The alternate filename will be display to the user in leiu of the attachments URL.
+             The alternate filename may be NIL.
+ */
+- (BOOL)addAttachmentURL:(NSURL *)attachmentURL withAlternateFilename:(NSString *)alternateFilename __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+
+/*!
+ @method     addAttachmentData:typeIdentifier:filename:
+ @abstract   Returns <tt>YES</tt>if the attachment was added to the composition successfully.
+ @discussion If the return value is YES, the attachment was added to the composition. If the return value is NO,
+ the attachment was not added to the composition.  The data and typeIdentifer must be non-nil.  typeIdentifier should be a valid Uniform Type Identifier.
+ */
+- (BOOL)addAttachmentData:(NSData *)attachmentData typeIdentifier:(NSString *)uti filename:(NSString *)filename __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 
 @end
+
 
 /*!
  @protocol    MFMessageComposeViewControllerDelegate

@@ -2,7 +2,7 @@
 //  UIPickerView.h
 //  UIKit
 //
-//  Copyright (c) 2006-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,36 +14,6 @@
 @protocol UIPickerViewDataSource, UIPickerViewDelegate;
 
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UIPickerView : UIView <NSCoding, UITableViewDataSource>
-{ 
-  @private
-    NSMutableArray            *_tables;
-    UIView                    *_topFrame;
-    NSMutableArray            *_dividers;
-    NSMutableArray            *_selectionBars;
-    id<UIPickerViewDataSource> _dataSource;
-    id<UIPickerViewDelegate>   _delegate;
-    UIView                    *_backgroundView;
-    NSInteger                  _numberOfComponents;
-  @package
-    struct {
-        unsigned int needsLayout:1;
-        unsigned int delegateRespondsToNumberOfComponentsInPickerView:1;
-        unsigned int delegateRespondsToNumberOfRowsInComponent:1;
-        unsigned int delegateRespondsToDidSelectRow:1;
-        unsigned int delegateRespondsToViewForRow:1;
-        unsigned int delegateRespondsToTitleForRow:1;
-        unsigned int delegateRespondsToAttributedTitleForRow:1;
-        unsigned int delegateRespondsToWidthForComponent:1;
-        unsigned int delegateRespondsToRowHeightForComponent:1;
-        unsigned int delegateRespondsToCheckableForRow:1;
-        unsigned int showsSelectionBar:1;
-        unsigned int allowsMultipleSelection:1;
-        unsigned int allowSelectingCells:1;
-        unsigned int soundsDisabled:1;
-        unsigned int usesCheckedSelection:1;
-        unsigned int skipsBackground:1;
-    } _pickerViewFlags;
-}
 
 @property(nonatomic,assign) id<UIPickerViewDataSource> dataSource;                // default is nil. weak reference
 @property(nonatomic,assign) id<UIPickerViewDelegate>   delegate;                  // default is nil. weak reference

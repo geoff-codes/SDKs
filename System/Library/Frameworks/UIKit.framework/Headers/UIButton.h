@@ -2,7 +2,7 @@
 //  UIButton.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,47 +14,29 @@
 @class UIImage, UIFont, UIColor, UIImageView, UILabel;
 
 typedef NS_ENUM(NSInteger, UIButtonType) {
-    UIButtonTypeCustom = 0,           // no button type
-    UIButtonTypeRoundedRect,          // rounded rect, flat white button, like in address card
+    UIButtonTypeCustom = 0,                         // no button type
+    UIButtonTypeSystem NS_ENUM_AVAILABLE_IOS(7_0),  // standard system button
 
     UIButtonTypeDetailDisclosure,
     UIButtonTypeInfoLight,
     UIButtonTypeInfoDark,
     UIButtonTypeContactAdd,
+    
+    UIButtonTypeRoundedRect = UIButtonTypeSystem,   // Deprecated, use UIButtonTypeSystem instead
 };
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UIButton : UIControl <NSCoding> {
-  @private
-    CFMutableDictionaryRef _contentLookup;
-    UIEdgeInsets           _contentEdgeInsets;
-    UIEdgeInsets           _titleEdgeInsets;
-    UIEdgeInsets           _imageEdgeInsets;
-    UIImageView           *_backgroundView;
-    UIImageView           *_imageView;
-    UILabel               *_titleView;
-    BOOL                  _initialized;
-    struct {
-        unsigned int reversesTitleShadowWhenHighlighted:1;
-        unsigned int adjustsImageWhenHighlighted:1;
-        unsigned int adjustsImageWhenDisabled:1;
-        unsigned int autosizeToFit:1;
-        unsigned int disabledDimsImage:1;
-        unsigned int showsTouchWhenHighlighted:1;
-        unsigned int buttonType:8;
-        unsigned int shouldHandleScrollerMouseEvent:1;
-    } _buttonFlags;
-}
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIButton : UIControl <NSCoding>
 
 + (id)buttonWithType:(UIButtonType)buttonType;
 
-@property(nonatomic)          UIEdgeInsets contentEdgeInsets;              // default is UIEdgeInsetsZero
+@property(nonatomic)          UIEdgeInsets contentEdgeInsets UI_APPEARANCE_SELECTOR; // default is UIEdgeInsetsZero
 @property(nonatomic)          UIEdgeInsets titleEdgeInsets;                // default is UIEdgeInsetsZero
 @property(nonatomic)          BOOL         reversesTitleShadowWhenHighlighted; // default is NO. if YES, shadow reverses to shift between engrave and emboss appearance
 @property(nonatomic)          UIEdgeInsets imageEdgeInsets;                // default is UIEdgeInsetsZero
 @property(nonatomic)          BOOL         adjustsImageWhenHighlighted;    // default is YES. if YES, image is drawn darker when highlighted(pressed)
 @property(nonatomic)          BOOL         adjustsImageWhenDisabled;       // default is YES. if YES, image is drawn lighter when disabled
 @property(nonatomic)          BOOL         showsTouchWhenHighlighted;      // default is NO. if YES, show a simple feedback (currently a glow) while highlighted
-@property(nonatomic,retain)   UIColor     *tintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is nil. only valid for some button types
+@property(nonatomic,retain)   UIColor     *tintColor NS_AVAILABLE_IOS(5_0); // The tintColor is inherited through the superview hierarchy. See UIView for more information.
 @property(nonatomic,readonly) UIButtonType buttonType;
 
 // you can set the image, title color, title shadow color, and background image to use for each state. you can specify data
@@ -62,10 +44,10 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIButton : UIControl <NSCoding> {
 // by other states which don't have a custom value set
 
 - (void)setTitle:(NSString *)title forState:(UIControlState)state;                     // default is nil. title is assumed to be single line
-- (void)setTitleColor:(UIColor *)color forState:(UIControlState)state;                 // default if nil. use opaque white
-- (void)setTitleShadowColor:(UIColor *)color forState:(UIControlState)state;           // default is nil. use 50% black
+- (void)setTitleColor:(UIColor *)color forState:(UIControlState)state UI_APPEARANCE_SELECTOR; // default if nil. use opaque white
+- (void)setTitleShadowColor:(UIColor *)color forState:(UIControlState)state UI_APPEARANCE_SELECTOR; // default is nil. use 50% black
 - (void)setImage:(UIImage *)image forState:(UIControlState)state;                      // default is nil. should be same size if different for different states
-- (void)setBackgroundImage:(UIImage *)image forState:(UIControlState)state;            // default is nil
+- (void)setBackgroundImage:(UIImage *)image forState:(UIControlState)state UI_APPEARANCE_SELECTOR; // default is nil
 - (void)setAttributedTitle:(NSAttributedString *)title forState:(UIControlState)state NS_AVAILABLE_IOS(6_0); // default is nil. title is assumed to be single line
 
 - (NSString *)titleForState:(UIControlState)state;          // these getters only take a single state value

@@ -2,7 +2,7 @@
 //  NSShadow.h
 //  UIKit
 //
-//  Copyright (c) 2002-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2002-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

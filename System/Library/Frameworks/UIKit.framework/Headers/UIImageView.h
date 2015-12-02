@@ -2,7 +2,7 @@
 //  UIImageView.h
 //  UIKit
 //
-//  Copyright (c) 2006-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -32,6 +32,10 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIImageView : UIView {
 
 @property(nonatomic) NSTimeInterval animationDuration;         // for one cycle of images. default is number of images * 1/30th of a second (i.e. 30 fps)
 @property(nonatomic) NSInteger      animationRepeatCount;      // 0 means infinite (default is 0)
+
+// When tintColor is non-nil, any template images set on the image view will be colorized with that color.
+// The tintColor is inherited through the superview hierarchy. See UIView for more information.
+@property (nonatomic, retain) UIColor *tintColor NS_AVAILABLE_IOS(7_0);
 
 - (void)startAnimating;
 - (void)stopAnimating;

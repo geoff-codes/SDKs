@@ -11,22 +11,18 @@
 #import <MediaPlayer/MPMediaItem.h>
 #import <MediaPlayer/MPMediaItemCollection.h>
 
-@class MPMediaPickerControllerInternal;
 @protocol MPMediaPickerControllerDelegate;
 
 // MPMediaPickerController is a UIViewController for visually selecting media items.
 // To display it, present it modally on an existing view controller.
 
-MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPickerController : UIViewController {
-@private
-    MPMediaPickerControllerInternal *_internal;
-}
+MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMediaPickerController : UIViewController
 
-- (id)init; // defaults to MPMediaTypeAny
-- (id)initWithMediaTypes:(MPMediaType)mediaTypes;
+- (instancetype)init; // defaults to MPMediaTypeAny
+- (instancetype)initWithMediaTypes:(MPMediaType)mediaTypes;
 @property (nonatomic, readonly) MPMediaType mediaTypes;
 
-@property (nonatomic, assign) id<MPMediaPickerControllerDelegate> delegate;
+@property (nonatomic, weak) id<MPMediaPickerControllerDelegate> delegate;
 
 @property (nonatomic) BOOL allowsPickingMultipleItems; // default is NO
 

@@ -2,7 +2,7 @@
 //  UISwitch.h
 //  UIKit
 //
-//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,12 +11,10 @@
 #import <UIKit/UIKitDefines.h>
 
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UISwitch : UIControl <NSCoding> {
-  @private
-    id _control;
 }
 
 @property(nonatomic, retain) UIColor *onTintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property(nonatomic, retain) UIColor *tintColor NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic, retain) UIColor *tintColor NS_AVAILABLE_IOS(6_0);
 @property(nonatomic, retain) UIColor *thumbTintColor NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
 
 @property(nonatomic, retain) UIImage *onImage NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;

@@ -11,6 +11,7 @@
 #import <GameKit/GKDefines.h>
 #import <GameKit/GKError.h>
 #import <GameKit/GKLeaderboard.h>
+#import <GameKit/GKLeaderboardSet.h>
 #import <GameKit/GKLocalPlayer.h>
 #import <GameKit/GKMatch.h>
 #import <GameKit/GKTurnBasedMatch.h>

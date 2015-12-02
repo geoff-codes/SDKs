@@ -3,7 +3,7 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2013 Apple Inc. All rights reserved.
 
 */
 
@@ -162,10 +162,6 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 	@param			item
 	  The AVPlayerItem that will become the player's current item.
 	@discussion
-	  For best results ensure that the tracks property of an AVPlayerItem's AVAsset, if there is one,
-	  has reached the status AVKeyValueStatusLoaded before attempting to replace the current item with it.
-	  See -[AVAsset loadValuesAsynchronouslyForKeys:completionHandler:].
-	  
 	  In all releases of iOS 4, invoking replaceCurrentItemWithPlayerItem: with an AVPlayerItem that's already the receiver's currentItem results in an exception being raised. Starting with iOS 5, it's a no-op.
 */
 - (void)replaceCurrentItemWithPlayerItem:(AVPlayerItem *)item;
@@ -353,7 +349,7 @@ typedef NSInteger AVPlayerActionAtItemEnd;
 					than requested. Even so, the player will invoke the block sufficiently often for the client to update indications
 					of the current time appropriately in its end-user interface.
 					Each call to -addPeriodicTimeObserverForInterval:queue:usingBlock: should be paired with a corresponding call to -removeTimeObserver:.
-					Releasing the observer object without a call to -removeTimeObserver will result in undefined behavior.
+					Releasing the observer object without a call to -removeTimeObserver: will result in undefined behavior.
 */
 - (id)addPeriodicTimeObserverForInterval:(CMTime)interval queue:(dispatch_queue_t)queue usingBlock:(void (^)(CMTime time))block;
 
@@ -371,7 +367,7 @@ typedef NSInteger AVPlayerActionAtItemEnd;
 	  An object conforming to the NSObject protocol.  You must retain this returned value as long as you want the time observer to be invoked by the player.
 	  Pass this object to -removeTimeObserver: to cancel time observation.
 	@discussion		Each call to -addPeriodicTimeObserverForInterval:queue:usingBlock: should be paired with a corresponding call to -removeTimeObserver:.
-					Releasing the observer object without a call to -removeTimeObserver will result in undefined behavior.
+					Releasing the observer object without a call to -removeTimeObserver: will result in undefined behavior.
 */
 - (id)addBoundaryTimeObserverForTimes:(NSArray *)times queue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
 
@@ -382,9 +378,9 @@ typedef NSInteger AVPlayerActionAtItemEnd;
 	  An object returned by a previous call to -addPeriodicTimeObserverForInterval:queue:usingBlock: or -addBoundaryTimeObserverForTimes:queue:usingBlock:.
 	@discussion		Upon return, the caller is guaranteed that no new time observer blocks will begin executing.  Depending on the calling thread and the queue
 					used to add the time observer, an in-flight block may continue to execute after this method returns.  You can guarantee synchronous time 
-					observer removal by enqueuing the call to -removeTimeObserver on that queue.  Alternatively, call dispatch_sync(queue, ^{}) after 
-					-removeTimeObserver to wait for any in-flight blocks to finish executing.
-					-removeTimeObserver should be used to explicitly cancel each time observer added using -addPeriodicTimeObserverForInterval:queue:usingBlock:
+					observer removal by enqueuing the call to -removeTimeObserver: on that queue.  Alternatively, call dispatch_sync(queue, ^{}) after
+					-removeTimeObserver: to wait for any in-flight blocks to finish executing.
+					-removeTimeObserver: should be used to explicitly cancel each time observer added using -addPeriodicTimeObserverForInterval:queue:usingBlock:
 					and -addBoundaryTimeObserverForTimes:queue:usingBlock:.
 */
 - (void)removeTimeObserver:(id)observer;
@@ -394,18 +390,72 @@ typedef NSInteger AVPlayerActionAtItemEnd;
 
 @interface AVPlayer (AVPlayerMediaControl)
 
-#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+/* Indicates the current audio volume of the player; 0.0 means "silence all audio", 1.0 means "play at the full volume of the current item".
 
-/* indicates the current audio volume of the player; 0.0 means "silence all audio", 1.0 means "play at the full volume of the current item" */
-@property (nonatomic) float volume NS_AVAILABLE(10_7, NA);
+   iOS note: Do not use this property to implement a volume slider for media playback. For that purpose, use MPVolumeView, which is customizable in appearance and provides standard media playback behaviors that users expect.
+   This property is most useful on iOS to control the volume of the AVPlayer relative to other audio output, not for volume control by end users. */
+@property (nonatomic) float volume NS_AVAILABLE(10_7, 7_0);
 
-/* indicates whether or not audio output of the player is muted */
-@property (nonatomic, getter=isMuted) BOOL muted NS_AVAILABLE(10_7, NA);
-
-#endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+/* indicates whether or not audio output of the player is muted. Only affects audio muting for the player instance and not for the device. */
+@property (nonatomic, getter=isMuted) BOOL muted NS_AVAILABLE(10_7, 7_0);
 
 /* indicates whether display of closed captions is enabled */
 @property (nonatomic, getter=isClosedCaptionDisplayEnabled) BOOL closedCaptionDisplayEnabled;
+
+@end
+
+
+@class AVPlayerMediaSelectionCriteria;
+
+@interface AVPlayer (AVPlayerAutomaticMediaSelection)
+
+/* Indicates whether the receiver should apply the current selection criteria automatically to AVPlayerItems.
+ For clients linked against the iOS 7 SDK or later or against the OS X 10.9 SDK or later, the default is YES. For all others, the default is NO.
+
+ By default, AVPlayer applies selection criteria based on system preferences. To override the default criteria for any media selection group, use -[AVPlayer setMediaSelectionCriteria:forMediaCharacteristic:].
+*/
+@property (nonatomic) BOOL appliesMediaSelectionCriteriaAutomatically NS_AVAILABLE(10_9, 7_0);
+
+/*!
+ @method     setMediaSelectionCriteria:forMediaCharacteristic:
+ @abstract   Applies automatic selection criteria for media that has the specified media characteristic.
+ @param      criteria
+   An instance of AVPlayerMediaSelectionCriteria.
+ @param      mediaCharacteristic
+   The media characteristic for which the selection criteria are to be applied. Supported values include AVMediaCharacteristicAudible, AVMediaCharacteristicLegible, and AVMediaCharacteristicVisual.
+ @discussion
+	Criteria will be applied to an AVPlayerItem when:
+		a) It is made ready to play
+		b) Specific media selections are made by -[AVPlayerItem selectMediaOption:inMediaSelectionGroup:] in a different group. The automatic choice in one group may be influenced by a specific selection in another group.
+		c) Underlying system preferences change, e.g. system language, accessibility captions.
+
+   Specific selections made by -[AVPlayerItem selectMediaOption:inMediaSelectionGroup:] within any group will override automatic selection in that group until -[AVPlayerItem selectMediaOptionAutomaticallyInMediaSelectionGroup:] is received.
+*/
+- (void)setMediaSelectionCriteria:(AVPlayerMediaSelectionCriteria *)criteria forMediaCharacteristic:(NSString *)mediaCharacteristic NS_AVAILABLE(10_9, 7_0);
+
+/*!
+ @method     mediaSelectionCriteriaForMediaCharacteristic:
+ @abstract   Returns the automatic selection criteria for media that has the specified media characteristic.
+ @param      mediaCharacteristic
+  The media characteristic for which the selection criteria is to be returned. Supported values include AVMediaCharacteristicAudible, AVMediaCharacteristicLegible, and AVMediaCharacteristicVisual.
+*/
+- (AVPlayerMediaSelectionCriteria *)mediaSelectionCriteriaForMediaCharacteristic:(NSString *)mediaCharacteristic NS_AVAILABLE(10_9, 7_0);
+
+@end
+
+
+@interface AVPlayer (AVPlayerAudioDeviceSupport)
+
+/*!
+ @property audioOutputDeviceUniqueID
+ @abstract
+	Specifies the unique ID of the Core Audio output device used to play audio.
+ @discussion
+	By default, the value of this property is nil, indicating that the default audio output device is used. Otherwise the value of this property is an NSString containing the unique ID of the Core Audio output device to be used for audio output.
+
+	Core Audio's kAudioDevicePropertyDeviceUID is a suitable source of audio output device unique IDs.
+*/
+@property (nonatomic, copy) NSString *audioOutputDeviceUniqueID NS_AVAILABLE_MAC(10_9);
 
 @end
 

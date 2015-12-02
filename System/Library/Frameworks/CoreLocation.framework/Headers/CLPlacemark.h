@@ -23,7 +23,7 @@
  */
 
 NS_CLASS_AVAILABLE(TBD,5_0)
-@interface CLPlacemark : NSObject <NSCopying, NSCoding>
+@interface CLPlacemark : NSObject <NSCopying, NSSecureCoding>
 {
 @private
     CLPlacemarkInternal *_internal;

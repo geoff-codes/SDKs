@@ -2,7 +2,7 @@
 //  UIGestureRecognizerSubclass.h
 //  UIKit
 //
-//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2013, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIGestureRecognizer.h>
@@ -29,6 +29,10 @@
 // for example, a UITapGestureRecognizer never prevents another UITapGestureRecognizer with a higher tap count
 - (BOOL)canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer;
 - (BOOL)canBePreventedByGestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer;
+
+// same behavior as the equivalent delegate methods, but can be used by subclasses to define class-wide failure requirements
+- (BOOL)shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer NS_AVAILABLE_IOS(7_0);
+- (BOOL)shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer NS_AVAILABLE_IOS(7_0);
 
 // mirror of the touch-delivery methods on UIResponder
 // UIGestureRecognizers aren't in the responder chain, but observe touches hit-tested to their view and their view's subviews

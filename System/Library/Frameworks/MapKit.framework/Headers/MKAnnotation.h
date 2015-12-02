@@ -2,12 +2,12 @@
 //  MKAnnotation.h
 //  MapKit
 //
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreLocation/CoreLocation.h>
-#import <Foundation/Foundation.h>
+#import <MapKit/MKFoundation.h>
 
 @protocol MKAnnotation <NSObject>
 
@@ -22,6 +22,6 @@
 @property (nonatomic, readonly, copy) NSString *subtitle;
 
 // Called as a result of dragging an annotation view.
-- (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate NS_AVAILABLE(NA, 4_0);
+- (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate NS_AVAILABLE(10_9, 4_0);
 
 @end

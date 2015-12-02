@@ -112,13 +112,13 @@ typedef struct task_basic_info_32       *task_basic_info_32_t;
 /* Don't use this, use MACH_TASK_BASIC_INFO instead */
 struct task_basic_info_64 {
         integer_t       suspend_count;  /* suspend count for task */
-#ifdef __arm__
+#if defined(__arm__) || defined(__arm64__)
         mach_vm_size_t  virtual_size;   /* virtual memory size (bytes) */
         mach_vm_size_t  resident_size;  /* resident memory size (bytes) */
-#else /* __arm__ */
+#else /* defined(__arm__) || defined(__arm64__) */
         mach_vm_size_t  virtual_size;   /* virtual memory size (bytes) */
         mach_vm_size_t  resident_size;  /* resident memory size (bytes) */
-#endif /* __arm__ */
+#endif /* defined(__arm__) || defined(__arm64__) */
         time_value_t    user_time;      /* total user run time for
                                            terminated threads */
         time_value_t    system_time;    /* total system run time for
@@ -128,9 +128,12 @@ struct task_basic_info_64 {
 typedef struct task_basic_info_64       task_basic_info_64_data_t;
 typedef struct task_basic_info_64       *task_basic_info_64_t;
 
-#ifdef __arm__
-	#if   defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_5_0)
-	
+#if defined(__arm__) || defined(__arm64__)
+	#if   defined(__arm__) && defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_5_0)
+	/* 
+	 * Note: arm64 can't use the old flavor.  If you somehow manage to,
+	 * you can cope with the nonsense data yourself.
+	 */
 	#define TASK_BASIC_INFO_64      5    
 	#define TASK_BASIC_INFO_64_COUNT   \
                 (sizeof(task_basic_info_64_data_t) / sizeof(natural_t))
@@ -140,7 +143,7 @@ typedef struct task_basic_info_64       *task_basic_info_64_t;
 	#define TASK_BASIC_INFO_64      	TASK_BASIC_INFO_64_2	
 	#define TASK_BASIC_INFO_64_COUNT  	TASK_BASIC_INFO_64_2_COUNT
 	#endif 
-#else /* __arm__ */
+#else /* defined(__arm__) || defined(__arm64__) */
 #define TASK_BASIC_INFO_64      5       /* 64-bit capable basic info */
 #define TASK_BASIC_INFO_64_COUNT   \
                 (sizeof(task_basic_info_64_data_t) / sizeof(natural_t))
@@ -207,7 +210,7 @@ typedef struct task_thread_times_info	*task_thread_times_info_t;
 #define TASK_ABSOLUTETIME_INFO	1
 
 struct task_absolutetime_info {
-	uint64_t		total_user;		/* total time */
+	uint64_t		total_user;
 	uint64_t		total_system;
 	uint64_t		threads_user;	/* existing threads only */
 	uint64_t		threads_system;
@@ -268,7 +271,7 @@ typedef struct task_dyld_info	*task_dyld_info_t;
 #define TASK_DYLD_ALL_IMAGE_INFO_32	0	/* format value */
 #define TASK_DYLD_ALL_IMAGE_INFO_64	1	/* format value */
 
-#ifdef __arm__
+#if defined(__arm__) || defined(__arm64__)
 
 /* Don't use this, use MACH_TASK_BASIC_INFO instead */
 /* Compatibility for old 32-bit mach_vm_*_t */
@@ -301,9 +304,8 @@ typedef struct task_extmod_info	*task_extmod_info_t;
 #define TASK_EXTMOD_INFO_COUNT	\
     		(sizeof(task_extmod_info_data_t) / sizeof(natural_t))
 
-/* Always 64-bit in user and kernel */
-#define MACH_TASK_BASIC_INFO     20         /* always 64-bit basic info */
 
+#define MACH_TASK_BASIC_INFO     20         /* always 64-bit basic info */
 struct mach_task_basic_info {
         mach_vm_size_t  virtual_size;       /* virtual memory size (bytes) */
         mach_vm_size_t  resident_size;      /* resident memory size (bytes) */
@@ -319,6 +321,57 @@ typedef struct mach_task_basic_info       mach_task_basic_info_data_t;
 typedef struct mach_task_basic_info       *mach_task_basic_info_t;
 #define MACH_TASK_BASIC_INFO_COUNT   \
                 (sizeof(mach_task_basic_info_data_t) / sizeof(natural_t))
+
+
+#define TASK_POWER_INFO	21
+
+struct task_power_info {
+	uint64_t		total_user;
+	uint64_t		total_system;
+	uint64_t		task_interrupt_wakeups;
+	uint64_t		task_platform_idle_wakeups;
+	uint64_t		task_timer_wakeups_bin_1;
+	uint64_t		task_timer_wakeups_bin_2;
+};
+
+typedef struct task_power_info	task_power_info_data_t;
+typedef struct task_power_info	*task_power_info_t;
+#define TASK_POWER_INFO_COUNT	((mach_msg_type_number_t) \
+		(sizeof (task_power_info_data_t) / sizeof (natural_t)))
+
+
+
+#define TASK_VM_INFO		22
+#define TASK_VM_INFO_PURGEABLE	23
+struct task_vm_info {
+        mach_vm_size_t  virtual_size;	    /* virtual memory size (bytes) */
+	integer_t	region_count;	    /* number of memory regions */
+	integer_t	page_size;
+        mach_vm_size_t  resident_size;	    /* resident memory size (bytes) */
+        mach_vm_size_t  resident_size_peak; /* peak resident size (bytes) */
+
+	mach_vm_size_t	device;
+	mach_vm_size_t	device_peak;
+	mach_vm_size_t	internal;
+	mach_vm_size_t	internal_peak;
+	mach_vm_size_t	external;
+	mach_vm_size_t	external_peak;
+	mach_vm_size_t	reusable;
+	mach_vm_size_t	reusable_peak;
+	mach_vm_size_t	purgeable_volatile_pmap;
+	mach_vm_size_t	purgeable_volatile_resident;
+	mach_vm_size_t	purgeable_volatile_virtual;
+	mach_vm_size_t	compressed;
+	mach_vm_size_t	compressed_peak;
+	mach_vm_size_t	compressed_lifetime;
+};
+typedef struct task_vm_info	task_vm_info_data_t;
+typedef struct task_vm_info	*task_vm_info_t;
+#define TASK_VM_INFO_COUNT	((mach_msg_type_number_t) \
+		(sizeof (task_vm_info_data_t) / sizeof (natural_t)))
+
+
+typedef struct vm_purgeable_info	task_purgable_info_t;
 
 /*
  * Obsolete interfaces.

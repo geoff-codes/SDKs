@@ -3,7 +3,7 @@
 	
 	Framework:  CoreMedia
 
-    Copyright 2010-2012 Apple Inc. All rights reserved.
+    Copyright 2010-2013 Apple Inc. All rights reserved.
     
 	To report bugs, go to:  http://developer.apple.com/bugreporter/
 

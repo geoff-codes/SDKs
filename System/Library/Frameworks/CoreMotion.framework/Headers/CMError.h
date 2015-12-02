@@ -15,5 +15,10 @@
 typedef enum {
 	CMErrorNULL = 100,
 	CMErrorDeviceRequiresMovement,
-	CMErrorTrueNorthNotAvailable
+	CMErrorTrueNorthNotAvailable,
+	CMErrorUnknown,
+	CMErrorMotionActivityNotAvailable,
+	CMErrorMotionActivityNotAuthorized,
+	CMErrorMotionActivityNotEntitled,
+	CMErrorInvalidParameter
 } CMError;

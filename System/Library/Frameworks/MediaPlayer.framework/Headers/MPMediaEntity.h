@@ -13,7 +13,7 @@
 // An MPMediaEntity represents an abstract member of an MPMediaLibrary.
 // Concrete subclasses are MPMediaItem and MPMediaItemCollection.
 
-MP_EXTERN_CLASS_AVAILABLE(4_2) @interface MPMediaEntity : NSObject <NSCoding>
+MP_EXTERN_CLASS_AVAILABLE(4_2) @interface MPMediaEntity : NSObject <NSSecureCoding>
 
 // Returns YES for properties which can be used to construct MPMediaPropertyPredicates.
 + (BOOL)canFilterByProperty:(NSString *)property;

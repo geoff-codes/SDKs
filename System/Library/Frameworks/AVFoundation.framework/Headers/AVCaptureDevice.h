@@ -3,7 +3,7 @@
  
 	Framework:  AVFoundation
  
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2013 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
@@ -51,8 +51,8 @@ AVF_EXPORT NSString *const AVCaptureDeviceWasDisconnectedNotification NS_AVAILAB
  */
 AVF_EXPORT NSString *const AVCaptureDeviceSubjectAreaDidChangeNotification NS_AVAILABLE_IOS(5_0);
 
-#if TARGET_OS_MAC && ! (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_OS_WIN32)
 @class AVCaptureDeviceFormat;
+#if TARGET_OS_MAC && ! (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_OS_WIN32)
 @class AVCaptureDeviceInputSource;
 #endif
 @class AVCaptureDeviceInternal;
@@ -75,6 +75,7 @@ AVF_EXPORT NSString *const AVCaptureDeviceSubjectAreaDidChangeNotification NS_AV
 NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureDevice : NSObject
 {
+@private
     AVCaptureDeviceInternal *_internal;
 }
 
@@ -312,6 +313,8 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 */
 @property(nonatomic, readonly) NSArray *linkedDevices NS_AVAILABLE(10_7, NA);
 
+#endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+
 /*!
  @property formats
  @abstract
@@ -322,7 +325,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     capture device's activeFormat property may be set to one of the formats in this array.  Clients 
     can observe automatic changes to the receiver's formats by key value observing this property.
 */
-@property(nonatomic, readonly) NSArray *formats NS_AVAILABLE(10_7, NA);
+@property(nonatomic, readonly) NSArray *formats NS_AVAILABLE(10_7, 7_0);
 
 /*!
  @property activeFormat
@@ -335,8 +338,30 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     array.  -setActiveFormat: throws an NSGenericException if called without first obtaining exclusive
     access to the receiver using lockForConfiguration:.  Clients can observe automatic changes to the 
     receiver's activeFormat by key value observing this property.
+ 
+    On iOS, use of AVCaptureDevice's setActiveFormat: and AVCaptureSession's setSessionPreset: are mutually
+    exclusive.  If you set a capture device's active format, the session to which it is attached changes its
+    preset to AVCaptureSessionPresetInputPriority.  Likewise if you set the AVCaptureSession's sessionPreset
+    property, the session assumes control of its input devices, and configures their activeFormat appropriately.
+    Note that audio devices do not expose any user-configurable formats on iOS.  To configure audio input on
+    iOS, you should use the AVAudioSession APIs instead (see AVAudioSession.h).
+    
+    The activeFormat, activeVideoMinFrameDuration, and activeVideoMaxFrameDuration properties may be set simultaneously
+    by using AVCaptureSession's begin/commitConfiguration methods:
+ 
+    [session beginConfiguration]; // the session to which the receiver's AVCaptureDeviceInput is added.
+    if ( [device lockForConfiguration:&error] ) {
+        [device setActiveFormat:newFormat];
+        [device setActiveVideoMinFrameDuration:newMinDuration];
+        [device setActiveVideoMaxFrameDuration:newMaxDuration];
+	    [device unlockForConfiguration];
+    }
+    [session commitConfiguration]; // The new format and frame rates are applied together in commitConfiguration
+ 
+	Note that when configuring a session to use an active format intended for high resolution still photography and applying one or more of the
+	following operations to an AVCaptureVideoDataOutput, the system may not meet the target framerate: zoom, orientation changes, format conversion.
 */
-@property(nonatomic, retain) AVCaptureDeviceFormat *activeFormat NS_AVAILABLE(10_7, NA);
+@property(nonatomic, retain) AVCaptureDeviceFormat *activeFormat NS_AVAILABLE(10_7, 7_0);
 
 /*!
  @property activeVideoMinFrameDuration
@@ -347,13 +372,44 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     An AVCaptureDevice's activeVideoMinFrameDuration property is the reciprocal of its active
     maximum frame rate.  To limit the max frame rate of the capture device, clients may
     set this property to a value supported by the receiver's activeFormat (see AVCaptureDeviceFormat's 
-    videoSupportedFrameRateRanges property).  -setActiveVideoMinFrameDuration: throws an NSInvalidArgumentException
-    if set to an unsupported value.  -setActiveVideoMinFrameDuration: throws an NSGenericException 
-    if called without first obtaining exclusive access to the receiver using lockForConfiguration:.
-    Clients can observe automatic changes to the receiver's activeVideoMinFrameDuration by key value 
-    observing this property.
+    videoSupportedFrameRateRanges property).  Clients may set this property's value to kCMTimeInvalid to
+    return activeVideoMinFrameDuration to its default value for the given activeFormat.
+    -setActiveVideoMinFrameDuration: throws an NSInvalidArgumentException if set to an unsupported value.  
+    -setActiveVideoMinFrameDuration: throws an NSGenericException if called without first obtaining exclusive 
+    access to the receiver using lockForConfiguration:.  Clients can observe automatic changes to the receiver's 
+    activeVideoMinFrameDuration by key value observing this property.
+ 
+    On iOS, the receiver's activeVideoMinFrameDuration resets to its default value under the following conditions:
+	    - The receiver's activeFormat changes
+        - The receiver's AVCaptureDeviceInput's session's sessionPreset changes
+        - The receiver's AVCaptureDeviceInput is added to a session
 */
-@property(nonatomic) CMTime activeVideoMinFrameDuration NS_AVAILABLE(10_7, NA);
+@property(nonatomic) CMTime activeVideoMinFrameDuration NS_AVAILABLE(10_7, 7_0);
+
+/*!
+ @property activeVideoMaxFrameDuration
+ @abstract
+    A property indicating the receiver's current active maximum frame duration (the reciprocal of its min frame rate).
+
+ @discussion
+    An AVCaptureDevice's activeVideoMaxFrameDuration property is the reciprocal of its active
+    minimum frame rate.  To limit the min frame rate of the capture device, clients may
+    set this property to a value supported by the receiver's activeFormat (see AVCaptureDeviceFormat's 
+    videoSupportedFrameRateRanges property).  Clients may set this property's value to kCMTimeInvalid to
+    return activeVideoMaxFrameDuration to its default value for the given activeFormat.
+    -setActiveVideoMaxFrameDuration: throws an NSInvalidArgumentException if set to an unsupported value.  
+    -setActiveVideoMaxFrameDuration: throws an NSGenericException if called without first obtaining exclusive 
+    access to the receiver using lockForConfiguration:.  Clients can observe automatic changes to the receiver's 
+    activeVideoMaxFrameDuration by key value observing this property.
+ 
+    On iOS, the receiver's activeVideoMaxFrameDuration resets to its default value under the following conditions:
+	    - The receiver's activeFormat changes
+        - The receiver's AVCaptureDeviceInput's session's sessionPreset changes
+        - The receiver's AVCaptureDeviceInput is added to a session
+*/
+@property(nonatomic) CMTime activeVideoMaxFrameDuration NS_AVAILABLE(10_9, 7_0);
+
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
 /*!
  @property inputSources
@@ -399,12 +455,11 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @constant AVCaptureDevicePositionFront
     Indicates that the device is physically located on the front of the system hardware.
 */
-enum {
+typedef NS_ENUM(NSInteger, AVCaptureDevicePosition) {
 	AVCaptureDevicePositionUnspecified         = 0,
 	AVCaptureDevicePositionBack                = 1,
 	AVCaptureDevicePositionFront               = 2
-};
-typedef NSInteger AVCaptureDevicePosition;
+} NS_AVAILABLE(10_7, 4_0);
 
 @interface AVCaptureDevice (AVCaptureDevicePosition)
 
@@ -433,12 +488,11 @@ typedef NSInteger AVCaptureDevicePosition;
  @constant AVCaptureFlashModeAuto
     Indicates that the flash should be used automatically depending on ambient light conditions.
 */
-enum {
+typedef NS_ENUM(NSInteger, AVCaptureFlashMode) {
 	AVCaptureFlashModeOff  = 0,
 	AVCaptureFlashModeOn   = 1,
 	AVCaptureFlashModeAuto = 2
-};
-typedef NSInteger AVCaptureFlashMode;
+} NS_AVAILABLE(10_7, 4_0);
 
 @interface AVCaptureDevice (AVCaptureDeviceFlash)
 
@@ -520,12 +574,11 @@ typedef NSInteger AVCaptureFlashMode;
  @constant AVCaptureTorchModeAuto
     Indicates that the torch should be used automatically depending on ambient light conditions.
 */
-enum {
+typedef NS_ENUM(NSInteger, AVCaptureTorchMode) {
 	AVCaptureTorchModeOff  = 0,
 	AVCaptureTorchModeOn   = 1,
 	AVCaptureTorchModeAuto = 2,
-};
-typedef NSInteger AVCaptureTorchMode;
+} NS_AVAILABLE(10_7, 4_0);
 
 /*!
   @constant AVCaptureMaxAvailableTorchLevel
@@ -644,12 +697,29 @@ extern const float AVCaptureMaxAvailableTorchLevel;
  @constant AVCaptureFocusModeContinuousAutoFocus
     Indicates that the device should automatically focus when needed.
 */
-enum {
+typedef NS_ENUM(NSInteger, AVCaptureFocusMode) {
 	AVCaptureFocusModeLocked              = 0,
 	AVCaptureFocusModeAutoFocus           = 1,
 	AVCaptureFocusModeContinuousAutoFocus = 2,
-};
-typedef NSInteger AVCaptureFocusMode;
+} NS_AVAILABLE(10_7, 4_0);
+
+/*!
+ @enum AVCaptureAutoFocusRangeRestriction
+ @abstract
+	Constants indicating the restriction of the receiver's autofocus system to a particular range of focus scan, if it supports range restrictions.
+ 
+ @constant AVCaptureAutoFocusRangeRestrictionNone
+	Indicates that the autofocus system should not restrict the focus range.
+ @constant AVCaptureAutoFocusRangeRestrictionNear
+	Indicates that the autofocus system should restrict the focus range for subject matter that is near to the camera.
+ @constant AVCaptureAutoFocusRangeRestrictionFar
+	Indicates that the autofocus system should restrict the focus range for subject matter that is far from the camera.
+*/
+typedef NS_ENUM(NSInteger, AVCaptureAutoFocusRangeRestriction) {
+	AVCaptureAutoFocusRangeRestrictionNone = 0,
+	AVCaptureAutoFocusRangeRestrictionNear = 1,
+	AVCaptureAutoFocusRangeRestrictionFar  = 2,
+} NS_AVAILABLE_IOS(7_0);
 
 @interface AVCaptureDevice (AVCaptureDeviceFocus)
 
@@ -722,6 +792,60 @@ typedef NSInteger AVCaptureFocusMode;
 */
 @property(nonatomic, readonly, getter=isAdjustingFocus) BOOL adjustingFocus;
 
+/*!
+ @property autoFocusRangeRestrictionSupported
+ @abstract
+	Indicates whether the receiver supports autofocus range restrictions.
+ 
+ @discussion
+	The receiver's autoFocusRangeRestriction property can only be set if this property returns YES.
+ */
+@property(nonatomic, readonly, getter=isAutoFocusRangeRestrictionSupported) BOOL autoFocusRangeRestrictionSupported NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property autoFocusRangeRestriction
+ @abstract
+	Indicates current restriction of the receiver's autofocus system to a particular range of focus scan, if it supports range restrictions.
+ 
+ @discussion
+	The value of this property is an AVCaptureAutoFocusRangeRestriction indicating how the autofocus system
+	should limit its focus scan.  The default value is AVCaptureAutoFocusRangeRestrictionNone.
+	-setAutoFocusRangeRestriction: throws an NSInvalidArgumentException if isAutoFocusRangeRestrictionSupported
+	returns NO.  -setAutoFocusRangeRestriction: throws an NSGenericException if called without first obtaining exclusive
+	access to the receiver using lockForConfiguration:.  This property only has an effect when the focusMode property is
+	set to AVCaptureFocusModeAutoFocus or AVCaptureFocusModeContinuousAutoFocus.  Note that setting autoFocusRangeRestriction 
+	alone does not initiate a focus operation.  After setting autoFocusRangeRestriction, call -setFocusMode: to apply the new restriction.
+ */
+@property(nonatomic) AVCaptureAutoFocusRangeRestriction autoFocusRangeRestriction NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property smoothAutoFocusSupported
+ @abstract
+	Indicates whether the receiver supports smooth autofocus.
+ 
+ @discussion
+	The receiver's smoothAutoFocusEnabled property can only be set if this property returns YES.
+ */
+@property(nonatomic, readonly, getter=isSmoothAutoFocusSupported) BOOL smoothAutoFocusSupported NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property smoothAutoFocusEnabled
+ @abstract
+	Indicates whether the receiver should use smooth autofocus.
+ 
+ @discussion
+	On a receiver where -isSmoothAutoFocusSupported returns YES and smoothAutoFocusEnabled is set to YES,
+	a smooth autofocus will be engaged when the focus mode is set to AVCaptureFocusModeAutoFocus or
+	AVCaptureFocusModeContinuousAutoFocus.  Enabling smooth autofocus is appropriate for movie recording.
+	Smooth autofocus is slower and less visually invasive. Disabling smooth autofocus is more appropriate
+	for video processing where a fast autofocus is necessary.  The default value is NO.
+	Setting this property throws an NSInvalidArgumentException if -isSmoothAutoFocusSupported returns NO.
+	The receiver must be locked for configuration using lockForConfiguration: before clients can set this method,
+	otherwise an NSGenericException is thrown. Note that setting smoothAutoFocusEnabled alone does not initiate a
+	focus operation.  After setting smoothAutoFocusEnabled, call -setFocusMode: to apply the new smooth autofocus mode.
+ */
+@property(nonatomic, getter=isSmoothAutoFocusEnabled) BOOL smoothAutoFocusEnabled NS_AVAILABLE_IOS(7_0);
+
 @end
 
 /*!
@@ -737,12 +861,11 @@ typedef NSInteger AVCaptureFocusMode;
  @constant AVCaptureExposureModeContinuousAutoExposure
     Indicates that the device should automatically adjust exposure when needed.
 */
-enum {
+typedef NS_ENUM(NSInteger, AVCaptureExposureMode) {
 	AVCaptureExposureModeLocked					= 0,
 	AVCaptureExposureModeAutoExpose				= 1,
 	AVCaptureExposureModeContinuousAutoExposure	= 2,
-};
-typedef NSInteger AVCaptureExposureMode;
+} NS_AVAILABLE(10_7, 4_0);
 
 @interface AVCaptureDevice (AVCaptureDeviceExposure)
 
@@ -830,12 +953,11 @@ typedef NSInteger AVCaptureExposureMode;
  @constant AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance
     Indicates that the device should automatically adjust white balance when needed.
 */
-enum {
+typedef NS_ENUM(NSInteger, AVCaptureWhiteBalanceMode) {
 	AVCaptureWhiteBalanceModeLocked				        = 0,
 	AVCaptureWhiteBalanceModeAutoWhiteBalance	        = 1,
     AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance = 2,
-};
-typedef NSInteger AVCaptureWhiteBalanceMode;
+} NS_AVAILABLE(10_7, 4_0);
 
 @interface AVCaptureDevice (AVCaptureDeviceWhiteBalance)
 
@@ -950,6 +1072,153 @@ typedef NSInteger AVCaptureWhiteBalanceMode;
 
 @end
 
+@interface AVCaptureDevice (AVCaptureDeviceVideoZoom)
+
+/*!
+ @property videoZoomFactor
+ @abstract
+ Controls zoom level of image outputs
+ 
+ @discussion
+ Applies a centered crop for all image outputs, scaling as necessary to maintain output
+ dimensions.  Minimum value of 1.0 yields full field of view, increasing values will increase
+ magnification, up to a maximum value specified in the activeFormat's videoMaxZoomFactor property.
+ Modifying the zoom factor will cancel any active rampToVideoZoomFactor:withRate:, and snap
+ directly to the assigned value.  Assigning values outside the acceptable range will generate
+ an NSRangeException.  Clients can key value observe the value of this property.
+ 
+ -setVideoZoomFactor: throws an NSGenericException if called without first obtaining exclusive
+ access to the receiver using lockForConfiguration:.
+ 
+ @seealso AVCaptureDeviceFormat AVCaptureDeviceFormat - videoMaxZoomFactor and videoZoomFactorUpscaleThreshold
+ */
+@property(nonatomic) CGFloat videoZoomFactor NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @method rampToVideoZoomFactor:withRate:
+ @abstract
+ Provides smooth changes in zoom factor.
+ 
+ @discussion
+ This method provides a change in zoom by compounding magnification at the specified
+ rate over time.  Although the zoom factor will grow exponentially, this yields a
+ visually linear zoom in the image over time.
+ 
+ The zoom transition will stop at the specified factor, which must be in the valid range for
+ videoZoomFactor.  Assignments to videoZoomFactor while a ramp is in progress will cancel the
+ ramp and snap to the assigned value.
+ 
+ The zoom factor is continuously scaled by pow(2,rate * time).  A rate of 0 causes no
+ change in zoom factor, equivalent to calling cancelVideoZoomRamp.  A rate of 1 will
+ cause the magnification to double every second (or halve every second if zooming out),
+ and similarly larger or smaller values will zoom faster or slower respectively.  Only
+ the absolute value of the rate is significant--sign is corrected for the direction
+ of the target.  Changes in rate will be smoothed by an internal acceleration limit.
+ 
+ -rampToVideoZoomFactor:withRate: throws an NSGenericException if called without first
+ obtaining exclusive access to the receiver using lockForConfiguration:.
+ */
+- (void)rampToVideoZoomFactor:(CGFloat)factor withRate:(float)rate NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property rampingVideoZoom
+ @abstract
+ Indicates if the zoom factor is transitioning to a value set by rampToVideoZoomFactor:withRate:
+ 
+ @discussion
+ Clients can observe this value to determine when a ramp begins or completes.
+ */
+@property(nonatomic,readonly,getter=isRampingVideoZoom) BOOL rampingVideoZoom NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @method cancelVideoZoomRamp
+ @abstract
+ Eases out of any video zoom transitions initiated by rampToVideoZoomFactor:withRate:
+ 
+ @discussion
+ This method is equivalent to calling rampToVideoZoomFactor:withRate: using the current zoom factor
+ target and a rate of 0.  This allows a smooth stop to any changes in zoom which were in progress.
+ 
+ -cancelVideoZoomRamp: throws an NSGenericException if called without first
+ obtaining exclusive access to the receiver using lockForConfiguration:.
+ */
+- (void)cancelVideoZoomRamp NS_AVAILABLE_IOS(7_0);
+
+@end
+	
+/*!
+ @enum AVAuthorizationStatus
+ @abstract
+    Constants indicating the client's authorization to the underlying hardware supporting a media type.
+ 
+ @constant AVAuthorizationStatusNotDetermined
+    Indicates that the user has not yet made a choice regarding whether the client can access the hardware.
+ @constant AVAuthorizationStatusRestricted
+    The client is not authorized to access the hardware for the media type. The user cannot change
+    the client's status, possibly due to active restrictions such as parental controls being in place.
+ @constant AVAuthorizationStatusDenied
+    The user explicitly denied access to the hardware supporting a media type for the client.
+ @constant AVAuthorizationStatusAuthorized
+    The client is authorized to access the hardware supporting a media type.
+ */
+typedef NS_ENUM(NSInteger, AVAuthorizationStatus) {
+	AVAuthorizationStatusNotDetermined = 0,
+	AVAuthorizationStatusRestricted,
+	AVAuthorizationStatusDenied,
+	AVAuthorizationStatusAuthorized
+} NS_AVAILABLE_IOS(7_0);
+		
+@interface AVCaptureDevice (AVCaptureDeviceAuthorization)
+
+/*!
+ @method authorizationStatusForMediaType:
+ @abstract
+    Returns the client's authorization status for accessing the underlying hardware that supports a given media type.
+ 
+ @param mediaType
+    The media type, either AVMediaTypeVideo or AVMediaTypeAudio
+ 
+ @result
+    The authorization status of the client
+ 
+ @discussion
+    This method returns the AVAuthorizationStatus of the client for accessing the underlying hardware supporting
+    the media type.  Media type constants are defined in AVMediaFormat.h.  If any media type other than AVMediaTypeVideo or
+    AVMediaTypeAudio is supplied, an NSInvalidArgumentException will be thrown.  If the status is AVAuthorizationStatusNotDetermined,
+    you may use the +requestAccessForMediaType:completionHandler: method to request access by prompting the user.
+ */
++ (AVAuthorizationStatus)authorizationStatusForMediaType:(NSString *)mediaType NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @method requestAccessForMediaType:completionHandler:
+ @abstract
+    Requests access to the underlying hardware for the media type, showing a dialog to the user if necessary.
+ 
+ @param mediaType
+    The media type, either AVMediaTypeVideo or AVMediaTypeAudio
+ @param handler
+    A block called with the result of requesting access
+ 
+ @discussion
+    Use this function to request access to the hardware for a given media type.   Media type constants are defined in AVMediaFormat.h.
+    If any media type other than AVMediaTypeVideo or AVMediaTypeAudio is supplied, an NSInvalidArgumentException will be thrown.
+ 
+    This call will not block while the user is being asked for access, allowing the client to continue running.  Until access has been granted,
+    any AVCaptureDevices for the media type will vend silent audio samples or black video frames.  The user is only asked for permission
+    the first time the client requests access.  Later calls use the permission granted by the user.
+ 
+    Note that the authorization dialog will automatically be shown if the status is AVAuthorizationStatusNotDetermined when
+    creating an AVCaptureDeviceInput.
+ 
+    Invoking this method with AVMediaTypeAudio is equivalent to calling -[AVAudioSession requestRecordPermission:].
+
+    The completion handler is called on an arbitrary dispatch queue.  Is it the client's responsiblity to ensure that
+    any UIKit-related updates are called on the main queue or main thread as a result.
+ */
++ (void)requestAccessForMediaType:(NSString *)mediaType completionHandler:(void (^)(BOOL granted))handler NS_AVAILABLE_IOS(7_0);
+
+@end
+
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
 typedef float AVCaptureDeviceTransportControlsSpeed; 
@@ -964,11 +1233,10 @@ typedef float AVCaptureDeviceTransportControlsSpeed;
  @constant AVCaptureDeviceTransportControlsPlayingMode
     Indicates that the tape transport is threaded through the play head.
 */
-enum {
+typedef NS_ENUM(NSInteger, AVCaptureDeviceTransportControlsPlaybackMode) {
 	AVCaptureDeviceTransportControlsNotPlayingMode      = 0,
 	AVCaptureDeviceTransportControlsPlayingMode         = 1
-};
-typedef NSInteger AVCaptureDeviceTransportControlsPlaybackMode;
+} NS_AVAILABLE(10_7, NA);
 
 @interface AVCaptureDevice (AVCaptureDeviceTransportControls)
 
@@ -1034,8 +1302,6 @@ typedef NSInteger AVCaptureDeviceTransportControlsPlaybackMode;
 #endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
 
-#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
-
 @class AVFrameRateRangeInternal;
 
 /*!
@@ -1052,9 +1318,10 @@ typedef NSInteger AVCaptureDeviceTransportControlsPlaybackMode;
     AVFrameRateRange expresses min and max frame rate as a rate in frames per second and
     duration (CMTime).  An AVFrameRateRange object is immutable.  Its values do not change for the life of the object.
 */
-NS_CLASS_AVAILABLE(10_7, NA)
+NS_CLASS_AVAILABLE(10_7, 7_0)
 @interface AVFrameRateRange : NSObject
 {
+@private
     AVFrameRateRangeInternal *_internal;
 }
 
@@ -1106,12 +1373,6 @@ NS_CLASS_AVAILABLE(10_7, NA)
 
 @end
 
-#endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
-
-
-
-#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
-
 @class AVCaptureDeviceFormatInternal;
 
 /*!
@@ -1128,9 +1389,10 @@ NS_CLASS_AVAILABLE(10_7, NA)
     CMFormatDescription, such as min and max frame rate.  An AVCaptureDeviceFormat object is immutable.
     Its values do not change for the life of the object.
 */
-NS_CLASS_AVAILABLE(10_7, NA)
+NS_CLASS_AVAILABLE(10_7, 7_0)
 @interface AVCaptureDeviceFormat : NSObject
 {
+@private
     AVCaptureDeviceFormatInternal *_internal;
 }
 
@@ -1167,9 +1429,67 @@ NS_CLASS_AVAILABLE(10_7, NA)
 */
 @property(nonatomic, readonly) NSArray *videoSupportedFrameRateRanges;
 
-@end
+/*!
+ @property videoFieldOfView
+ @abstract
+    A property indicating the format's field of view.
 
-#endif // (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+ @discussion
+    videoFieldOfView is a float value indicating the receiver's field of view in degrees.
+    If field of view is unknown, a value of 0 is returned.
+*/
+@property(nonatomic, readonly) float videoFieldOfView NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property videoBinned
+ @abstract
+    A property indicating whether the format is binned.
+
+ @discussion
+    videoBinned is a boolean value indicating whether the format is a binned format.
+    Binning is a pixel-combining process which can result in greater low light sensitivity at the cost of reduced resolution.
+*/
+@property(nonatomic, readonly, getter=isVideoBinned) BOOL videoBinned NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property videoStabilizationSupported
+ @abstract
+    A property indicating whether the format supports video stabilization.
+
+ @discussion
+    videoStabilizationSupported is a boolean value indicating whether the format can be stabilized using 
+    AVCaptureConnection -setEnablesVideoStabilizationWhenAvailable.
+*/
+@property(nonatomic, readonly, getter=isVideoStabilizationSupported) BOOL videoStabilizationSupported NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property videoMaxZoomFactor
+ @abstract
+    Indicates the maximum zoom factor available for the AVCaptureDevice's videoZoomFactor property.
+ 
+ @discussion
+    If the device's videoZoomFactor property is assigned a larger value, an NSRangeException will
+    be thrown. A maximum zoom factor of 1 indicates no zoom is available.
+ */
+@property(nonatomic, readonly) CGFloat videoMaxZoomFactor NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property videoZoomFactorUpscaleThreshold
+ @abstract
+    Indicates the value of AVCaptureDevice's videoZoomFactor property at which the image output
+    begins to require upscaling.
+ 
+ @discussion
+    In some cases the image sensor's dimensions are larger than the dimensions reported by the video
+    AVCaptureDeviceFormat.  As long as the sensor crop is larger than the reported dimensions of the
+    AVCaptureDeviceFormat, the image will be downscaled.  Setting videoZoomFactor to the value of
+    videoZoomFactorUpscalingThreshold will provide a center crop of the sensor image data without
+    any scaling.  If a greater zoom factor is used, then the sensor data will be upscaled to the
+    device format's dimensions.
+ */
+@property(nonatomic, readonly) CGFloat videoZoomFactorUpscaleThreshold NS_AVAILABLE_IOS(7_0);
+
+@end
 
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 
@@ -1189,6 +1509,7 @@ NS_CLASS_AVAILABLE(10_7, NA)
 NS_CLASS_AVAILABLE(10_7, NA)
 @interface AVCaptureDeviceInputSource : NSObject
 {
+@private
     AVCaptureDeviceInputSourceInternal *_internal;
 }
 

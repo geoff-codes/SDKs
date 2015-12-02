@@ -3,9 +3,9 @@
  
      Contains:   Master include for vecLib framework
  
-     Version:    vecLib-387.12
+     Version:    vecLib-459.0
  
-     Copyright:  © 2000-2012 by Apple Computer, Inc., all rights reserved.
+     Copyright:  2000-2014 by Apple Computer, Inc., all rights reserved.
  
      Bugs?:      For bug reports, consult the following page on
                  the World Wide Web:
@@ -46,7 +46,6 @@
 #ifndef __VDSP__
 #include <vecLib/vDSP.h>
 #endif
-
 
 #if defined __ppc__ || defined __i386__
 #ifndef __VDSP_TRANSLATE__

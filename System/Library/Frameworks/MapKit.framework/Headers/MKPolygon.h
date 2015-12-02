@@ -2,22 +2,15 @@
 //  MKPolygon.h
 //  MapKit
 //
-//  Copyright (c) 2010-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2010-2013, Apple Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
+#import <MapKit/MKFoundation.h>
 #import <MapKit/MKMultiPoint.h>
 #import <MapKit/MKOverlay.h>
-#import <MapKit/MKFoundation.h>
 
-MK_CLASS_AVAILABLE(NA, 4_0)
-@interface MKPolygon : MKMultiPoint <MKOverlay> {
-@package
-    CLLocationCoordinate2D _centroid;
-    NSArray *_interiorPolygons;
-    BOOL _isDefinitelyConvex;
-}
+MK_CLASS_AVAILABLE(10_9, 4_0)
+@interface MKPolygon : MKMultiPoint <MKOverlay>
 
 + (MKPolygon *)polygonWithPoints:(MKMapPoint *)points count:(NSUInteger)count;
 + (MKPolygon *)polygonWithPoints:(MKMapPoint *)points count:(NSUInteger)count interiorPolygons:(NSArray *)interiorPolygons;

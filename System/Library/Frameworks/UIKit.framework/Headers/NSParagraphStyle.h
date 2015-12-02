@@ -2,7 +2,7 @@
 //  NSParagraphStyle.h
 //  UIKit
 //
-//  Copyright (c) 2011-2012 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2013, Apple Inc. All rights reserved.
 //
 // NSParagraphStyle and NSMutableParagraphStyle hold paragraph style information
 // 
@@ -11,8 +11,23 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/NSText.h>
-#import <CoreText/CTParagraphStyle.h>
 
+
+// NSTextTab
+UIKIT_EXTERN NSString *const NSTabColumnTerminatorsAttributeName NS_AVAILABLE_IOS(7_0); /* An attribute for NSTextTab options.  The value is NSCharacterSet.  The character set is used to determine the tab column terminating character.  The tab and newline characters are implied even if not included in the character set. */
+
+NS_CLASS_AVAILABLE_IOS(7_0) @interface NSTextTab : NSObject <NSCopying, NSCoding>
+- (id)initWithTextAlignment:(NSTextAlignment)alignment location:(CGFloat)loc options:(NSDictionary *)options; /* Initializes a text tab with the text alignment, location, and options.  The text alignment is used to determine the position of text inside the tab column. */
+
++ (NSCharacterSet *)columnTerminatorsForLocale:(NSLocale *)aLocale; // Returns the column terminators for locale. Passing nil returns an instance corresponding to the system locale. For matching user's formatting preferences, pass [NSLocale currentLocale]. Can be used as the value for NSTabColumnTerminatorsAttributeName to make a decimal tab stop */
+
+@property(readonly) NSTextAlignment alignment;  /* Defines the aligment of tab column contents. NSTextAlignmentNatural and NSTextAlignmentJustified are resolved either NSTextAlignmentLeft or NSTextAlignmentRight based on the user's preferred language */
+@property(readonly) CGFloat location; /* Location of the tab stop inside the line fragment rect coordinate system */
+@property(readonly) NSDictionary *options; /* Optional configuration attributes */
+@end
+
+
+// NSParagraphStyle
 typedef NS_ENUM(NSInteger, NSLineBreakMode) {		/* What to do with long lines */
     NSLineBreakByWordWrapping = 0,     	/* Wrap at word boundaries, default */
     NSLineBreakByCharWrapping,		/* Wrap at character boundaries */
@@ -28,7 +43,7 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface NSParagraphStyle : NSObject <NSCopying, N
 
 + (NSWritingDirection)defaultWritingDirectionForLanguage:(NSString *)languageName;  // languageName is in ISO lang region format
 
-@property(readonly) CGFloat lineSpacing; /* "Leading": distance between the bottom of one line fragment and top of next (applied between lines in the same container). Can't be negative. This value is included in the line fragment heights in layout manager. */
+@property(readonly) CGFloat lineSpacing; /* "Leading": distance between the bottom of one line fragment and top of next (applied between lines in the same container). This value is included in the line fragment heights in layout manager. */
 @property(readonly) CGFloat paragraphSpacing; /* Distance between the bottom of this paragraph and top of next (or the beginning of its paragraphSpacingBefore, if any). */
 @property(readonly) NSTextAlignment alignment;
 
@@ -53,6 +68,9 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface NSParagraphStyle : NSObject <NSCopying, N
     NOTE: On iOS, the only supported values are 0.0 and 1.0.
 */
 @property(readonly) float hyphenationFactor;
+
+@property(readonly,copy,NS_NONATOMIC_IOSONLY) NSArray *tabStops NS_AVAILABLE_IOS(7_0); // An array of NSTextTabs. Default value is nil. Contents should be ordered by localtion
+@property(readonly,NS_NONATOMIC_IOSONLY) CGFloat defaultTabInterval NS_AVAILABLE_IOS(7_0); // The default tab interval used for locations beyond the last element in tabStops
 @end
 
 
@@ -71,5 +89,7 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface NSMutableParagraphStyle : NSParagraphStyl
 @property(readwrite) CGFloat lineHeightMultiple;
 @property(readwrite) CGFloat paragraphSpacingBefore;
 @property(readwrite) float hyphenationFactor;
+@property(readwrite,copy,NS_NONATOMIC_IOSONLY) NSArray *tabStops NS_AVAILABLE_IOS(7_0);
+@property(readwrite,NS_NONATOMIC_IOSONLY) CGFloat defaultTabInterval NS_AVAILABLE_IOS(7_0);
 
 @end

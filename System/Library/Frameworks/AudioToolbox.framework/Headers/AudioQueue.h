@@ -211,13 +211,11 @@ enum {
         A read-only property whose value is a UInt32 indicating the most recent error (if any)
         encountered by the queue's internal encoding/decoding process.
     @constant   kAudioQueueProperty_EnableTimePitch
-        A read/write property whose value is a UInt32 describing whether there is an AUTimePitch
+        A read/write property whose value is a UInt32 describing whether there is a time/pitch unit
         inserted into the queue's audio signal chain. This property may only be set while
         the queue is stopped.
     @constant   kAudioQueueProperty_TimePitchAlgorithm
         A read/write property whose value is a UInt32 describing the time/pitch algorithm in use.
-        Valid values are kAudioQueueTimePitchAlgorithm_Spectral (expensive but high-quality),
-        and kAudioQueueTimePitchAlgorithm_TimeDomain (less expensive and lower quality).
         This property is only valid while a time/pitch has been inserted, and may only be changed
         when the queue is not running.
     @constant   kAudioQueueProperty_TimePitchBypass
@@ -243,23 +241,34 @@ enum { // typedef UInt32 AudioQueuePropertyID
     kAudioQueueProperty_DecodeBufferSizeFrames  = 'dcbf',       // value is UInt32
     kAudioQueueProperty_ConverterError          = 'qcve',       // value is UInt32
 
-#if !TARGET_OS_IPHONE
     kAudioQueueProperty_EnableTimePitch         = 'q_tp',       // value is UInt32, 0/1
     kAudioQueueProperty_TimePitchAlgorithm      = 'qtpa',       // value is UInt32. See values below.
     kAudioQueueProperty_TimePitchBypass         = 'qtpb',       // value is UInt32, 1=bypassed
-#endif
 };
 
-#if !TARGET_OS_IPHONE
 /*!
     @enum       Time/Pitch algorithms
     @abstract   Constants that identify values of kAudioQueueProperty_TimePitchAlgorithm
+
+    @constant kAudioQueueTimePitchAlgorithm_Spectral
+        Highest quality, most computationally expensive. Suitable for music.
+        Default algorithm on OS X.
+    @constant kAudioQueueTimePitchAlgorithm_TimeDomain
+        Modest quality, less expensive. Suitable for voice.
+    @constant kAudioQueueTimePitchAlgorithm_LowQualityZeroLatency
+        Low quality, very inexpensive. Suitable for brief fast-forward/rewind effects,
+        low quality voice. Default algorithm on iOS.
+	@constant kAudioQueueTimePitchAlgorithm_Varispeed
+		High quality, but pitch varies with rate.
 */
 enum {
     kAudioQueueTimePitchAlgorithm_Spectral      = 'spec',
     kAudioQueueTimePitchAlgorithm_TimeDomain    = 'tido',
-};
+#if TARGET_OS_IPHONE
+    kAudioQueueTimePitchAlgorithm_LowQualityZeroLatency = 'lqzl',
 #endif
+	kAudioQueueTimePitchAlgorithm_Varispeed		= 'vspd'
+};
 
 #if TARGET_OS_IPHONE
 /*!
@@ -356,9 +365,9 @@ enum {
         1.0 (the default) indicates that the queue should play at its normal rate. Only
         applicable when the time/pitch processor has been enabled and on Mac OS X 10.6 and higher.
     @constant   kAudioQueueParam_Pitch
-        A value from -2400 to 2400 indicating the number of cents to pitch-shift the queues
+        A value from -2400 to 2400 indicating the number of cents to pitch-shift the queue's
         playback. (1200 cents is one octave.) Only applicable when the time/pitch processor has 
-        been enabled  and on Mac OS X 10.6 and higher.
+        been enabled with the spectral algorithm, and on Mac OS X 10.6 and higher.
     @constant   kAudioQueueParam_VolumeRampTime
         A value indicating the number of seconds over which subsequent volume changes will be
         ramped. For example, to fade out from full unity gain to silence over the course of 1
@@ -371,10 +380,8 @@ enum {
 enum    // typedef UInt32 AudioQueueParameterID;
 {
     kAudioQueueParam_Volume         = 1,
-#if !TARGET_OS_IPHONE
     kAudioQueueParam_PlayRate       = 2,
     kAudioQueueParam_Pitch          = 3,
-#endif
     kAudioQueueParam_VolumeRampTime = 4,
     kAudioQueueParam_Pan            = 13
 };
@@ -1682,7 +1689,7 @@ AudioQueueSetOfflineRenderFormat(   AudioQueueRef           inAQ,
         The output queue from which to obtain output.
     @param      inTimestamp
         The point in time corresponding to the beginning of the output buffer. Only mSampleTime
-        is used.
+        is used. mFlags must include kAudioTimeStampSampleTimeValid.
     @param      ioBuffer
         The buffer into which the queue will render.
     @param      inNumberFrames

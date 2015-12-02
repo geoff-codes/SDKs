@@ -2,14 +2,12 @@
  *  SFNTTypes.h
  *  CoreText
  *
- *  Copyright 1994-2012 Apple Inc. All rights reserved.
+ *  Copyright 1994-2013 Apple Inc. All rights reserved.
  *
  */
 
 #ifndef __SFNTTYPES__
 #define __SFNTTYPES__
-
-#include <TargetConditionals.h>
 
 #include <MacTypes.h>
 
@@ -419,12 +417,12 @@ struct sfntFeatureName {
   UInt16              settingCount;
   SInt32              offsetToSettings;
   UInt16              featureFlags;
-  UInt16              nameID;
+  SInt16              nameID;
 };
 typedef struct sfntFeatureName          sfntFeatureName;
 struct sfntFontFeatureSetting {
   UInt16              setting;
-  UInt16              nameID;
+  SInt16              nameID;
 };
 typedef struct sfntFontFeatureSetting   sfntFontFeatureSetting;
 struct sfntFontRunFeature {

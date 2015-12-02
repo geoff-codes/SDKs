@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 NS_CLASS_AVAILABLE(NA,4_0)
-@interface CMLogItem : NSObject <NSCoding, NSCopying>
+@interface CMLogItem : NSObject <NSSecureCoding, NSCopying>
 {
 @private
 	id _internalLogItem;

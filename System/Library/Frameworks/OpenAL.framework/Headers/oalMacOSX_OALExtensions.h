@@ -2,7 +2,7 @@
 *
 *   OpenAL cross platform audio library
 *	Copyright (c) 2004-2006, Apple Computer, Inc. All rights reserved.
-*	Copyright (c) 2007-2008, Apple Inc. All rights reserved.
+*	Copyright (c) 2007-2012, Apple Inc. All rights reserved.
 *
 *	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following 
 *	conditions are met:
@@ -26,6 +26,7 @@
 #define __OAL_MAC_OSX_OAL_EXTENSIONS_H__
 
 #include <OpenAL/al.h>
+#include <OpenAL/alc.h>
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -36,7 +37,7 @@
 
 // Retrieve functions via alGetProcAddress() by passing in strings: alcMacOSXMixerOutputRate or alcMacOSXGetMixerOutputRate
 
-// Setting the Mixer Output Rate effectively sets the samnple rate at which the mixer
+// Setting the Mixer Output Rate effectively sets the sample rate at which the mixer renders
 typedef ALvoid (*alcMacOSXRenderingQualityProcPtr) (ALint value);
 typedef ALvoid (*alMacOSXRenderChannelCountProcPtr) (ALint value);
 typedef ALvoid (*alcMacOSXMixerMaxiumumBussesProcPtr) (ALint value);
@@ -60,10 +61,33 @@ typedef ALdouble (*alcMacOSXGetMixerOutputRateProcPtr) ();
 	Allows a user to force OpenAL to render to stereo, regardless of the audio hardware being used
 */
 	#define ALC_MAC_OSX_RENDER_CHANNEL_COUNT_STEREO         'rcst'
+    #define ALC_MAC_OSX_RENDER_CHANNEL_COUNT_MULTICHANNEL   'rcmc'
 
 /* GameKit extension */
 
 	#define AL_GAMEKIT											'gksr'
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ AL_EXT_SOURCE_SPATIALIZATION
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/*
+    Allows the rendering quality to be explicitly set on a source object, overriding the default
+    render quality set via alcMacOSXRenderingQuality(). A subsequent call to alcMacOSXRenderingQuality()
+    resets the render quality of all source objects.
+ 
+    Uses the same render settings (defined above) as alcMacOSXRenderingQuality():
+ 
+        ALC_MAC_OSX_SPATIAL_RENDERING_QUALITY_HIGH
+        ALC_MAC_OSX_SPATIAL_RENDERING_QUALITY_LOW
+        ALC_IPHONE_SPATIAL_RENDERING_QUALITY_HEADPHONES
+ 
+    Retrieve functions via alcGetProcAddress() by passing in strings: alSourceRenderingQuality or alSourceGetRenderingQuality
+ */
+
+typedef ALvoid (*alSourceRenderingQualityProcPtr) (ALuint sid, ALint value);
+typedef ALint (*alSourceGetRenderingQualityProcPtr) (ALuint sid);
+
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  AL_EXT_SOURCE_NOTIFICATIONS
@@ -116,6 +140,7 @@ typedef ALenum (*alSourceAddNotificationProcPtr) (ALuint sid, ALuint notificatio
  */
 typedef ALvoid (*alSourceRemoveNotificationProcPtr) (ALuint	sid, ALuint notificationID, alSourceNotificationProc notifyProc, ALvoid* userData);
 
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	ALC_EXT_ASA : Apple Spatial Audio Extension
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -158,4 +183,72 @@ typedef ALenum  (*alcASASetListenerProcPtr) (ALuint property, ALvoid *data, ALui
 	#define ALC_ASA_OCCLUSION							'occl'	// type ALfloat	-100.0 db (most occlusion) - 0.0 db (no occlusion, 0.0 default)
 	#define ALC_ASA_OBSTRUCTION							'obst'	// type ALfloat	-100.0 db (most obstruction) - 0.0 db (no obstruction, 0.0 default)	
 							
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ALC_EXT_OUTPUT_CAPTURER
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/*
+ Allows an application to capture the rendered output of the current context.
+ The application prepares OpenAL for capturing the context output by specifying the data format
+ of the captured audio output data. Once capture has been started, the application then queries OpenAL
+ for the available number of captured samples, and requests the samples by providing a buffer to fill.
+ 
+ Retrieve functions via alcGetProcAddress() by passing in strings: alcOutputCapturerPrepare, alcOutputCapturerStart,
+ alcOutputCapturerStop, alcOutputCapturerAvailableSamples and alcOutputCapturerSamples
+ */
+
+/*
+ API: alcOutputCapturerPrepare
+ 
+ Prepare output capturing of the current context by specifying the data format desired from OpenAL.
+ 
+ frequency		- Sampling rate of the captured output.
+ 
+ format         - Data format of the captured data. Specified as one of the native OpenAL data format types:
+ AL_FORMAT_MONO8
+ AL_FORMAT_MONO16
+ AL_FORMAT_STEREO8
+ AL_FORMAT_STEREO16
+ 
+ maxsamplecount     - The maximum number of samples that will be requested by the application.
+ */
+typedef ALvoid AL_APIENTRY (*alcOutputCapturerPrepareProcPtr)   (ALCuint frequency, ALCenum format, ALCsizei maxsamplecount);
+
+/*
+ API: alcOutputCapturerStart
+ 
+ Start capturing samples rendered by the current context to a maximum of the sample count specified when calling alcOutputCapturerPrepare.
+ */
+typedef ALvoid AL_APIENTRY (*alcOutputCapturerStartProcPtr) ();
+
+/*
+ API: alcOutputCapturerStop
+ 
+ Stop capturing samples rendered by the context. This function resets the captured audio samples to 0.
+ */
+typedef ALvoid AL_APIENTRY (*alcOutputCapturerStopProcPtr) ();
+
+/*
+ API: alcOutputCapturerAvailableSamples
+ 
+ Get the number of captured samples currently available.
+ */
+typedef ALint  AL_APIENTRY (*alcOutputCapturerAvailableSamplesProcPtr) ();
+
+/*
+ API: alcOutputCapturerSamples
+ 
+ Write captured samples to an application provided buffer.
+ 
+ buffer         -   Application provided buffer to be filled with the requested amount of samples and must be of size
+ samplecount * size of sample. i.e. 100 samples of AL_FORMAT_STEREO16 data -> 100 * 4 = 400 bytes
+ The buffer must NOT be deallocated before the call to alcOutputCapturerSamples returns.
+ 
+ samplecount    -   Number of samples to be copied to the provided buffer.
+ Requesting more samples than currently available is an error.
+ */
+typedef ALvoid AL_APIENTRY (*alcOutputCapturerSamplesProcPtr)   (ALCvoid *buffer, ALCsizei samplecount);
+
+
 #endif // __OAL_MAC_OSX_OAL_EXTENSIONS_H__
+

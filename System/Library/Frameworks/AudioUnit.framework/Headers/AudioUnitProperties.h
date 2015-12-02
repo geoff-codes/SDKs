@@ -344,7 +344,7 @@ enum {
 	@constant		kAudioUnitProperty_HostCallbacks
 						Scope:			Global
 						Value Type:		HostCallbackInfo
-						Access:			Write
+ 						Access:			Write
 						
 						The audio unit should only call the host callbacks while it is in its render function. The audio unit must provide the client info when calling the callbacks as provided
 						by the host. They are provided as a means for an audio unit to gain information from the host about parameters that may affect its rendering operation. 
@@ -722,22 +722,23 @@ enum {
 						For parameters which have kAudioUnitParameterFlag_PlotHistory set, getting this property fills out the 
 						AudioUnitParameterHistoryInfo struct containing the recommended update rate and history duration.
 
-     @constant		kAudioUnitProperty_NickName
-                         Scope:			Global
-                         Value Type:	CFStringRef
-                         Access: 		read/write
-                         
-                        Provides a way for a host to set a custom name on an AU. 
+	@constant		kAudioUnitProperty_NickName
+						Scope:			Global
+						Value Type:		CFStringRef
+						Access:			read/write
+						 
+						Provides a way for a host to set a custom name on an AU. 
  
-                        An example of when this is useful is when a host is managing a processing chain that contains multiple AU
-                        instances of the same subtype (and type and manufacturer). The host uses this property to assign a 
-                        unique name to each AU instance indicating what that particular instance's function is in the processing
-                        chain and can later query the property to distinguish between AU instances with the same type/subtype/manu
-                        tuple. It is the host's responsibility to keep the names unique if uniqueness is required. 
+						An example of when this is useful is when a host is managing a processing chain that contains multiple AU
+						instances of the same subtype (and type and manufacturer). The host uses this property to assign a 
+						unique name to each AU instance indicating what that particular instance's function is in the processing
+						chain and can later query the property to distinguish between AU instances with the same type/subtype/manu
+						tuple. It is the host's responsibility to keep the names unique if uniqueness is required. 
  
-                        When getting this property, ownership follows Core Foundation's 'Copy Rule'. This property may return NULL 
-                        which indicates that no name has been set on the AU.
- */	
+						When getting this property, ownership follows Core Foundation's 'Copy Rule'. This property may return NULL 
+						which indicates that no name has been set on the AU.
+
+ */
 enum
 {
 // range (0 -> 999)
@@ -768,6 +769,7 @@ enum
 	kAudioUnitProperty_DependentParameters			= 45,
 	kAudioUnitProperty_InputSamplesInOutput			= 49,
 	kAudioUnitProperty_ShouldAllocateBuffer			= 51,
+	kAudioUnitProperty_FrequencyResponse			= 52,
 	kAudioUnitProperty_ParameterHistoryInfo			= 53,
 	kAudioUnitProperty_NickName                     = 54,
     kAudioUnitProperty_OfflineRender				= 37
@@ -788,10 +790,51 @@ enum
 	kAudioUnitProperty_AUHostIdentifier				= 46,
 	kAudioUnitProperty_MIDIOutputCallbackInfo		= 47,
 	kAudioUnitProperty_MIDIOutputCallback			= 48,
-	kAudioUnitProperty_ClassInfoFromDocument		= 50,
-	kAudioUnitProperty_FrequencyResponse			= 52
+	kAudioUnitProperty_ClassInfoFromDocument		= 50
 #endif
 };
+
+#if TARGET_OS_IPHONE
+/*
+    @enum           Inter-App Audio Property IDs
+    @abstract       Properties used in inter-app audio.
+
+	@constant		kAudioUnitProperty_RemoteControlEventListener
+	@discussion			Scope:			Global
+						Value Type:		AudioUnitRemoteControlEventListener
+						Access:			read/write
+						
+					Provides a way for a host to receive AudioUnitRemoteControlEvents from a remote "node"
+					audio unit. The supplied listener block is called when the audio unit sends a remote
+					control event.
+
+	@constant		kAudioUnitProperty_IsInterAppConnected
+	@discussion			Scope: Global
+						Value Type: UInt32 (0-1)
+						Access: read-only
+					
+					Both host and node apps can query and listen to this property to determine when
+					the audio unit has been connected to another app.
+
+	@constant		kAudioUnitProperty_PeerURL
+	@discussion			Scope: Global
+						Value Type: CFURLRef
+						Access: read-only
+					
+					Both host and node apps can query this property to obtain a URL which, when
+					opened, will activate the other app.
+					
+					N.B. This URL is only valid while the host has an open connection to the node.
+*/
+enum
+{
+	kAudioUnitProperty_RemoteControlEventListener	= 100,
+	kAudioUnitProperty_IsInterAppConnected			= 101,
+	kAudioUnitProperty_PeerURL						= 102
+};
+#endif
+
+
 
 /*!
     @abstract       Keys contains in an audio unit preset (ClassInfo) dictionary
@@ -932,9 +975,16 @@ typedef struct AudioUnitFrequencyResponseBin
 /*!
 	@typedef		HostCallback_GetBeatAndTempo
 	@abstract		Retrieve information about the current beat and/or tempo
-	@discussion		If the host app has set this callback, then the audio unit can use this to get the current beat and tempo as they relate to the first sample in the render buffer. The audio unit can call this callback only from within the audio unit render call (otherwise the host is unable to provide information accurately to the audio unit as the information obtained is relate to the current AudioUnitRender call). If the host cannot provide the requested information, it will return kAudioUnitErr_CannotDoInCurrentContext.
+	@discussion
+		If the host app has set this callback, then the audio unit can use this to get the current
+		beat and tempo as they relate to the first sample in the render buffer. The audio unit can
+		call this callback only from within the audio unit render call (otherwise the host is unable
+		to provide information accurately to the audio unit as the information obtained is relate to
+		the current AudioUnitRender call). If the host cannot provide the requested information, it
+		will return kAudioUnitErr_CannotDoInCurrentContext.
 	
-			The AudioUnit can provide NULL for any of the requested parameters (except for inHostUserData) if it is not interested in that particular piece of information
+		The AudioUnit can provide NULL for any of the requested parameters (except for
+		inHostUserData) if it is not interested in that particular piece of information
 
 	@param			inHostUserData			Must be provided by the audio unit when it makes this call. It is the client data provided by the host when it set the HostCallbacks property
 	@param			outCurrentBeat			The current beat, where 0 is the first beat. Tempo is defined as the number of whole-number (integer) beat values (as indicated by the outCurrentBeat field) per minute.
@@ -947,9 +997,16 @@ typedef OSStatus (*HostCallback_GetBeatAndTempo) (void		*inHostUserData,
 /*!
 	@typedef		HostCallback_GetMusicalTimeLocation
 	@abstract		Retrieve information about the musical time state of the host
-	@discussion		If the host app has set this callback, then the audio unit can use this to obtain information about the state of musical time in the host. The audio unit can call this callback only from within the audio unit render call (otherwise the host is unable to provide information accurately to the audio unit as the information obtained is relate to the current AudioUnitRender call). If the host cannot provide the requested information, it will return kAudioUnitErr_CannotDoInCurrentContext.
-	
-			The AudioUnit can provide NULL for any of the requested parameters (except for inHostUserData) if it is not interested in that particular piece of information
+	@discussion
+		If the host app has set this callback, then the audio unit can use this to obtain
+		information about the state of musical time in the host. The audio unit can call this
+		callback only from within the audio unit render call (otherwise the host is unable to
+		provide information accurately to the audio unit as the information obtained is relate to
+		the current AudioUnitRender call). If the host cannot provide the requested information, it
+		will return kAudioUnitErr_CannotDoInCurrentContext.
+
+		The AudioUnit can provide NULL for any of the requested parameters (except for
+		inHostUserData) if it is not interested in that particular piece of information
 
 	@param			inHostUserData					Must be provided by the audio unit when it makes this call. It is the client data provided by the host when it set the HostCallbacks property
 	@param			outDeltaSampleOffsetToNextBeat	The number of samples until the next whole beat from the start sample of the current rendering buffer
@@ -967,9 +1024,16 @@ typedef OSStatus (*HostCallback_GetMusicalTimeLocation) (void     *inHostUserDat
 /*!
 	@typedef		HostCallback_GetTransportState
 	@abstract		Retrieve information about the time line's (or transport) state of the host. 
-	@discussion		If the host app has set this callback, then the audio unit can use this to obtain information about the transport state of the host's time line. The audio unit can call this callback only from within the audio unit render call (otherwise the host is unable to provide information accurately to the audio unit as the information obtained is relate to the current AudioUnitRender call. If the host cannot provide the requested information, it will return kAudioUnitErr_CannotDoInCurrentContext.
+	@discussion
+		If the host app has set this callback, then the audio unit can use this to obtain
+		information about the transport state of the host's time line. The audio unit can call this
+		callback only from within the audio unit render call (otherwise the host is unable to
+		provide information accurately to the audio unit as the information obtained is relate to
+		the current AudioUnitRender call. If the host cannot provide the requested information, it
+		will return kAudioUnitErr_CannotDoInCurrentContext.
 	
-			The AudioUnit can provide NULL for any of the requested parameters (except for inHostUserData) if it is not interested in that particular piece of information
+		The AudioUnit can provide NULL for any of the requested parameters (except for
+		inHostUserData) if it is not interested in that particular piece of information
 	
 	@param			inHostUserData					Must be provided by the audio unit when it makes this call. It is the client data provided by the host when it set the HostCallbacks property
 	@param			outIsPlaying					Returns true if the host's transport is currently playing, false if stopped
@@ -989,16 +1053,51 @@ typedef OSStatus (*HostCallback_GetTransportState) (void 	*inHostUserData,
 										Float64 			*outCycleEndBeat);
 
 /*!
+	@typedef		HostCallback_GetTransportState2
+	@abstract		Retrieve information about the time line's (or transport) state of the host. 
+	@discussion
+		If the host app has set this callback, then the audio unit can use this to obtain
+		information about the transport state of the host's time line. The audio unit can call this
+		callback only from within the audio unit render call (otherwise the host is unable to
+		provide information accurately to the audio unit as the information obtained is relate to
+		the current AudioUnitRender call. If the host cannot provide the requested information, it
+		will return kAudioUnitErr_CannotDoInCurrentContext.
+
+		The AudioUnit can provide NULL for any of the requested parameters (except for
+		inHostUserData) if it is not interested in that particular piece of information
+	
+	@param			inHostUserData					Must be provided by the audio unit when it makes this call. It is the client data provided by the host when it set the HostCallbacks property
+	@param			outIsPlaying					Returns true if the host's transport is currently playing, false if stopped
+	@param			outIsRecording					Returns true if the host is currently record-enabled, otherwise false.
+	@param			outTransportStateChanged		Returns true if there was a change to the state of, or discontinuities in, the host's transport (generally since the callback was last called). Can indicate such state changes as start/top, time moves (jump from one time line to another).
+	@param			outCurrentSampleInTimeLine		Returns the current sample count in the time line of the host's transport time.  
+	@param			outIsCycling					Returns true if the host's transport is currently cycling or looping
+	@param			outCycleStartBeat				If cycling is true, the start beat of the cycle or loop point in the host's transport
+	@param			outCycleEndBeat					If cycling is true, the end beat of the cycle or loop point in the host's transport
+	
+*/
+typedef OSStatus (*HostCallback_GetTransportState2) (void 	*inHostUserData,
+										Boolean 			*outIsPlaying,
+										Boolean				*outIsRecording,
+										Boolean 			*outTransportStateChanged,
+										Float64 			*outCurrentSampleInTimeLine,
+										Boolean 			*outIsCycling,
+										Float64 			*outCycleStartBeat,
+										Float64 			*outCycleEndBeat);
+
+/*!
 	@struct			HostCallbackInfo
-	@abstract		Contains the various callbacks (or NULL) for an audio unit to call
+	@abstract		Contains the various callbacks for an audio unit to call
+	@discussion
+		Any callback can be NULL.
 */
 typedef struct HostCallbackInfo {
 	void *									hostUserData;
 	HostCallback_GetBeatAndTempo			beatAndTempoProc;
     HostCallback_GetMusicalTimeLocation     musicalTimeLocationProc;
 	HostCallback_GetTransportState			transportStateProc;	
+	HostCallback_GetTransportState2			transportStateProc2;
 } HostCallbackInfo;
-
 
 /*!
 	@struct			AUDependentParameter
@@ -1370,6 +1469,65 @@ typedef struct AudioUnitParameterValueFromString {
 } AudioUnitParameterValueFromString;
 
 #endif //!TARGET_OS_IPHONE
+
+
+#if TARGET_OS_IPHONE
+/*!
+	@enum			Remote Control Events
+	@abstract		In inter-app audio, messages to control the host's transport state.
+*/
+enum {
+	kAudioUnitRemoteControlEvent_TogglePlayPause	= 1,
+	kAudioUnitRemoteControlEvent_ToggleRecord		= 2,
+	kAudioUnitRemoteControlEvent_Rewind				= 3
+};
+typedef UInt32 AudioUnitRemoteControlEvent;
+
+/*!	@typedef		AudioUnitRemoteControlEventListener
+	@abstract		Block called to receive a remote control event.
+*/
+typedef void (^AudioUnitRemoteControlEventListener)(AudioUnitRemoteControlEvent event);
+#endif
+
+//=====================================================================================================================
+#pragma mark - Configuration Info Keys
+
+//	These strings are used as keys to the dictionary of configuration info returned by
+//	AudioComponentGetConfiguationInfo(). Informaton about them is presented inline with the
+//	declaration.
+
+/*!
+	@define		kAudioUnitConfigurationInfo_HasCustomView
+	@discussion	This is a boolean value that indicates whether or not the AU has a custom view
+*/
+#define kAudioUnitConfigurationInfo_HasCustomView	"HasCustomView"
+
+/*!
+	@define		kAudioUnitConfigurationInfo_ChannelConfigurations
+	@discussion	This is an array of pairs of values where each item in the array is an array of two
+				numbers and is the equivalent of an AUChannelInfo. If the AudioUnit is an effect and
+				it doesn't implement kAudioUnitProperty_SupportedNumChannels, the array will contain
+				only the single entry, { -1, -1}. If the AudioUnit is an instrument or a generator
+				and doesn't implement kAudioUnitProperty_SupportedNumChannels, the array will be
+				empty and means that the AU's initial state is all that is supported.
+*/
+#define kAudioUnitConfigurationInfo_ChannelConfigurations	"ChannelConfigurations"
+
+/*!
+	@define		kAudioUnitConfigurationInfo_InitialInputs
+	@discussion	An array of numbers whose size is equal to the number of input buses posessed by the
+				AU. Each number in the array represents the number of channels for the corresponding
+				bus.
+*/
+#define kAudioUnitConfigurationInfo_InitialInputs	"InitialInputs"
+
+/*!
+	@define		kAudioUnitConfigurationInfo_InitialOutputs
+	@discussion	An array of numbers whose size is equal to the number of output buses posessed by
+				the AU. Each number in the array represents the number of channels for the
+				corresponding bus.
+*/
+#define kAudioUnitConfigurationInfo_InitialOutputs	"InitialOutputs"
 
 //=====================================================================================================================
 #pragma mark - Output Unit
@@ -2041,6 +2199,75 @@ enum {
 	kAudioOutputUnitProperty_StartTimestampsAtZero  = 2007	// this will also work with AUConverter
 };
 
+#if TARGET_OS_IPHONE
+/*!
+    @enum           Apple Inter-App Output Property IDs
+    @abstract       The collection of property IDs for Apple output units with inter-app audio on iOS.
+	
+	@constant		kAudioOutputUnitProperty_MIDICallbacks
+	@discussion			Scope: Global
+						Value Type: AudioOutputUnitMIDICallbacks
+						Access: read/write
+
+					When an output unit is published as a remote instrument or music effect, this
+					property must be set on the unit in order to receive MIDI events from the
+					host. The specified callbacks will be called at render time, immediately
+					prior to the request to render a buffer.
+
+	@constant		kAudioOutputUnitProperty_HostReceivesRemoteControlEvents
+	@discussion			Scope: Global
+						Value Type: UInt32
+						Access: read-only
+					Indicates whether the connected host app (if any) receives remote control events.
+
+	@constant		kAudioOutputUnitProperty_RemoteControlToHost
+	@discussion			Scope: Global
+						Value Type: AudioUnitRemoteControlEvent
+						Access: write-only
+					A node app can set this property on its output unit in order to send a remote
+					control event to the host app.
+
+	@constant		kAudioOutputUnitProperty_HostTransportState
+	@discussion			Scope: Global
+						Value Type: UInt32 (dummy, always 0)
+						Access: listener only
+					Indicates that the host's record or play transport state has changed and that any
+					UI reflecting it should be updated. The actual state must be fetched from the
+					HostCallbacks.
+
+	@constant		kAudioOutputUnitProperty_NodeComponentDescription
+	@discussion			Scope: Global
+						Value Type: AudioComponentDescription
+						Access: read-only
+					If a single output unit is published with multiple component descriptions, the
+					node app needs to know which component description the host used to connect.
+					This property returns that component description.
+*/
+enum {
+	kAudioOutputUnitProperty_MIDICallbacks			= 2010,
+	kAudioOutputUnitProperty_HostReceivesRemoteControlEvents
+													= 2011,
+	kAudioOutputUnitProperty_RemoteControlToHost	= 2012,
+	kAudioOutputUnitProperty_HostTransportState		= 2013,
+	kAudioOutputUnitProperty_NodeComponentDescription = 2014
+};
+
+/*!
+	@struct AudioOutputUnitMIDICallbacks
+	@abstract For inter-app audio, callbacks for receiving MIDI messages.
+	@discussion
+		The supplied callback functions are called from the realtime rendering thread, before each
+		render cycle, to provide any incoming MIDI messages.
+*/
+typedef struct {
+	void *userData;
+	
+	// see MusicDeviceMIDIEvent, MusicDeviceSysEx
+	void (*MIDIEventProc)(void *userData, UInt32 inStatus, UInt32 inData1, UInt32 inData2, UInt32 inOffsetSampleFrame);
+	void (*MIDISysExProc)(void *userData, const UInt8* inData, UInt32 inLength);
+} AudioOutputUnitMIDICallbacks;
+#endif // TARGET_OS_IPHONE
+
 /*!
 	@struct			AudioOutputUnitStartAtTimeParams
 */
@@ -2118,13 +2345,11 @@ enum {
 
 };
 
-#if TARGET_OS_IPHONE
-
 //=====================================================================================================================
 #pragma mark - AUNBandEQ unit
 /*!
 	@enum           Apple N-Band EQ Audio Unit Property IDs
-	@abstract       The collection of property IDs for the Apple N-Band EQ Audio Unit. These properties are only available with iOS 5.0 or greater.
+	@abstract       The collection of property IDs for the Apple N-Band EQ Audio Unit.
 	
 	@constant		kAUNBandEQProperty_NumberOfBands
 	@discussion			Scope: Global
@@ -2139,13 +2364,19 @@ enum {
 						Value Type: UInt32
 						Access: read-only
 							Returns the maximum number of equalizer bands.
+							
+	@constant		kAUNBandEQProperty_BiquadCoefficients
+	@discussion			Scope: Global
+						Value Type: array of Float64
+						Access: read-only
+							Returns an array of Float64 values, 5 per band.
 */
 
 enum {
 	kAUNBandEQProperty_NumberOfBands			= 2200,
-	kAUNBandEQProperty_MaxNumberOfBands			= 2201
+	kAUNBandEQProperty_MaxNumberOfBands			= 2201,
+	kAUNBandEQProperty_BiquadCoefficients		= 2203
 };
-#endif // TARGET_OS_IPHONE
 
 #if !TARGET_OS_IPHONE
 

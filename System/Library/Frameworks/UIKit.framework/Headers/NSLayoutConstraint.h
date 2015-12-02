@@ -2,7 +2,7 @@
 //  NSLayoutConstraint.h
 //  UIKit
 //	
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/NSObject.h>
@@ -121,5 +121,15 @@ UIKIT_EXTERN NSDictionary *_NSDictionaryOfVariableBindings(NSString *commaSepara
  */
 @property CGFloat constant;
 
+@end
+
+/*
+ UILayoutSupport protocol is implemented by layout guide objects
+ returned by UIViewController properties topLayoutGuide and bottomLayoutGuide.
+ These guide objects may be used as layout items in the NSLayoutConstraint
+ factory methods.
+ */
+@protocol UILayoutSupport <NSObject>
+@property(nonatomic,readonly) CGFloat length;  // As a courtesy when not using auto layout, this value is safe to refer to in -viewDidLayoutSubviews, or in -layoutSubviews after calling super
 @end
 

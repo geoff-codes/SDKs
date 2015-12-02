@@ -1,5 +1,5 @@
-/*  vfp.h (from vecLib-387.12)
- *  Copyright 1999-2012 Apple Inc.  All rights reserved.
+/*  vfp.h (from vecLib-459.0)
+ *  Copyright 1999-2014 Apple Inc.  All rights reserved.
  *
  *  Overview:
  *  vfp.h provides math library operations for SIMD vectors.  These functions
@@ -57,7 +57,7 @@ static __inline__ vFloat __VFP_INLINE_ATTR__  vnintf(vFloat __vfp_a) { return _m
 #else
 extern vFloat  vceilf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_6_0);
 extern vFloat vfloorf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_6_0);
-extern vFloat vtruncf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_NA,   __IPHONE_6_0);
+extern vFloat vtruncf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_6_0);
 extern vFloat  vnintf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_6_0);
 /*  The legacy name vintf is not available on iOS.  Use vtruncf instead.      */
 extern vFloat   vintf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
@@ -83,10 +83,10 @@ extern vFloat   vintf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_NA);
  *                      when the argument is close to zero.                   */
  
 extern vFloat   vexpf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
-extern vFloat  vexp2f(vFloat) __OSX_AVAILABLE_STARTING(__MAC_NA,   __IPHONE_6_0);
+extern vFloat  vexp2f(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_6_0);
 extern vFloat vexpm1f(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
 extern vFloat   vlogf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
-extern vFloat  vlog2f(vFloat) __OSX_AVAILABLE_STARTING(__MAC_NA,   __IPHONE_6_0);
+extern vFloat  vlog2f(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_6_0);
 extern vFloat vlog10f(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_6_0);
 extern vFloat vlog1pf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
  
@@ -160,9 +160,9 @@ extern vFloat    vsinf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0
 extern vFloat    vcosf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
 extern vFloat vsincosf(vFloat, vFloat *) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_6_0);
 extern vFloat    vtanf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
-extern vFloat  vsinpif(vFloat) __OSX_AVAILABLE_STARTING(__MAC_NA,   __IPHONE_6_0);
-extern vFloat  vcospif(vFloat) __OSX_AVAILABLE_STARTING(__MAC_NA,   __IPHONE_6_0);
-extern vFloat  vtanpif(vFloat) __OSX_AVAILABLE_STARTING(__MAC_NA,   __IPHONE_6_0);
+extern vFloat  vsinpif(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_6_0);
+extern vFloat  vcospif(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_6_0);
+extern vFloat  vtanpif(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_6_0);
 extern vFloat   vasinf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
 extern vFloat   vacosf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
 extern vFloat   vatanf(vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
@@ -229,7 +229,7 @@ extern vFloat    vremquof(vFloat, vFloat, vUInt32 *) __OSX_AVAILABLE_STARTING(__
  *                      FP_INFINITE; if the argument is zero, the result is
  *                      FP_ZERO.  Consult <math.h> for further details.       */
 
-extern vFloat       vfabsf(vFloat)         __OSX_AVAILABLE_STARTING(__MAC_NA,   __IPHONE_6_0);
+extern vFloat       vfabsf(vFloat)         __OSX_AVAILABLE_STARTING(__MAC_10_9, __IPHONE_6_0);
 extern vFloat   vcopysignf(vFloat, vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
 extern vUInt32   vsignbitf(vFloat)         __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);
 extern vFloat  vnextafterf(vFloat, vFloat) __OSX_AVAILABLE_STARTING(__MAC_10_0, __IPHONE_6_0);

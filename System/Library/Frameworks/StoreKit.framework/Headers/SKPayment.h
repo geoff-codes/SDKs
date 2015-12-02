@@ -29,11 +29,15 @@ SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPayment : NSObject <NSCopying, NSMut
 // default: 1.  Must be at least 1.
 @property(nonatomic, readonly) NSInteger quantity __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
+// Application-specific user identifier.  Optional.
+@property(nonatomic, copy, readonly) NSString *applicationUsername __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+
 @end
 
 
 SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKMutablePayment : SKPayment
 
+@property(nonatomic, copy, readwrite) NSString *applicationUsername __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 @property(nonatomic, copy, readwrite) NSString *productIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 @property(nonatomic, readwrite) NSInteger quantity __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 @property(nonatomic, copy, readwrite) NSData *requestData __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);

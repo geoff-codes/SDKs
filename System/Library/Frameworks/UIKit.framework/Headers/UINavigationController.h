@@ -2,7 +2,7 @@
 //  UINavigationController.h
 //  UIKit
 //
-//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -24,51 +24,21 @@
  Navigation between controllers with non-uniform rotatability is currently not supported.
 */
 
+
+typedef NS_ENUM(NSInteger, UINavigationControllerOperation) {
+    UINavigationControllerOperationNone,
+    UINavigationControllerOperationPush,
+    UINavigationControllerOperationPop,
+};
+
 UIKIT_EXTERN const CGFloat UINavigationControllerHideShowBarDuration;
 
 @class UIView, UINavigationBar, UINavigationItem, UIToolbar, UILayoutContainerView;
 @protocol UINavigationControllerDelegate;
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationController : UIViewController {
-  @package
-    UIView           *_containerView;
-    UINavigationBar  *_navigationBar;
-    Class             _navigationBarClass;
-    UIToolbar 	     *_toolbar;
-    UIView           *_navigationTransitionView;
 
-    UIEdgeInsets      _currentScrollContentInsetDelta;
-    UIEdgeInsets      _previousScrollContentInsetDelta;
-    CGFloat           _previousScrollContentOffsetDelta;
-    CGFloat			  _bottomInsetDelta;
-    
-    UIViewController *_disappearingViewController;
-    
-    id <UINavigationControllerDelegate> _delegate;
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationController : UIViewController
 
-    UIBarStyle _savedNavBarStyleBeforeSheet;
-    UIBarStyle _savedToolBarStyleBeforeSheet;
-
-    struct {
-        unsigned int isAppearingAnimated:1;
-        unsigned int isAlreadyPoppingNavigationItem:1;
-        unsigned int isNavigationBarHidden:1;
-        unsigned int isToolbarShown:1;
-        unsigned int needsDeferredTransition:1;
-        unsigned int isTransitioning:1;
-        unsigned int lastOperation:4;
-        unsigned int lastOperationAnimated:1;
-        unsigned int deferredTransition:8;
-        unsigned int didPreloadKeyboardAnimation:1;
-        unsigned int didHideBottomBar:1;
-        unsigned int isChangingOrientationForPop:1;
-        unsigned int pretendNavBarHidden:1;
-        unsigned int avoidMovingNavBarOffscreenBeforeUnhiding:1;
-        unsigned int searchBarHidNavBar:1; 
-        unsigned int useSystemPopoverBarAppearance:1;
-        unsigned int isCustomTransition:1;        
-    } _navigationControllerFlags;
-}
 
 /* Use this initializer to make the navigation controller use your custom bar class. 
    Passing nil for navigationBarClass will get you UINavigationBar, nil for toolbarClass gets UIToolbar.
@@ -99,8 +69,11 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationController : UIViewController
 @property(nonatomic,readonly) UIToolbar *toolbar NS_AVAILABLE_IOS(3_0); // For use when presenting an action sheet.
 
 @property(nonatomic, assign) id<UINavigationControllerDelegate> delegate;
-
+@property(nonatomic, readonly) UIGestureRecognizer *interactivePopGestureRecognizer NS_AVAILABLE_IOS(7_0);
 @end
+
+@protocol UIViewControllerInteractiveTransitioning;
+@protocol UIViewControllerAnimatedTransitioning;
 
 @protocol UINavigationControllerDelegate <NSObject>
 
@@ -109,6 +82,17 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationController : UIViewController
 // Called when the navigation controller shows a new top view controller via a push, pop or setting of the view controller stack.
 - (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated;
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated;
+
+- (NSUInteger)navigationControllerSupportedInterfaceOrientations:(UINavigationController *)navigationController NS_AVAILABLE_IOS(7_0);
+- (UIInterfaceOrientation)navigationControllerPreferredInterfaceOrientationForPresentation:(UINavigationController *)navigationController NS_AVAILABLE_IOS(7_0);
+
+- (id <UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
+                          interactionControllerForAnimationController:(id <UIViewControllerAnimatedTransitioning>) animationController NS_AVAILABLE_IOS(7_0);
+
+- (id <UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                   animationControllerForOperation:(UINavigationControllerOperation)operation
+                                                fromViewController:(UIViewController *)fromVC
+                                                  toViewController:(UIViewController *)toVC  NS_AVAILABLE_IOS(7_0);
 
 @end
 

@@ -3,11 +3,12 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2013 Apple Inc. All rights reserved.
 
 */
 
 #import <AVFoundation/AVBase.h>
+#import <AVFoundation/AVMediaSelectionGroup.h>
 #import <Foundation/Foundation.h>
 #import <CoreMedia/CMBase.h>
 #import <CoreMedia/CMTime.h>
@@ -319,7 +320,7 @@ NS_CLASS_AVAILABLE(10_7, 4_1)
 	
 	This method should not be called concurrently with -[AVAssetWriterInput appendSampleBuffer:] or -[AVAssetWriterInputPixelBufferAdaptor appendPixelBuffer:withPresentationTime:].
 */
-- (BOOL)finishWriting NS_DEPRECATED(10_7, TBD, 4_1, 6_0);
+- (BOOL)finishWriting NS_DEPRECATED(10_7, 10_9, 4_1, 6_0);
 
 /*!
  @method finishWritingWithCompletionHandler:
@@ -333,7 +334,7 @@ NS_CLASS_AVAILABLE(10_7, 4_1)
 	
 	To guarantee that all sample buffers are successfully written, ensure all calls to -[AVAssetWriterInput appendSampleBuffer:] or -[AVAssetWriterInputPixelBufferAdaptor appendPixelBuffer:withPresentationTime:] have returned before invoking this method.
 */
-- (void)finishWritingWithCompletionHandler:(void (^)(void))handler NS_AVAILABLE(TBD, 6_0);
+- (void)finishWritingWithCompletionHandler:(void (^)(void))handler NS_AVAILABLE(10_9, 6_0);
 
 @end
 
@@ -363,5 +364,122 @@ NS_CLASS_AVAILABLE(10_7, 4_1)
 	This property cannot be set after writing has started.
  */
 @property (nonatomic) CMTimeScale movieTimeScale NS_AVAILABLE(10_7, 4_3);
+
+@end
+
+
+@class AVAssetWriterInputGroup;
+
+@interface AVAssetWriter (AVAssetWriterInputGroups)
+
+/*!
+ @method canAddInputGroup:
+ @abstract
+	Tests whether an input group can be added to the receiver.
+
+ @param inputGroup
+	The AVAssetWriterInputGroup object to be tested.
+ @result
+	A BOOL indicating whether the input group can be added to the receiver.
+
+ @discussion
+	If outputFileType specifies a container format that does not support mutually exclusive relationships among tracks, or if the specified instance of AVAssetWriterInputGroup contains inputs with media types that cannot be related, the group cannot be added to the AVAssetWriter.
+ */
+- (BOOL)canAddInputGroup:(AVAssetWriterInputGroup *)inputGroup NS_AVAILABLE(10_9, 7_0);
+
+/*
+ @method addInputGroup:
+ @abstract
+	Adds an instance of AVAssetWriterInputGroup to the AVAssetWriter.  The AVAssetWriter will mark the tracks associated with grouped inputs as mutually exclusive to each other for playback or other processing, if the output container format supports mutually exlusive relationships among tracks.
+
+ @param inputGroup
+	The collection of AVAssetWriterInputs to be grouped together.
+ 
+ @discussion
+	When an input group is added to an AVAssetWriter, the value of marksOutputTrackAsEnabled will automatically be set to YES for the default input and set to NO for all of the other inputs in the group.
+
+	Input groups cannot be added after writing has started.
+ */
+- (void)addInputGroup:(AVAssetWriterInputGroup *)inputGroup NS_AVAILABLE(10_9, 7_0);
+
+/*!
+ @property inputGroups
+ @abstract
+	The instances of AVAssetWriterInputGroup that have been added to the AVAssetWriter.
+ 
+ @discussion
+	The value of this property is an NSArray containing concrete instances of AVAssetWriterInputGroup.  Input groups can be added to the receiver using the addInputGroup: method.
+ */
+@property (nonatomic, readonly) NSArray *inputGroups NS_AVAILABLE(10_9, 7_0);
+
+@end
+
+
+@class AVAssetWriterInputGroupInternal;
+
+/*
+ @class AVAssetWriterInputGroup
+ @abstract Associates tracks corresponding to inputs with each other in a mutually exclusive relationship.
+
+ @discussion
+	This class is used to associate tracks corresponding to multiple AVAssetWriterInputs as mutually exclusive to each other for playback or other processing.  For example, if you are creating an asset with multiple audio tracks using different spoken languages, only one of which should be played at a time, group the inputs corresponding to those tracks into a single instance of AVAssetWriterInputGroup and add the group to the AVAssetWriter via -[AVAssetWriter addInputGroup:].  If the output format supports mutually exlusive relationships among tracks, the AVAssetWriter will mark the tracks as mutually exclusive to each other.
+ 
+	Note that because AVAssetWriterInputGroup is a subclass of AVMediaSelectionGroup, clients can examine the media selection options that will be available on the output asset before the asset is written.  Best results for examining the options of the AVAssetWriterInputGroup will be obtained after associating the AVAssetWriterInputs of the AVAsset as appropriate via -[AVAssetWriterInput addTrackAssociationWithTrackOfInput:type:] and by initializing each AVAssetWriterInput with a source format hint, where appropriate.
+ */
+
+NS_CLASS_AVAILABLE(10_9, 7_0)
+@interface AVAssetWriterInputGroup : AVMediaSelectionGroup
+{
+@private
+    AVAssetWriterInputGroupInternal	*_internal;
+}
+
+/*
+ @method assetWriterInputGroupWithInputs:defaultInput:
+ @abstract
+	Creates an instance of AVAssetWriterInputGroup, for use with -[AVAssetWriter addInputGroup:].
+
+ @param inputs
+	The collection of AVAssetWriterInputs to be grouped together.
+ @param defaultInput
+	The instance of AVAssetWriterInput in the group to designate as the default.  When the input group is added to an AVAssetWriter via -addInputGroup:, the value of marksOutputTrackAsEnabled will automatically be set to YES for the default input and set to NO for all of the other inputs in the group.
+ @result
+	An instance of AVAssetWriterInputGroup, for use with -[AVAssetWriter addInputGroup:].
+ */
++ (AVAssetWriterInputGroup *)assetWriterInputGroupWithInputs:(NSArray *)inputs defaultInput:(AVAssetWriterInput *)defaultInput;
+
+/*
+ @method initWithInputs:defaultInput:
+ @abstract
+	Creates an instance of AVAssetWriterInputGroup, for use with -[AVAssetWriter addInputGroup:].
+
+ @param inputs
+	The collection of AVAssetWriterInputs to be grouped together.
+ @param defaultInput
+	The instance of AVAssetWriterInput in the group to designate as the default.  When the input group is added to an AVAssetWriter via -addInputGroup:, the value of marksOutputTrackAsEnabled will automatically be set to YES for the default input and set to NO for all of the other inputs in the group.
+ @result
+	An instance of AVAssetWriterInputGroup, for use with -[AVAssetWriter addInputGroup:].
+ */
+- (id)initWithInputs:(NSArray *)inputs defaultInput:(AVAssetWriterInput *)defaultInput;
+
+/*!
+ @property inputs
+ @abstract
+	The inputs grouped together by the receiver.
+ 
+ @discussion
+	The value of this property is an NSArray containing concrete instances of AVAssetWriterInput.
+ */
+@property (nonatomic, readonly) NSArray *inputs;
+
+/*!
+ @property defaultInput
+ @abstract
+	The input designated at the defaultInput of the receiver.
+ 
+ @discussion
+	The value of this property is a concrete instance of AVAssetWriterInput.
+ */
+@property (nonatomic, readonly) AVAssetWriterInput *defaultInput;
 
 @end

@@ -627,16 +627,17 @@ void cblas_zher2k(const enum CBLAS_ORDER Order, const enum CBLAS_UPLO Uplo,
  */
 
 /*
- The level 3 BLAS may allocate a large (approximately 4Mb) buffer to hold intermediate operands
- and results. These intermediate quantities are organized in memory for efficient access and
- so contribute to optimal performance. By default, this buffer is retained across calls to the
- BLAS. This strategy has substantial advantages when the BLAS are executed repeatedly. Clients
- who wish to free this buffer and return the memory allocation to the malloc heap can call the
- following routine at any time. Note that subsequent calls to the level 3 BLAS may allocate this
- buffer again.
+ Historically, the ATLAS-based BLAS in OS X allocated thread-local temp
+ buffers, and this routine existed to free that memory.  The Apple BLAS
+ is no longer based on ATLAS, and there are no scratch buffers to release,
+ so this routine has been deprecated.  It has been a no-op since OS X
+ 10.7, and calls to it may be safely removed.
+ 
+ On iOS, this routine has never done anything, so there is no risk in removing
+ these calls.
  */
 
-extern void ATLU_DestroyThreadMemory() __OSX_AVAILABLE_STARTING(__MAC_10_2,__IPHONE_4_0);
+extern void ATLU_DestroyThreadMemory() __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_2, __MAC_10_9, __IPHONE_4_0, __IPHONE_7_0);
 
 /*
  -------------------------------------------------------------------------------------------------

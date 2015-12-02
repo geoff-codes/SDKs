@@ -3,15 +3,15 @@
 
 	Framework:  AVFoundation
  
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2013 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
 #import <QuartzCore/QuartzCore.h>
 #import <AVFoundation/AVCaptureSession.h>
 #import <AVFoundation/AVAnimation.h>
-#import <AVFoundation/AVMetadataObject.h>
 
+@class AVMetadataObject;
 @class AVCaptureVideoPreviewLayerInternal;
 
 /*!
@@ -31,6 +31,7 @@
 NS_CLASS_AVAILABLE(10_7, 4_0)
 @interface AVCaptureVideoPreviewLayer : CALayer
 {
+@private
 	AVCaptureVideoPreviewLayerInternal *_internal;
 }
 
@@ -167,7 +168,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     the coordinate space of the receiver to a point of interest in the coordinate space of the AVCaptureDevice providing
     input to the receiver.  The conversion takes frameSize and videoGravity into consideration.
 */
-- (CGPoint)captureDevicePointOfInterestForPoint:(CGPoint)pointInLayer NS_AVAILABLE(NA, 6_0);
+- (CGPoint)captureDevicePointOfInterestForPoint:(CGPoint)pointInLayer NS_AVAILABLE_IOS(6_0);
 
 /*!
  @method pointForCaptureDevicePointOfInterest:
@@ -185,9 +186,49 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     AVCaptureDevice pointOfInterest is expressed as a CGPoint where {0,0} represents the top left of the picture area,
     and {1,1} represents the bottom right on an unrotated picture.  This convenience method converts a point in 
     the coordinate space of the AVCaptureDevice providing input to the coordinate space of the receiver.  The conversion 
-    takes frameSize and videoGravity into consideration.
+    takes frame size and videoGravity into consideration.
 */
-- (CGPoint)pointForCaptureDevicePointOfInterest:(CGPoint)captureDevicePointOfInterest NS_AVAILABLE(NA, 6_0);
+- (CGPoint)pointForCaptureDevicePointOfInterest:(CGPoint)captureDevicePointOfInterest NS_AVAILABLE_IOS(6_0);
+
+/*!
+ @method metadataOutputRectOfInterestForRect:
+ @abstract
+	Converts a rectangle in layer coordinates to a rectangle of interest in the coordinate space of an AVCaptureMetadataOutput
+	whose capture device is providing input to the layer.
+ 
+ @param rectInLayerCoordinates
+	A CGRect in layer coordinates.
+ 
+ @result
+	A CGRect in the coordinate space of the metadata output whose capture device is providing input to the layer.
+ 
+ @discussion
+	AVCaptureMetadataOutput rectOfInterest is expressed as a CGRect where {0,0} represents the top left of the picture area,
+	and {1,1} represents the bottom right on an unrotated picture.  This convenience method converts a rectangle in
+	the coordinate space of the receiver to a rectangle of interest in the coordinate space of an AVCaptureMetadataOutput 
+	whose AVCaptureDevice is providing input to the receiver.  The conversion takes frame size and videoGravity into consideration.
+ */
+- (CGRect)metadataOutputRectOfInterestForRect:(CGRect)rectInLayerCoordinates NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @method rectForMetadataOutputRectOfInterest:
+ @abstract
+	Converts a rectangle of interest in the coordinate space of an AVCaptureMetadataOutput whose capture device is 
+	providing input to the layer to a rectangle in layer coordinates.
+ 
+ @param rectInMetadataOutputCoordinates
+	A CGRect in the coordinate space of the metadata output whose capture device is providing input to the layer.
+ 
+ @result
+	A CGRect in layer coordinates.
+ 
+ @discussion
+	AVCaptureMetadataOutput rectOfInterest is expressed as a CGRect where {0,0} represents the top left of the picture area,
+	and {1,1} represents the bottom right on an unrotated picture.  This convenience method converts a rectangle in
+	the coordinate space of an AVCaptureMetadataOutput whose AVCaptureDevice is providing input to the coordinate space of the 
+	receiver.  The conversion takes frame size and videoGravity into consideration.
+ */
+- (CGRect)rectForMetadataOutputRectOfInterest:(CGRect)rectInMetadataOutputCoordinates NS_AVAILABLE_IOS(7_0);
 
 /*!
  @method transformedMetadataObjectForMetadataObject:
@@ -208,7 +249,7 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     the receiver.  The conversion takes orientation, mirroring, layer bounds and videoGravity into consideration.
     If the provided metadata object originates from an input source other than the preview layer's, nil will be returned.
 */
-- (AVMetadataObject *)transformedMetadataObjectForMetadataObject:(AVMetadataObject *)metadataObject NS_AVAILABLE(NA, 6_0);
+- (AVMetadataObject *)transformedMetadataObjectForMetadataObject:(AVMetadataObject *)metadataObject NS_AVAILABLE_IOS(6_0);
 
 #if TARGET_OS_IPHONE
 

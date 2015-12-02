@@ -2,7 +2,7 @@
 //  UICollectionViewCell.h
 //  UIKit
 //
-//  Copyright (c) 2011 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2013, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIView.h>
@@ -25,7 +25,7 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface UICollectionReusableView : UIView
 
 // Classes that want to support custom layout attributes specific to a given UICollectionViewLayout subclass can apply them here.
 // This allows the view to work in conjunction with a layout class that returns a custom subclass of UICollectionViewLayoutAttributes from -layoutAttributesForItem: or the corresponding layoutAttributesForHeader/Footer methods.
-// -applyLayoutAttributes: is then called after the view is added to the collection view and just before the view is sent to the delegate in the appropriate collectionView:configureXXX method.
+// -applyLayoutAttributes: is then called after the view is added to the collection view and just before the view is returned from the reuse queue.
 - (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes;
 
 // Override these methods to provide custom UI for specific layouts.

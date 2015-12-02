@@ -2,14 +2,14 @@
 //  UIScreen.h
 //  UIKit
 //
-//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIKitDefines.h>
 
-@class UIScreenMode, CADisplayLink;
+@class UIScreenMode, CADisplayLink, UIView;
 
 // Object is the UIScreen that represents the new screen. Connection notifications are not sent for screens present when the application is first launched
 UIKIT_EXTERN NSString *const UIScreenDidConnectNotification NS_AVAILABLE_IOS(3_2);
@@ -26,19 +26,7 @@ typedef NS_ENUM(NSInteger, UIScreenOverscanCompensation) {
     UIScreenOverscanCompensationInsetApplicationFrame, // the screen's applicationFrame will be inset in the bounds. content drawn in the bounds outside applicationFrame may be clipped
 };
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UIScreen : NSObject {
-  @private
-    id _display;
-    CGRect _bounds;
-    CGFloat _scale;
-    CGFloat _horizontalScale;
-    struct {
-        unsigned int bitsPerComponent:4;
-        unsigned int initialized:1;
-        unsigned int connected:1;
-        unsigned int overscanCompensation:2;
-    } _screenFlags;
-}
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UIScreen : NSObject
 
 + (NSArray *)screens NS_AVAILABLE_IOS(3_2);          // all screens currently attached to the device
 + (UIScreen *)mainScreen;      // the device's internal screen
@@ -60,3 +48,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIScreen : NSObject {
 - (CADisplayLink *)displayLinkWithTarget:(id)target selector:(SEL)sel NS_AVAILABLE_IOS(4_0);
 
 @end
+
+@interface UIScreen (UISnapshotting)
+// Please see snapshotViewAfterScreenUpdates: in UIView.h for some important details on the behavior of this method when called from layoutSubviews.
+- (UIView *)snapshotViewAfterScreenUpdates:(BOOL)afterUpdates NS_AVAILABLE_IOS(7_0);
+@end
+

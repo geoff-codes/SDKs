@@ -87,7 +87,7 @@ typedef enum {
     EKCalendarTypeCalDAV,
     EKCalendarTypeExchange,
     EKCalendarTypeSubscription,
-    EKCalendarTypeBirthday,
+    EKCalendarTypeBirthday
 } EKCalendarType;
 
 // Event availability support (free/busy)

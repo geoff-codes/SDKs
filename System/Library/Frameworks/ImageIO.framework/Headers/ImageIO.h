@@ -19,6 +19,7 @@
 
 #include <ImageIO/CGImageProperties.h>
 
+#include <ImageIO/CGImageMetadata.h>
 
 
 #endif	/* __IMAGEIO__ */

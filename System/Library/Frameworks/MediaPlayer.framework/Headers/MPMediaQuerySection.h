@@ -10,7 +10,7 @@
 
 // An MPMediaQuerySection object represents a single section grouping for a query.
 
-MP_EXTERN_CLASS_AVAILABLE(4_2) @interface MPMediaQuerySection : NSObject <NSCoding, NSCopying>
+MP_EXTERN_CLASS_AVAILABLE(4_2) @interface MPMediaQuerySection : NSObject <NSSecureCoding, NSCopying>
 
 // The localized title of the section grouping.
 @property (nonatomic, copy, readonly) NSString *title;

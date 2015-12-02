@@ -2,11 +2,23 @@
 //  GLKMathTypes.h
 //  GLKit
 //
-//  Copyright (c) 2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2012, Apple Inc. All rights reserved.
 //
 
 #ifndef __GLK_MATH_TYPES_H
 #define __GLK_MATH_TYPES_H
+
+#import <GLKit/GLKitBase.h>
+
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+	#ifndef __SSE3__
+		#warning "SSE3 instruction set not enabled. GLKit math routines will be slower."
+	#else
+		#include <immintrin.h>
+		#include <stdint.h>
+		#define GLK_SSE3_INTRINSICS 1
+	#endif
+#endif
 
 #ifdef __cplusplus
 extern "C" {

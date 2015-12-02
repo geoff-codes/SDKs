@@ -3,12 +3,13 @@
 
 	Framework:  AVFoundation
 
-	Copyright 2010-2012 Apple Inc. All rights reserved.
+	Copyright 2010-2013 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
 #import <Foundation/Foundation.h>
 #import <CoreMedia/CMFormatDescription.h>
+#import <CoreMedia/CMSync.h>
 
 /*!
  @constant AVCaptureSessionRuntimeErrorNotification
@@ -107,13 +108,12 @@ AVF_EXPORT NSString *const AVCaptureSessionInterruptionEndedNotification NS_AVAI
  @constant AVCaptureVideoOrientationLandscapeLeft
     Indicates that video should be oriented horizontally, home button on the left.
 */
-enum {
+typedef NS_ENUM(NSInteger, AVCaptureVideoOrientation) {
     AVCaptureVideoOrientationPortrait           = 1,
     AVCaptureVideoOrientationPortraitUpsideDown = 2,
     AVCaptureVideoOrientationLandscapeRight     = 3,
     AVCaptureVideoOrientationLandscapeLeft      = 4,
-};
-typedef NSInteger AVCaptureVideoOrientation;
+} NS_AVAILABLE(10_7, 4_0);
 
 /*!
  @constant AVCaptureSessionPresetPhoto
@@ -236,6 +236,8 @@ AVF_EXPORT NSString *const AVCaptureSessionPreset1280x720 NS_AVAILABLE(10_7, 4_0
 */
 AVF_EXPORT NSString *const AVCaptureSessionPreset1920x1080 NS_AVAILABLE(NA, 5_0);
 
+#endif // TARGET_OS_IPHONE
+
 /*!
 @constant AVCaptureSessionPresetiFrame960x540
 @abstract
@@ -246,7 +248,7 @@ AVF_EXPORT NSString *const AVCaptureSessionPreset1920x1080 NS_AVAILABLE(NA, 5_0)
     to achieve 960x540 quality iFrame H.264 video at ~30 Mbits/sec with AAC audio.  QuickTime
     movies captured in iFrame format are optimal for editing applications.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame960x540 NS_AVAILABLE(NA, 5_0);
+AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame960x540 NS_AVAILABLE(10_9, 5_0);
 
 /*!
 @constant AVCaptureSessionPresetiFrame1280x720
@@ -258,9 +260,25 @@ AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame960x540 NS_AVAILABLE(NA, 
     to achieve 1280x720 quality iFrame H.264 video at ~40 Mbits/sec with AAC audio.  QuickTime
     movies captured in iFrame format are optimal for editing applications.
 */
-AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame1280x720 NS_AVAILABLE(NA, 5_0);
+AVF_EXPORT NSString *const AVCaptureSessionPresetiFrame1280x720 NS_AVAILABLE(10_9, 5_0);
 
-#endif // TARGET_OS_IPHONE
+/*!
+@constant AVCaptureSessionPresetInputPriority
+@abstract
+    An AVCaptureSession preset indicating that the formats of the session's inputs are being given priority.
+
+@discussion
+    By calling -setSessionPreset:, clients can easily configure an AVCaptureSession to produce a desired 
+    quality of service level.  The session configures its inputs and outputs optimally to produce the
+    QoS level indicated.  Clients who need to ensure a particular input format is chosen can use
+    AVCaptureDevice's -setActiveFormat: method.  When a client sets the active format on a device, the
+    associated session's -sessionPreset property automatically changes to AVCaptureSessionPresetInputPriority.
+    This change indicates that the input format selected by the client now dictates the quality of service 
+    level provided at the outputs.  When a client sets the session preset to anything other than 
+    AVCaptureSessionPresetInputPriority, the session resumes responsibility for configuring inputs and outputs,
+    and is free to change its inputs' activeFormat as needed.
+*/
+AVF_EXPORT NSString *const AVCaptureSessionPresetInputPriority NS_AVAILABLE(NA, 7_0);
 
 @class AVCaptureInput;
 @class AVCaptureOutput;
@@ -569,6 +587,37 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 */
 @property(nonatomic, readonly, getter=isInterrupted) BOOL interrupted NS_AVAILABLE_IOS(4_0);
 
+/*!
+ @property usesApplicationAudioSession
+ @abstract
+    Indicates whether the receiver will use the application's AVAudioSession for recording.
+ 
+ @discussion
+    The value of this property is a BOOL indicating whether the receiver is currently
+    using the application's AVAudioSession (see AVAudioSession.h).  Prior to iOS 7, AVCaptureSession
+    uses its own audio session, which can lead to unwanted interruptions when interacting with
+    the application's audio session. In applications linked on or after iOS 7, AVCaptureSession
+    shares the application's audio session, allowing for simultaneous play back and recording
+    without unwanted interruptions.  Clients desiring the pre-iOS 7 behavior may opt out
+    by setting usesApplicationAudioSession to NO.  The default value is YES.
+*/
+@property(nonatomic) BOOL usesApplicationAudioSession NS_AVAILABLE_IOS(7_0);
+
+/*!
+ @property automaticallyConfiguresApplicationAudioSession
+ @abstract
+    Indicates whether the receiver should configure the application's audio session for recording.
+ 
+ @discussion
+    The value of this property is a BOOL indicating whether the receiver should configure the
+    application's audio session when needed for optimal recording.  When set to YES, the receiver
+    ensures the application's audio session is set to the PlayAndRecord category, and picks an appropriate
+    microphone and polar pattern to match the video camera being used. When set to NO, and -usesApplicationAudioSession
+    is set to YES, the receiver will use the application's audio session, but will not change any of its properties.  If
+    the session is not set up correctly for input, audio recording may fail. The default value is YES.
+*/
+@property(nonatomic) BOOL automaticallyConfiguresApplicationAudioSession NS_AVAILABLE_IOS(7_0);
+
 #endif // TARGET_OS_IPHONE
 
 /*!
@@ -596,6 +645,27 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
 */
 - (void)stopRunning;
 
+/*!
+ @property masterClock
+ @abstract
+ Provides the master clock being used for output synchronization.
+ @discussion
+ The masterClock is readonly. Use masterClock to synchronize AVCaptureOutput data with external data sources (e.g motion samples).
+ All capture output sample buffer timestamps are on the masterClock timebase.
+ 
+ For example, if you want to reverse synchronize the output timestamps to the original timestamps, you can do the following:
+ In captureOutput:didOutputSampleBuffer:fromConnection:
+ 
+ AVCaptureInputPort *port = [[connection inputPorts] objectAtIndex:0];
+ CMClockRef originalClock = [port clock];
+ 
+ CMTime syncedPTS = CMSampleBufferGetPresentationTime( sampleBuffer );
+ CMTime originalPTS = CMSyncConvertTime( syncedPTS, [session masterClock], originalClock );
+ 
+ This property is key-value observable.
+ */
+@property(nonatomic, readonly) __attribute__((NSObject)) CMClockRef masterClock NS_AVAILABLE(10_9, 7_0);
+
 @end
 
 
@@ -615,13 +685,12 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
  @constant AVVideoFieldModeDeinterlace
     Indicates that top and bottom video fields in interlaced content should be deinterlaced.
 */
-enum {
+typedef NS_ENUM(NSInteger, AVVideoFieldMode) {
     AVVideoFieldModeBoth        = 0,
     AVVideoFieldModeTopOnly     = 1,
     AVVideoFieldModeBottomOnly  = 2,
     AVVideoFieldModeDeinterlace = 3,
-};
-typedef NSInteger AVVideoFieldMode;
+} NS_AVAILABLE(10_7, NA);
 
 
 @class AVCaptureAudioChannel;
@@ -937,8 +1006,13 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     This property is only applicable to AVCaptureConnection instances involving
     video.  In such connections, the videoMinFrameDuration property may only be set if
     -isVideoMinFrameDurationSupported returns YES.
+ 
+    This property is deprecated on iOS, where min and max frame rate adjustments are applied
+    exclusively at the AVCaptureDevice using the activeVideoMinFrameDuration and activeVideoMaxFrameDuration
+    properties.  On Mac OS X, frame rate adjustments are supported both at the AVCaptureDevice
+    and at AVCaptureConnection, enabling connections to output different frame rates.
 */
-@property(nonatomic, readonly, getter=isVideoMinFrameDurationSupported) BOOL supportsVideoMinFrameDuration NS_AVAILABLE(10_7, 5_0);
+@property(nonatomic, readonly, getter=isVideoMinFrameDurationSupported) BOOL supportsVideoMinFrameDuration NS_DEPRECATED(10_7, NA, 5_0, 7_0);
 
 /*!
  @property videoMinFrameDuration
@@ -950,10 +1024,13 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     placing a lower bound on the amount of time that should separate consecutive frames. This is equivalent to
     the reciprocal of the maximum frame rate. A value of kCMTimeZero or kCMTimeInvalid indicates an unlimited maximum frame
     rate. The default value is kCMTimeInvalid.
+ 
+    This property is deprecated on iOS, where min and max frame rate adjustments are applied
+    exclusively at the AVCaptureDevice using the activeVideoMinFrameDuration and activeVideoMaxFrameDuration
+    properties.  On Mac OS X, frame rate adjustments are supported both at the AVCaptureDevice
+    and at AVCaptureConnection, enabling connections to output different frame rates.
 */
-@property(nonatomic) CMTime videoMinFrameDuration NS_AVAILABLE(10_7, 5_0);
-
-#if TARGET_OS_IPHONE
+@property(nonatomic) CMTime videoMinFrameDuration NS_DEPRECATED(10_7, NA, 5_0, 7_0);
 
 /*!
  @property supportsVideoMaxFrameDuration
@@ -964,8 +1041,13 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     This property is only applicable to AVCaptureConnection instances involving
     video.  In such connections, the videoMaxFrameDuration property may only be set if
     -isVideoMaxFrameDurationSupported returns YES.
+ 
+	This property is deprecated on iOS, where min and max frame rate adjustments are applied
+	exclusively at the AVCaptureDevice using the activeVideoMinFrameDuration and activeVideoMaxFrameDuration
+	properties.  On Mac OS X, frame rate adjustments are supported both at the AVCaptureDevice
+	and at AVCaptureConnection, enabling connections to output different frame rates.
 */
-@property(nonatomic, readonly, getter=isVideoMaxFrameDurationSupported) BOOL supportsVideoMaxFrameDuration NS_AVAILABLE(NA, 5_0);
+@property(nonatomic, readonly, getter=isVideoMaxFrameDurationSupported) BOOL supportsVideoMaxFrameDuration NS_DEPRECATED(10_9, NA, 5_0, 7_0);
 
 /*!
  @property videoMaxFrameDuration
@@ -977,10 +1059,13 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     placing an upper bound on the amount of time that should separate consecutive frames. This is equivalent to
     the reciprocal of the minimum frame rate. A value of kCMTimeZero or kCMTimeInvalid indicates an unlimited minimum frame
     rate. The default value is kCMTimeInvalid.
+ 
+	This property is deprecated on iOS, where min and max frame rate adjustments are applied
+	exclusively at the AVCaptureDevice using the activeVideoMinFrameDuration and activeVideoMaxFrameDuration
+	properties.  On Mac OS X, frame rate adjustments are supported both at the AVCaptureDevice
+	and at AVCaptureConnection, enabling connections to output different frame rates.
 */
-@property(nonatomic) CMTime videoMaxFrameDuration NS_AVAILABLE(NA, 5_0);
-
-#endif // TARGET_OS_IPHONE
+@property(nonatomic) CMTime videoMaxFrameDuration NS_DEPRECATED(10_9, NA, 5_0, 7_0);
 
 /*!
  @property videoMaxScaleAndCropFactor
@@ -1001,11 +1086,15 @@ NS_CLASS_AVAILABLE(10_7, 4_0)
     Indicates the current video scale and crop factor in use by the receiver.
  
  @discussion
-    This property is only applicable to AVCaptureConnection instances involving
-    video.  In such connections, the videoScaleAndCropFactor property may be set
+    This property only applies to AVCaptureStillImageOutput connections.
+    In such connections, the videoScaleAndCropFactor property may be set
     to a value in the range of 1.0 to videoMaxScaleAndCropFactor.  At a factor of
     1.0, the image is its original size.  At a factor greater than 1.0, the image
     is scaled by the factor and center-cropped to its original dimensions.
+    This factor is applied in addition to any magnification from AVCaptureDevice's
+    videoZoomFactor property.
+ 
+ @see -[AVCaptureDevice videoZoomFactor]
 */
 @property(nonatomic) CGFloat videoScaleAndCropFactor NS_AVAILABLE_IOS(5_0);
 

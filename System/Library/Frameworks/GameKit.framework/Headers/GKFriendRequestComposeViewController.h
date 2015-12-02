@@ -2,7 +2,7 @@
  *  GKFriendRequestComposeViewController.h
  *  GameKit
  *
- *  Copyright 2010 Apple, Inc. All rights reserved.
+ *  Copyright 2010 Apple Inc. All rights reserved.
  */
 
 #import <UIKit/UIKit.h>
@@ -30,5 +30,5 @@ NS_CLASS_AVAILABLE(NA, 4_2)
 // Optional delegate
 @protocol GKFriendRequestComposeViewControllerDelegate
 // The compose view has finished
-- (void)friendRequestComposeViewControllerDidFinish:(GKFriendRequestComposeViewController *)viewController;
+- (void)friendRequestComposeViewControllerDidFinish:(GKFriendRequestComposeViewController *)viewController NS_AVAILABLE_IOS(4_2);
 @end

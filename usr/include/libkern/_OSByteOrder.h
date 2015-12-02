@@ -62,11 +62,8 @@
 
 #if defined(__GNUC__)
 
-#if defined(__i386__) || defined(__x86_64__)
-#include <libkern/i386/_OSByteOrder.h>
-#endif
 
-#if defined (__arm__)
+#if defined (__arm__) || defined(__arm64__)
 #include <libkern/arm/OSByteOrder.h>
 #endif
 
@@ -82,45 +79,6 @@
 
 #else /* ! __GNUC__ */
 
-#if defined(__i386__) || defined(__x86_64__)
-
-#if !defined(__DARWIN_OS_INLINE)
-# if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#        define __DARWIN_OS_INLINE static inline
-# elif defined(__MWERKS__) || defined(__cplusplus)
-#        define __DARWIN_OS_INLINE static inline
-# else
-#        define __DARWIN_OS_INLINE static __inline__
-# endif
-#endif
-
-__DARWIN_OS_INLINE
-uint16_t
-_OSSwapInt16(
-    uint16_t			data
-)
-{
-    return __DARWIN_OSSwapConstInt16(data);
-}
-
-__DARWIN_OS_INLINE
-uint32_t
-_OSSwapInt32(
-    uint32_t			data
-)
-{
-    return __DARWIN_OSSwapConstInt32(data);
-}
-
-__DARWIN_OS_INLINE
-uint64_t
-_OSSwapInt64(
-    uint64_t			data
-)
-{
-    return __DARWIN_OSSwapConstInt64(data);
-}
-#endif
 
 #define __DARWIN_OSSwapInt16(x) _OSSwapInt16(x)
 

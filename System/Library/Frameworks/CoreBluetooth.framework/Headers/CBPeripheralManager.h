@@ -9,8 +9,26 @@
 
 #import <CoreBluetooth/CBDefines.h>
 #import <CoreBluetooth/CBError.h>
-
+#import <CoreBluetooth/CBPeripheralManagerConstants.h>
 #import <Foundation/Foundation.h>
+
+/*!
+ *  @enum CBPeripheralManagerAuthorizationStatus
+ *
+ *  @discussion Represents the current state of a CBPeripheralManager.
+ *
+ *  @constant CBPeripheralManagerAuthorizationStatusNotDetermined	User has not yet made a choice with regards to this application.
+ *  @constant CBPeripheralManagerAuthorizationStatusRestricted		This application is not authorized to share data while backgrounded. The user cannot change this application’s status, possibly due to active restrictions such as parental controls being in place.
+ *  @constant CBPeripheralManagerAuthorizationStatusDenied			User has explicitly denied this application from sharing data while backgrounded.
+ *  @constant CBPeripheralManagerAuthorizationStatusAuthorized		User has authorized this application to share data while backgrounded.
+ *
+ */
+typedef NS_ENUM(NSInteger, CBPeripheralManagerAuthorizationStatus) {
+	CBPeripheralManagerAuthorizationStatusNotDetermined = 0,
+	CBPeripheralManagerAuthorizationStatusRestricted,
+	CBPeripheralManagerAuthorizationStatusDenied,
+	CBPeripheralManagerAuthorizationStatusAuthorized,		
+} NS_ENUM_AVAILABLE(NA, 7_0);
 
 /*!
  *  @enum CBPeripheralManagerState
@@ -31,7 +49,7 @@ typedef NS_ENUM(NSInteger, CBPeripheralManagerState) {
 	CBPeripheralManagerStateUnsupported,
 	CBPeripheralManagerStateUnauthorized,
 	CBPeripheralManagerStatePoweredOff,
-	CBPeripheralManagerStatePoweredOn
+	CBPeripheralManagerStatePoweredOn,
 } NS_ENUM_AVAILABLE(NA, 6_0);
 
 /*!
@@ -57,18 +75,21 @@ typedef NS_ENUM(NSInteger, CBPeripheralManagerConnectionLatency) {
 /*!
  *  @class CBPeripheralManager
  *
- *  @discussion Entry point to the peripheral role. Commands should only be issued when its state is <code>CBPeripheralManagerStatePoweredOn</code>.
- *              The use of more than one <code>CBPeripheralManager</code> at a time is not supported and may result in undefined behavior.
+ *  @discussion The <code>CBPeripheralManager</code> class is an abstraction of the Peripheral and Broadcaster GAP roles, and the GATT Server
+ *              role. Its primary function is to allow you to manage published services within the GATT database, and to advertise these services
+ *              to other devices.
+ *              Each application has sandboxed access to the shared GATT database. You can add services to the database by calling {@link addService:};
+ *              they can be removed via {@link removeService:} and {@link removeAllServices}, as appropriate. While a service is in the database,
+ *              it is visible to and can be accessed by any connected GATT Client. However, applications that have not specified the "bluetooth-peripheral"
+ *              background mode will have the contents of their service(s) "disabled" when in the background. Any remote device trying to access
+ *              characteristic values or descriptors during this time will receive an error response.
+ *              Once you've published services that you want to share, you can ask to advertise their availability and allow other devices to connect
+ *              to you by calling {@link startAdvertising:}. Like the GATT database, advertisement is managed at the system level and shared by all
+ *              applications. This means that even if you aren't advertising at the moment, someone else might be!
  *
  */
 NS_CLASS_AVAILABLE(NA, 6_0)
 CB_EXTERN_CLASS @interface CBPeripheralManager : NSObject
-{
-@package
-	id<CBPeripheralManagerDelegate>         _delegate;
-	CBPeripheralManagerState                _state;
-	BOOL                                    _advertising;
-}
 
 /*!
  *  @property delegate
@@ -76,7 +97,7 @@ CB_EXTERN_CLASS @interface CBPeripheralManager : NSObject
  *  @discussion The delegate object that will receive peripheral events.
  *
  */
-@property(assign, nonatomic) id<CBPeripheralManagerDelegate> delegate;
+@property(weak, nonatomic) id<CBPeripheralManagerDelegate> delegate;
 
 /*!
  *  @property state
@@ -88,12 +109,24 @@ CB_EXTERN_CLASS @interface CBPeripheralManager : NSObject
 @property(readonly) CBPeripheralManagerState state;
 
 /*!
- *  @property advertising
+ *  @property isAdvertising
  *
  *  @discussion Whether or not the peripheral is currently advertising data.
  *
  */
 @property(readonly) BOOL isAdvertising;
+
+/*!
+ *  @method authorizationStatus
+ *
+ *  @discussion	This method does not prompt the user for access. You can use it to detect restricted access and simply hide UI instead of
+ *				prompting for access.
+ *
+ *  @return		The current authorization status for sharing data while backgrounded. For the constants returned, see {@link CBPeripheralManagerAuthorizationStatus}.
+ *
+ *  @see		CBPeripheralManagerAuthorizationStatus
+ */
++ (CBPeripheralManagerAuthorizationStatus)authorizationStatus NS_AVAILABLE(NA, 7_0);
 
 /*!
  *  @method initWithDelegate:queue:
@@ -106,6 +139,22 @@ CB_EXTERN_CLASS @interface CBPeripheralManager : NSObject
  *
  */
 - (id)initWithDelegate:(id<CBPeripheralManagerDelegate>)delegate queue:(dispatch_queue_t)queue;
+
+/*!
+ *  @method initWithDelegate:queue:options:
+ *
+ *  @param delegate The delegate that will receive peripheral role events.
+ *  @param queue    The dispatch queue on which the events will be dispatched.
+ *  @param options  An optional dictionary specifying options for the manager.
+ *
+ *  @discussion     The initialization call. The events of the peripheral role will be dispatched on the provided queue.
+ *                  If <i>nil</i>, the main queue will be used.
+ *
+ *	@seealso		CBPeripheralManagerOptionShowPowerAlertKey
+ *	@seealso		CBPeripheralManagerOptionRestoreIdentifierKey
+ *
+ */
+- (id)initWithDelegate:(id<CBPeripheralManagerDelegate>)delegate queue:(dispatch_queue_t)queue options:(NSDictionary *)options NS_AVAILABLE(NA, 7_0);
 
 /*!
  *  @method startAdvertising:
@@ -121,7 +170,8 @@ CB_EXTERN_CLASS @interface CBPeripheralManager : NSObject
  *                              will be added to a special "overflow" area, and can only be discovered by an iOS device that is explicitly scanning
  *                              for them.
  *                              While an application is in the background, the local name will not be used and all service UUIDs will be placed in the
- *                              "overflow" area.
+ *                              "overflow" area. However, applications that have not specified the "bluetooth-peripheral" background mode will not be able 
+ *                              to advertise anything while in the background.
  *
  *  @see                        peripheralManagerDidStartAdvertising:error:
  *  @seealso                    CBAdvertisementData.h
@@ -205,7 +255,8 @@ CB_EXTERN_CLASS @interface CBPeripheralManager : NSObject
  *  @param centrals         A list of <code>CBCentral</code> objects to receive the update. Note that centrals which have not subscribed to
  *                          <i>characteristic</i> will be ignored. If <i>nil</i>, all centrals that are subscribed to <i>characteristic</i> will be updated.
  *
- *  @discussion             Sends an updated characteristic value to one or more centrals, via a notification or indication.
+ *  @discussion             Sends an updated characteristic value to one or more centrals, via a notification or indication. If <i>value</i> exceeds
+ *							{@link maximumUpdateValueLength}, it will be truncated to fit.
  *
  *  @return                 <i>YES</i> if the update could be sent, or <i>NO</i> if the underlying transmit queue is full. If <i>NO</i> was returned,
  *                          the delegate method @link peripheralManagerIsReadyToUpdateSubscribers: @/link will be called once space has become
@@ -214,6 +265,7 @@ CB_EXTERN_CLASS @interface CBPeripheralManager : NSObject
  *  @see                    peripheralManager:central:didSubscribeToCharacteristic:
  *  @see                    peripheralManager:central:didUnsubscribeFromCharacteristic:
  *  @see                    peripheralManagerIsReadyToUpdateSubscribers:
+ *	@seealso				maximumUpdateValueLength
  */
 - (BOOL)updateValue:(NSData *)value forCharacteristic:(CBMutableCharacteristic *)characteristic onSubscribedCentrals:(NSArray *)centrals;
 
@@ -239,7 +291,7 @@ CB_EXTERN_CLASS @interface CBPeripheralManager : NSObject
  *
  *  @discussion         Invoked whenever the peripheral manager's state has been updated. Commands should only be issued when the state is 
  *                      <code>CBPeripheralManagerStatePoweredOn</code>. A state below <code>CBPeripheralManagerStatePoweredOn</code>
- *                      implies that advertisement has stopped and any connected centrals have been disconnected. If the state moves below
+ *                      implies that advertisement has paused and any connected centrals have been disconnected. If the state moves below
  *                      <code>CBPeripheralManagerStatePoweredOff</code>, advertisement is stopped and must be explicitly restarted, and the
  *                      local database is cleared and all services must be re-added.
  *
@@ -249,6 +301,22 @@ CB_EXTERN_CLASS @interface CBPeripheralManager : NSObject
 - (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral;
 
 @optional
+
+/*!
+ *  @method peripheralManager:willRestoreState:
+ *
+ *  @param peripheral	The peripheral manager providing this information.
+ *  @param dict			A dictionary containing information about <i>peripheral</i> that was preserved by the system at the time the app was terminated.
+ *
+ *  @discussion			For apps that opt-in to state preservation and restoration, this is the first method invoked when your app is relaunched into
+ *						the background to complete some Bluetooth-related task. Use this method to synchronize your app's state with the state of the
+ *						Bluetooth system.
+ *
+ *  @seealso            CBPeripheralManagerRestoredStateServicesKey;
+ *  @seealso            CBPeripheralManagerRestoredStateAdvertisementDataKey;
+ *
+ */
+- (void)peripheralManager:(CBPeripheralManager *)peripheral willRestoreState:(NSDictionary *)dict;
 
 /*!
  *  @method peripheralManagerDidStartAdvertising:error:

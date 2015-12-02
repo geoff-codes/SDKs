@@ -2,7 +2,7 @@
 //  UITextChecker.h
 //  UIKit
 //
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKitDefines.h>
@@ -13,7 +13,6 @@
 
 NS_CLASS_AVAILABLE_IOS(3_2) @interface UITextChecker : NSObject {
 @private
-    id _checker;
     id _reserved;
     NSInteger _usdt;
 }

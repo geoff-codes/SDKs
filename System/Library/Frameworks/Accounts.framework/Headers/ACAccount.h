@@ -35,6 +35,10 @@ ACCOUNTS_CLASS_AVAILABLE(NA, 5_0)
 // only available to applications that have been granted access to the account by the user.
 @property (copy, NS_NONATOMIC_IOSONLY)     NSString            *username;
 
+// For accounts that support it (currently only Facebook accounts), you can get the user's full name for display
+// purposes without having to talk to the network.
+@property (readonly, NS_NONATOMIC_IOSONLY)  NSString           *userFullName NS_AVAILABLE_IOS(7_0);
+
 // The credential for the account. This property can be set and saved during account creation. It is 
 // inaccessible once the account has been saved.
 @property (strong, NS_NONATOMIC_IOSONLY)   ACAccountCredential *credential;

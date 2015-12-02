@@ -69,7 +69,7 @@ typedef enum {
 } CMAttitudeReferenceFrame;
 
 NS_CLASS_AVAILABLE(NA,4_0)
-@interface CMAttitude : NSObject <NSCopying, NSCoding>
+@interface CMAttitude : NSObject <NSCopying, NSSecureCoding>
 {
 @private
 	id _internal;

@@ -3,7 +3,7 @@
 	
 	Framework:  AVFoundation
 
-	Copyright 2008-2012 Apple Inc. All rights reserved.
+	Copyright 2008-2013 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
@@ -11,6 +11,7 @@
 #import <Foundation/NSArray.h>
 #import <Foundation/NSDate.h>  /* for NSTimeInterval */
 #import <AVFoundation/AVAudioSettings.h>
+#import <AudioToolbox/AudioFile.h>
 #import <Availability.h>
 
 @class NSData, NSURL, NSError, NSDictionary;
@@ -20,7 +21,7 @@
 NS_CLASS_AVAILABLE(10_7, 2_2)
 @interface AVAudioPlayer : NSObject {
 @private
-    void *_impl;
+	id _impl;
 }
 
 /* For all of these init calls, if a return value of nil is given you can check outError to see what the problem was.
@@ -31,11 +32,16 @@ NS_CLASS_AVAILABLE(10_7, 2_2)
 - (id)initWithContentsOfURL:(NSURL *)url error:(NSError **)outError;
 - (id)initWithData:(NSData *)data error:(NSError **)outError;
 
+/* The file type hint is a constant defined in AVMediaFormat.h whose value is a UTI for a file format. e.g. AVFileTypeAIFF. */
+/* Sometimes the type of a file cannot be determined from the data, or it is actually corrupt. The file type hint tells the parser what kind of data to look for so that files which are not self identifying or possibly even corrupt can be successfully parsed. */
+- (id)initWithContentsOfURL:(NSURL *)url fileTypeHint:(NSString*)utiString error:(NSError **)outError NS_AVAILABLE(10_9, 7_0);
+- (id)initWithData:(NSData *)data fileTypeHint:(NSString*)utiString error:(NSError **)outError NS_AVAILABLE(10_9, 7_0);
+
 /* transport control */
 /* methods that return BOOL return YES on success and NO on failure. */
 - (BOOL)prepareToPlay;	/* get ready to play the sound. happens automatically on play. */
 - (BOOL)play;			/* sound is played asynchronously. */
-- (BOOL)playAtTime:(NSTimeInterval)time NS_AVAILABLE(10_7, 4_0); /* play a sound some time in the future. time should be greater than deviceCurrentTime. */
+- (BOOL)playAtTime:(NSTimeInterval)time NS_AVAILABLE(10_7, 4_0); /* play a sound some time in the future. time is an absolute time based on and greater than deviceCurrentTime. */
 - (void)pause;			/* pauses playback, but remains ready to play. */
 - (void)stop;			/* stops playback. no longer ready to play. */
 
@@ -90,7 +96,7 @@ Any negative number will loop indefinitely until stopped.
 /* The channels property lets you assign the output to play to specific channels as described by AVAudioSession's channels property */
 /* This property is nil valued until set. */
 /* The array must have the same number of channels as returned by the numberOfChannels property. */
-@property(nonatomic, copy) NSArray* channelAssignments; /* Array of AVAudioSessionChannelDescription objects */
+@property(nonatomic, copy) NSArray* channelAssignments NS_AVAILABLE(10_9, 7_0); /* Array of AVAudioSessionChannelDescription objects */
 #endif
 
 @end

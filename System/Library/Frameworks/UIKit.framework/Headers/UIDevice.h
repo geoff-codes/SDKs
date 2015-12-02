@@ -2,7 +2,7 @@
 //  UIDevice.h
 //  UIKit
 //
-//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -61,7 +61,6 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIDevice : NSObject {
 @property(nonatomic,readonly,retain) NSString    *systemName;        // e.g. @"iOS"
 @property(nonatomic,readonly,retain) NSString    *systemVersion;     // e.g. @"4.0"
 @property(nonatomic,readonly) UIDeviceOrientation orientation;       // return current device orientation.  this will return UIDeviceOrientationUnknown unless device orientation notifications are being generated.
-@property(nonatomic,readonly,retain) NSString    *uniqueIdentifier  NS_DEPRECATED_IOS(2_0, 5_0);  // a string unique to each device based on various hardware info.
 
 @property(nonatomic,readonly,retain) NSUUID      *identifierForVendor NS_AVAILABLE_IOS(6_0);      // a UUID that may be used to uniquely identify the device, same across apps from a single vendor.
 

@@ -9,6 +9,7 @@
 #import <GameKit/GKChallenge.h>
 
 // GKChallengeEventHandler's delegate must implement the following protocol to be notified of challenge-related events. All of these methods are called on the main thread.
+__OSX_AVAILABLE_BUT_DEPRECATED_MSG(__MAC_10_8, __MAC_NA, __IPHONE_6_0, __IPHONE_7_0, "As of iOS 7.0, you should instead implement the GKChallengeListener protocol and register a listener with GKLocalPlayer.")
 @protocol GKChallengeEventHandlerDelegate <NSObject>
 
 @optional
@@ -36,10 +37,12 @@
 
 @end
 
-NS_CLASS_AVAILABLE(NA, 6_0)
+
+__OSX_AVAILABLE_BUT_DEPRECATED_MSG(__MAC_10_8, __MAC_NA, __IPHONE_6_0, __IPHONE_7_0, "As of iOS 7.0, you should instead implement the GKChallengeListener protocol and register a listener with GKLocalPlayer.")
 // A singleton object responsible for dispatching challenge-related events to its delegate
 @interface GKChallengeEventHandler : NSObject
-+ (GKChallengeEventHandler *) challengeEventHandler;
 
-@property (nonatomic, assign) id<GKChallengeEventHandlerDelegate> delegate; // It is not safe to read or write this property on anything other than the main thread
++ (GKChallengeEventHandler *) challengeEventHandler NS_DEPRECATED(10_8, NA, 6_0, 7_0);
+
+@property (nonatomic, assign) id<GKChallengeEventHandlerDelegate> delegate NS_DEPRECATED(10_8, NA, 6_0, 7_0); // It is not safe to read or write this property on anything other than the main thread
 @end

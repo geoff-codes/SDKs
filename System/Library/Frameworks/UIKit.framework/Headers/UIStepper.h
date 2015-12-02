@@ -22,7 +22,8 @@ NS_CLASS_AVAILABLE_IOS(5_0) @interface UIStepper : UIControl
 @property(nonatomic) double maximumValue;                 // default 100. must be greater than minimumValue
 @property(nonatomic) double stepValue;                    // default 1. must be greater than 0
 
-@property(nonatomic,retain) UIColor *tintColor NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
+// The tintColor is inherited through the superview hierarchy. See UIView for more information.
+@property(nonatomic,retain) UIColor *tintColor NS_AVAILABLE_IOS(6_0);
 
 // a background image which will be 3-way stretched over the whole of the control. Each half of the stepper will paint the image appropriate for its state
 - (void)setBackgroundImage:(UIImage*)image forState:(UIControlState)state NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;

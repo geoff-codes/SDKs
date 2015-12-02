@@ -99,6 +99,7 @@ CCSymmetricKeyWrap( CCWrappingAlgorithm algorithm,
  @param ivLen           The length of the initialization value to be used.  
                         CCrfc3394_ivLen is available as a constant for the 
                         standard IV to use.
+ @param kek             The Key Encryption Key to be used to unwrap the raw key.
  @param kekLen          The length of the KEK in bytes.
  @param wrappedKey      The wrapped key bytes.
  @param wrappedKeyLen   The length of the wrapped key in bytes.

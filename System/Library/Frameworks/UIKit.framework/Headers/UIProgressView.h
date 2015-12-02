@@ -2,14 +2,15 @@
 //  UIProgressView.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIKitDefines.h>
 
-@class UIImageView;
+
+@class UIImageView, CAGradientLayer;
 
 typedef NS_ENUM(NSInteger, UIProgressViewStyle) {
     UIProgressViewStyleDefault,     // normal progress bar
@@ -17,17 +18,6 @@ typedef NS_ENUM(NSInteger, UIProgressViewStyle) {
 };
 
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UIProgressView : UIView <NSCoding>
-{ 
-  @private
-    UIProgressViewStyle _progressViewStyle;
-    float               _progress;
-    UIBarStyle          _barStyle;
-    UIColor*            _progressTintColor;
-    UIColor*            _trackTintColor;
-    UIImageView*        _trackView;
-    UIImageView*        _progressView;
-    BOOL                _isAnimating;
-}
 
 - (id)initWithProgressViewStyle:(UIProgressViewStyle)style; // sets the view height according to the style
 

@@ -3,7 +3,7 @@
 
 	Framework:	MediaToolbox
 
-	Copyright 2011-2012 Apple Inc. All rights reserved.
+	Copyright 2011-2013 Apple Inc. All rights reserved.
 */
 
 #ifndef MTAUDIOPROCESSINGTAP_H
@@ -23,7 +23,7 @@ extern "C"
 
 typedef const struct opaqueMTAudioProcessingTap *MTAudioProcessingTapRef; // CFType, retain/release please
 
-MT_EXPORT CFTypeID MTAudioProcessingTapGetTypeID(void) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+MT_EXPORT CFTypeID MTAudioProcessingTapGetTypeID(void) __OSX_AVAILABLE_STARTING(__MAC_10_9,__IPHONE_6_0);
 
 /*!
 	@enum		MTAudioProcessingTapCreationFlags
@@ -307,7 +307,7 @@ MT_EXPORT OSStatus MTAudioProcessingTapCreate(
 		CFAllocatorRef allocator,
 		const MTAudioProcessingTapCallbacks *callbacks,
 		MTAudioProcessingTapCreationFlags flags,
-		MTAudioProcessingTapRef *tapOut) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+		MTAudioProcessingTapRef *tapOut) __OSX_AVAILABLE_STARTING(__MAC_10_9,__IPHONE_6_0);
 
 /*!
 	@function	MTAudioProcessingTapGetStorage
@@ -318,7 +318,7 @@ MT_EXPORT OSStatus MTAudioProcessingTapCreate(
 
 	@result		The tapStorage returned by the init callback.
 */
-MT_EXPORT void *MTAudioProcessingTapGetStorage(MTAudioProcessingTapRef tap) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+MT_EXPORT void *MTAudioProcessingTapGetStorage(MTAudioProcessingTapRef tap) __OSX_AVAILABLE_STARTING(__MAC_10_9,__IPHONE_6_0);
 
 /*!
 	@function	MTAudioProcessingTapGetSourceAudio
@@ -353,7 +353,7 @@ MT_EXPORT OSStatus MTAudioProcessingTapGetSourceAudio(
 		AudioBufferList *bufferListInOut,
 		MTAudioProcessingTapFlags *flagsOut,
 		CMTimeRange *timeRangeOut,
-		CMItemCount *numberFramesOut) __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);
+		CMItemCount *numberFramesOut) __OSX_AVAILABLE_STARTING(__MAC_10_9,__IPHONE_6_0);
 
 #pragma pack(pop)
 

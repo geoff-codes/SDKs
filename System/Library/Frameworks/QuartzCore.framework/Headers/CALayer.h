@@ -1,6 +1,6 @@
 /* CoreAnimation - CALayer.h
 
-   Copyright (c) 2006-2007 Apple Inc.
+   Copyright (c) 2006-2012 Apple Inc.
    All rights reserved. */
 
 #import <QuartzCore/CAMediaTiming.h>
@@ -426,6 +426,15 @@ enum CAEdgeAntialiasingMask
 
 @property unsigned int edgeAntialiasingMask;
 
+/* When true this layer is allowed to antialias its edges, as requested
+ * by the value of the edgeAntialiasingMask property.
+ *
+ * The default value is read from the boolean UIViewEdgeAntialiasing
+ * property in the main bundle's Info.plist. If no value is found in
+ * the Info.plist the default value is NO. */
+
+@property BOOL allowsEdgeAntialiasing;
+
 /* The background color of the layer. Default value is nil. Colors
  * created from tiled patterns are supported. Animatable. */
 
@@ -454,6 +463,19 @@ enum CAEdgeAntialiasingMask
  * results. Animatable. */
 
 @property float opacity;
+
+/* When true, and the layer's opacity property is less than one, the
+ * layer is allowed to composite itself as a group separate from its
+ * parent. This gives the correct results when the layer contains
+ * multiple opaque components, but may reduce performance.
+ *
+ * The default value of the property is read from the boolean
+ * UIViewGroupOpacity property in the main bundle's Info.plist. If no
+ * value is found in the Info.plist the default value is YES for
+ * applications linked against the iOS 7 SDK or later and NO for
+ * applications linked against an earlier SDK. */
+
+@property BOOL allowsGroupOpacity;
 
 /* A filter object used to composite the layer with its (possibly
  * filtered) background. Default value is nil, which implies source-

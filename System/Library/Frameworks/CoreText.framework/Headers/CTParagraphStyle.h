@@ -20,7 +20,8 @@
 #include <CoreText/CTDefines.h>
 #include <CoreFoundation/CFArray.h>
 #include <CoreGraphics/CGBase.h>
-#include <AvailabilityMacros.h>
+
+CF_IMPLICIT_BRIDGING_ENABLED
 
 #if defined(__cplusplus)
 extern "C" {
@@ -38,7 +39,7 @@ typedef const struct __CTParagraphStyle * CTParagraphStyleRef;
     @abstract   Returns the CFType of the paragraph style object
 */
 
-CFTypeID CTParagraphStyleGetTypeID( void ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+CFTypeID CTParagraphStyleGetTypeID( void ) CT_AVAILABLE(10_5, 3_2);
 
 
 /* --------------------------------------------------------------------------- */
@@ -295,8 +296,7 @@ typedef CF_ENUM(int8_t, CTWritingDirection) {
 
     @constant   kCTParagraphStyleSpecifierMaximumLineSpacing
                 The maximum space in points between lines within the paragraph
-                (commonly known as leading). This value is always
-                nonnegative.
+                (commonly known as leading).
 
                 Type: CGFloat
                 Default: some large number.
@@ -305,8 +305,7 @@ typedef CF_ENUM(int8_t, CTWritingDirection) {
  
     @constant   kCTParagraphStyleSpecifierMinimumLineSpacing
                 The minimum space in points between lines within the paragraph
-                (commonly known as leading). This value is always
-                nonnegative.
+                (commonly known as leading).
 
                 Type: CGFloat
                 Default: 0.0
@@ -416,7 +415,7 @@ typedef struct CTParagraphStyleSetting
 
 CTParagraphStyleRef CTParagraphStyleCreate(
     const CTParagraphStyleSetting * settings,
-    size_t settingCount ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+    size_t settingCount ) CT_AVAILABLE(10_5, 3_2);
 
 
 /*!
@@ -434,7 +433,7 @@ CTParagraphStyleRef CTParagraphStyleCreate(
 */
 
 CTParagraphStyleRef CTParagraphStyleCreateCopy(
-    CTParagraphStyleRef paragraphStyle ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+    CTParagraphStyleRef paragraphStyle ) CT_AVAILABLE(10_5, 3_2);
 
 
 /* --------------------------------------------------------------------------- */
@@ -482,11 +481,13 @@ bool CTParagraphStyleGetValueForSpecifier(
     CTParagraphStyleRef paragraphStyle,
     CTParagraphStyleSpecifier spec,
     size_t valueBufferSize,
-    void * valueBuffer ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+    void * valueBuffer ) CT_AVAILABLE(10_5, 3_2);
 
 
 #if defined(__cplusplus)
 }
 #endif
+
+CF_IMPLICIT_BRIDGING_DISABLED
 
 #endif

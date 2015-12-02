@@ -7,14 +7,7 @@
 
 #include <stdint.h>
 #include <arm/arch.h> /* for _ARM_ARCH_6 */
-
-#if !defined(OS_INLINE)
-# if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#        define OS_INLINE static inline
-# else
-#        define OS_INLINE static __inline__
-# endif
-#endif
+#include <sys/_types/_os_inline.h>
 
 /* Generic byte swapping functions. */
 

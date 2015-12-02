@@ -36,7 +36,7 @@ EVENTKITUI_CLASS_AVAILABLE(5_0)
 
 @property(nonatomic, readonly) EKCalendarChooserSelectionStyle    selectionStyle;
 
-@property(nonatomic, assign) id<EKCalendarChooserDelegate>        delegate;
+@property(nonatomic, weak) id<EKCalendarChooserDelegate>        delegate;
 
 // When used in a navigation controller (presented modally), you can enable
 // the done/cancel buttons and get informed when pressed via the delegate.

@@ -25,15 +25,6 @@
  */
 NS_CLASS_AVAILABLE(10_7, 5_0)
 CB_EXTERN_CLASS @interface CBService : NSObject
-{
-@package
-	CBPeripheral	*_peripheral;
-	CBUUID			*_UUID;
-	BOOL			_isPrimary;
-	
-	NSArray			*_includedServices;
-	NSArray			*_characteristics;
-}
 
 /*!
  * @property peripheral
@@ -42,7 +33,7 @@ CB_EXTERN_CLASS @interface CBService : NSObject
  *      A back-pointer to the peripheral this service belongs to.
  *
  */
-@property(readonly, nonatomic) CBPeripheral *peripheral;
+@property(weak, readonly, nonatomic) CBPeripheral *peripheral;
 
 /*!
  * @property UUID

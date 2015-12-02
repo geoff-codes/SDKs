@@ -2,7 +2,7 @@
 //  UIViewController.h
 //  UIKit
 //
-//  Copyright (c) 2007-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -24,6 +24,7 @@
 @class UISearchDisplayController;
 @class UIPopoverController;
 @class UIStoryboard, UIStoryboardSegue;
+@class UIScrollView;
 
 typedef NS_ENUM(NSInteger, UIModalTransitionStyle) {
     UIModalTransitionStyleCoverVertical = 0,
@@ -41,8 +42,11 @@ typedef NS_ENUM(NSInteger, UIModalPresentationStyle) {
     UIModalPresentationFormSheet,
     UIModalPresentationCurrentContext,
 #endif
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
+    UIModalPresentationCustom,
+    UIModalPresentationNone = -1,        
+#endif        
 };
-
 
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UIViewController : UIResponder <NSCoding, UIAppearanceContainer> {
     @package
@@ -62,10 +66,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIViewController : UIResponder <NSCoding,
     UIViewController *_previousRootViewController; // Nonretained    
     UIView           *_modalTransitionView;
     UIResponder	     *_modalPreservedFirstResponder;
-    UIResponder      *_defaultFirstResponder;
     id               _dimmingView;
     id               _dropShadowView;
-
+    
     id                _currentAction;
     UIStoryboard     *_storyboard;
     NSArray          *_storyboardSegueTemplates;
@@ -89,8 +92,12 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIViewController : UIResponder <NSCoding,
     CGSize _contentSizeForViewInPopover;
     CGSize _formSheetSize;
 
-    void (^_afterAppearance)(void);    
+    UIScrollView *_recordedContentScrollView;
+
+    void (^_afterAppearance)(void);
     NSInteger _explicitAppearanceTransitionLevel;
+    
+    NSArray *_keyCommands;
 
     struct {
         unsigned int appearState:2;
@@ -109,7 +116,6 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIViewController : UIResponder <NSCoding,
         unsigned int searchControllerRetained:1;
         unsigned int oldModalInPopover:1;
         unsigned int isModalInPopover:1;
-        unsigned int restoreDeepestFirstResponder:1;
         unsigned int isInWillRotateCallback:1;
         unsigned int disallowMixedOrientationPresentations:1;
         unsigned int isFinishingModalTransition:1;
@@ -131,6 +137,14 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIViewController : UIResponder <NSCoding,
         unsigned int rootResignationNeeded:1;
         unsigned int shouldSynthesizeSupportedOrientations:1;
         unsigned int viewConstraintsNeedUpdateOnAppearance:1;
+        unsigned int shouldForceNonAnimatedTransition:1;
+        unsigned int isInCustomTransition:1;
+        unsigned int usesSharedView:1;
+        unsigned int extendedLayoutIncludesOpaqueBars:1;
+        unsigned int automaticallyAdjustInsets:1;
+        unsigned int previousShouldUnderlapUnderStatusBar:1;
+        unsigned int freezeShouldUnderlapUnderStatusBar:1;
+        unsigned int neverResizeRoot:1;
     } _viewControllerFlags;
 }
 
@@ -215,7 +229,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIViewController : UIResponder <NSCoding,
   These four methods can be used in a view controller's appearance callbacks to determine if it is being
   presented, dismissed, or added or removed as a child view controller. For example, a view controller can
   check if it is disappearing because it was dismissed or popped by asking itself in its viewWillDisappear:
-  method by checking the expression ([self isDismissing] || [self isMovingFromParentViewController]).
+  method by checking the expression ([self isBeingDismissed] || [self isMovingFromParentViewController]).
 */
 
 - (BOOL)isBeingPresented NS_AVAILABLE_IOS(5_0);
@@ -246,11 +260,30 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIViewController : UIResponder <NSCoding,
 */
 @property(nonatomic,assign) UIModalTransitionStyle modalTransitionStyle NS_AVAILABLE_IOS(3_0);
 @property(nonatomic,assign) UIModalPresentationStyle modalPresentationStyle NS_AVAILABLE_IOS(3_2);
+// This controls whether this view controller takes over control of the status bar's appearance when presented non-full screen on another view controller. Defaults to NO.
+@property(nonatomic,assign) BOOL modalPresentationCapturesStatusBarAppearance NS_AVAILABLE_IOS(7_0);
 
 // Presentation modes may keep the keyboard visible when not required. Default implementation affects UIModalPresentationFormSheet visibility.
 - (BOOL)disablesAutomaticKeyboardDismissal NS_AVAILABLE_IOS(4_3);
 
-@property(nonatomic,assign) BOOL wantsFullScreenLayout NS_AVAILABLE_IOS(3_0);
+@property(nonatomic,assign) BOOL wantsFullScreenLayout NS_DEPRECATED_IOS(3_0, 7_0); // Deprecated in 7_0, Replaced by the following:
+
+@property(nonatomic,assign) UIRectEdge edgesForExtendedLayout NS_AVAILABLE_IOS(7_0); // Defaults to UIRectEdgeAll
+@property(nonatomic,assign) BOOL extendedLayoutIncludesOpaqueBars NS_AVAILABLE_IOS(7_0); // Defaults to NO, but bars are translucent by default on 7_0.  
+@property(nonatomic,assign) BOOL automaticallyAdjustsScrollViewInsets NS_AVAILABLE_IOS(7_0); // Defaults to YES
+
+/* The preferredContentSize is used for any container laying out a child view controller.
+ */
+@property (nonatomic) CGSize preferredContentSize NS_AVAILABLE_IOS(7_0);
+
+// These methods control the attributes of the status bar when this view controller is shown. They can be overridden in view controller subclasses to return the desired status bar attributes.
+- (UIStatusBarStyle)preferredStatusBarStyle NS_AVAILABLE_IOS(7_0); // Defaults to UIStatusBarStyleDefault
+- (BOOL)prefersStatusBarHidden NS_AVAILABLE_IOS(7_0); // Defaults to NO
+// Override to return the type of animation that should be used for status bar changes for this view controller. This currently only affects changes to prefersStatusBarHidden.
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation NS_AVAILABLE_IOS(7_0); // Defaults to UIStatusBarAnimationFade
+
+// This should be called whenever the return values for the view controller's status bar attributes have changed. If it is called from within an animation block, the changes will be animated along with the rest of the animation block.
+- (void)setNeedsStatusBarAppearanceUpdate NS_AVAILABLE_IOS(7_0);
 
 @end
 
@@ -363,6 +396,10 @@ UIKIT_EXTERN NSString *const UIViewControllerHierarchyInconsistencyException NS_
 - (void)beginAppearanceTransition:(BOOL)isAppearing animated:(BOOL)animated __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 - (void)endAppearanceTransition __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
 
+// Override to return a child view controller or nil. If non-nil, that view controller's status bar appearance attributes will be use. If nil, self is used. Whenever the return values from these methods change, -setNeedsUpdatedStatusBarAttributes should be called.
+- (UIViewController *)childViewControllerForStatusBarStyle NS_AVAILABLE_IOS(7_0);
+- (UIViewController *)childViewControllerForStatusBarHidden NS_AVAILABLE_IOS(7_0);
+
 @end
 
 @interface UIViewController (UIContainerViewControllerCallbacks)
@@ -405,11 +442,12 @@ UIKIT_EXTERN NSString *const UIViewControllerHierarchyInconsistencyException NS_
 
 @end
 
-@interface UIViewController (UIStateRestoration)
+@interface UIViewController (UIStateRestoration) <UIStateRestoring>
 @property (nonatomic, copy) NSString *restorationIdentifier NS_AVAILABLE_IOS(6_0);
 @property (nonatomic, readwrite, assign) Class<UIViewControllerRestoration> restorationClass NS_AVAILABLE_IOS(6_0);
 - (void) encodeRestorableStateWithCoder:(NSCoder *)coder NS_AVAILABLE_IOS(6_0);
 - (void) decodeRestorableStateWithCoder:(NSCoder *)coder NS_AVAILABLE_IOS(6_0);
+- (void) applicationFinishedRestoringState NS_AVAILABLE_IOS(7_0);
 @end
 
 @interface UIViewController (UIConstraintBasedLayoutCoreMethods)
@@ -422,4 +460,18 @@ UIKIT_EXTERN NSString *const UIViewControllerHierarchyInconsistencyException NS_
     Overrides must call super or send -updateConstraints to the view.
  */
 - (void)updateViewConstraints NS_AVAILABLE_IOS(6_0);
+@end
+
+@protocol UIViewControllerTransitioningDelegate;
+
+@interface UIViewController(CustomTransitioning)
+
+@property (nonatomic,assign) id <UIViewControllerTransitioningDelegate> transitioningDelegate NS_AVAILABLE_IOS(7_0);
+
+@end
+
+@interface UIViewController (UILayoutSupport)
+// These objects may be used as layout items in the NSLayoutConstraint API
+@property(nonatomic,readonly,retain) id<UILayoutSupport> topLayoutGuide NS_AVAILABLE_IOS(7_0);
+@property(nonatomic,readonly,retain) id<UILayoutSupport> bottomLayoutGuide NS_AVAILABLE_IOS(7_0);
 @end

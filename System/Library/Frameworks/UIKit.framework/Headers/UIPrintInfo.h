@@ -10,9 +10,12 @@
 #import <UIKit/UIKitDefines.h>
 
 typedef NS_ENUM(NSInteger, UIPrintInfoOutputType) {
-    UIPrintInfoOutputGeneral,     // B&W or color, normal quality output for mixed text, graphics, and images
-    UIPrintInfoOutputPhoto,       // B&W or color, best quality output for images
-    UIPrintInfoOutputGrayscale,   // B&W content only
+    UIPrintInfoOutputGeneral,           // B&W or color, normal quality output for mixed text, graphics, and images
+    UIPrintInfoOutputPhoto,             // B&W or color, best quality output for images
+    UIPrintInfoOutputGrayscale,         // B&W content only
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
+    UIPrintInfoOutputPhotoGrayscale,    // B&W only, best quality output for images
+#endif
 };
 
 typedef NS_ENUM(NSInteger, UIPrintInfoOrientation) {

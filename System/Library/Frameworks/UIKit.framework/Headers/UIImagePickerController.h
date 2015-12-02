@@ -2,7 +2,7 @@
 //  UIImagePickerController.h
 //  UIKit
 //
-//  Copyright (c) 2008-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -64,6 +64,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIImagePickerController : UINavigationCon
     NSArray                          *_mediaTypes;
     NSMutableDictionary              *_properties;
     int                               _previousStatusBarStyle;
+    BOOL                              _previousStatusBarHidden;
     
     struct {
         unsigned int visible:1;

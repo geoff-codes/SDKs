@@ -42,13 +42,11 @@ typedef enum {
 EVENTKITUI_CLASS_AVAILABLE(4_0)
 @interface EKEventEditViewController : UINavigationController {
 @private
-    EKEventStore                   *_store;
     EKEvent                        *_event;
-    id<EKEventEditViewDelegate>     _editViewDelegate;
     NSString                       *_eventId;
 }
 
-@property(nonatomic, assign) id<EKEventEditViewDelegate>  editViewDelegate;
+@property(nonatomic, weak) id<EKEventEditViewDelegate>  editViewDelegate;
 
 /*!
     @property   eventStore
@@ -106,7 +104,7 @@ EVENTKITUI_CLASS_AVAILABLE(4_0)
     @abstract   Allows you to supply your own default calendar for new events.
     @discussion This delegate method allows you to control what the editor chooses for the default calendar
                 if it needs to fill in a calendar. This might be necessary if you either don't pass an initial
-                event to the view controller, or you do, but you did not supply a calender. In these cases, we
+                event to the view controller, or you do, but you did not supply a calendar. In these cases, we
                 we set the calendar to a default. If this is not implemented by the delegate, the controller
                 will use the store's defaultCalendarForNewEvents.
 */

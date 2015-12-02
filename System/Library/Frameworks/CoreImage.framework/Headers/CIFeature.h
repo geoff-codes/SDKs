@@ -26,7 +26,30 @@ CORE_IMAGE_EXPORT NSString* const CIFeatureTypeFace;
 /** A face feature found by a CIDetector.
  All positions are relative to the original image. */
 CORE_IMAGE_CLASS_EXPORT
-@interface CIFaceFeature : CIFeature {}
+@interface CIFaceFeature : CIFeature
+{
+	CGRect bounds;
+	BOOL hasLeftEyePosition;
+	CGPoint leftEyePosition;
+	BOOL hasRightEyePosition;
+	CGPoint rightEyePosition;
+	BOOL hasMouthPosition;
+	CGPoint mouthPosition;
+	
+    
+	BOOL hasTrackingID;
+	int trackingID;
+	BOOL hasTrackingFrameCount;
+	int trackingFrameCount;
+	
+	BOOL hasFaceAngle;
+	float faceAngle;
+	
+	BOOL hasSmile;
+	BOOL leftEyeClosed;
+	BOOL rightEyeClosed;
+	
+}
 
 /** coordinates of various cardinal points within a face.
  
@@ -34,6 +57,7 @@ CORE_IMAGE_CLASS_EXPORT
  from the observer's perspective. It is not the left eye from
  the subject's perspective. */
 
+@property (readonly, assign) CGRect bounds;
 @property (readonly, assign) BOOL hasLeftEyePosition;
 @property (readonly, assign) CGPoint leftEyePosition;
 @property (readonly, assign) BOOL hasRightEyePosition;
@@ -45,6 +69,13 @@ CORE_IMAGE_CLASS_EXPORT
 @property (readonly, assign) int trackingID;
 @property (readonly, assign) BOOL hasTrackingFrameCount;
 @property (readonly, assign) int trackingFrameCount;
+
+@property (readonly, assign) BOOL hasFaceAngle;
+@property (readonly, assign) float faceAngle;
+
+@property (readonly, assign) BOOL hasSmile;
+@property (readonly, assign) BOOL leftEyeClosed;
+@property (readonly, assign) BOOL rightEyeClosed;
 
 @end
 

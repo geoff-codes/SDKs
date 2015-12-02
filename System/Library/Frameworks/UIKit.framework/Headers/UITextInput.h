@@ -2,7 +2,7 @@
 //  UITextInput.h
 //  UIKit
 //
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -26,6 +26,7 @@
 // Responders that implement the UITextInput protocol allow the system-provided keyboard to
 // offer more sophisticated behaviors based on a current selection and context.
 
+@class NSTextAlternatives;
 @class UITextPosition;
 @class UITextRange;
 @class UITextSelectionRect;
@@ -242,20 +243,20 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface UITextSelectionRect : NSObject
 
 /* A recommended base implementation of the tokenizer protocol. Subclasses are responsible
  * for handling directions and granularities affected by layout.*/
-NS_CLASS_AVAILABLE_IOS(3_2) @interface UITextInputStringTokenizer : NSObject <UITextInputTokenizer> {
-  @package
-    UIResponder <UITextInput> *_textInput;
-}
+NS_CLASS_AVAILABLE_IOS(3_2) @interface UITextInputStringTokenizer : NSObject <UITextInputTokenizer> 
 
 - (id)initWithTextInput:(UIResponder <UITextInput> *)textInput;
 
 @end
 
-NS_CLASS_AVAILABLE_IOS(4_2) @interface UITextInputMode : NSObject
+/* The UITextInputMode class should not be subclassed. It is to allow other in-app functionality to adapt 
+ * based on the keyboard language. Different UITextInputMode objects may have the same primaryLanguage. */
+NS_CLASS_AVAILABLE_IOS(4_2) @interface UITextInputMode : NSObject <NSSecureCoding>
 
 @property (nonatomic, readonly, retain) NSString *primaryLanguage; // The primary language, if any, of the input mode.  A BCP 47 language identifier such as en-US
 
-+ (UITextInputMode *)currentInputMode; // The current input mode.  Nil if unset.
+// To query the UITextInputMode, refer to the UIResponder method -textInputMode.
++ (UITextInputMode *)currentInputMode NS_DEPRECATED_IOS(4_2, 7_0); // The current input mode.  Nil if unset.
 + (NSArray *)activeInputModes; // The activate input modes.
 
 @end

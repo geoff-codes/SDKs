@@ -27,6 +27,7 @@ SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPaymentQueue : NSObject {
 
 // Asynchronous.  Will add completed transactions for the current user back to the queue to be re-completed.  User will be asked to authenticate.  Observers will receive 0 or more -paymentQueue:updatedTransactions:, followed by either -paymentQueueRestoreCompletedTransactionsFinished: on success or -paymentQueue:restoreCompletedTransactionsFailedWithError: on failure.  In the case of partial success, some transactions may still be delivered.
 - (void)restoreCompletedTransactions  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+- (void)restoreCompletedTransactionsWithApplicationUsername:(NSString *)username __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 
 // Asynchronous.  Remove a finished (i.e. failed or completed) transaction from the queue.  Attempting to finish a purchasing transaction will throw an exception.
 - (void)finishTransaction:(SKPaymentTransaction *)transaction __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);

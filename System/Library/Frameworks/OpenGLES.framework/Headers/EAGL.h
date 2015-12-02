@@ -1,11 +1,9 @@
 /*
-    Copyright:  (c) 2006-2008 Apple Inc. All rights reserved.
+    Copyright:  (c) 2006-2013 Apple Inc. All rights reserved.
 */
 
 #ifndef _EAGL_H_
 #define _EAGL_H_
-
-// HEADER REVISION 14
 
 #include <Foundation/Foundation.h>
 
@@ -32,7 +30,8 @@
 enum
 {
 	kEAGLRenderingAPIOpenGLES1 = 1,
-	kEAGLRenderingAPIOpenGLES2 = 2
+	kEAGLRenderingAPIOpenGLES2 = 2,
+	kEAGLRenderingAPIOpenGLES3 = 3,
 };
 typedef NSUInteger EAGLRenderingAPI;
 
@@ -78,7 +77,7 @@ EAGL_EXTERN_CLASS
 @property (readonly) EAGLSharegroup*    sharegroup;
 
 @property (copy, nonatomic) NSString* debugLabel NS_AVAILABLE_IOS(6_0);
-
+@property (getter=isMultiThreaded, nonatomic) BOOL multiThreaded NS_AVAILABLE_IOS(7_1);
 @end
 
 

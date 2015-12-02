@@ -2,14 +2,12 @@
  *  SFNTLayoutTypes.h
  *  CoreText
  *
- *  Copyright 1994-2012 Apple Inc. All rights reserved.
+ *  Copyright 1994-2013 Apple Inc. All rights reserved.
  *
  */
 
 #ifndef __SFNTLAYOUTTYPES__
 #define __SFNTLAYOUTTYPES__
-
-#include <TargetConditionals.h>
 
 #include <MacTypes.h>
 
@@ -71,6 +69,7 @@ enum {
   kContextualAlternatesType     = 36,
   kLowerCaseType                = 37,
   kUpperCaseType                = 38,
+  kLanguageTagType              = 39,
   kCJKRomanSpacingType          = 103,
   kLastFeatureType              = -1
 };
@@ -1194,18 +1193,18 @@ enum {
   kPROPRDirectionClass          = 1,    /* Right-to-Left */
   kPROPALDirectionClass         = 2,    /* Right-to-Left Arabic Letter */
   kPROPENDirectionClass         = 3,    /* European Number */
-  kPROPESDirectionClass         = 4,    /* European Number Seperator */
+  kPROPESDirectionClass         = 4,    /* European Number Separator */
   kPROPETDirectionClass         = 5,    /* European Number Terminator */
   kPROPANDirectionClass         = 6,    /* Arabic Number */
-  kPROPCSDirectionClass         = 7,    /* Common Number Seperator */
-  kPROPPSDirectionClass         = 8,    /* Paragraph Seperator (also referred to as Block Separator) */
-  kPROPSDirectionClass          = 9,    /* Segment Seperator */
+  kPROPCSDirectionClass         = 7,    /* Common Number Separator */
+  kPROPPSDirectionClass         = 8,    /* Paragraph Separator (also referred to as Block Separator) */
+  kPROPSDirectionClass          = 9,    /* Segment Separator */
   kPROPWSDirectionClass         = 10,   /* Whitespace */
   kPROPONDirectionClass         = 11,   /* Other Neutral */
   kPROPSENDirectionClass        = 12,   /* Special European Number (not a Unicode class) */
-  kPROPLREDirectionClass        = 13,   /* Left-to-Right Embeding */
+  kPROPLREDirectionClass        = 13,   /* Left-to-Right Embedding */
   kPROPLRODirectionClass        = 14,   /* Left-to-Right Override */
-  kPROPRLEDirectionClass        = 15,   /* Right-to-Left Embeding */
+  kPROPRLEDirectionClass        = 15,   /* Right-to-Left Embedding */
   kPROPRLODirectionClass        = 16,   /* Right-to-Left Override */
   kPROPPDFDirectionClass        = 17,   /* Pop Directional Format */
   kPROPNSMDirectionClass        = 18,   /* Non-Spacing Mark */
@@ -1235,6 +1234,38 @@ struct PropLookupSingle {
 };
 typedef struct PropLookupSingle         PropLookupSingle;
 /* --------------------------------------------------------------------------- */
+/* FORMATS FOR TABLE: 'trak' */
+/* CONSTANTS */
+enum {
+  kTRAKTag                      = 0x7472616B, /* 'trak' */
+  kTRAKCurrentVersion           = 0x00010000, /* current version number for 'trak' table */
+  kTRAKUniformFormat            = 0     /*    kTRAKPerGlyphFormat         = 2*/
+};
+
+/* TYPES */
+
+typedef SInt16                          TrakValue;
+struct TrakTableEntry {
+  Fixed               track;
+  UInt16              nameTableIndex;
+  UInt16              sizesOffset;            /* offset to array of TrackingValues */
+};
+typedef struct TrakTableEntry           TrakTableEntry;
+struct TrakTableData {
+  UInt16              nTracks;
+  UInt16              nSizes;
+  UInt32              sizeTableOffset;
+  TrakTableEntry      trakTable[1];
+};
+typedef struct TrakTableData            TrakTableData;
+struct TrakTable {
+  Fixed               version;
+  UInt16              format;
+  UInt16              horizOffset;
+  UInt16              vertOffset;
+};
+typedef struct TrakTable                TrakTable;
+/* --------------------------------------------------------------------------- */
 /* FORMATS FOR TABLE: 'kern' */
 /* CONSTANTS */
 enum {
@@ -1252,7 +1283,7 @@ enum {
   kKERNOrderedList              = 0,    /* ordered list of kerning pairs */
   kKERNStateTable               = 1,    /* state table for n-way contextual kerning */
   kKERNSimpleArray              = 2,    /* simple n X m array of kerning values */
-  kKERNIndexArray               = 3     /* modifed version of SimpleArray */
+  kKERNIndexArray               = 3     /* modified version of SimpleArray */
 };
 
 /* Message Type Flags */
@@ -1348,7 +1379,7 @@ typedef KernOffsetTable *               KernOffsetTablePtr;
 /*
     KernSimpleArray:
     
-    The array is an nXm array of kenring values. Each row in the array
+    The array is an nXm array of kerning values. Each row in the array
     represents one left-hand glyph, and each column one right-hand glyph.
     The zeroth row and column always represent glyphs that are out of bounds
     and will always contain zero.
@@ -1427,7 +1458,7 @@ enum {
   kKERXOrderedList              = 0,    /* ordered list of kerning pairs */
   kKERXStateTable               = 1,    /* state table for n-way contextual kerning */
   kKERXSimpleArray              = 2,    /* simple n X m array of kerning values */
-  kKERXIndexArray               = 3,    /* modifed version of SimpleArray */
+  kKERXIndexArray               = 3,    /* modified version of SimpleArray */
   kKERXControlPoint             = 4     /* state table for control point positioning */
 };
 
@@ -1539,23 +1570,9 @@ struct KerxCoordinateAction {
 };
 typedef struct KerxCoordinateAction     KerxCoordinateAction;
 /*
- Kern offset table header.
- The offset table is a trimmed array from firstGlyph to limitGlyph.
- Glyphs outside of this range should get zero for right-hand glyphs
- and the offset of the beginning of the kerning array for left-hand glyphs.
- */
-struct KerxOffsetTable {
-  UInt16              firstGlyph;             /* first glyph in class range */
-  UInt16              nGlyphs;                /* number of glyphs in class range */
-  KerxArrayOffset     offsetTable[1];         /* offset table starts here */
-};
-typedef struct KerxOffsetTable          KerxOffsetTable;
-typedef KerxOffsetTable *               KerxOffsetTablePtr;
-/* Header information for accessing offset tables and kerning array */
-/*
  KerxSimpleArray:
  
- The array is an nXm array of kenring values. Each row in the array
+ The array is an nXm array of kerning values. Each row in the array
  represents one left-hand glyph, and each column one right-hand glyph.
  The zeroth row and column always represent glyphs that are out of bounds
  and will always contain zero.
@@ -1565,11 +1582,6 @@ typedef KerxOffsetTable *               KerxOffsetTablePtr;
  adding both offsets to the starting address of the kerning array,
  and fetching the kerning value pointed to.
  */
-/* Kern offset table header. */
-/* The offset table is a trimmed array from firstGlyph to limitGlyph. */
-/* Glyphs outside of this range should get zero for right-hand glyphs */
-/* and the offset of the beginning of the kerning array for left- */
-/* hand glyphs. */
 struct KerxSimpleArrayHeader {
   UInt32              rowWidth;               /* width, in bytes, of a row in the table */
   UInt32              leftOffsetTable;        /* offset to left-hand offset table */
@@ -1604,7 +1616,7 @@ typedef union KerxFormatSpecificHeader  KerxFormatSpecificHeader;
 /* Overall Subtable header format */
 struct KerxSubtableHeader {
   UInt32              length;                 /* length in bytes (including this header) */
-  KerxSubtableCoverage  stInfo;               /* subtable converage */
+  KerxSubtableCoverage  stInfo;               /* subtable coverage */
   UInt32              tupleIndex;             /* tuple index for variation subtables */
   KerxFormatSpecificHeader  fsHeader;         /* format specific sub-header */
 };
@@ -1757,12 +1769,33 @@ struct AnchorPointTable {
 typedef struct AnchorPointTable         AnchorPointTable;
 
 struct AnkrTable {
-  UInt16              version;                /* 1 */
+  UInt16              version;                /* 0 */
   UInt16              flags;                  /* never leave home without them (see 'Zapf') */
   UInt32              lookupTableOffset;      /* Byte offset to lookup table mapping glyphs to offset into anchor point table */
   UInt32              anchorPointTableOffset; /* Byte offset to start of anchor point table */
 };
 typedef struct AnkrTable                AnkrTable;
+/* --------------------------------------------------------------------------- */
+/* FORMATS FOR TABLE 'ltag' */
+/* CONSTANTS */
+enum {
+  kLTAGCurrentVersion = 1
+};
+
+/* TYPES */
+struct LtagStringRange {
+  UInt16               offset;                /* offset to the beginning of the string */
+  UInt16               length;                /* string length in bytes */
+};
+typedef struct LtagStringRange          LtagStringRange;
+
+struct LtagTable {
+  UInt32              version;                /* 1 */
+  UInt32              flags;                  /* none currently defined */
+  UInt32              numTags;                /* number of language tags which follow */
+  LtagStringRange     tagRange[1];            /* first string range starts here */
+};
+typedef struct LtagTable                LtagTable;
 /* --------------------------------------------------------------------------- */
 
 #pragma pack(pop)

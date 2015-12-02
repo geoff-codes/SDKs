@@ -216,22 +216,17 @@ struct kevent64_s {
  * contain the PID of the child (but the pid does not get passed through in
  * the actual kevent).
  */
+enum {
+	eNoteReapDeprecated __deprecated_enum_msg("This kqueue(2) EVFILT_PROC flag is deprecated") = 0x10000000
+};
+
 #define	NOTE_EXIT		0x80000000	/* process exited */
 #define	NOTE_FORK		0x40000000	/* process forked */
 #define	NOTE_EXEC		0x20000000	/* process exec'd */
-#define	NOTE_REAP		0x10000000	/* process reaped */
+#define	NOTE_REAP		((unsigned int)eNoteReapDeprecated /* 0x10000000 */)	/* process reaped */
 #define	NOTE_SIGNAL		0x08000000	/* shared with EVFILT_SIGNAL */
 #define	NOTE_EXITSTATUS		0x04000000	/* exit status to be returned, valid for child process only */
 #define	NOTE_EXIT_DETAIL	0x02000000	/* provide details on reasons for exit */
-
-#if CONFIG_EMBEDDED
-/* App states notification */
-#define	NOTE_APPACTIVE		0x00800000	/* app went to active state */
-#define	NOTE_APPBACKGROUND	0x00400000	/* app went to background */
-#define	NOTE_APPNONUI		0x00200000	/* app went to active with no UI */
-#define	NOTE_APPINACTIVE	0x00100000	/* app went to inactive state */
-#define NOTE_APPALLSTATES	0x00f00000
-#endif /* CONFIG_EMBEDDED */
 
 #define	NOTE_PDATAMASK	0x000fffff		/* mask for signal & exit status */
 #define	NOTE_PCTRLMASK	(~NOTE_PDATAMASK)
@@ -239,14 +234,19 @@ struct kevent64_s {
 /*
  * If NOTE_EXITSTATUS is present, provide additional info about exiting process.
  */
-#define NOTE_EXIT_REPARENTED	0x00080000	/* exited while reparented */
+enum {
+	eNoteExitReparentedDeprecated __deprecated_enum_msg("This kqueue(2) EVFILT_PROC flag is no longer sent") = 0x00080000 
+};
+#define NOTE_EXIT_REPARENTED	((unsigned int)eNoteExitReparentedDeprecated)	/* exited while reparented */
 
 /*
  * If NOTE_EXIT_DETAIL is present, these bits indicate specific reasons for exiting.
  */
-#define NOTE_EXIT_DETAIL_MASK		0x00030000
+#define NOTE_EXIT_DETAIL_MASK		0x00070000
 #define	NOTE_EXIT_DECRYPTFAIL		0x00010000 
 #define	NOTE_EXIT_MEMORY		0x00020000
+#define NOTE_EXIT_CSERROR		0x00040000
+
 
 /*
  * data/hint fflags for EVFILT_VM, shared with userspace.
@@ -269,6 +269,9 @@ struct kevent64_s {
 #define NOTE_NSECONDS	0x00000004		/* data is nanoseconds     */
 #define NOTE_ABSOLUTE	0x00000008		/* absolute timeout        */
 						/* ... implicit EV_ONESHOT */
+#define NOTE_LEEWAY	0x00000010		/* ext[1] holds leeway for power aware timers */
+#define NOTE_CRITICAL	0x00000020		/* system does minimal timer coalescing */
+#define NOTE_BACKGROUND	0x00000040		/* system does maximum timer coalescing */
 
 /*
  * data/hint fflags for EVFILT_MACHPORT, shared with userspace.

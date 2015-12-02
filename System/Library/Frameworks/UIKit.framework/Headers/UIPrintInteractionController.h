@@ -22,6 +22,7 @@ NS_CLASS_AVAILABLE_IOS(4_2) @interface UIPrintInteractionController : NSObject {
     UIPrintInfo                             *_printInfo;
     id<UIPrintInteractionControllerDelegate> _delegate;
     BOOL                                     _showsPageRange;
+    BOOL                                     _hidesNumberOfCopies;
     UIPrintPageRenderer                     *_printPageRenderer;
     UIPrintFormatter                        *_printFormatter;
     id                                       _printingItem;
@@ -43,6 +44,7 @@ NS_CLASS_AVAILABLE_IOS(4_2) @interface UIPrintInteractionController : NSObject {
 @property(nonatomic,retain) UIPrintInfo                             *printInfo;      // changes to printInfo ignored while printing. default is nil
 @property(nonatomic,assign) id<UIPrintInteractionControllerDelegate> delegate;       // not retained. default is nil
 @property(nonatomic)        BOOL                                     showsPageRange; // default is NO.
+@property(nonatomic)        BOOL                                     showsNumberOfCopies NS_AVAILABLE_IOS(7_0); // default is YES.
 
 @property(nonatomic,readonly) UIPrintPaper *printPaper;  // set after printer selection
 
@@ -73,5 +75,7 @@ NS_CLASS_AVAILABLE_IOS(4_2) @interface UIPrintInteractionController : NSObject {
 
 - (void)printInteractionControllerWillStartJob:(UIPrintInteractionController *)printInteractionController;
 - (void)printInteractionControllerDidFinishJob:(UIPrintInteractionController *)printInteractionController;
+
+- (CGFloat)printInteractionController:(UIPrintInteractionController *)printInteractionController cutLengthForPaper:(UIPrintPaper *)paper NS_AVAILABLE_IOS(7_0);  
 
 @end

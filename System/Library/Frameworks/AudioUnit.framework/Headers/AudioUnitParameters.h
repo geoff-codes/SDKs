@@ -328,12 +328,6 @@ enum {
 	kAULowShelfParam_Gain = 1
 };
 
-// Parameters for the AUDCFilter unit
-enum {
-		// Global, Seconds, .0001->1., .03
-	kAUDCFilterParam_DecayTime = 0,		
-};
-
 // Parameters for the AUParametricEQ unit
 enum {
 		// Global, Hz, 20->(SampleRate/2), 2000
@@ -452,6 +446,126 @@ enum {
 		// Global, Hz, 10->(SampleRate/2), 15000
 	kDelayParam_LopassCutoff	 		= 3
 };
+
+// Parameters for the AUNBandEQ unit
+// Note that the parameter IDs listed correspond to band 0 (zero) of the unit. The parameter IDs for
+// higher bands can be obtained by adding the zero-indexed band number to the corresponding band 0
+// parameter ID up to the number of bands minus one, where the number of bands is described by the
+// AUNBandEQ property kAUNBandEQProperty_NumberOfBands. For example, the parameter ID corresponding
+// to the filter type of band 4 would be kAUNBandEQParam_FilterType + 3.
+// kAUNBandEQParam_GlobalsGain is an overall gain and does not have a band.
+enum {
+    // Global, dB, -96->24, 0
+	kAUNBandEQParam_GlobalGain								= 0,
+	
+    // Global, Boolean, 0 or 1, 1
+	kAUNBandEQParam_BypassBand								= 1000,
+	
+    // Global, Indexed, 0->kNumAUNBandEQFilterTypes-1, 0
+	kAUNBandEQParam_FilterType								= 2000,
+	
+    // Global, Hz, 20->(SampleRate/2), 1000
+	kAUNBandEQParam_Frequency								= 3000,
+	
+    // Global, dB, -96->24, 0
+	kAUNBandEQParam_Gain									= 4000,
+	
+    // Global, octaves, 0.05->5.0, 0.5
+	kAUNBandEQParam_Bandwidth								= 5000
+};
+
+/*!
+ @enum			AUNBandEQ filter types
+ @discussion		Constants available as values for the kAUNBandEQParam_FilterType parameter defined above
+ 
+ @constant		kAUNBandEQFilterType_Parametric
+ Parametric filter based on Butterworth analog prototype. Uses parameterization where
+ the bandwidth is specifed as the relationship of the upper bandedge frequency to the
+ lower bandedge frequency in octaves, where the upper and lower bandedge frequencies are
+ the respective frequencies above and below the center frequency at which the gain is
+ equal to half the peak gain.
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (center frequency)
+ - kAUNBandEQParam_Gain (peak gain)
+ - kAUNBandEQParam_Bandwidth
+ 
+ @constant		kAUNBandEQFilterType_2ndOrderButterworthLowPass
+ Simple Butterworth 2nd order low pass filter
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (-3 dB cutoff frequency)
+ 
+ @constant		kAUNBandEQFilterType_2ndOrderButterworthHighPass
+ Simple Butterworth 2nd order high pass filter
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (-3 dB cutoff frequency)
+ 
+ @constant		kAUNBandEQFilterType_ResonantLowPass
+ Low pass filter with resonance support (via bandwidth parameter)
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (-3 dB cutoff frequency)
+ - kAUNBandEQParam_Bandwidth
+ 
+ @constant		kAUNBandEQFilterType_ResonantHighPass
+ High pass filter with resonance support (via bandwidth parameter)
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (-3 dB cutoff frequency)
+ - kAUNBandEQParam_Bandwidth
+ 
+ @constant		kAUNBandEQFilterType_BandPass
+ Band pass filter
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (center frequency)
+ - kAUNBandEQParam_Bandwidth
+ 
+ @constant		kAUNBandEQFilterType_BandStop
+ Band stop filter (aka "notch filter")
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (center frequency)
+ - kAUNBandEQParam_Bandwidth
+ 
+ @constant		kAUNBandEQFilterType_LowShelf
+ Low shelf filter
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (center frequency)
+ - kAUNBandEQParam_Gain (shelf gain)
+ 
+ @constant		kAUNBandEQFilterType_HighShelf
+ High shelf filter
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (center frequency)
+ - kAUNBandEQParam_Gain (shelf gain)
+ 
+ @constant		kAUNBandEQFilterType_ResonantLowShelf
+ Low shelf filter with resonance support (via bandwidth parameter)
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (center frequency)
+ - kAUNBandEQParam_Gain (shelf gain)
+ - kAUNBandEQParam_Bandwidth
+ 
+ @constant		kAUNBandEQFilterType_ResonantHighShelf
+ High shelf filter with resonance support (via bandwidth parameter)
+ Applicable parameters:
+ - kAUNBandEQParam_Frequency (center frequency)
+ - kAUNBandEQParam_Gain (shelf gain)
+ - kAUNBandEQParam_Bandwidth
+ 
+ */
+enum {
+	kAUNBandEQFilterType_Parametric 						= 0,
+	kAUNBandEQFilterType_2ndOrderButterworthLowPass			= 1,
+	kAUNBandEQFilterType_2ndOrderButterworthHighPass		= 2,
+	kAUNBandEQFilterType_ResonantLowPass					= 3,
+	kAUNBandEQFilterType_ResonantHighPass					= 4,
+	kAUNBandEQFilterType_BandPass							= 5,
+	kAUNBandEQFilterType_BandStop							= 6,
+	kAUNBandEQFilterType_LowShelf							= 7,
+	kAUNBandEQFilterType_HighShelf							= 8,
+	kAUNBandEQFilterType_ResonantLowShelf					= 9,
+	kAUNBandEQFilterType_ResonantHighShelf					= 10,
+	
+	kNumAUNBandEQFilterTypes								= 11
+};
+
 
 #pragma mark Apple Specific - Desktop
 
@@ -738,132 +852,20 @@ enum {
 };
 #endif // !TARGET_OS_IPHONE
 
+// `Analog' AudioUnits
+
+
+// Parameters for the AURandom unit
+enum {
+	kRandomParam_BoundA 			= 0,
+	kRandomParam_BoundB				= 1,
+	kRandomParam_Curve				= 2
+};
+
 
 #pragma mark Apple Specific - iOS
 
 #if TARGET_OS_IPHONE
-
-
-// Parameters for the AUNBandEQ unit
-// Note that the parameter IDs listed correspond to band 0 (zero) of the unit. The parameter IDs for
-// higher bands can be obtained by adding the zero-indexed band number to the corresponding band 0
-// parameter ID up to the number of bands minus one, where the number of bands is described by the
-// AUNBandEQ property kAUNBandEQProperty_NumberOfBands. For example, the parameter ID corresponding
-// to the filter type of band 4 would be kAUNBandEQParam_FilterType + 3.
-// kAUNBandEQParam_GlobalsGain is an overall gain and does not have a band. 
-enum {
-		// Global, dB, -96->24, 0
-	kAUNBandEQParam_GlobalGain								= 0,
-	
-		// Global, Boolean, 0 or 1, 1
-	kAUNBandEQParam_BypassBand								= 1000,
-	
-		// Global, Indexed, 0->kNumAUNBandEQFilterTypes-1, 0
-	kAUNBandEQParam_FilterType								= 2000,
-	
-		// Global, Hz, 20->(SampleRate/2), 1000
-	kAUNBandEQParam_Frequency								= 3000,
-	
-		// Global, dB, -96->24, 0
-	kAUNBandEQParam_Gain									= 4000,
-	
-		// Global, octaves, 0.05->5.0, 0.5
-	kAUNBandEQParam_Bandwidth								= 5000
-};
-
-/*!
-	@enum			AUNBandEQ filter types
-	@discussion		Constants available as values for the kAUNBandEQParam_FilterType parameter defined above
-	
-	@constant		kAUNBandEQFilterType_Parametric
-					Parametric filter based on Butterworth analog prototype. Uses parameterization where
-					the bandwidth is specifed as the relationship of the upper bandedge frequency to the
-					lower bandedge frequency in octaves, where the upper and lower bandedge frequencies are
-					the respective frequencies above and below the center frequency at which the gain is
-					equal to half the peak gain.
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (center frequency)
-							- kAUNBandEQParam_Gain (peak gain)
-							- kAUNBandEQParam_Bandwidth
-	
-	@constant		kAUNBandEQFilterType_2ndOrderButterworthLowPass
-					Simple Butterworth 2nd order low pass filter
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (-3 dB cutoff frequency)
-	
-	@constant		kAUNBandEQFilterType_2ndOrderButterworthHighPass
-					Simple Butterworth 2nd order high pass filter
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (-3 dB cutoff frequency)
-
-	@constant		kAUNBandEQFilterType_ResonantLowPass
-					Low pass filter with resonance support (via bandwidth parameter)
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (-3 dB cutoff frequency)
-							- kAUNBandEQParam_Bandwidth
-
-	@constant		kAUNBandEQFilterType_ResonantHighPass
-					High pass filter with resonance support (via bandwidth parameter)
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (-3 dB cutoff frequency)
-							- kAUNBandEQParam_Bandwidth
-
-	@constant		kAUNBandEQFilterType_BandPass
-					Band pass filter
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (center frequency)
-							- kAUNBandEQParam_Bandwidth
-
-	@constant		kAUNBandEQFilterType_BandStop
-					Band stop filter (aka "notch filter")
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (center frequency)
-							- kAUNBandEQParam_Bandwidth
-
-	@constant		kAUNBandEQFilterType_LowShelf
-					Low shelf filter
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (center frequency)
-							- kAUNBandEQParam_Gain (shelf gain)
-
-	@constant		kAUNBandEQFilterType_HighShelf
-					High shelf filter
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (center frequency)
-							- kAUNBandEQParam_Gain (shelf gain)
-	
-	@constant		kAUNBandEQFilterType_ResonantLowShelf
-					Low shelf filter with resonance support (via bandwidth parameter)
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (center frequency)
-							- kAUNBandEQParam_Gain (shelf gain)
-							- kAUNBandEQParam_Bandwidth
-
-	@constant		kAUNBandEQFilterType_ResonantHighShelf
-					High shelf filter with resonance support (via bandwidth parameter)
-						Applicable parameters:
-							- kAUNBandEQParam_Frequency (center frequency)
-							- kAUNBandEQParam_Gain (shelf gain)
-							- kAUNBandEQParam_Bandwidth
-	
-*/
-enum {
-	kAUNBandEQFilterType_Parametric							= 0,
-	kAUNBandEQFilterType_2ndOrderButterworthLowPass			= 1,
-	kAUNBandEQFilterType_2ndOrderButterworthHighPass		= 2,
-	kAUNBandEQFilterType_ResonantLowPass					= 3,
-	kAUNBandEQFilterType_ResonantHighPass					= 4,
-	kAUNBandEQFilterType_BandPass							= 5,
-	kAUNBandEQFilterType_BandStop							= 6,
-	kAUNBandEQFilterType_LowShelf							= 7,
-	kAUNBandEQFilterType_HighShelf							= 8,
-	kAUNBandEQFilterType_ResonantLowShelf					= 9,
-	kAUNBandEQFilterType_ResonantHighShelf					= 10,
-	
-	kNumAUNBandEQFilterTypes								= 11
-};
-
-
 
 // Parameters for the iOS reverb unit
 enum {

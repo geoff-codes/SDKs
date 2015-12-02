@@ -2,49 +2,18 @@
 //  UISlider.h
 //  UIKit
 //
-//  Copyright (c) 2006-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIControl.h>
 #import <UIKit/UIKitDefines.h>
+#import <QuartzCore/QuartzCore.h>
 
 @class UIImageView, UIImage;
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UISlider : UIControl <NSCoding> {
-  @package
-    float _value;
-    float _minValue;
-    float _maxValue;
-    CGFloat _alpha;
-
-    CFMutableDictionaryRef _contentLookup;
-
-    UIImageView *_minValueImageView;
-    UIImageView *_maxValueImageView;
-    UIImageView *_thumbView;
-    UIImageView *_minTrackView;
-    UIImageView *_maxTrackView;
-    UIView      *_maxTrackClipView;
-
-    struct {
-	unsigned int continuous:1;
-	unsigned int animating:1;
-        unsigned int preparingToAnimate:1;
-	unsigned int showValue:1;
-	unsigned int trackEnabled:1;
-	unsigned int creatingSnapshot:1;
-	unsigned int thumbDisabled:1;
-	unsigned int minTrackHidden:1;
-    } _sliderFlags;
-
-    CGFloat _hitOffset;
-    
-    UIColor *_minTintColor;
-    UIColor *_maxTintColor;
-    UIColor *_thumbTintColor;
-}
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UISlider : UIControl <NSCoding>
 
 @property(nonatomic) float value;                                 // default 0.0. this value will be pinned to min/max
 @property(nonatomic) float minimumValue;                          // default 0.0. the current value may change if outside new min value

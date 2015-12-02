@@ -2,7 +2,7 @@
 //  UISplitViewController.h
 //  UIKit
 //
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -37,6 +37,10 @@ NS_CLASS_AVAILABLE_IOS(3_2) @interface UISplitViewController : UIViewController
 // Returns YES if a view controller should be hidden by the split view controller in a given orientation.
 // (This method is only called on the leftmost view controller and only discriminates portrait from landscape.)
 - (BOOL)splitViewController:(UISplitViewController *)svc shouldHideViewController:(UIViewController *)vc inOrientation:(UIInterfaceOrientation)orientation NS_AVAILABLE_IOS(5_0);
+
+- (NSUInteger)splitViewControllerSupportedInterfaceOrientations:(UISplitViewController *)splitViewController NS_AVAILABLE_IOS(7_0);
+- (UIInterfaceOrientation)splitViewControllerPreferredInterfaceOrientationForPresentation:(UISplitViewController *)splitViewController NS_AVAILABLE_IOS(7_0);
+
 
 @end
 

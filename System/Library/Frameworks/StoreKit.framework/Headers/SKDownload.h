@@ -1,8 +1,7 @@
 //
 //  SKDownload.h
-//  iTunesStore
+//  StoreKit
 //
-//  Created by Sean Kelly on 1/19/12.
 //  Copyright (c) 2012 Apple Inc. All rights reserved.
 //
 

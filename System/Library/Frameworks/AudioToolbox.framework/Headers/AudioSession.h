@@ -3,7 +3,7 @@
  
  Contains:   API for audio session services.
  
- Copyright:  (c) 2006 - 2012 by Apple, Inc., all rights reserved.
+ Copyright:  (c) 2006 - 2013 by Apple, Inc., all rights reserved.
  
  Bugs?:      For bug reports, consult the following page on
  the World Wide Web:
@@ -19,7 +19,7 @@
 /*!
  @header AudioSession
  This header describes the API for audio session services.
- 
+ Note: As of iOS 7, this entire API has been deprecated in favor of AVAudioSession, part of the AVFoundation framework.
  */
 
 //==================================================================================================
@@ -82,8 +82,7 @@ extern "C"
 	 category (e.g. attempting to play or record when the category is AudioProcessing) or
 	 the session is not active.
 	 @constant       kAudioSessionUnspecifiedError
-	 An audio session unspecified error has occurred.  This would indicate an 
-	 Apple-internal bug or that the audio system is currently in a bad state.
+	 An audio session unspecified error has occurred.
 	 */
 	enum
 	{
@@ -199,6 +198,9 @@ extern "C"
 	 @constant       kAudioSessionRouteChangeReason_NoSuitableRouteForCategory
 	 Returned when there is no route for the current category (for instance RecordCategory 
 	 but no input device)
+	 @constant		 kAudioSessionRouteChangeReason_RouteConfigurationChange
+	 Indicates that the set of input and/our output ports has not changed, but some aspect of their 
+	 configuration has changed.  For example, a port's selected data source has changed.
 	 */
 	enum {
 		kAudioSessionRouteChangeReason_Unknown = 0,
@@ -207,7 +209,8 @@ extern "C"
 		kAudioSessionRouteChangeReason_CategoryChange = 3,
 		kAudioSessionRouteChangeReason_Override = 4,
 		kAudioSessionRouteChangeReason_WakeFromSleep = 6,
-		kAudioSessionRouteChangeReason_NoSuitableRouteForCategory = 7
+		kAudioSessionRouteChangeReason_NoSuitableRouteForCategory = 7,
+		kAudioSessionRouteChangeReason_RouteConfigurationChange = 8
 	};
 	
 	// see documentation for kAudioSessionProperty_AudioRouteChange
@@ -217,22 +220,22 @@ extern "C"
     
 	// CFString version of kAudioSession_AudioRouteChangeKey_Reason.  This is more convenient to use than the raw string version.
 	// Available in iOS 5.0 or greater          
-	extern const CFStringRef kAudioSession_RouteChangeKey_Reason                __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+	extern const CFStringRef kAudioSession_RouteChangeKey_Reason                __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
 	
 	// CFDictionary keys for kAudioSessionProperty_AudioRouteChange
 	// Available in iOS 5.0 or greater      
-	extern const CFStringRef   kAudioSession_AudioRouteChangeKey_PreviousRouteDescription  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef   kAudioSession_AudioRouteChangeKey_CurrentRouteDescription   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+	extern const CFStringRef   kAudioSession_AudioRouteChangeKey_PreviousRouteDescription  __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef   kAudioSession_AudioRouteChangeKey_CurrentRouteDescription   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
 	
 	// CFDictionary keys for kAudioSessionProperty_AudioRouteDescription    
 	// Available in iOS 5.0 or greater    
-	extern const CFStringRef   kAudioSession_AudioRouteKey_Inputs   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef   kAudioSession_AudioRouteKey_Outputs  __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+	extern const CFStringRef   kAudioSession_AudioRouteKey_Inputs   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef   kAudioSession_AudioRouteKey_Outputs  __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
 	
 	// key(s) for the CFDictionary associated with each entry of the CFArrays returned by kAudioSession_AudioRouteKey_Inputs
 	// and kAudioSession_AudioRouteKey_Outputs.  
 	// Available in iOS 5.0 or greater        
-	extern const CFStringRef   kAudioSession_AudioRouteKey_Type     __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+	extern const CFStringRef   kAudioSession_AudioRouteKey_Type     __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
     
     
 	/*!
@@ -251,11 +254,11 @@ extern "C"
 	 @constant       kAudioSessionInputRoute_USBAudio
 	 A Universal Serial Bus input
 	 */    
-	extern const CFStringRef   kAudioSessionInputRoute_LineIn       __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef   kAudioSessionInputRoute_BuiltInMic   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef   kAudioSessionInputRoute_HeadsetMic   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef   kAudioSessionInputRoute_BluetoothHFP __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef   kAudioSessionInputRoute_USBAudio     __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+	extern const CFStringRef   kAudioSessionInputRoute_LineIn       __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef   kAudioSessionInputRoute_BuiltInMic   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef   kAudioSessionInputRoute_HeadsetMic   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef   kAudioSessionInputRoute_BluetoothHFP __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef   kAudioSessionInputRoute_USBAudio     __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
     
 	/*!
 	 @enum           AudioSession route output types
@@ -281,24 +284,24 @@ extern "C"
 	 @constant       kAudioSessionOutputRoute_AirPlay
 	 Output on a remote Air Play device
 	 */
-	extern const CFStringRef kAudioSessionOutputRoute_LineOut           __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);        
-	extern const CFStringRef kAudioSessionOutputRoute_Headphones        __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);     
-	extern const CFStringRef kAudioSessionOutputRoute_BluetoothHFP      __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);   
-	extern const CFStringRef kAudioSessionOutputRoute_BluetoothA2DP     __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);  
-	extern const CFStringRef kAudioSessionOutputRoute_BuiltInReceiver   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef kAudioSessionOutputRoute_BuiltInSpeaker    __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef kAudioSessionOutputRoute_USBAudio          __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);   
-	extern const CFStringRef kAudioSessionOutputRoute_HDMI              __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef kAudioSessionOutputRoute_AirPlay           __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);    
+	extern const CFStringRef kAudioSessionOutputRoute_LineOut           __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);        
+	extern const CFStringRef kAudioSessionOutputRoute_Headphones        __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);     
+	extern const CFStringRef kAudioSessionOutputRoute_BluetoothHFP      __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);   
+	extern const CFStringRef kAudioSessionOutputRoute_BluetoothA2DP     __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);  
+	extern const CFStringRef kAudioSessionOutputRoute_BuiltInReceiver   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef kAudioSessionOutputRoute_BuiltInSpeaker    __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef kAudioSessionOutputRoute_USBAudio          __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);   
+	extern const CFStringRef kAudioSessionOutputRoute_HDMI              __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef kAudioSessionOutputRoute_AirPlay           __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);    
 	
     
 	// CFDictionary keys for kAudioSessionProperty_InputSources
-	extern const CFStringRef   kAudioSession_InputSourceKey_ID            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef   kAudioSession_InputSourceKey_Description   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+	extern const CFStringRef   kAudioSession_InputSourceKey_ID            __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef   kAudioSession_InputSourceKey_Description   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
 	
 	// CFDictionary keys for kAudioSessionProperty_OutputDestinations
-	extern const CFStringRef   kAudioSession_OutputDestinationKey_ID            __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
-	extern const CFStringRef   kAudioSession_OutputDestinationKey_Description   __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_5_0);
+	extern const CFStringRef   kAudioSession_OutputDestinationKey_ID            __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
+	extern const CFStringRef   kAudioSession_OutputDestinationKey_Description   __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0);
     
     
 	//==================================================================================================
@@ -554,8 +557,8 @@ extern "C"
 		kAudioSessionProperty_AudioCategory                         = 'acat',   // UInt32           (get/set)
 		kAudioSessionProperty_AudioRouteChange                      = 'roch',   // CFDictionaryRef  (property listener)
 		kAudioSessionProperty_CurrentHardwareSampleRate             = 'chsr',   // Float64          (get only)
-		kAudioSessionProperty_CurrentHardwareInputNumberChannels    = 'chic',   // UInt32           (get only)
-		kAudioSessionProperty_CurrentHardwareOutputNumberChannels   = 'choc',   // UInt32           (get only)
+		kAudioSessionProperty_CurrentHardwareInputNumberChannels    = 'chic',   // UInt32           (get only/property listener)
+		kAudioSessionProperty_CurrentHardwareOutputNumberChannels   = 'choc',   // UInt32           (get only/property listener)
 		kAudioSessionProperty_CurrentHardwareOutputVolume           = 'chov',   // Float32          (get only/property listener)
 		kAudioSessionProperty_CurrentHardwareInputLatency           = 'cilt',   // Float32          (get only)
 		kAudioSessionProperty_CurrentHardwareOutputLatency          = 'colt',   // Float32          (get only)
@@ -576,7 +579,7 @@ extern "C"
 		kAudioSessionProperty_OutputDestination                     = 'odst',   // CFNumberRef      (get/set)
 		kAudioSessionProperty_InputGainAvailable                    = 'igav',   // UInt32           (get only/property listener)
 		kAudioSessionProperty_InputGainScalar                       = 'igsc',   // Float32          (get/set/property listener)
-		kAudioSessionProperty_AudioRouteDescription                 = 'crar',   // CFDictionaryRef  (get only)
+		kAudioSessionProperty_AudioRouteDescription                 = 'crar'    // CFDictionaryRef  (get only)
 	};
     
 	//==================================================================================================
@@ -647,7 +650,7 @@ extern "C"
 						   CFStringRef                         inRunLoopMode, 
 						   AudioSessionInterruptionListener    inInterruptionListener, 
 						   void                                *inClientData)              
-	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+	__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_7_0);
 	
 	/*!
 	 @function       AudioSessionSetActive
@@ -662,7 +665,7 @@ extern "C"
 	 */
 	extern OSStatus
 	AudioSessionSetActive(              Boolean                             active)                     
-	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+	__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_7_0);
 	
 	//==================================================================================================
 #pragma mark    AudioSessionActivationFlags for AudioSessionSetActiveWithFlags
@@ -698,7 +701,7 @@ extern "C"
 	extern OSStatus
 	AudioSessionSetActiveWithFlags(     Boolean                             active,
 								   UInt32                              inFlags)                    
-	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_0);
+	__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_4_0,__IPHONE_7_0);
 	
 	/*!
 	 @function       AudioSessionGetProperty
@@ -722,7 +725,7 @@ extern "C"
 	AudioSessionGetProperty(            AudioSessionPropertyID              inID,
 							UInt32                              *ioDataSize,
 							void                                *outData)                   
-	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+	__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_7_0);
 	
 	/*!
 	 @function       AudioSessionSetProperty
@@ -745,7 +748,7 @@ extern "C"
 	AudioSessionSetProperty(            AudioSessionPropertyID              inID,
 							UInt32                              inDataSize,
 							const void                          *inData)                    
-	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+	__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_7_0);
 	
 	/*!
 	 @function       AudioSessionGetPropertySize
@@ -760,7 +763,7 @@ extern "C"
 	extern OSStatus
 	AudioSessionGetPropertySize(        AudioSessionPropertyID              inID,
 								UInt32                              *outDataSize)               
-	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+	__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_7_0);
 	
 	/*!
 	 @function       AudioSessionAddPropertyListener
@@ -783,7 +786,7 @@ extern "C"
 	AudioSessionAddPropertyListener(    AudioSessionPropertyID              inID,
                                     AudioSessionPropertyListener        inProc,
                                     void                                *inClientData)              
-	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_0);
+	__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_0,__IPHONE_7_0);
 	
 	/*!
 	 @function       AudioSessionRemovePropertyListener
@@ -817,7 +820,7 @@ extern "C"
 	AudioSessionRemovePropertyListenerWithUserData(	AudioSessionPropertyID          inID,
 												   AudioSessionPropertyListener    inProc,
 												   void                            *inClientData)              
-	__OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_2_1);
+	__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_2_1,__IPHONE_7_0);
 	
 #pragma mark -
 #pragma mark Deprecated

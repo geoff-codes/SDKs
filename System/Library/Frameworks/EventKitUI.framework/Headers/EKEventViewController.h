@@ -30,44 +30,9 @@ typedef enum {
 @protocol EKEventViewDelegate;
 
 EVENTKITUI_CLASS_AVAILABLE(4_0)
-@interface EKEventViewController : UIViewController {
-@private
-    EKEvent                *_event;
-    NSString               *_eventId;
-    UIActionSheet*          _alertSheet;
-    int                     _pendingStatus;
-	
-    id<EKEventViewDelegate> _delegate;
-    id                      _editor;
-    
-    UIBarButtonItem        *_responseButtons[3];
-    UIToolbar              *_buttonBar;
-    UIInterfaceOrientation  _lastOrientation;
-    
-    id                      _currentEditItem;
-    UITableView            *_tableView;
+@interface EKEventViewController : UIViewController
 
-    unsigned                _didAppear:1;
-    unsigned                _autoPop:1;
-    unsigned                _allowsEditing:1;
-    unsigned                _allowsSubitems:1;
-    unsigned                _showsPreview:1;
-    unsigned                _forcePreview:1;
-    unsigned                _trustsStatus:1;
-    unsigned                _allowsInviteResponses:1;
-    unsigned                _showsAddToCalendar:1;
-    unsigned                _icsPreview:1;
-    unsigned                _needsReload:1;    
-    unsigned                _showsDoneButton:1;
-    unsigned                _showsDelegateMessage:1;
-    
-    NSArray                *_items;
-    NSArray                *_currentSections;
-    
-    int                     _scrollToSection;    
-}
-
-@property(nonatomic, assign) id<EKEventViewDelegate>  delegate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2);
+@property(nonatomic, weak) id<EKEventViewDelegate>  delegate __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_4_2);
 
 /*!
     @property   event

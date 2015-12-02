@@ -294,6 +294,8 @@ struct load_command {
 #define LC_DATA_IN_CODE 0x29 /* table of non-instructions in __text */
 #define LC_SOURCE_VERSION 0x2A /* source version used to build binary */
 #define LC_DYLIB_CODE_SIGN_DRS 0x2B /* Code signing DRs copied from linked dylibs */
+#define	LC_ENCRYPTION_INFO_64 0x2C /* 64-bit encrypted segment information */
+#define LC_LINKER_OPTION 0x2D /* linker options in MH_OBJECT files */
 
 
 /*
@@ -1175,6 +1177,21 @@ struct encryption_info_command {
 };
 
 /*
+ * The encryption_info_command_64 contains the file offset and size of an
+ * of an encrypted segment (for use in x86_64 targets).
+ */
+struct encryption_info_command_64 {
+   uint32_t	cmd;		/* LC_ENCRYPTION_INFO_64 */
+   uint32_t	cmdsize;	/* sizeof(struct encryption_info_command_64) */
+   uint32_t	cryptoff;	/* file offset of encrypted range */
+   uint32_t	cryptsize;	/* file size of encrypted range */
+   uint32_t	cryptid;	/* which enryption system,
+				   0 means not-encrypted yet */
+   uint32_t	pad;		/* padding to make this struct's size a multiple
+				   of 8 bytes */
+};
+
+/*
  * The version_min_command contains the min OS version on which this 
  * binary was built to run.
  */
@@ -1358,6 +1375,17 @@ struct dyld_info_command {
 #define EXPORT_SYMBOL_FLAGS_WEAK_DEFINITION			0x04
 #define EXPORT_SYMBOL_FLAGS_REEXPORT				0x08
 #define EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER			0x10
+
+/*
+ * The linker_option_command contains linker options embedded in object files.
+ */
+struct linker_option_command {
+    uint32_t  cmd;	/* LC_LINKER_OPTION only used in MH_OBJECT filetypes */
+    uint32_t  cmdsize;
+    uint32_t  count;	/* number of strings */
+    /* concatenation of zero terminated UTF8 strings.
+       Zero filled at end to align */
+};
 
 /*
  * The symseg_command contains the offset and size of the GNU style

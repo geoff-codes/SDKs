@@ -342,7 +342,7 @@ typedef void(^EKEventStoreRequestAccessCompletionHandler)(BOOL granted, NSError 
                 This only includes reminders which have been committed (e.g. those saved using 
                 saveReminder:commit:NO are not included until commit: is called.)
 */
-- (id)fetchRemindersMatchingPredicate:(NSPredicate *)predicate completion:(void (^)(NSArray *))completion __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0);
+- (id)fetchRemindersMatchingPredicate:(NSPredicate *)predicate completion:(void (^)(NSArray *reminders))completion __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0);
 
 /*!
     @method     cancelFetchRequest:

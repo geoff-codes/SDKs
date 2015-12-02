@@ -41,7 +41,7 @@ SK_EXTERN_CLASS_AVAILABLE(3_0) @interface SKPaymentTransaction : NSObject {
 @property(nonatomic, readonly) NSString *transactionIdentifier __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 
 // Only valid if state is SKPaymentTransactionStatePurchased.
-@property(nonatomic, readonly) NSData *transactionReceipt __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
+@property(nonatomic, readonly) NSData *transactionReceipt __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA,__MAC_NA,__IPHONE_3_0,__IPHONE_7_0);
 
 @property(nonatomic, readonly) SKPaymentTransactionState transactionState __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_3_0);
 

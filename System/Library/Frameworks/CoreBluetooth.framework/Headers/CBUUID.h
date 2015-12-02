@@ -54,43 +54,43 @@ CB_EXTERN NSString * const CBUUIDCharacteristicAggregateFormatString;
  *  @const CBUUIDGenericAccessProfileString
  *  @discussion The string representation of the GAP UUID.
  */
-CB_EXTERN NSString * const CBUUIDGenericAccessProfileString;
+CB_EXTERN NSString * const CBUUIDGenericAccessProfileString NS_DEPRECATED(NA, NA, 5_0, 7_0);
 /*!
  *  @const CBUUIDGenericAttributeProfileString
  *  @discussion The string representation of the GATT UUID.
  */
-CB_EXTERN NSString * const CBUUIDGenericAttributeProfileString;
+CB_EXTERN NSString * const CBUUIDGenericAttributeProfileString NS_DEPRECATED(NA, NA, 5_0, 7_0);
 
 /*!
  *  @const CBUUIDDeviceNameString
  *  @discussion The string representation of the GAP device name UUID.
  */
-CB_EXTERN NSString * const CBUUIDDeviceNameString;
+CB_EXTERN NSString * const CBUUIDDeviceNameString NS_DEPRECATED(NA, NA, 5_0, 7_0);
 /*!
  *  @const CBUUIDAppearanceString
  *  @discussion The string representation of the GAP appearance UUID.
  */
-CB_EXTERN NSString * const CBUUIDAppearanceString;
+CB_EXTERN NSString * const CBUUIDAppearanceString NS_DEPRECATED(NA, NA, 5_0, 7_0);
 /*!
  *  @const CBUUIDPeripheralPrivacyFlagString
  *  @discussion The string representation of the GAP privacy flag UUID.
  */
-CB_EXTERN NSString * const CBUUIDPeripheralPrivacyFlagString;
+CB_EXTERN NSString * const CBUUIDPeripheralPrivacyFlagString NS_DEPRECATED(NA, NA, 5_0, 7_0);
 /*!
  *  @const CBUUIDReconnectionAddressString
  *  @discussion The string representation of the GAP reconnection address UUID.
  */
-CB_EXTERN NSString * const CBUUIDReconnectionAddressString;
+CB_EXTERN NSString * const CBUUIDReconnectionAddressString NS_DEPRECATED(NA, NA, 5_0, 7_0);
 /*!
  *  @const CBUUIDPeripheralPreferredConnectionParametersString
  *  @discussion The string representation of the GAP preferred connection parameter UUID.
  */
-CB_EXTERN NSString * const CBUUIDPeripheralPreferredConnectionParametersString;
+CB_EXTERN NSString * const CBUUIDPeripheralPreferredConnectionParametersString NS_DEPRECATED(NA, NA, 5_0, 7_0);
 /*!
  *  @const CBUUIDServiceChangedString
  *  @discussion The string representation of the GATT service changed UUID.
  */
-CB_EXTERN NSString * const CBUUIDServiceChangedString;
+CB_EXTERN NSString * const CBUUIDServiceChangedString NS_DEPRECATED(NA, NA, 5_0, 7_0);
 
 
 
@@ -104,11 +104,6 @@ CB_EXTERN NSString * const CBUUIDServiceChangedString;
  */
 NS_CLASS_AVAILABLE(10_7, 5_0)
 CB_EXTERN_CLASS @interface CBUUID : NSObject <NSCopying>
-{
-@private
-	NSData	*_data;
-	NSRange	 _range;
-}
 
 /*!
  * @property data
@@ -118,6 +113,15 @@ CB_EXTERN_CLASS @interface CBUUID : NSObject <NSCopying>
  *
  */
 @property(nonatomic, readonly) NSData *data;
+
+/*!
+ * @property UUIDString
+ *
+ *  @discussion
+ *      The UUID as NSString.
+ *
+ */
+@property(nonatomic, readonly) NSString *UUIDString NS_AVAILABLE(NA, 7_1);
 
 /*!
  * @method UUIDWithString:
@@ -146,5 +150,14 @@ CB_EXTERN_CLASS @interface CBUUID : NSObject <NSCopying>
  *
  */
 + (CBUUID *)UUIDWithCFUUID:(CFUUIDRef)theUUID;
+
+/*!
+ * @method UUIDWithNSUUID:
+ *
+ *  @discussion
+ *      Creates a CBUUID with a NSUUID.
+ *
+ */
++ (CBUUID *)UUIDWithNSUUID:(NSUUID *)theUUID NS_AVAILABLE(NA, 7_0);
 
 @end

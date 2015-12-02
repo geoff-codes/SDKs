@@ -2,7 +2,7 @@
 //  GKMatch.h
 //  GameKit
 //
-//  Copyright 2010 Apple, Inc. All rights reserved.
+//  Copyright 2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -59,16 +59,16 @@ NS_CLASS_AVAILABLE(10_8, 4_1)
 @protocol GKMatchDelegate <NSObject>
 @required
 // The match received data sent from the player.
-- (void)match:(GKMatch *)match didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID;
+- (void)match:(GKMatch *)match didReceiveData:(NSData *)data fromPlayer:(NSString *)playerID NS_AVAILABLE_IOS(4_1);
 
 @optional
 // The player state changed (eg. connected or disconnected)
-- (void)match:(GKMatch *)match player:(NSString *)playerID didChangeState:(GKPlayerConnectionState)state;
+- (void)match:(GKMatch *)match player:(NSString *)playerID didChangeState:(GKPlayerConnectionState)state NS_AVAILABLE_IOS(4_1);
 
 // The match was unable to be established with any players due to an error.
-- (void)match:(GKMatch *)match didFailWithError:(NSError *)error;
+- (void)match:(GKMatch *)match didFailWithError:(NSError *)error NS_AVAILABLE_IOS(4_1);
 
 // This method is called when the match is interrupted; if it returns YES, a new invite will be sent to attempt reconnection. This is supported only for 1v1 games
-- (BOOL)match:(GKMatch *)match shouldReinvitePlayer:(NSString *)playerID;
+- (BOOL)match:(GKMatch *)match shouldReinvitePlayer:(NSString *)playerID NS_AVAILABLE_IOS(5_0);
 
 @end

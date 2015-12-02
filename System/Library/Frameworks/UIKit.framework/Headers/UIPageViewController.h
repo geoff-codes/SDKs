@@ -82,6 +82,9 @@ NS_CLASS_AVAILABLE_IOS(5_0) @interface UIPageViewController : UIViewController {
 // Delegate may set new view controllers or update double-sided state within this method's implementation as well.
 - (UIPageViewControllerSpineLocation)pageViewController:(UIPageViewController *)pageViewController spineLocationForInterfaceOrientation:(UIInterfaceOrientation)orientation;
 
+- (NSUInteger)pageViewControllerSupportedInterfaceOrientations:(UIPageViewController *)pageViewController NS_AVAILABLE_IOS(7_0);
+- (UIInterfaceOrientation)pageViewControllerPreferredInterfaceOrientationForPresentation:(UIPageViewController *)pageViewController NS_AVAILABLE_IOS(7_0);
+
 @end
 
 @protocol UIPageViewControllerDataSource <NSObject>

@@ -2,7 +2,7 @@
 //  GKLeaderboard.h
 //  GameKit
 //
-//  Copyright 2010 Apple, Inc. All rights reserved.
+//  Copyright 2010 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -20,25 +20,28 @@ enum {
 };
 typedef NSInteger GKLeaderboardPlayerScope;
 
+@class UIImage;
 @class GKScore;
 
 // GKLeaderboard represents the set of high scores for the current game, always including the local player's best score.
 NS_CLASS_AVAILABLE(10_8, 4_1)
-@interface GKLeaderboard : NSObject {
-}
+@interface GKLeaderboard : NSObject
 
-@property(nonatomic, assign)            GKLeaderboardTimeScope      timeScope;
-@property(nonatomic, assign)            GKLeaderboardPlayerScope    playerScope;        // Filter on friends. Does not apply to leaderboard initialized with players.
-@property(nonatomic, retain)            NSString                    *category;          // leaderboard category.  If nil, then it will fetch the aggregate leaderboard
-@property(nonatomic, readonly, retain)  NSString                    *title;             // Localized category title. Defaults to nil until loaded.
-@property(nonatomic, assign)            NSRange                     range;              // Leaderboards start at index 1 and the length should be less than 100. Does not apply to leaderboards initialized with players.  Exception will be thrown if developer tries to set an invalid range
+@property(assign, NS_NONATOMIC_IOSONLY)            GKLeaderboardTimeScope      timeScope;
+@property(assign, NS_NONATOMIC_IOSONLY)            GKLeaderboardPlayerScope    playerScope;        // Filter on friends. Does not apply to leaderboard initialized with players.
+@property(copy, NS_NONATOMIC_IOSONLY)              NSString                    *category __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_8, __MAC_NA, __IPHONE_4_1, __IPHONE_7_0);          // Deprecated. Use identifier instead.
 
-@property(nonatomic, readonly, retain)  NSArray                     *scores;            // Scores are not valid until loadScores: has completed.
-@property(nonatomic, readonly, assign)  NSUInteger                  maxRange;           // The maxRange which represents the size of the leaderboard is not valid until loadScores: has completed.
-@property(nonatomic, readonly, retain)  GKScore                     *localPlayerScore;  // The local player's score
-@property(readonly, getter=isLoading)   BOOL                        loading;            // true if the leaderboard is currently loading
+@property(copy, NS_NONATOMIC_IOSONLY)              NSString                    *identifier __OSX_AVAILABLE_STARTING( __MAC_NA, __IPHONE_7_0);         // leaderboardID. If nil, fetch the aggregate leaderboard.
+ 
+@property(readonly, copy, NS_NONATOMIC_IOSONLY)    NSString                    *title;             // Localized category title. Defaults to nil until loaded.
+@property(assign, NS_NONATOMIC_IOSONLY)            NSRange                     range;              // Leaderboards start at index 1 and the length should be less than 100. Does not apply to leaderboards initialized with players.  Exception will be thrown if developer tries to set an invalid range
 
-@property(nonatomic, readonly, retain)  NSString                    *groupIdentifier    __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0);       // set when leaderboards have been designated a game group; set when loadLeaderboardsWithCompletionHandler has been called for leaderboards that support game groups
+@property(readonly, retain, NS_NONATOMIC_IOSONLY)  NSArray                     *scores;            // Scores are not valid until loadScores: has completed.
+@property(readonly, assign, NS_NONATOMIC_IOSONLY)  NSUInteger                  maxRange;           // The maxRange which represents the size of the leaderboard is not valid until loadScores: has completed.
+@property(readonly, retain, NS_NONATOMIC_IOSONLY)  GKScore                     *localPlayerScore;  // The local player's score
+@property(readonly, getter=isLoading)              BOOL                        loading;            // true if the leaderboard is currently loading
+
+@property(nonatomic, readonly, retain)             NSString                    *groupIdentifier    __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0);       // set when leaderboards have been designated a game group; set when loadLeaderboardsWithCompletionHandler has been called for leaderboards that support game groups
 
 // Designated initializer
 // Default is the range 1-10 with Global/AllTime scopes
@@ -60,15 +63,26 @@ NS_CLASS_AVAILABLE(10_8, 4_1)
 // 1. Communications problem
 // 2. Unauthenticated player
 // 3. Leaderboard not present
-+ (void)loadCategoriesWithCompletionHandler:(void(^)(NSArray *categories, NSArray *titles, NSError *error))completionHandler __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_4_1, __IPHONE_6_0);
++ (void)loadCategoriesWithCompletionHandler:(void(^)(NSArray *categories, NSArray *titles, NSError *error))completionHandler __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_8, __MAC_NA, __IPHONE_4_1, __IPHONE_6_0);
 
 + (void)loadLeaderboardsWithCompletionHandler:(void(^)(NSArray *leaderboards, NSError *error))completionHandler __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_6_0);
 
 // Set the default leaderboard for the local player per game
-// Possible reasons for error:
+// Possible reasons for error:d
 // 1. Communications problem
 // 2. Unauthenticated player
 // 3. Leaderboard not present
-+ (void)setDefaultLeaderboard:(NSString *)categoryID withCompletionHandler:(void(^)(NSError *error))completionHandler __OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_5_0);
+///Deprecated: Use setDefaultLeaderboardIdentifier:completionHandler: on GKLocalPlayer instead
++ (void)setDefaultLeaderboard:(NSString *)leaderboardIdentifier withCompletionHandler:(void(^)(NSError *error))completionHandler __OSX_AVAILABLE_BUT_DEPRECATED_MSG(__MAC_10_8,__MAC_NA,__IPHONE_5_0,__IPHONE_7_0,"Use setDefaultLeaderboardIdentifier:completionHandler: on GKLocalPlayer instead");
+
 
 @end
+
+
+ @interface GKLeaderboard (UI)
+ 
+ // Asynchronously load the image. Error will be nil on success.
+- (void)loadImageWithCompletionHandler:(void(^)(UIImage *image, NSError *error))completionHandler __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+ 
+ @end
+ 

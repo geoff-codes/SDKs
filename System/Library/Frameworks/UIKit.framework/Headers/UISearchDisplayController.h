@@ -2,7 +2,7 @@
 //  UISearchDisplayController.h
 //  UIKit
 //
-//  Copyright (c) 2009-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2009-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,40 +14,7 @@
 @class UISearchBar, UITableView, UIViewController, UIPopoverController;
 @protocol UITableViewDataSource, UITableViewDelegate, UISearchDisplayDelegate;
 
-NS_CLASS_AVAILABLE_IOS(3_0) @interface UISearchDisplayController : NSObject {
-  @private
-    UIViewController           *_viewController;
-    UITableView                *_tableView;
-    UIView                     *_dimmingView;
-    UISearchBar                *_searchBar;
-    UILabel                    *_noResultsLabel;
-    NSString                   *_noResultsMessage;
-    NSString                   *_resultsTitle;
-    id<UISearchDisplayDelegate> _delegate;
-    id<UITableViewDataSource>   _tableViewDataSource;
-    id<UITableViewDelegate>     _tableViewDelegate;
-    CFMutableArrayRef           _containingScrollViews;
-    CGFloat                     _lastKeyboardAdjustment;
-    CGFloat                     _lastFooterAdjustment;
-    UIPopoverController        *_popoverController;
-    UITableViewStyle            _searchResultsTableViewStyle;
-    id                          _navigationControllerBookkeeper;
-    struct {
-        unsigned int visible:1;
-        unsigned int animating:1;
-        unsigned int hidIndexBar:1;
-        unsigned int hidNavigationBar:1;
-        unsigned int noResultsMessageVisible:1;
-        unsigned int noResultsMessageAutoDisplay:1;
-        unsigned int navigationBarHidingEnabled:1;
-        unsigned int dimTableViewOnEmptySearchString:1;
-        unsigned int isRotatingWithPopover:1;
-        unsigned int cancelButtonManagementDisabled:1;
-        unsigned int allowDisablingNavigationBarHiding:1;
-        unsigned int showsResultsForEmptyField:1;
-        unsigned int adjustsSearchBarContentInsetForIndexBar:1;
-    } _searchDisplayControllerFlags;
-}
+NS_CLASS_AVAILABLE_IOS(3_0) @interface UISearchDisplayController : NSObject
 
 - (id)initWithSearchBar:(UISearchBar *)searchBar contentsController:(UIViewController *)viewController;
 
@@ -62,6 +29,10 @@ NS_CLASS_AVAILABLE_IOS(3_0) @interface UISearchDisplayController : NSObject {
 @property(nonatomic,assign)                           id<UITableViewDataSource>   searchResultsDataSource;  // default is nil. delegate can provide
 @property(nonatomic,assign)                           id<UITableViewDelegate>     searchResultsDelegate;    // default is nil. delegate can provide
 @property(nonatomic,copy)                             NSString                   *searchResultsTitle NS_AVAILABLE_IOS(5_0); // default is nil. If nil, the controller uses the default title string
+
+/* Displaying the search bar in a navigation bar will override the contentsController's navigationItem if it has one. */
+@property (nonatomic, assign) BOOL displaysSearchBarInNavigationBar NS_AVAILABLE_IOS(7_0);
+@property (nonatomic, readonly) UINavigationItem *navigationItem NS_AVAILABLE_IOS(7_0);
 
 @end
 

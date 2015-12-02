@@ -8,7 +8,7 @@
 #import <EventKit/EKObject.h>
 #import <EventKit/EventKitDefines.h>
 
-@class EKRecurrenceRule, EKAlarm, EKCalendar, EKStructuredLocation;
+@class EKRecurrenceRule, EKAlarm, EKCalendar;
 
 EVENTKIT_CLASS_AVAILABLE(10_8, 5_0)
 @interface EKCalendarItem : EKObject {

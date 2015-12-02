@@ -76,11 +76,56 @@ extern void CAShowFile (void* inObject, FILE* inFile)
 struct FSRef;
 extern OSStatus GetNameFromSoundBank (const struct FSRef *inSoundBankRef, CFStringRef *outName)
 											__OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_2,__MAC_10_5, __IPHONE_NA, __IPHONE_NA);
-
-extern OSStatus 
-CopyNameFromSoundBank (CFURLRef inURL, CFStringRef *outName) 
-											__OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_NA);
 #endif
+
+/*!
+    @function		CopyNameFromSoundBank
+	 
+    @discussion		This will return the name of a sound bank from a DLS or SF2 bank.
+					The name should be released by the caller.
+
+    @param			inURL
+						The URL for the sound bank.
+    @param			outName
+						A pointer to a CFStringRef to be created and returned by the function.
+    @result			returns noErr if successful.
+*/
+
+extern OSStatus
+CopyNameFromSoundBank (CFURLRef inURL, CFStringRef *outName) 
+											__OSX_AVAILABLE_STARTING(__MAC_10_5,__IPHONE_7_0);
+
+/*!
+    @function		CopyInstrumentInfoFromSoundBank
+	 
+    @discussion		This will return a CFArray of CFDictionaries, one per instrument found in the DLS or SF2 bank.
+					Each dictionary will contain four items accessed via CFStringRef versions of the keys kInstrumentInfoKey_MSB,
+ 					kInstrumentInfoKey_LSB, kInstrumentInfoKey_Program, and kInstrumentInfoKey_Name.
+ 						MSB: An NSNumberRef for the most-significant byte of the bank number.  GM melodic banks will return 120 (0x78).
+ 							 GM percussion banks will return 121 (0x79).  Custom banks will return their literal value.
+						LSB: An NSNumberRef for the least-significant byte of the bank number.  All GM banks will return
+							 the bank variation number (0-127).
+ 						Program Number: An NSNumberRef for the program number (0-127) of an instrument within a particular bank.
+ 						Name: A CFStringRef containing the name of the instrument.
+ 
+					Using these MSB, LSB, and Program values will guarantee that the correct instrument is loaded by the DLS synth
+					or Sampler Audio Unit.
+					The CFArray should be released by the caller.
+
+    @param			inURL
+	 					The URL for the sound bank.
+    @param			outInstrumentInfo
+						A pointer to a CFArrayRef to be created and returned by the function.
+    @result			returns noErr if successful.
+*/
+
+extern OSStatus CopyInstrumentInfoFromSoundBank (CFURLRef inURL, CFArrayRef *outInstrumentInfo)
+														__OSX_AVAILABLE_STARTING(__MAC_10_8,__IPHONE_7_0);
+	
+#define kInstrumentInfoKey_Name		"name"
+#define kInstrumentInfoKey_MSB		"MSB"
+#define kInstrumentInfoKey_LSB		"LSB"
+#define kInstrumentInfoKey_Program	"program"
 
 #if defined(__cplusplus)
 }

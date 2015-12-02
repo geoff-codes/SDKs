@@ -2,7 +2,7 @@
 //  UIActivity.h
 //  UIKit
 //
-//  Copyright 2012 Apple, Inc. All rights reserved.
+//  Copyright 2012-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,19 +10,31 @@
 
 @class UIImage, UIViewController;
 
-UIKIT_EXTERN NSString *const UIActivityTypePostToFacebook   NS_AVAILABLE_IOS(6_0); // text, images, URLs
-UIKIT_EXTERN NSString *const UIActivityTypePostToTwitter    NS_AVAILABLE_IOS(6_0); // text, images, URLs
-UIKIT_EXTERN NSString *const UIActivityTypePostToWeibo      NS_AVAILABLE_IOS(6_0); // text, images, URLs
-UIKIT_EXTERN NSString *const UIActivityTypeMessage          NS_AVAILABLE_IOS(6_0); // text
-UIKIT_EXTERN NSString *const UIActivityTypeMail             NS_AVAILABLE_IOS(6_0); // text, image, file:// URLs
-UIKIT_EXTERN NSString *const UIActivityTypePrint            NS_AVAILABLE_IOS(6_0); // image, NSData, file:// URL, UIPrintPageRenderer, UIPrintFormatter, UIPrintInfo
-UIKIT_EXTERN NSString *const UIActivityTypeCopyToPasteboard NS_AVAILABLE_IOS(6_0); // text, image, NSURL, UIColor, NSDictionary
-UIKIT_EXTERN NSString *const UIActivityTypeAssignToContact  NS_AVAILABLE_IOS(6_0); // image
-UIKIT_EXTERN NSString *const UIActivityTypeSaveToCameraRoll NS_AVAILABLE_IOS(6_0); // image, video
+UIKIT_EXTERN NSString *const UIActivityTypePostToFacebook     NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIActivityTypePostToTwitter      NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIActivityTypePostToWeibo        NS_AVAILABLE_IOS(6_0);    // SinaWeibo
+UIKIT_EXTERN NSString *const UIActivityTypeMessage            NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIActivityTypeMail               NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIActivityTypePrint              NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIActivityTypeCopyToPasteboard   NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIActivityTypeAssignToContact    NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIActivityTypeSaveToCameraRoll   NS_AVAILABLE_IOS(6_0);
+UIKIT_EXTERN NSString *const UIActivityTypeAddToReadingList   NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIActivityTypePostToFlickr       NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIActivityTypePostToVimeo        NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIActivityTypePostToTencentWeibo NS_AVAILABLE_IOS(7_0);
+UIKIT_EXTERN NSString *const UIActivityTypeAirDrop            NS_AVAILABLE_IOS(7_0);
+
+typedef NS_ENUM(NSInteger, UIActivityCategory) {
+    UIActivityCategoryAction,
+    UIActivityCategoryShare,
+} NS_ENUM_AVAILABLE_IOS(7_0);
 
 NS_CLASS_AVAILABLE_IOS(6_0) @interface UIActivity : NSObject
 
 // override methods
+
++ (UIActivityCategory)activityCategory NS_AVAILABLE_IOS(7_0); // default is UIActivityCategoryAction.
 
 - (NSString *)activityType;       // default returns nil. subclass may override to return custom activity type that is reported to completion handler
 - (NSString *)activityTitle;      // default returns nil. subclass must override and must return non-nil value

@@ -18,7 +18,7 @@ NS_CLASS_AVAILABLE(10_8, 4_1)
 @property(nonatomic, assign) NSUInteger minPlayers;     // Minimum number of players for the match
 @property(nonatomic, assign) NSUInteger maxPlayers;     // Maximum number of players for the match
 @property(nonatomic, assign) NSUInteger playerGroup;    // The player group identifier. Matchmaking will only take place between players in the same group.
-@property(nonatomic, assign) uint32_t playerAttributes; // optional flags such that when all player flags are OR'ed together in a match they evaluate to 0xFFFFFFFF
+@property(nonatomic, assign) uint32_t playerAttributes; // optional mask that specifies the role that the local player would like to play in the game.  If this value is 0 (the default), this property is ignored. If the value is nonzero, then automatching uses the value as a mask that restricts the role the player can play in the group. Automatching with player attributes matches new players into the game so that the bitwise OR of the masks of all the players in the resulting match equals 0xFFFFFFFF.
 @property(nonatomic, retain) NSArray *playersToInvite;  // Array of player IDs to invite, or nil if none
 
 // Message sent to invited players, may be modified if using GKMatchmakerViewController
@@ -55,16 +55,35 @@ typedef NSUInteger GKMatchType;
 
 // GKInvite represents an accepted game invite, it is used to create a GKMatchmakerViewController
 NS_CLASS_AVAILABLE(10_8, 4_1)
-@interface GKInvite : NSObject {
+@interface GKInvite : NSObject
+#if !__OBJC2__
+{
+@private
+    id _internal;
+    GKPlayer *_invitingPlayer;
+    BOOL _hosted;
 }
+#endif //!__OBJC2__
 
-@property(nonatomic, readonly, retain) NSString *inviter;
-@property(nonatomic, readonly, getter=isHosted) BOOL hosted;
-@property(nonatomic, readonly) NSUInteger playerGroup __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);      // player group from inviter's match request
-@property(nonatomic, readonly) uint32_t playerAttributes __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);   // player attributes from inviter's match request
+@property(readonly, retain, NS_NONATOMIC_IOSONLY) NSString *inviter;
+@property(readonly, getter=isHosted, NS_NONATOMIC_IOSONLY) BOOL hosted;
+@property(readonly, NS_NONATOMIC_IOSONLY) NSUInteger playerGroup __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);      // player group from inviter's match request
+@property(readonly, NS_NONATOMIC_IOSONLY) uint32_t playerAttributes __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_6_0);   // player attributes from inviter's match request
 
 @end
 
+// GKInviteEventListener uses the GKLocalPlayerListener mechanism on GKLocalPlayer to listen to the two kinds of invite events that a game must respond to
+@protocol GKInviteEventListener
+
+@optional
+
+// player:didAcceptInvite: gets called when another player accepts the invite from the local player
+- (void)player:(GKPlayer *)player didAcceptInvite:(GKInvite *)invite NS_AVAILABLE_IOS(7_0);
+
+// player:didRequestMatchWithPlayers gets called when the player chooses to play with another player from Game Center and it launches the game to start matchmaking
+- (void)player:(GKPlayer *)player didRequestMatchWithPlayers:(NSArray *)playerIDsToInvite NS_AVAILABLE_IOS(7_0);
+
+@end
 
 // GKMatchmaker is a singleton object to manage match creation from invites and auto-matching.
 NS_CLASS_AVAILABLE(10_8, 4_1)
@@ -75,8 +94,8 @@ NS_CLASS_AVAILABLE(10_8, 4_1)
 + (GKMatchmaker*)sharedMatchmaker;
 
 // An inviteHandler must be set in order to receive game invites or respond to external requests to initiate an invite. The inviteHandler will be called when an invite or request is received. It may be called immediately if there is a pending invite or request when the application is launched. The inviteHandler may be called multiple times.
-// Either acceptedInvite or playersToInvite will be present, but never both.
-@property(nonatomic, copy) void(^inviteHandler)(GKInvite *acceptedInvite, NSArray *playersToInvite);
+// Either acceptedInvite or playerIDsToInvite will be present, but never both.
+@property(nonatomic, copy) void(^inviteHandler)(GKInvite *acceptedInvite, NSArray *playerIDsToInvite) __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_8,__MAC_NA,__IPHONE_4_1,__IPHONE_7_0);
 
 
 // Get a match for an accepted invite

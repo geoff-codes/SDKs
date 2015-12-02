@@ -21,13 +21,6 @@
  */
 NS_CLASS_AVAILABLE(NA, 6_0)
 CB_EXTERN_CLASS @interface CBATTRequest : NSObject
-{
-@package
-	CBCentral			*_central;
-	CBCharacteristic	*_characteristic;
-	NSUInteger			_offset;
-	NSData				*_value;
-}
 
 /*!
  *  @property central

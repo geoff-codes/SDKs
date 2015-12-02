@@ -13,7 +13,7 @@ typedef struct CGImageDestination *CGImageDestinationRef;
 
 #include <CoreGraphics/CoreGraphics.h>
 #include <ImageIO/CGImageSource.h>
-
+#include <ImageIO/CGImageMetadata.h>
 
 
 /** Properties which may be passed to "CGImageDestinationAddImage"
@@ -103,6 +103,73 @@ IMAGEIO_EXTERN void CGImageDestinationAddImageFromSource(CGImageDestinationRef i
  * if the image was successfully written; false otherwise. */
 
 IMAGEIO_EXTERN bool CGImageDestinationFinalize(CGImageDestinationRef idst)  IMAGEIO_AVAILABLE_STARTING(__MAC_10_4, __IPHONE_4_0);
+
+
+/* Set the next image in the image destination `idst' to be `image' with
+ * metadata properties specified in `metadata'. An error is logged if more
+ * images are added than specified in the original count of the image
+ * destination. */
+IMAGEIO_EXTERN void CGImageDestinationAddImageAndMetadata(CGImageDestinationRef idst, 
+                                                          CGImageRef image,
+                                                          CGImageMetadataRef metadata,
+                                                          CFDictionaryRef options)  IMAGEIO_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_7_0);
+
+/**
+ ** Keys which may be used in the 'options' dictionary of
+ ** "CGImageDestinationCopyImageSource" to effect the output.
+ **/
+
+/* Set the metadata tags for the image destination. If present, the value of
+ * this key is a CGImageMetadataRef. By default, all EXIF, IPTC, and XMP tags
+ * will be replaced. Use kCGImageDestinationMergeMetadata to merge the tags
+ * with the existing tags in the image source.
+ */
+IMAGEIO_EXTERN const CFStringRef kCGImageDestinationMetadata IMAGEIO_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_7_0);
+
+/* If true, The metadata will be copied from the source and merged with the tags
+ * specified in kCGImageDestinationMetadata. If a tag does not exist in the 
+ * source, it will be added. If the tag exists in the source, it will be 
+ * updated. A metadata tag can be removed by setting the tag's value to 
+ * kCFNull. If present, the value of this key is a CFBoooleanRef. The default
+ * is kCFBooleanFalse.
+ */ 
+IMAGEIO_EXTERN const CFStringRef kCGImageDestinationMergeMetadata IMAGEIO_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_7_0);
+
+/* XMP data will not be written to the destination. If used in conjunction with 
+ * kCGImageDestinationMetadata, EXIF and/or IPTC tags will be preserved, but 
+ * an XMP packet will not be written to the file. If present, the value for 
+ * this key is a CFBooleanRef. The default is kCFBooleanFalse.
+ */
+IMAGEIO_EXTERN const CFStringRef kCGImageMetadataShouldExcludeXMP IMAGEIO_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_7_0);
+
+/* Updates the DateTime parameters of the image metadata. Only values
+ * present in the original image will updated. If present, the value should
+ * be a CFStringRef or a CFDateRef. If CFString, the value must be in 
+ * Exif DateTime or ISO 8601 DateTime format. This option is mutually
+ * exclusive with kCGImageDestinationMetadata.
+ */
+IMAGEIO_EXTERN const CFStringRef kCGImageDestinationDateTime IMAGEIO_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_7_0);
+
+/* Updates the orientation in the image metadata. The image data itself will
+ * not be rotated. If present, the value should be a CFNumberRef from 1 to 8. 
+ * This option is mutually exclusive with kCGImageDestinationMetadata.
+ */
+IMAGEIO_EXTERN const CFStringRef kCGImageDestinationOrientation IMAGEIO_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_7_0);
+
+/* Losslessly copies the contents of the image source, 'isrc', to the 
+ * destination, 'idst'. The image data will not be modified. The image's 
+ * metadata can be modified by adding the keys and values defined above to 
+ * 'options'. No other images should be added to the image destination. 
+ * CGImageDestinationFinalize() should not be called afterward -
+ * the result is saved to the destination when this function returns. 
+ * The image type of the destination must match the image source. Returns true
+ * if the operation was successful. If an error occurs, false will be returned 
+ * and 'err' will be set to a CFErrorRef. Not all image formats are supported 
+ * for this operation. */
+IMAGEIO_EXTERN bool CGImageDestinationCopyImageSource(CGImageDestinationRef idst, 
+                                                      CGImageSourceRef isrc, 
+                                                      CFDictionaryRef options, 
+                                                      CFErrorRef* err) IMAGEIO_AVAILABLE_STARTING(__MAC_10_8, __IPHONE_7_0);
 
 
 

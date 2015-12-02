@@ -12,6 +12,7 @@
 #import <StoreKit/SKPaymentTransaction.h>
 #import <StoreKit/SKProduct.h>
 #import <StoreKit/SKProductsRequest.h>
+#import <StoreKit/SKReceiptRefreshRequest.h>
 #import <StoreKit/SKRequest.h>
 #import <StoreKit/SKStoreProductViewController.h>
 #import <StoreKit/StoreKitDefines.h>

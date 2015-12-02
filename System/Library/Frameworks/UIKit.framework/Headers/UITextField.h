@@ -2,7 +2,7 @@
 //  UITextField.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -39,95 +39,7 @@ typedef NS_ENUM(NSInteger, UITextFieldViewMode) {
     UITextFieldViewModeAlways
 };
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UITextField : UIControl <UITextInput, NSCoding> {
-  @private
-    NSAttributedString *_text;
-    UIColor            *_textColor;
-    UITextBorderStyle   _borderStyle;
-    CGFloat             _minimumFontSize;
-    id                  _delegate;
-    UIImage            *_background;
-    UIImage            *_disabledBackground;
-    UITextFieldViewMode _clearButtonMode;
-    UIView             *_leftView;
-    UITextFieldViewMode _leftViewMode;
-    UIView             *_rightView;
-    UITextFieldViewMode _rightViewMode;
-
-    UITextInputTraits  *_traits;
-    UITextInputTraits  *_nonAtomTraits;
-    CGFloat             _fullFontSize; // font size to use when no shrinkage is needed.
-    CGFloat             _paddingLeft;
-    CGFloat             _paddingTop;
-    CGFloat             _paddingRight;
-    CGFloat             _paddingBottom;
-    NSString           *_textFont; // This ivar will go away. This is deprecated and people should use _font
-    NSRange             _selectionRange;
-    int                 _scrollXOffset;
-    int                 _scrollYOffset;
-    float               _progress;
-    NSString           *_style;
-    
-    UIButton           *_clearButton;
-    CGSize              _clearButtonOffset;
-    
-    CGSize              _leftViewOffset;
-    CGSize              _rightViewOffset;
-
-    UITextFieldBorderView     *_backgroundView;
-    UITextFieldBorderView     *_disabledBackgroundView;
-    UITextFieldBackgroundView *_systemBackgroundView;
-    
-    UITextFieldLabel *_textLabel;
-    UITextFieldLabel *_placeholderLabel;
-    UITextFieldLabel *_suffixLabel;
-    UITextFieldLabel *_prefixLabel;
-    UIImageView      *_iconView;
-    UILabel          *_label;
-    CGFloat          _labelOffset;
-    
-    UITextInteractionAssistant *_interactionAssistant;
-    
-    UIView             *_inputView;
-    UIView             *_inputAccessoryView;
-
-    UITextFieldAtomBackgroundView *_atomBackgroundView;
-    
-    UIColor         *_shadowColor;
-    CGSize           _shadowOffset;
-    CGFloat          _shadowBlur;
-
-    struct {
-        unsigned int secureTextChanged:1;
-        unsigned int guard:1;
-        unsigned int delegateRespondsToHandleKeyDown:1;
-        unsigned int verticallyCenterText:1;
-        unsigned int isAnimating:4;
-        unsigned int inactiveHasDimAppearance:1;
-        unsigned int becomesFirstResponderOnClearButtonTap:1;
-        unsigned int clearsOnBeginEditing:1;
-        unsigned int clearsPlaceholderOnBeginEditing:1;
-        unsigned int adjustsFontSizeToFitWidth:1;
-        unsigned int fieldEditorAttached:1;
-        unsigned int canBecomeFirstResponder:1;
-        unsigned int shouldSuppressShouldBeginEditing:1;
-        unsigned int inResignFirstResponder:1;
-        unsigned int undoDisabled:1;
-        unsigned int contentsRTL:1;
-        unsigned int explicitAlignment:1;
-        unsigned int implementsCustomDrawing:1;
-        unsigned int needsClearing:1;
-        unsigned int suppressContentChangedNotification:1;
-        unsigned int allowsEditingTextAttributes:1;
-        unsigned int usesAttributedText:1;
-        unsigned int backgroundViewState:2;
-        unsigned int clearsOnInsertion:1;
-    } _textFieldFlags;
-}
-
-// End ivars
-// =============================================================================
-// Begin SDK properties
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UITextField : UIControl <UITextInput, NSCoding> 
 
 @property(nonatomic,copy)   NSString               *text;                 // default is nil
 @property(nonatomic,copy)   NSAttributedString     *attributedText NS_AVAILABLE_IOS(6_0); // default is nil
@@ -135,6 +47,8 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITextField : UIControl <UITextInput, NSC
 @property(nonatomic,retain) UIFont                 *font;                 // default is nil. use system font 12 pt
 @property(nonatomic)        NSTextAlignment         textAlignment;        // default is NSLeftTextAlignment
 @property(nonatomic)        UITextBorderStyle       borderStyle;          // default is UITextBorderStyleNone. If set to UITextBorderStyleRoundedRect, custom background images are ignored.
+@property(nonatomic,copy)   NSDictionary           *defaultTextAttributes NS_AVAILABLE_IOS(7_0); // applies attributes to the full range of text. Unset attributes act like default values.
+
 @property(nonatomic,copy)   NSString               *placeholder;          // default is nil. string is drawn 70% gray
 @property(nonatomic,copy)   NSAttributedString     *attributedPlaceholder NS_AVAILABLE_IOS(6_0); // default is nil
 @property(nonatomic)        BOOL                    clearsOnBeginEditing; // default is NO which moves cursor to location clicked. if YES, all text cleared

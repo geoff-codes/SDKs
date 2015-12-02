@@ -66,7 +66,8 @@ MP_EXTERN_CLASS_AVAILABLE(3_0) @interface MPMusicPlayerController : NSObject <MP
 @property(nonatomic) MPMusicShuffleMode shuffleMode;
 
 // The current volume of playing music, in the range of 0.0 to 1.0.
-@property(nonatomic) float volume;
+// This property is deprecated -- use MPVolumeView for volume control instead.
+@property(nonatomic) float volume NS_DEPRECATED_IOS(3_0, 7_0);
 
 // Returns the currently playing media item, or nil if none is playing.
 // Setting the nowPlayingItem to an item in the current queue will begin playback at that item.

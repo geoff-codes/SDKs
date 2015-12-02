@@ -18,7 +18,7 @@
  */
 enum {
     kCLErrorLocationUnknown  = 0,         // location is currently unknown, but CL will keep trying
-    kCLErrorDenied,                       // CL access has been denied (eg, user declined location use)
+    kCLErrorDenied,                       // Access to location or ranging has been denied by the user
     kCLErrorNetwork,                      // general, network-related error
     kCLErrorHeadingFailure,               // heading could not be determined
     kCLErrorRegionMonitoringDenied,       // Location region monitoring has been denied by the user
@@ -33,6 +33,8 @@ enum {
     kCLErrorDeferredAccuracyTooLow,       // Deferred mode not supported for the requested accuracy
     kCLErrorDeferredDistanceFiltered,     // Deferred mode does not support distance filters
     kCLErrorDeferredCanceled,             // Deferred mode request canceled a previous request
+	kCLErrorRangingUnavailable,           // Ranging cannot be performed
+	kCLErrorRangingFailure,               // General ranging failure
 };
 typedef NSInteger CLError;
 

@@ -2,7 +2,7 @@
 //  UICollectionViewController.h
 //  UIKit
 //
-//  Copyright (c) 2011 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2013, Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIViewController.h>
@@ -17,6 +17,19 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface UICollectionViewController : UIViewContro
 - (id)initWithCollectionViewLayout:(UICollectionViewLayout *)layout;
 
 @property (nonatomic, retain) UICollectionView *collectionView;
-@property (nonatomic) BOOL clearsSelectionOnViewWillAppear; // defaults to YES, and if YES, any selection is cleared in viewWillAppear:
+
+// defaults to YES, and if YES, any selection is cleared in viewWillAppear:
+// This property has not effect if the useLayoutToLayoutNavigationTransitions property is set to YES
+@property (nonatomic) BOOL clearsSelectionOnViewWillAppear;
+
+// Set to YES before pushing a a UICollectionViewController onto a
+// UINavigationController. The top view controller of the navigation controller
+// must be a UICollectionViewController that was pushed with this property set
+// to NO. This property should NOT be changed on a UICollectionViewController that
+// has already been pushed onto a UINavigationController.
+@property (nonatomic,assign)   BOOL useLayoutToLayoutNavigationTransitions NS_AVAILABLE_IOS(7_0);
+
+// The layout object is needed when defining interactive layout to layout transitions.
+@property (nonatomic,readonly) UICollectionViewLayout *collectionViewLayout NS_AVAILABLE_IOS(7_0);
 
 @end

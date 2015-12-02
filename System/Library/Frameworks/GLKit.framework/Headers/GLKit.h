@@ -2,14 +2,18 @@
 //  GLKit.h
 //  GLKit
 //
-//  Copyright (c) 2011, Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2012, Apple Inc. All rights reserved.
 //
+
+#import <GLKit/GLKitBase.h>
+
+#if TARGET_OS_IPHONE
+#import <GLKit/GLKView.h>
+#import <GLKit/GLKViewController.h>
+#endif
 
 #import <GLKit/GLKEffects.h>
 
 #import <GLKit/GLKMath.h>
-
-#import <GLKit/GLKView.h>
-#import <GLKit/GLKViewController.h>
 
 #import <GLKit/GLKTextureLoader.h>

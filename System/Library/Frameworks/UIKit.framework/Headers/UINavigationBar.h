@@ -2,7 +2,7 @@
 //  UINavigationBar.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,11 +13,12 @@
 #import <UIKit/UIKitDefines.h>
 #import <UIKit/UIButton.h>
 #import <UIKit/UIBarButtonItem.h>
+#import <UIKit/UIBarCommon.h>
 
 @class UINavigationItem, UIBarButtonItem, UIImage, UIColor;
 @protocol UINavigationBarDelegate;
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationBar : UIView <NSCoding> {
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationBar : UIView <NSCoding, UIBarPositioning> {
   @private
     NSMutableArray *_itemStack;
     CGFloat         _rightMargin;
@@ -29,7 +30,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationBar : UIView <NSCoding> {
     NSArray        *_rightViews;
     UIView         *_prompt;
     UIView         *_accessoryView;
-    UIColor        *_tintColor;
+    UIColor        *_barTintColor;
     id              _appearanceStorage;
     id              _currentAlert;
     struct {
@@ -39,14 +40,13 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationBar : UIView <NSCoding> {
         unsigned int newBarStyle:3;
         unsigned int transitioningToTranslucent:1;
         unsigned int barStyle:3;
-        unsigned int isTranslucent:1;
+        unsigned int barTranslucence:3;
         unsigned int disableLayout:1;
         unsigned int backPressed:1;
         unsigned int animatePromptChange:1;
         unsigned int pendingHideBackButton:1;
         unsigned int titleAutosizesToFit:1;
         unsigned int usingNewAPI:1;
-        unsigned int minibar:1;
         unsigned int forceFullHeightInLandscape:1;
         unsigned int isLocked:1;
         unsigned int shouldUpdatePromptAfterTransition:1;
@@ -55,18 +55,32 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationBar : UIView <NSCoding> {
         unsigned int isContainedInPopover:1;
         unsigned int needsDrawRect:1;
         unsigned int animationCleanupCancelled:1;
-        unsigned int forceLayout:1;
         unsigned int layoutInProgress:1;
         unsigned int dynamicDuration:1;
         unsigned int isInteractive:1;
         unsigned int cancelledTransition:1;
         unsigned int animationCount:4;
+        unsigned int backgroundLayoutNeedsUpdate:1;
+        unsigned int backgroundImageNeedsUpdate:1;
     } _navbarFlags;
 }
 
 @property(nonatomic,assign) UIBarStyle barStyle;
 @property(nonatomic,assign) id delegate;
-@property(nonatomic,assign,getter=isTranslucent) BOOL translucent NS_AVAILABLE_IOS(3_0); // Default is NO. Always YES if barStyle is set to UIBarStyleBlackTranslucent
+
+/*
+ New behavior on iOS 7.
+ Default is YES.
+ You may force an opaque background by setting the property to NO.
+ If the navigation bar has a custom background image, the default is inferred 
+ from the alpha values of the image—YES if it has any pixel with alpha < 1.0
+ If you send setTranslucent:YES to a bar with an opaque custom background image
+ it will apply a system opacity less than 1.0 to the image.
+ If you send setTranslucent:NO to a bar with a translucent custom background image
+ it will provide an opaque background for the image using the bar's barTintColor if defined, or black
+ for UIBarStyleBlack or white for UIBarStyleDefault if barTintColor is nil.
+ */
+@property(nonatomic,assign,getter=isTranslucent) BOOL translucent NS_AVAILABLE_IOS(3_0); // Default is NO on iOS 6 and earlier. Always YES if barStyle is set to UIBarStyleBlackTranslucent
 
 // Pushing a navigation item displays the item's title in the center of the navigation bar.
 // The previous top navigation item (if it exists) is displayed as a "back" button on the left.
@@ -79,17 +93,26 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationBar : UIView <NSCoding> {
 @property(nonatomic,copy) NSArray *items;
 - (void)setItems:(NSArray *)items animated:(BOOL)animated; // If animated is YES, then simulate a push or pop depending on whether the new top item was previously in the stack.
 
-@property(nonatomic,retain) UIColor *tintColor UI_APPEARANCE_SELECTOR;
+/*
+ The behavior of tintColor for bars has changed on iOS 7.0. It no longer affects the bar's background
+ and behaves as described for the tintColor property added to UIView.
+ To tint the bar's background, please use -barTintColor.
+ */
+@property(nonatomic,retain) UIColor *tintColor;
+@property(nonatomic,retain) UIColor *barTintColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;  // default is nil
 
 /* In general, you should specify a value for the normal state to be used by other states which don't have a custom value set.
  
  Similarly, when a property is dependent on the bar metrics (on the iPhone in landscape orientation, bars have a different height from standard), be sure to specify a value for UIBarMetricsDefault.
- 
- DISCUSSION: Interdependence of barStyle, tintColor, backgroundImage.
- When barStyle or tintColor is set as well as the bar's background image,
- the bar buttons (unless otherwise customized) will inherit the underlying
- barStyle or tintColor.
  */
+
+- (void)setBackgroundImage:(UIImage *)backgroundImage forBarPosition:(UIBarPosition)barPosition barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+- (UIImage *)backgroundImageForBarPosition:(UIBarPosition)barPosition barMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+
+/*
+Same as using UIBarPositionAny in -setBackgroundImage:forBarPosition:barMetrics. Resizable images will be stretched
+vertically if necessary when the navigation bar is in the position UIBarPositionTopAttached.
+*/
 - (void)setBackgroundImage:(UIImage *)backgroundImage forBarMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 - (UIImage *)backgroundImageForBarMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
@@ -97,16 +120,24 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationBar : UIView <NSCoding> {
  */
 @property(nonatomic,retain) UIImage *shadowImage NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;
 
-/* You may specify the font, text color, text shadow color, and text shadow offset for the title in the text attributes dictionary, using the keys found in UIStringDrawing.h.
+/* You may specify the font, text color, and shadow properties for the title in the text attributes dictionary, using the keys found in NSAttributedString.h.
  */
 @property(nonatomic,copy) NSDictionary *titleTextAttributes NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
 - (void)setTitleVerticalPositionAdjustment:(CGFloat)adjustment forBarMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 - (CGFloat)titleVerticalPositionAdjustmentForBarMetrics:(UIBarMetrics)barMetrics NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
+/*
+ The back indicator image is shown beside the back button.
+ The back indicator transition mask image is used as a mask for content during push and pop transitions
+ Note: These properties must both be set if you want to customize the back indicator image.
+ */
+@property(nonatomic,retain) UIImage *backIndicatorImage NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+@property(nonatomic,retain) UIImage *backIndicatorTransitionMaskImage NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;
+
 @end
 
-@protocol UINavigationBarDelegate <NSObject>
+@protocol UINavigationBarDelegate <UIBarPositioningDelegate>
 
 @optional
 
@@ -138,7 +169,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UINavigationItem : NSObject <NSCoding> {
     UIImageView     *_frozenTitleView;
 }
 
-- (id)initWithTitle:(NSString *)title;
+- (id)initWithTitle:(NSString *)title; // Designated initializer
 
 @property(nonatomic,copy)   NSString        *title;             // Title when topmost on the stack. default is nil
 @property(nonatomic,retain) UIBarButtonItem *backBarButtonItem; // Bar button item to use for the back button in the child navigation item.

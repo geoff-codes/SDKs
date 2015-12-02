@@ -2,17 +2,17 @@
  *	CTRunDelegate.h
  *	CoreText
  *
- *	Copyright 2006-2012 Apple Inc. All rights reserved.
+ *	Copyright (c) 2006-2013 Apple Inc. All rights reserved.
  *
  */
 
 #ifndef __CTRUNDELEGATE__
 #define __CTRUNDELEGATE__
 
-#if TARGET_OS_IPHONE
-
 #include <CoreText/CTDefines.h>
 #include <CoreText/CTRun.h>
+
+CF_IMPLICIT_BRIDGING_ENABLED
 
 #if defined(__cplusplus)
 extern "C" {
@@ -29,7 +29,7 @@ typedef const struct __CTRunDelegate * CTRunDelegateRef;
 	@abstract	Returns the CFType of CTRunDelegate objects.
 */
 
-CFTypeID CTRunDelegateGetTypeID( void ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+CFTypeID CTRunDelegateGetTypeID( void ) CT_AVAILABLE(10_5, 3_2);
 
 
 /* --------------------------------------------------------------------------- */
@@ -170,7 +170,7 @@ enum {
 
 CTRunDelegateRef CTRunDelegateCreate(
 	const CTRunDelegateCallbacks* callbacks,
-	void* refCon ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+	void* refCon ) CT_AVAILABLE(10_5, 3_2);
 
 
 /* --------------------------------------------------------------------------- */
@@ -191,13 +191,13 @@ CTRunDelegateRef CTRunDelegateCreate(
 */
 
 void* CTRunDelegateGetRefCon(
-	CTRunDelegateRef runDelegate ) CT_AVAILABLE_STARTING( __MAC_10_5, __IPHONE_3_2);
+	CTRunDelegateRef runDelegate ) CT_AVAILABLE(10_5, 3_2);
 
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif // TARGET_OS_IPHONE
+CF_IMPLICIT_BRIDGING_DISABLED
 
 #endif

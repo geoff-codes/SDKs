@@ -9,9 +9,8 @@
 
 #import <CoreBluetooth/CBDefines.h>
 #import <CoreBluetooth/CBAdvertisementData.h>
-
+#import <CoreBluetooth/CBCentralManagerConstants.h>
 #import <Foundation/Foundation.h>
-
 
 /*!
  *  @enum CBCentralManagerState
@@ -32,66 +31,8 @@ typedef NS_ENUM(NSInteger, CBCentralManagerState) {
 	CBCentralManagerStateUnsupported,
 	CBCentralManagerStateUnauthorized,
 	CBCentralManagerStatePoweredOff,
-	CBCentralManagerStatePoweredOn
+	CBCentralManagerStatePoweredOn,
 };
-
-/*!
- *  @const CBCentralManagerScanOptionAllowDuplicatesKey
- *
- *  @discussion A NSNumber (Boolean) indicating that the scan should run without duplicate filtering. By default, multiple discoveries of the
- *              same peripheral are coalesced into a single discovery event. Disabling this filtering can have an adverse effect on battery life
- *              and should only be used if necessary.
- *
- *  @see        scanForPeripheralsWithServices:options:
- *
- */
-CB_EXTERN NSString * const CBCentralManagerScanOptionAllowDuplicatesKey;
-
-
-
-/*!
- *  @const CBConnectPeripheralOptionNotifyOnConnectionKey
- *
- *  @discussion A NSNumber (Boolean) indicating that the system should display an alert for a given peripheral, if the application is suspended
- *              when a successful connection is made.
- *              This is useful for applications that have not specified the <code>bluetooth-central</code> background mode and cannot display their
- *              own alert. If more than one application has requested notification for a given peripheral, the one that was most recently in the foreground
- *              will receive the alert.
- *
- *  @see        connectPeripheral:
- *
- */
-CB_EXTERN NSString * const CBConnectPeripheralOptionNotifyOnConnectionKey NS_AVAILABLE(NA, 6_0);
-
-/*!
- *  @const CBConnectPeripheralOptionNotifyOnDisconnectionKey
- *
- *  @discussion A NSNumber (Boolean) indicating that the system should display a disconnection alert for a given peripheral, if the application
- *              is suspended at the time of the disconnection.
- *              This is useful for applications that have not specified the <code>bluetooth-central</code> background mode and cannot display their
- *              own alert. If more than one application has requested notification for a given peripheral, the one that was most recently in the foreground
- *              will receive the alert.
- *
- *  @see        connectPeripheral:
- *
- */
-CB_EXTERN NSString * const CBConnectPeripheralOptionNotifyOnDisconnectionKey;
-
-/*!
- *  @const CBConnectPeripheralOptionNotifyOnNotificationKey
- *
- *  @discussion A NSNumber (Boolean) indicating that the system should display an alert for all notifications received from a given peripheral, if
- *              the application is suspended at the time.
- *              This is useful for applications that have not specified the <code>bluetooth-central</code> background mode and cannot display their
- *              own alert. If more than one application has requested notification for a given peripheral, the one that was most recently in the foreground
- *              will receive the alert.
- *
- *  @see        connectPeripheral:
- *
- */
-CB_EXTERN NSString * const CBConnectPeripheralOptionNotifyOnNotificationKey NS_AVAILABLE(NA, 6_0);
-
-
 
 @protocol CBCentralManagerDelegate;
 @class CBUUID, CBPeripheral;
@@ -104,11 +45,6 @@ CB_EXTERN NSString * const CBConnectPeripheralOptionNotifyOnNotificationKey NS_A
  */
 NS_CLASS_AVAILABLE(10_7, 5_0)
 CB_EXTERN_CLASS @interface CBCentralManager : NSObject
-{
-@package
-	id<CBCentralManagerDelegate>    _delegate;
-	CBCentralManagerState           _state;
-}
 
 /*!
  *  @property delegate
@@ -116,13 +52,13 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
  *  @discussion The delegate object that will receive central events.
  *
  */
-@property(assign, nonatomic) id<CBCentralManagerDelegate> delegate;
+@property(weak, nonatomic) id<CBCentralManagerDelegate> delegate;
 
 /*!
  *  @property state
  *
  *  @discussion The current state of the peripheral, initially set to <code>CBCentralManagerStateUnknown</code>. Updates are provided by required
- *              delegate method @link centralManagerDidUpdateState: @/link.
+ *              delegate method {@link centralManagerDidUpdateState:}.
  *
  */
 @property(readonly) CBCentralManagerState state;
@@ -140,40 +76,88 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
 - (id)initWithDelegate:(id<CBCentralManagerDelegate>)delegate queue:(dispatch_queue_t)queue;
 
 /*!
+ *  @method initWithDelegate:queue:options:
+ *
+ *  @param delegate The delegate that will receive central role events.
+ *  @param queue    The dispatch queue on which the events will be dispatched.
+ *  @param options  An optional dictionary specifying options for the manager.
+ *
+ *  @discussion     The initialization call. The events of the central role will be dispatched on the provided queue.
+ *                  If <i>nil</i>, the main queue will be used.
+ *
+ *	@seealso		CBCentralManagerOptionShowPowerAlertKey
+ *	@seealso		CBCentralManagerOptionRestoreIdentifierKey
+ *
+ */
+- (id)initWithDelegate:(id<CBCentralManagerDelegate>)delegate queue:(dispatch_queue_t)queue options:(NSDictionary *)options NS_AVAILABLE(NA, 7_0);
+
+/*!
  *  @method retrievePeripherals:
  *
  *  @param peripheralUUIDs  A list of <code>CFUUIDRef</code> objects.
  *
  *  @discussion             Attempts to retrieve the <code>CBPeripheral</code> object(s) that correspond to <i>peripheralUUIDs</i>.
  *
+ *	@deprecated				Use {@link retrievePeripheralsWithIdentifiers:} instead.
+ *
  *  @see                    centralManager:didRetrievePeripherals:
  *
  */
-- (void)retrievePeripherals:(NSArray *)peripheralUUIDs;
+- (void)retrievePeripherals:(NSArray *)peripheralUUIDs NS_DEPRECATED(NA, NA, 5_0, 7_0);
+
+/*!
+ *  @method retrievePeripheralsWithIdentifiers:
+ *
+ *  @param identifiers	A list of <code>NSUUID</code> objects.
+ *
+ *  @discussion			Attempts to retrieve the <code>CBPeripheral</code> object(s) with the corresponding <i>identifiers</i>.
+ *
+ *	@return				A list of <code>CBPeripheral</code> objects.
+ *
+ */
+- (NSArray *)retrievePeripheralsWithIdentifiers:(NSArray *)identifiers NS_AVAILABLE(NA, 7_0);
 
 /*!
  *  @method retrieveConnectedPeripherals
  *
  *  @discussion Retrieves all peripherals that are connected to the system. Note that this set can include peripherals which were connected by other
- *              applications, which will need to be connected locally via @link connectPeripheral:options: @/link before they can be used.
+ *              applications, which will need to be connected locally via {@link connectPeripheral:options:} before they can be used.
+ *
+ *	@deprecated	Use {@link retrieveConnectedPeripheralsWithServices:} instead.
  *
  *	@see        centralManager:didRetrieveConnectedPeripherals:
  *
  */
-- (void)retrieveConnectedPeripherals;
+- (void)retrieveConnectedPeripherals NS_DEPRECATED(NA, NA, 5_0, 7_0);
+
+/*!
+ *  @method retrieveConnectedPeripheralsWithServices
+ *
+ *  @discussion Retrieves all peripherals that are connected to the system and implement any of the services listed in <i>serviceUUIDs</i>.
+ *				Note that this set can include peripherals which were connected by other applications, which will need to be connected locally
+ *				via {@link connectPeripheral:options:} before they can be used.
+ *
+ *	@return		A list of <code>CBPeripheral</code> objects.
+ *
+ */
+- (NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDs NS_AVAILABLE(NA, 7_0);
 
 /*!
  *  @method scanForPeripheralsWithServices:options:
  *
- *  @param serviceUUIDs A list of <code>CBUUID</code> objects representing the services to scan for.
+ *  @param serviceUUIDs A list of <code>CBUUID</code> objects representing the service(s) to scan for.
  *  @param options      An optional dictionary specifying options for the scan.
  *
- *  @discussion         Starts scanning for peripherals. If <i>serviceUUIDs</i> is <i>nil</i> all discovered peripherals will be returned, regardless of their
- *                      supported services (not recommended). If the central is already scanning with different <i>serviceUUIDs</i> or <i>options</i>, the
- *                      provided parameters will replace them.
+ *  @discussion         Starts scanning for peripherals that are advertising any of the services listed in <i>serviceUUIDs</i>. Although strongly discouraged,
+ *                      if <i>serviceUUIDs</i> is <i>nil</i> all discovered peripherals will be returned. If the central is already scanning with different
+ *                      <i>serviceUUIDs</i> or <i>options</i>, the provided parameters will replace them.
+ *                      Applications that have specified the <code>bluetooth-central</code> background mode are allowed to scan while backgrounded, with two
+ *                      caveats: the scan must specify one or more service types in <i>serviceUUIDs</i>, and the <code>CBCentralManagerScanOptionAllowDuplicatesKey</code>
+ *                      scan option will be ignored.
  *
  *  @see                centralManager:didDiscoverPeripheral:advertisementData:RSSI:
  *  @seealso            CBCentralManagerScanOptionAllowDuplicatesKey
+ *	@seealso			CBCentralManagerScanOptionSolicitedServiceUUIDsKey
  *
  */
 - (void)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options;
@@ -193,8 +177,8 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
  *  @param options      An optional dictionary specifying connection behavior options.
  *
  *  @discussion         Initiates a connection to <i>peripheral</i>. Connection attempts never time out and, depending on the outcome, will result
- *                      in a call to either @link centralManager:didConnectPeripheral: @/link or @link centralManager:didFailToConnectPeripheral:error: @/link.
- *                      Pending attempts are cancelled automatically upon deallocation of <i>peripheral</i>, and explicitly via @link cancelPeripheralConnection @/link.
+ *                      in a call to either {@link centralManager:didConnectPeripheral:} or {@link centralManager:didFailToConnectPeripheral:error:}.
+ *                      Pending attempts are cancelled automatically upon deallocation of <i>peripheral</i>, and explicitly via {@link cancelPeripheralConnection}.
  *
  *  @see                centralManager:didConnectPeripheral:
  *  @see                centralManager:didFailToConnectPeripheral:error:
@@ -210,11 +194,8 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
  *
  *  @param peripheral   A <code>CBPeripheral</code>.
  *
- *  @discussion         Cancels an active or pending connection to <i>peripheral</i>. This command is non-blocking, and any <code>CBPeripheral</code>
+ *  @discussion         Cancels an active or pending connection to <i>peripheral</i>. Note that this is non-blocking, and any <code>CBPeripheral</code>
  *                      commands that are still pending to <i>peripheral</i> may or may not complete.
- *                      It extremely important to note that canceling a connection does not guarantee the immediate disconnection of the underlying physical
- *                      link. This can be caused by a variety of different factors, including other application(s) that hold an outstanding connection to the
- *                      peripheral. However, in this situation, you will still receive an immediate call to @link centralManager:didDisconnectPeripheral:error: @/link.
  *
  *  @see                centralManager:didDisconnectPeripheral:error:
  *
@@ -227,7 +208,7 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
 /*!
  *  @protocol CBCentralManagerDelegate
  *
- *  @discussion The delegate of a @link CBCentralManager @/link object must adopt the <code>CBCentralManagerDelegate</code> protocol. The
+ *  @discussion The delegate of a {@link CBCentralManager} object must adopt the <code>CBCentralManagerDelegate</code> protocol. The
  *              single required method indicates the availability of the central manager, while the optional methods allow for the discovery and
  *              connection of peripherals.
  *
@@ -255,12 +236,29 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
 @optional
 
 /*!
+ *  @method centralManager:willRestoreState:
+ *
+ *  @param central      The central manager providing this information.
+ *  @param dict			A dictionary containing information about <i>central</i> that was preserved by the system at the time the app was terminated.
+ *
+ *  @discussion			For apps that opt-in to state preservation and restoration, this is the first method invoked when your app is relaunched into
+ *						the background to complete some Bluetooth-related task. Use this method to synchronize your app's state with the state of the
+ *						Bluetooth system.
+ *
+ *  @seealso            CBCentralManagerRestoredStatePeripheralsKey;
+ *  @seealso            CBCentralManagerRestoredStateScanServicesKey;
+ *  @seealso            CBCentralManagerRestoredStateScanOptionsKey;
+ *
+ */
+- (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary *)dict;
+
+/*!
  *  @method centralManager:didRetrievePeripherals:
  *
  *  @param central      The central manager providing this information.
  *  @param peripherals  A list of <code>CBPeripheral</code> objects.
  *
- *  @discussion         This method returns the result of a @link retrievePeripherals @/link call, with the peripheral(s) that the central manager was
+ *  @discussion         This method returns the result of a {@link retrievePeripherals} call, with the peripheral(s) that the central manager was
  *                      able to match to the provided UUID(s).
  *
  */
@@ -272,7 +270,7 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
  *  @param central      The central manager providing this information.
  *  @param peripherals  A list of <code>CBPeripheral</code> objects representing all peripherals currently connected to the system.
  *
- *  @discussion         This method returns the result of a @link retrieveConnectedPeripherals @/link call.
+ *  @discussion         This method returns the result of a {@link retrieveConnectedPeripherals} call.
  *
  */
 - (void)centralManager:(CBCentralManager *)central didRetrieveConnectedPeripherals:(NSArray *)peripherals;
@@ -283,11 +281,12 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
  *  @param central              The central manager providing this update.
  *  @param peripheral           A <code>CBPeripheral</code> object.
  *  @param advertisementData    A dictionary containing any advertisement and scan response data.
- *  @param RSSI                 The current RSSI of <i>peripheral</i>, in decibels.
+ *  @param RSSI                 The current RSSI of <i>peripheral</i>, in dBm. A value of <code>127</code> is reserved and indicates the RSSI
+ *								was not available.
  *
- *  @discussion                 This method is invoked while scanning, upon the discovery of <i>peripheral</i> by <i>central</i>. Any advertisement/scan response
- *                              data stored in <i>advertisementData</i> can be accessed via the <code>CBAdvertisementData</code> keys. A discovered peripheral must
- *                              be retained in order to use it; otherwise, it is assumed to not be of interest and will be cleaned up by the central manager.
+ *  @discussion                 This method is invoked while scanning, upon the discovery of <i>peripheral</i> by <i>central</i>. A discovered peripheral must
+ *                              be retained in order to use it; otherwise, it is assumed to not be of interest and will be cleaned up by the central manager. For
+ *                              a list of <i>advertisementData</i> keys, see {@link CBAdvertisementDataLocalNameKey} and other similar constants.
  *
  *  @seealso                    CBAdvertisementData.h
  *
@@ -300,7 +299,7 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
  *  @param central      The central manager providing this information.
  *  @param peripheral   The <code>CBPeripheral</code> that has connected.
  *
- *  @discussion         This method is invoked when a connection initiated by @link connectPeripheral:options: @/link has succeeded.
+ *  @discussion         This method is invoked when a connection initiated by {@link connectPeripheral:options:} has succeeded.
  *
  */
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral;
@@ -312,7 +311,7 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
  *  @param peripheral   The <code>CBPeripheral</code> that has failed to connect.
  *  @param error        The cause of the failure.
  *
- *  @discussion         This method is invoked when a connection initiated by @link connectPeripheral:options: @/link has failed to complete. As connection attempts do not
+ *  @discussion         This method is invoked when a connection initiated by {@link connectPeripheral:options:} has failed to complete. As connection attempts do not
  *                      timeout, the failure of a connection is atypical and usually indicative of a transient issue.
  *
  */
@@ -325,8 +324,8 @@ CB_EXTERN_CLASS @interface CBCentralManager : NSObject
  *  @param peripheral   The <code>CBPeripheral</code> that has disconnected.
  *  @param error        If an error occurred, the cause of the failure.
  *
- *  @discussion         This method is invoked upon the disconnection of a peripheral that was connected by @link connectPeripheral:options: @/link. If the disconnection
- *                      was not initiated by @link cancelPeripheralConnection @/link, the cause will be detailed in the <i>error</i> parameter. Once this method has been
+ *  @discussion         This method is invoked upon the disconnection of a peripheral that was connected by {@link connectPeripheral:options:}. If the disconnection
+ *                      was not initiated by {@link cancelPeripheralConnection}, the cause will be detailed in the <i>error</i> parameter. Once this method has been
  *                      called, no more methods will be invoked on <i>peripheral</i>'s <code>CBPeripheralDelegate</code>.
  *
  */

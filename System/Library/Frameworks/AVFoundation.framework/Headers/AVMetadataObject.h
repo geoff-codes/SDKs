@@ -3,7 +3,7 @@
  
 	Framework:  AVFoundation
  
-	Copyright 2012 Apple Inc. All rights reserved.
+	Copyright 2012-2013 Apple Inc. All rights reserved.
 */
 
 #import <AVFoundation/AVBase.h>
@@ -99,7 +99,7 @@ AVF_EXPORT NSString *const AVMetadataObjectTypeFace;
     AVMetadataFaceObject represents a single detected face in a picture.  It is an immutable object
     describing the various features found in the face.
 
-    On supported platforms, AVCaptureMetadataOutput outputs arrays of detected face objects.  See AVCaptureMetadataOutput.h.
+    On supported platforms, AVCaptureMetadataOutput outputs arrays of detected face objects.  See AVCaptureOutput.h.
 */
 NS_CLASS_AVAILABLE(NA, 6_0)
 @interface AVMetadataFaceObject : AVMetadataObject
@@ -161,5 +161,131 @@ NS_CLASS_AVAILABLE(NA, 6_0)
     then reading this property throws an NSGenericException.
 */
 @property(readonly) CGFloat yawAngle;
+
+@end
+
+/*!
+ @constant AVMetadataObjectTypeUPCECode
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeUPCECode.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from UPC-E codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypeUPCECode NS_AVAILABLE(NA, 7_0);
+
+/*!
+ @constant AVMetadataObjectTypeCode39Code
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeCode39Code.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from Code 39 codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypeCode39Code NS_AVAILABLE(NA, 7_0);
+
+/*!
+ @constant AVMetadataObjectTypeCode39Mod43Code
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeCode39Mod43Code.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from Code 39 mod 43 codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypeCode39Mod43Code NS_AVAILABLE(NA, 7_0);
+
+/*!
+ @constant AVMetadataObjectTypeEAN13Code
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeEAN13Code.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from EAN-13 (including UPC-A) codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypeEAN13Code NS_AVAILABLE(NA, 7_0);
+
+/*!
+ @constant AVMetadataObjectTypeEAN8Code
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeEAN8Code.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from EAN-8 codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypeEAN8Code NS_AVAILABLE(NA, 7_0);
+
+/*!
+ @constant AVMetadataObjectTypeCode93Code
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeCode93Code.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from Code 93 codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypeCode93Code NS_AVAILABLE(NA, 7_0);
+
+/*!
+ @constant AVMetadataObjectTypeCode128Code
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeCode128Code.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from Code 128 codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypeCode128Code NS_AVAILABLE(NA, 7_0);
+
+/*!
+ @constant AVMetadataObjectTypePDF417Code
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypePDF417Code.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from PDF417 codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypePDF417Code NS_AVAILABLE(NA, 7_0);
+
+/*!
+ @constant AVMetadataObjectTypeQRCode
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeQRCode.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from QR codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypeQRCode NS_AVAILABLE(NA, 7_0);
+
+/*!
+ @constant AVMetadataObjectTypeAztecCode
+ @abstract An identifier for an instance of AVMetadataMachineReadableCodeObject having a type AVMetadataObjectTypeAztecCode.
+ @discussion
+    AVMetadataMachineReadableCodeObject objects generated from Aztec codes return this constant as their type.
+ */
+AVF_EXPORT NSString *const AVMetadataObjectTypeAztecCode NS_AVAILABLE(NA, 7_0);
+
+@class AVMetadataMachineReadableCodeObjectInternal;
+
+/*!
+ @class AVMetadataMachineReadableCodeObject
+ @abstract
+    AVMetadataMachineReadableCodeObject is a concrete subclass of AVMetadataObject defining the features of a detected one-dimensional
+    or two-dimensional barcode.
+ 
+ @discussion
+    AVMetadataMachineReadableCodeObject represents a single detected machine readable code in a picture.  It is an immutable object
+    describing the features and payload of a barcode.
+ 
+    On supported platforms, AVCaptureMetadataOutput outputs arrays of detected machine readable code objects.  See AVCaptureMetadataOutput.h.
+ */
+NS_CLASS_AVAILABLE(NA, 7_0)
+@interface AVMetadataMachineReadableCodeObject : AVMetadataObject
+{
+	AVMetadataMachineReadableCodeObjectInternal *_internal;
+}
+
+/*!
+ @property corners
+ @abstract
+    The points defining the (X,Y) locations of the corners of the machine-readable code.
+ 
+ @discussion
+    The value of this property is an NSArray of CFDictionaries, each of which has been created from a CGPoint using 
+    CGPointCreateDictionaryRepresentation(), representing the coordinates of the corners of the object with respect to the image 
+    in which it resides.  If the metadata originates from video, the points may be expressed as scalar values from 0. - 1. The 
+    points in the corners differ from the bounds rectangle in that bounds is axis-aligned to orientation of the captured image, 
+    and the values of the corners reside within the bounds rectangle. The points are arranged in counter-clockwise order 
+    (clockwise if the code or image is mirrored), starting with the top-left of the code in its canonical orientation.
+ */
+@property(readonly) NSArray *corners;
+
+/*!
+ @property stringValue
+ @abstract Returns the receiver’s errorCorrectedData decoded into a human-readable string.
+ @discussion
+    The value of this property is an NSString created by decoding the binary payload according to the format of the machine
+    readable code.  Returns nil if a string representation cannot be created from the payload.
+ */
+@property(readonly) NSString *stringValue;
 
 @end

@@ -12,12 +12,8 @@
 
 NS_CLASS_AVAILABLE(NA, 2_0)
 @interface ABUnknownPersonViewController : UIViewController
-{
-    @private
-        id           _helper;
-        id<ABUnknownPersonViewControllerDelegate> _unknownPersonViewDelegate;
-        id           _reserved;
-}
+
+// ABPersonViewController does not support subclassing in iOS 7.0 and later. A nil instance will be returned.
 
 @property(nonatomic,assign)    id<ABUnknownPersonViewControllerDelegate> unknownPersonViewDelegate;
 

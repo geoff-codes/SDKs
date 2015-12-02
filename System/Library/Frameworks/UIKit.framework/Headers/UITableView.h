@@ -2,7 +2,7 @@
 //  UITableView.h
 //  UIKit
 //
-//  Copyright (c) 2005-2012, Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2013, Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -72,6 +72,12 @@ UIKIT_EXTERN const CGFloat UITableViewAutomaticDimension NS_AVAILABLE_IOS(5_0);
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section;
 
+// Use the estimatedHeight methods to quickly calcuate guessed values which will allow for fast load times of the table.
+// If these methods are implemented, the above -tableView:heightForXXX calls will be deferred until views are ready to be displayed, so more expensive logic can be placed there.
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(7_0);
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0);
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForFooterInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0);
+
 // Section header & footer information. Views are preferred over title should you decide to provide both
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section;   // custom view for header. will be adjusted to default or specified header height
@@ -132,226 +138,20 @@ UIKIT_EXTERN NSString *const UITableViewSelectionDidChangeNotification;
 
 //_______________________________________________________________________________________________________________
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding> {
-  @private
-//    UITableViewStyle            _style;
-
-    id <UITableViewDataSource>  _dataSource;
-    
-    id                          _rowData;
-    CGFloat                     _rowHeight;
-    CGFloat                     _sectionHeaderHeight;
-    CGFloat                     _sectionFooterHeight;
-
-    CGRect                      _visibleBounds;
-    NSRange                     _visibleRows;
-    NSMutableArray             *_visibleCells;
-    NSIndexPath                *_firstResponderIndexPath;
-    UIView                     *_firstResponderView;
-    NSUInteger                  _firstResponderViewType;    
-    NSMutableDictionary        *_reusableTableCells;
-    NSMutableDictionary        *_nibMap;
-    NSMutableDictionary        *_headerFooterNibMap;
-    NSMutableDictionary        *_nibExternalObjectsTables;
-    UITableViewCell            *_topSeparatorCell;
-    id                          _topSeparator;
-    NSMutableArray             *_extraSeparators;
-    CFMutableDictionaryRef      _visibleHeaderViews;
-    CFMutableDictionaryRef      _visibleFooterViews;
-    NSMutableDictionary        *_reusableHeaderFooterViews;
-    
-    NSMutableArray             *_highlightedIndexPaths;
-    NSMutableArray             *_selectedIndexPaths;
-    NSInteger                   _swipeToDeleteSection;
-    NSInteger                   _swipeToDeleteRow;
-    NSIndexPath                *_pendingSelectionIndexPath;
-    NSArray                    *_pendingDeselectionIndexPaths;
-    UIView                     *_touchedContentView;
-    UIView                     *_newContentView;
-
-    id                          _deleteAnimationSupport;
-    id                          _reorderingSupport;
-
-    UIView                     *_backgroundView;
-    UIView                     *_index;
-    UIView                     *_tableHeaderBackgroundView;
-    UIView                     *_tableHeaderView;
-    UIView                     *_tableFooterView;
-    id                          _countLabel;
-
-    NSInteger                   _tableReloadingSuspendedCount;
-//    NSInteger                   _tableDisplaySuspendedCount;
-    NSInteger                   _sectionIndexMinimumDisplayRowCount;
-//    NSInteger                   _itemCountFooterMinimumDisplayRowCount;
-
-    NSMutableArray             *_insertItems;
-    NSMutableArray             *_deleteItems;
-    NSMutableArray             *_reloadItems;
-    NSMutableArray             *_moveItems;
-    
-    UIColor                    *_separatorColor;
-    UIColor                    *_separatorTopShadowColor;
-    UIColor                    *_separatorBottomShadowColor;
-    UIColor                    *_checkmarkColor;
-    UIColor                    *_sectionBorderColor;
-    UIColor                    *_indexColor;
-    UIColor                    *_indexBackgroundColor;
-    
-    NSArray                    *_defaultSectionIndexTitles;
-    
-    UISwipeGestureRecognizer   *_swipeGestureRecognizer;
-    UIGestureRecognizer        *_gobblerGestureRecognizer;
-
-    NSInteger                   _updateCount;
-    
-    NSIndexPath                  *_displayingCellContentStringIndexPath;
-    UILongPressGestureRecognizer *_longPressGestureRecognizer;
-    NSTimer                      *_longPressAutoscrollTimer;
-    int                          _longPressAutoscrollDirection;
-    
-    UIEdgeInsets                 _sectionContentInset;
-    
-    UITouch                     *_currentTouch;
-    
-    UIRefreshControl            *_refreshControl;
-    
-    NSMutableDictionary         *_cellClassDict;
-    NSMutableDictionary         *_headerFooterClassDict;
-
-    CGFloat                      _topPadding;
-    CGFloat                      _bottomPadding;
-    
-    id                           _updateCompletionHandler;
-
-    struct {
-        unsigned int dataSourceNumberOfRowsInSection:1;
-        unsigned int dataSourceCellForRow:1;
-        unsigned int dataSourceNumberOfSectionsInTableView:1;
-        unsigned int dataSourceTitleForHeaderInSection:1;
-        unsigned int dataSourceTitleForFooterInSection:1;
-        unsigned int dataSourceDetailTextForHeaderInSection:1;
-        unsigned int dataSourceCommitEditingStyle:1;
-        unsigned int dataSourceSectionIndexTitlesForTableView:1;
-        unsigned int dataSourceSectionForSectionIndexTitle:1;
-        unsigned int dataSourceCanEditRow:1;
-        unsigned int dataSourceCanMoveRow:1;
-        unsigned int dataSourceCanUpdateRow:1;
-        unsigned int dataSourceShouldShowMenu:1;
-        unsigned int dataSourceCanPerformAction:1;
-        unsigned int dataSourcePerformAction:1;
-        unsigned int dataSourceIndexPathForSectionIndexTitle:1;
-        unsigned int delegateEditingStyleForRowAtIndexPath:1;
-        unsigned int delegateTitleForDeleteConfirmationButtonForRowAtIndexPath:1;
-        unsigned int delegateShouldIndentWhileEditing:1;
-        unsigned int dataSourceMoveRow:1;
-        unsigned int delegateCellForRow:1;
-        unsigned int delegateWillDisplayCell:1;
-        unsigned int delegateDidEndDisplayingCell:1;
-        unsigned int delegateDidEndDisplayingSectionHeader:1;
-        unsigned int delegateDidEndDisplayingSectionFooter:1;
-        unsigned int delegateHeightForRow:1;
-        unsigned int delegateHeightForSectionHeader:1;
-        unsigned int delegateTitleWidthForSectionHeader:1;
-        unsigned int delegateHeightForSectionFooter:1;
-        unsigned int delegateTitleWidthForSectionFooter:1;
-        unsigned int delegateViewForHeaderInSection:1;
-        unsigned int delegateViewForFooterInSection:1;
-        unsigned int delegateDisplayedItemCountForRowCount:1;
-        unsigned int delegateDisplayStringForRowCount:1;
-        unsigned int delegateAccessoryTypeForRow:1;
-        unsigned int delegateAccessoryButtonTappedForRow:1;
-        unsigned int delegateWillSelectRow:1;
-        unsigned int delegateWillDeselectRow:1;
-        unsigned int delegateDidSelectRow:1;
-        unsigned int delegateDidDeselectRow:1;
-        unsigned int delegateWillBeginEditing:1;
-        unsigned int delegateDidEndEditing:1;
-        unsigned int delegateWillMoveToRow:1;
-        unsigned int delegateIndentationLevelForRow:1;
-        unsigned int delegateWantsHeaderForSection:1;
-        unsigned int delegateHeightForRowsInSection:1;
-        unsigned int delegateMargin:1;
-        unsigned int delegateHeaderTitleAlignment:1;
-        unsigned int delegateFooterTitleAlignment:1;
-        unsigned int delegateFrameForSectionIndexGivenProposedFrame:1;
-        unsigned int delegateDidFinishReload:1;
-        unsigned int delegateHeightForHeader:1;
-        unsigned int delegateHeightForFooter:1;
-        unsigned int delegateViewForHeader:1;
-        unsigned int delegateViewForFooter:1;
-        unsigned int delegateCalloutTargetRectForCell;
-        unsigned int delegateShouldShowMenu:1;
-        unsigned int delegateCanPerformAction:1;
-        unsigned int delegatePerformAction:1;
-        unsigned int delegateWillBeginReordering:1;
-        unsigned int delegateDidEndReordering:1;
-        unsigned int delegateDidCancelReordering:1;
-        unsigned int delegateWillDisplayHeaderViewForSection:1;
-        unsigned int delegateWillDisplayFooterViewForSection:1;
-        unsigned int delegateShouldHighlightRow:1;
-        unsigned int delegateDidHighlightRow:1;
-        unsigned int delegateDidUnhighlightRow:1;
-        unsigned int style:1;
-        unsigned int separatorStyle:3;
-        unsigned int wasEditing:1;
-        unsigned int isEditing:1;
-        unsigned int scrollsToSelection:1;
-        unsigned int reloadSkippedDuringSuspension:1;
-        unsigned int updating:1;
-        unsigned int displaySkippedDuringSuspension:1;
-        unsigned int needsReload:1;
-        unsigned int updatingVisibleCellsManually:1;
-        unsigned int scheduledUpdateVisibleCells:1;
-        unsigned int scheduledUpdateVisibleCellsFrames:1;
-        unsigned int warnForForcedCellUpdateDisabled:1;
-        unsigned int displayTopSeparator:1;
-        unsigned int countStringInsignificantRowCount:4;
-        unsigned int needToAdjustExtraSeparators:1;
-        unsigned int overlapsSectionHeaderViews:1;
-        unsigned int ignoreDragSwipe:1;        
-        unsigned int ignoreTouchSelect:1;
-        unsigned int lastHighlightedRowActive:1;
-        unsigned int reloading:1;
-        unsigned int allowsSelection:1;
-        unsigned int allowsSelectionDuringEditing:1;
-        unsigned int allowsMultipleSelection:1;
-        unsigned int allowsMultipleSelectionDuringEditing:1;
-        unsigned int showsSelectionImmediatelyOnTouchBegin:1;
-        unsigned int indexHidden:1;
-        unsigned int indexHiddenForSearch:1;
-        unsigned int defaultShowsHorizontalScrollIndicator:1;
-        unsigned int defaultShowsVerticalScrollIndicator:1;
-        unsigned int sectionIndexTitlesLoaded:1;
-        unsigned int tableHeaderViewShouldAutoHide:1;
-        unsigned int tableHeaderViewIsHidden:1;
-        unsigned int tableHeaderViewWasHidden:1;
-        unsigned int tableHeaderViewShouldPin:1;
-        unsigned int hideScrollIndicators:1;
-        unsigned int sendReloadFinished:1;
-        unsigned int keepFirstResponderWhenInteractionDisabled:1;
-        unsigned int keepFirstResponderVisibleOnBoundsChange:1;
-        unsigned int dontDrawTopShadowInGroupedSections:1;
-        unsigned int forceStaticHeadersAndFooters;
-        unsigned int displaysCellContentStringsOnTapAndHold:1;
-        unsigned int displayingCellContentStringCallout:1;
-        unsigned int longPressAutoscrollingActive:1;
-        unsigned int adjustsRowHeightsForSectionLocation:1;
-        unsigned int customSectionContentInsetSet:1;
-        unsigned int inInit:1;
-        unsigned int inSetBackgroundColor:1;
-        unsigned int usingCustomBackgroundView:1;
-        unsigned int rowDataIndexPathsAreValidForCurrentCells:1;
-    } _tableFlags;
-}
+NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding>
 
 - (id)initWithFrame:(CGRect)frame style:(UITableViewStyle)style;                // must specify style at creation. -initWithFrame: calls this with UITableViewStylePlain
 
-@property(nonatomic,readonly) UITableViewStyle           style;
-@property(nonatomic,assign)   id <UITableViewDataSource> dataSource;
-@property(nonatomic,assign)   id <UITableViewDelegate>   delegate;
-@property(nonatomic)          CGFloat                    rowHeight;             // will return the default value if unset
-@property(nonatomic)          CGFloat                    sectionHeaderHeight;   // will return the default value if unset
-@property(nonatomic)          CGFloat                    sectionFooterHeight;   // will return the default value if unset
+@property (nonatomic, readonly) UITableViewStyle           style;
+@property (nonatomic, assign)   id <UITableViewDataSource> dataSource;
+@property (nonatomic, assign)   id <UITableViewDelegate>   delegate;
+@property (nonatomic)          CGFloat                     rowHeight;             // will return the default value if unset
+@property (nonatomic)          CGFloat                     sectionHeaderHeight;   // will return the default value if unset
+@property (nonatomic)          CGFloat                     sectionFooterHeight;   // will return the default value if unset
+@property (nonatomic)          CGFloat                     estimatedRowHeight NS_AVAILABLE_IOS(7_0); // default is 0, which means there is no estimate
+@property (nonatomic)          CGFloat                     estimatedSectionHeaderHeight NS_AVAILABLE_IOS(7_0); // default is 0, which means there is no estimate
+@property (nonatomic)          CGFloat                     estimatedSectionFooterHeight NS_AVAILABLE_IOS(7_0); // default is 0, which means there is no estimate
+@property (nonatomic)          UIEdgeInsets                separatorInset NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR; // allows customization of the frame of cell separators
 
 @property(nonatomic, readwrite, retain) UIView *backgroundView NS_AVAILABLE_IOS(3_2); // the background view will be automatically resized to track the size of the table view.  this will be placed as a subview of the table view behind all cells and headers/footers.  default may be non-nil for some devices.
 
@@ -370,7 +170,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding> {
 - (CGRect)rectForFooterInSection:(NSInteger)section;
 - (CGRect)rectForRowAtIndexPath:(NSIndexPath *)indexPath;
 
-- (NSIndexPath *)indexPathForRowAtPoint:(CGPoint)point;                         // returns nil if point is outside table
+- (NSIndexPath *)indexPathForRowAtPoint:(CGPoint)point;                         // returns nil if point is outside of any row in the table
 - (NSIndexPath *)indexPathForCell:(UITableViewCell *)cell;                      // returns nil if cell is not visible
 - (NSArray *)indexPathsForRowsInRect:(CGRect)rect;                              // returns nil if rect not valid 
 
@@ -419,8 +219,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding> {
 
 // Appearance
 
-@property(nonatomic) NSInteger sectionIndexMinimumDisplayRowCount;                                                      // show special section index list on right when row count reaches this value. default is NSInteger Max
+@property(nonatomic) NSInteger sectionIndexMinimumDisplayRowCount;                                                      // show special section index list on right when row count reaches this value. default is 0
 @property(nonatomic, retain) UIColor *sectionIndexColor NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR;                   // color used for text of the section index
+@property(nonatomic, retain) UIColor *sectionIndexBackgroundColor NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR;         // the background color of the section index while not being touched
 @property(nonatomic, retain) UIColor *sectionIndexTrackingBackgroundColor NS_AVAILABLE_IOS(6_0) UI_APPEARANCE_SELECTOR; // the background color of the section index while it is being touched
 
 @property(nonatomic) UITableViewCellSeparatorStyle separatorStyle;              // default is UITableViewCellSeparatorStyleSingleLine

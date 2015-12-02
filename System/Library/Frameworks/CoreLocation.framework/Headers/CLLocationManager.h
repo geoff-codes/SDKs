@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CLAvailability.h>
 #import <CoreLocation/CLLocation.h>
+#import <CoreLocation/CLRegion.h>
 
 /*
  *  CLDeviceOrientation
@@ -63,7 +64,7 @@ typedef NSInteger CLActivityType;
 
 @class CLLocation;
 @class CLHeading;
-@class CLRegion;
+@class CLBeaconRegion;
 @protocol CLLocationManagerDelegate;
 
 /*
@@ -106,21 +107,38 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
 + (BOOL)significantLocationChangeMonitoringAvailable __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
+ *  isMonitoringAvailableForClass:
+ *
+ *  Discussion:
+ *      Determines whether the device supports monitoring for the specified type of region.
+ *      If NO, all attempts to monitor the specified type of region will fail.
+ */
++ (BOOL)isMonitoringAvailableForClass:(Class)regionClass __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+
+/*
  *  regionMonitoringAvailable
  *  
  *  Discussion:
- *      Determines whether the device supports region monitoring.
- *      If NO, all attempts to monitor regions will fail.
+ *      Deprecated. Use +isMonitoringAvailableForClass: instead.
  */
-+ (BOOL)regionMonitoringAvailable __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
++ (BOOL)regionMonitoringAvailable __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_7,__MAC_NA,__IPHONE_4_0,__IPHONE_7_0);
 
 /*
  *  regionMonitoringEnabled
  *  
  *  Discussion:
- *      Deprecated. Use +regionMonitoringAvailable and +authorizationStatus instead.
+ *      Deprecated. Use +isMonitoringAvailableForClass: and +authorizationStatus instead.
  */
 + (BOOL)regionMonitoringEnabled __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA,__IPHONE_4_0, __IPHONE_6_0);
+
+/*
+ *  isRangingAvailable
+ *
+ *  Discussion:
+ *      Determines whether the device supports ranging.
+ *      If NO, all attempts to range beacons will fail.
+ */
++ (BOOL)isRangingAvailable __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 
 /*
  *  authorizationStatus
@@ -260,6 +278,14 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
 @property (readonly, nonatomic) NSSet *monitoredRegions __OSX_AVAILABLE_STARTING(__MAC_10_7,__IPHONE_4_0);
 
 /*
+ *  rangedRegions
+ *
+ *  Discussion:
+ *       Retrieve a set of objects representing the regions for which this location manager is actively providing ranging.
+ */
+@property (readonly, nonatomic) NSSet *rangedRegions __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+
+/*
  *  startUpdatingLocation
  *  
  *  Discussion:
@@ -329,7 +355,8 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *      and may not be respected if desiredAccuracy is large with respect to the size of the region, or if the device is not
  *      capable of providing the precision desired.
  *
- *      If a region with the same identifier is already being monitored for this application, it will be removed from monitoring.
+ *      If a region of the same type with the same identifier is already being monitored for this application, it will be
+ *      removed from monitoring.
  *
  *      This is done asynchronously and may not be immediately reflected in monitoredRegions.
  */
@@ -353,12 +380,38 @@ NS_CLASS_AVAILABLE(10_6, 2_0)
  *  Discussion:
  *      Start monitoring the specified region.
  *
- *      If a region with the same identifier is already being monitored for this application, it will be removed from monitoring.
- *      The region monitoring service will prioritize regions by their sizes, favoring smaller regions over larger regions.
+ *      If a region of the same type with the same identifier is already being monitored for this application,
+ *      it will be removed from monitoring. For circular regions, the region monitoring service will prioritize
+ *      regions by their size, favoring smaller regions over larger regions.
  *
  *      This is done asynchronously and may not be immediately reflected in monitoredRegions.
  */
 - (void)startMonitoringForRegion:(CLRegion *)region __OSX_AVAILABLE_STARTING(__MAC_TBD,__IPHONE_5_0);
+
+/*
+ *  requestStateForRegion:
+ *
+ *  Discussion:
+ *      Asynchronously retrieve the cached state of the specified region. The state is returned to the delegate via
+ *      locationManager:didDetermineState:forRegion:.
+ */
+- (void)requestStateForRegion:(CLRegion *)region __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+
+/*
+ *  startRangingBeaconsInRegion:
+ *
+ *  Discussion:
+ *      Start calculating ranges for beacons in the specified region.
+ */
+- (void)startRangingBeaconsInRegion:(CLBeaconRegion *)region __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
+
+/*
+ *  stopRangingBeaconsInRegion:
+ *
+ *  Discussion:
+ *      Stop calculating ranges for the specified region.
+ */
+- (void)stopRangingBeaconsInRegion:(CLBeaconRegion *)region __OSX_AVAILABLE_STARTING(__MAC_NA,__IPHONE_7_0);
 
 /*
  *	allowDeferredLocationUpdatesUntilTraveled:timeout:
