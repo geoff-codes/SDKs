@@ -147,7 +147,7 @@
 #define	kIOAudioEngineFullChannelNamesKey			"IOAudioEngineChannelNames"
 
 /*!
- * @defined kIOAudioEngineFullChannelNamesKey
+ * @defined kIOAudioEngineFullChannelCategoryNamesKey
  * @abstract The key in the IORegistry for the IOAudioEngine's dictionary of category names for each channel keyed by the device channel
  * @discussion 
  */

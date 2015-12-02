@@ -20,6 +20,7 @@ extern "C" {
 
 
 #include <sys/types.h>
+#include <stdint.h>
 typedef __darwin_ptrdiff_t ptrdiff_t;
 
 #if defined __i386__ || defined __x86_64__
@@ -30,6 +31,10 @@ typedef unsigned char	vUInt8  __attribute__((__vector_size__(16)));
 
 #endif	//	#if defined __i386__ || defined __x86_64__
 
+// Types for 24 bit data
+typedef struct { uint8_t bytes[3];} vDSP_uint24;
+typedef struct { uint8_t bytes[3];} vDSP_int24;
+    
 void 
 vDSP_conv(
 	const float	vDSP_signal[],
@@ -106,8 +111,62 @@ vDSP_vdiv(
 	float		vDSP_result[],
 	ptrdiff_t	vDSP_strideResult,
 	size_t		vDSP_size);
-
-void 
+    
+void
+vDSP_vfix32(float const *vDSP_input1, ptrdiff_t vDSP_stride1,
+            int *vDSP_input2, ptrdiff_t vDSP_stride2,
+            size_t vDSP_size);
+    
+void
+vDSP_vfix16(float const *vDSP_input1, ptrdiff_t vDSP_stride1,
+            int16_t *vDSP_input2, ptrdiff_t vDSP_stride2,
+            size_t vDSP_size);
+    
+void
+vDSP_vflt32(int const *vDSP_input1, ptrdiff_t vDSP_stride1,
+            float *vDSP_input2, ptrdiff_t vDSP_stride2,
+            size_t vDSP_size);
+    
+void
+vDSP_vflt16(int16_t const *vDSP_input1, ptrdiff_t vDSP_stride1,
+            float *vDSP_input2, ptrdiff_t vDSP_stride2,
+            size_t vDSP_size);
+    
+void
+vDSP_vsmfix24(
+      const float vDSP_input1[],
+      ptrdiff_t   vDSP_stride1,
+      const float vDSP_input2[],
+      vDSP_int24* vDSP_input3,
+      ptrdiff_t	  vDSP_stride2,
+      size_t	  vDSP_size);
+    
+void
+vDSP_vsmfixu24(
+    const float     vDSP_input1[],
+    ptrdiff_t       vDSP_stride1,
+    const float     vDSP_input2[],
+    vDSP_uint24*    vDSP_input3,
+    ptrdiff_t       vDSP_stride2,
+    size_t          vDSP_size);
+    
+void
+vDSP_vflt24(
+    const vDSP_int24*   vDSP_input1,
+    ptrdiff_t           vDSP_stride1,
+    float*              vDSP_input2,
+    ptrdiff_t           vDSP_stride2,
+    size_t              vDSP_size);
+    
+void
+vDSP_vfltu24(
+    const vDSP_uint24*  vDSP_input1,
+    ptrdiff_t           vDSP_stride1,
+    float*              vDSP_input2,
+    ptrdiff_t           vDSP_stride2,
+    size_t              vDSP_size);
+    
+void
 vDSP_vma(
     const float vDSP_input1[],
     ptrdiff_t   vDSP_stride1,
@@ -253,6 +312,10 @@ extern float expf(float);
 extern float logf(float);
 extern float log10f(float);
 extern float sqrtf(float);
+extern float sinf(float);
+extern float cosf(float);
+extern float __sinpif(float);
+extern float __cospif(float);
 
 void vvexpf (float * /* y */, const float * /* x */, const int * /* n */);
 

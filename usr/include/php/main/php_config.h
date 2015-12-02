@@ -1,28 +1,6 @@
-/* main/php_config.h.  Generated automatically by configure.  */
+/* main/php_config.h.  Generated from php_config.h.in by configure.  */
 /* main/php_config.h.in.  Generated from configure.in by autoheader.  */
-/* Leave this file alone */
-/*
-   +----------------------------------------------------------------------+
-   | Zend Engine                                                          |
-   +----------------------------------------------------------------------+
-   | Copyright (c) 1998-2013 Zend Technologies Ltd. (http://www.zend.com) |
-   +----------------------------------------------------------------------+
-   | This source file is subject to version 2.00 of the Zend license,     |
-   | that is bundled with this package in the file LICENSE, and is        |
-   | available through the world-wide-web at the following url:           |
-   | http://www.zend.com/license/2_00.txt.                                |
-   | If you did not receive a copy of the Zend license and are unable to  |
-   | obtain it through the world-wide-web, please send a note to          |
-   | license@zend.com so we can mail you a copy immediately.              |
-   +----------------------------------------------------------------------+
-   | Authors: Andi Gutmans <andi@zend.com>                                |
-   |          Zeev Suraski <zeev@zend.com>                                |
-   +----------------------------------------------------------------------+
-*/
 
-/* $Id$ */
-
-#ifndef ZEND_API
 
 #if defined(__GNUC__) && __GNUC__ >= 4
 # define ZEND_API __attribute__ ((visibility("default")))
@@ -34,9 +12,8 @@
 
 #define ZEND_DLIMPORT
 
-
 /* #undef uint */
-#define ulong unsigned long 
+#define ulong unsigned long
 
 /* Define if you want to enable memory limit support */
 #define MEMORY_LIMIT 0
@@ -228,9 +205,6 @@
 /* Whether to build spl as dynamic module */
 /* #undef COMPILE_DL_SPL */
 
-/* Whether to build sqlite as dynamic module */
-/* #undef COMPILE_DL_SQLITE */
-
 /* Whether to build sqlite3 as dynamic module */
 /* #undef COMPILE_DL_SQLITE3 */
 
@@ -358,6 +332,9 @@
 
 /* */
 /* #undef DBA_QDBM */
+
+/* */
+/* #undef DBA_TCADB */
 
 /* */
 /* #undef DBM_INCLUDE_FILE */
@@ -488,7 +465,7 @@
 #define HAVE_BUILD_DEFS_H 1
 
 /* Define to 1 if gcc supports __sync_bool_compare_and_swap() a.o. */
-/* #undef HAVE_BUILTIN_ATOMIC */
+#define HAVE_BUILTIN_ATOMIC 1
 
 /* */
 /* #undef HAVE_BUNDLED_PCRE */
@@ -527,7 +504,7 @@
 /* #undef HAVE_CLOCK_GETTIME */
 
 /* do we have clock_get_time? */
-/* #undef HAVE_CLOCK_GET_TIME */
+#define HAVE_CLOCK_GET_TIME 1
 
 /* Whether you have struct cmsghdr */
 #define HAVE_CMSGHDR 1
@@ -575,7 +552,7 @@
 #define HAVE_CURL_MULTI_STRERROR 1
 
 /* Have cURL with OpenSSL support */
-#define HAVE_CURL_OPENSSL 1
+/* #undef HAVE_CURL_OPENSSL */
 
 /* Have cURL with SSL support */
 #define HAVE_CURL_SSL 1
@@ -602,11 +579,11 @@
    */
 /* #undef HAVE_DECL_TZNAME */
 
-/* Define to 1 if you have the <default_store.h> header file. */
-/* #undef HAVE_DEFAULT_STORE_H */
-
 /* do we have /dev/poll? */
 /* #undef HAVE_DEVPOLL */
+
+/* Define if the target system has /dev/arandom device */
+/* #undef HAVE_DEV_ARANDOM */
 
 /* Define if the target system has /dev/urandom device */
 #define HAVE_DEV_URANDOM 1
@@ -646,6 +623,9 @@
 
 /* OpenSSL 0.9.7 or later */
 #define HAVE_DSA_DEFAULT_METHOD 1
+
+/* Whether to enable DTrace support */
+/* #undef HAVE_DTRACE */
 
 /* embedded MySQL support enabled */
 /* #undef HAVE_EMBEDDED_MYSQLI */
@@ -798,6 +778,9 @@
 #define HAVE_GD_WBMP 1
 
 /* */
+/* #undef HAVE_GD_WEBP */
+
+/* */
 #define HAVE_GD_XBM 1
 
 /* */
@@ -929,6 +912,12 @@
 /* Define to 1 if you have the <ieeefp.h> header file. */
 /* #undef HAVE_IEEEFP_H */
 
+/* Define to 1 if you have the `if_indextoname' function. */
+#define HAVE_IF_INDEXTONAME 1
+
+/* Define to 1 if you have the `if_nametoindex' function. */
+#define HAVE_IF_NAMETOINDEX 1
+
 /* */
 /* #undef HAVE_IMAP */
 
@@ -978,7 +967,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* */
-#define HAVE_IODBC 1
+/* #undef HAVE_IODBC */
 
 /* */
 /* #undef HAVE_IODBC_H */
@@ -1011,7 +1000,7 @@
 #define HAVE_KILL 1
 
 /* do we have kqueue? */
-/* #undef HAVE_KQUEUE */
+#define HAVE_KQUEUE 1
 
 /* Define to 1 if you have the <langinfo.h> header file. */
 #define HAVE_LANGINFO_H 1
@@ -1152,7 +1141,7 @@
 #define HAVE_LRAND48 1
 
 /* do we have mach_vm_read? */
-/* #undef HAVE_MACH_VM_READ */
+#define HAVE_MACH_VM_READ 1
 
 /* Define to 1 if you have the `makedev' function. */
 /* #undef HAVE_MAKEDEV */
@@ -1185,7 +1174,7 @@
 #define HAVE_MEMMOVE 1
 
 /* Define to 1 if you have the <memory.h> header file. */
-/* #undef HAVE_MEMORY_H */
+#define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the `mempcpy' function. */
 /* #undef HAVE_MEMPCPY */
@@ -1225,18 +1214,6 @@
 /* */
 /* #undef HAVE_MYSQLILIB */
 
-/* Define to 1 if you have the `mysql_commit' function. */
-/* #undef HAVE_MYSQL_COMMIT */
-
-/* Define to 1 if you have the `mysql_next_result' function. */
-/* #undef HAVE_MYSQL_NEXT_RESULT */
-
-/* Define to 1 if you have the `mysql_sqlstate' function. */
-/* #undef HAVE_MYSQL_SQLSTATE */
-
-/* Define to 1 if you have the `mysql_stmt_prepare' function. */
-/* #undef HAVE_MYSQL_STMT_PREPARE */
-
 /* Define to 1 if you have the `nanosleep' function. */
 #define HAVE_NANOSLEEP 1
 
@@ -1251,9 +1228,6 @@
 
 /* Define to 1 if you have the <netinet/tcp.h> header file. */
 #define HAVE_NETINET_TCP_H 1
-
-/* */
-#define HAVE_NET_SNMP 1
 
 /* Whether utf8_mime2text() has new signature */
 /* #undef HAVE_NEW_MIME2TEXT */
@@ -1298,7 +1272,7 @@
 /* #undef HAVE_OCI_LOB_READ2 */
 
 /* */
-#define HAVE_ODBC2 1
+/* #undef HAVE_ODBC2 */
 
 /* */
 /* #undef HAVE_ODBCSDK_H */
@@ -1319,7 +1293,7 @@
 #define HAVE_ONIG 1
 
 /* Define to 1 if you have the <openssl/crypto.h> header file. */
-#define HAVE_OPENSSL_CRYPTO_H 1
+/* #undef HAVE_OPENSSL_CRYPTO_H */
 
 /* */
 #define HAVE_OPENSSL_EXT 1
@@ -1343,7 +1317,7 @@
 /* #undef HAVE_PDO_FIREBIRD */
 
 /* Whether to build PostgreSQL for PDO support or not */
-#define HAVE_PDO_PGSQL 1
+/* #undef HAVE_PDO_PGSQL */
 
 /* */
 /* #undef HAVE_PDO_SQLITELIB */
@@ -1352,22 +1326,22 @@
 #define HAVE_PERROR 1
 
 /* Whether to build PostgreSQL support or not */
-#define HAVE_PGSQL 1
+/* #undef HAVE_PGSQL */
 
 /* Whether libpq is compiled with --enable-multibyte */
-#define HAVE_PGSQL_WITH_MULTIBYTE_SUPPORT 1
+/* #undef HAVE_PGSQL_WITH_MULTIBYTE_SUPPORT */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PGTRANSACTIONSTATUS 1
+/* #undef HAVE_PGTRANSACTIONSTATUS */
 
 /* Whether to have pg_config.h */
-#define HAVE_PG_CONFIG_H 1
+/* #undef HAVE_PG_CONFIG_H */
 
 /* PostgreSQL 8.1 or later */
-#define HAVE_PG_LO_CREATE 1
+/* #undef HAVE_PG_LO_CREATE */
 
 /* PostgreSQL 8.4 or later */
-#define HAVE_PG_LO_IMPORT_WITH_OID 1
+/* #undef HAVE_PG_LO_IMPORT_WITH_OID */
 
 /* */
 #define HAVE_PHP_SESSION 1
@@ -1388,73 +1362,76 @@
 #define HAVE_POSIX_READDIR_R 1
 
 /* PostgreSQL 7.0.x or later */
-#define HAVE_PQCLIENTENCODING 1
+/* #undef HAVE_PQCLIENTENCODING */
 
 /* Broken libpq under windows */
-#define HAVE_PQCMDTUPLES 1
+/* #undef HAVE_PQCMDTUPLES */
 
 /* PostgreSQL 7.2.0 or later */
-#define HAVE_PQESCAPE 1
+/* #undef HAVE_PQESCAPE */
+
+/* PostgreSQL 9.0 or later */
+/* #undef HAVE_PQESCAPELITERAL */
 
 /* PostgreSQL 8.1.4 or later */
-#define HAVE_PQESCAPE_BYTEA_CONN 1
+/* #undef HAVE_PQESCAPE_BYTEA_CONN */
 
 /* PostgreSQL 8.1.4 or later */
-#define HAVE_PQESCAPE_CONN 1
+/* #undef HAVE_PQESCAPE_CONN */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQEXECPARAMS 1
+/* #undef HAVE_PQEXECPARAMS */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQEXECPREPARED 1
+/* #undef HAVE_PQEXECPREPARED */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQFREEMEM 1
+/* #undef HAVE_PQFREEMEM */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQFTABLE 1
+/* #undef HAVE_PQFTABLE */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQGETCOPYDATA 1
+/* #undef HAVE_PQGETCOPYDATA */
 
 /* Older PostgreSQL */
-#define HAVE_PQOIDVALUE 1
+/* #undef HAVE_PQOIDVALUE */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQPARAMETERSTATUS 1
+/* #undef HAVE_PQPARAMETERSTATUS */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQPREPARE 1
+/* #undef HAVE_PQPREPARE */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQPROTOCOLVERSION 1
+/* #undef HAVE_PQPROTOCOLVERSION */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQPUTCOPYDATA 1
+/* #undef HAVE_PQPUTCOPYDATA */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQPUTCOPYEND 1
+/* #undef HAVE_PQPUTCOPYEND */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQRESULTERRORFIELD 1
+/* #undef HAVE_PQRESULTERRORFIELD */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQSENDPREPARE 1
+/* #undef HAVE_PQSENDPREPARE */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQSENDQUERYPARAMS 1
+/* #undef HAVE_PQSENDQUERYPARAMS */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQSENDQUERYPREPARED 1
+/* #undef HAVE_PQSENDQUERYPREPARED */
 
 /* PostgreSQL 7.4 or later */
-#define HAVE_PQSETERRORVERBOSITY 1
+/* #undef HAVE_PQSETERRORVERBOSITY */
 
 /* PostgreSQL 7.0.x or later */
-#define HAVE_PQSETNONBLOCKING 1
+/* #undef HAVE_PQSETNONBLOCKING */
 
 /* PostgreSQL 7.3.0 or later */
-#define HAVE_PQUNESCAPEBYTEA 1
+/* #undef HAVE_PQUNESCAPEBYTEA */
 
 /* do we have prctl? */
 /* #undef HAVE_PRCTL */
@@ -1511,10 +1488,13 @@
 /* #undef HAVE_RFC822_OUTPUT_ADDRESS_LIST */
 
 /* */
-/* #undef HAVE_RL_CALLBACK_READ_CHAR */
+#define HAVE_RL_CALLBACK_READ_CHAR 1
 
 /* Define to 1 if you have the `rl_completion_matches' function. */
 #define HAVE_RL_COMPLETION_MATCHES 1
+
+/* */
+#define HAVE_RL_ON_NEW_LINE 1
 
 /* Whether you use Roxen */
 /* #undef HAVE_ROXEN */
@@ -1522,11 +1502,14 @@
 /* */
 /* #undef HAVE_SAPDB */
 
+/* Whether you have sockaddr_storage.ss_family */
+#define HAVE_SA_SS_FAMILY 1
+
 /* Define to 1 if you have the `scandir' function. */
 #define HAVE_SCANDIR 1
 
 /* do we have select? */
-/* #undef HAVE_SELECT */
+#define HAVE_SELECT 1
 
 /* */
 #define HAVE_SEMUN 1
@@ -1571,13 +1554,16 @@
 #define HAVE_SHUTDOWN 1
 
 /* */
-/* #undef HAVE_SIGACTION */
+#define HAVE_SHUTDOWN_SNMP_LOGGING 1
+
+/* Whether sigaction() is available */
+#define HAVE_SIGACTION 1
 
 /* Define to 1 if you have the <signal.h> header file. */
 #define HAVE_SIGNAL_H 1
 
 /* Define to 1 if you have the `sigprocmask' function. */
-/* #undef HAVE_SIGPROCMASK */
+#define HAVE_SIGPROCMASK 1
 
 /* Define to 1 if you have the `sigsetjmp' function. */
 #define HAVE_SIGSETJMP 1
@@ -1596,9 +1582,6 @@
 
 /* */
 #define HAVE_SNMP 1
-
-/* */
-#define HAVE_SNMP_PARSE_OID 1
 
 /* Define to 1 if you have the `snprintf' function. */
 #define HAVE_SNPRINTF 1
@@ -1643,7 +1626,7 @@
 /* #undef HAVE_SQLCLI1_H */
 
 /* */
-#define HAVE_SQLDATASOURCES 1
+/* #undef HAVE_SQLDATASOURCES */
 
 /* */
 /* #undef HAVE_SQLEXT_H */
@@ -1694,7 +1677,7 @@
 #define HAVE_STDINT_H 1
 
 /* Define to 1 if you have the <stdio.h> header file. */
-/* #undef HAVE_STDIO_H */
+#define HAVE_STDIO_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
@@ -1777,17 +1760,17 @@
 /* whether you have struct flock */
 #define HAVE_STRUCT_FLOCK 1
 
-/* Define to 1 if `st_blksize' is member of `struct stat'. */
-/* #undef HAVE_STRUCT_STAT_ST_BLKSIZE */
+/* Define to 1 if `st_blksize' is a member of `struct stat'. */
+#define HAVE_STRUCT_STAT_ST_BLKSIZE 1
 
-/* Define to 1 if `st_blocks' is member of `struct stat'. */
-/* #undef HAVE_STRUCT_STAT_ST_BLOCKS */
+/* Define to 1 if `st_blocks' is a member of `struct stat'. */
+#define HAVE_STRUCT_STAT_ST_BLOCKS 1
 
-/* Define to 1 if `st_rdev' is member of `struct stat'. */
-/* #undef HAVE_STRUCT_STAT_ST_RDEV */
+/* Define to 1 if `st_rdev' is a member of `struct stat'. */
+#define HAVE_STRUCT_STAT_ST_RDEV 1
 
-/* Define to 1 if `tm_zone' is member of `struct tm'. */
-/* #undef HAVE_STRUCT_TM_TM_ZONE */
+/* Define to 1 if `tm_zone' is a member of `struct tm'. */
+#define HAVE_STRUCT_TM_TM_ZONE 1
 
 /* Define to 1 if your `struct stat' has `st_blksize'. Deprecated, use
    `HAVE_STRUCT_STAT_ST_BLKSIZE' instead. */
@@ -1814,13 +1797,19 @@
 #define HAVE_SYNC_FETCH_AND_ADD 1
 
 /* do we have sysconf? */
-/* #undef HAVE_SYSCONF */
+#define HAVE_SYSCONF 1
 
 /* Define to 1 if you have the <sysexits.h> header file. */
 #define HAVE_SYSEXITS_H 1
 
 /* Define to 1 if you have the <syslog.h> header file. */
 #define HAVE_SYSLOG_H 1
+
+/* FPM use systemd integration */
+/* #undef HAVE_SYSTEMD */
+
+/* Define to 1 if you have the <systemd/sd-daemon.h> header file. */
+/* #undef HAVE_SYSTEMD_SD_DAEMON_H */
 
 /* */
 #define HAVE_SYSVMSG 1
@@ -1869,11 +1858,17 @@
 /* Define to 1 if you have the <sys/resource.h> header file. */
 #define HAVE_SYS_RESOURCE_H 1
 
+/* Define to 1 if you have the <sys/sdt.h> header file. */
+/* #undef HAVE_SYS_SDT_H */
+
 /* Define to 1 if you have the <sys/select.h> header file. */
 #define HAVE_SYS_SELECT_H 1
 
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #define HAVE_SYS_SOCKET_H 1
+
+/* Define to 1 if you have the <sys/sockio.h> header file. */
+#define HAVE_SYS_SOCKIO_H 1
 
 /* Define to 1 if you have the <sys/statfs.h> header file. */
 /* #undef HAVE_SYS_STATFS_H */
@@ -1897,7 +1892,7 @@
 #define HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have the <sys/uio.h> header file. */
-/* #undef HAVE_SYS_UIO_H */
+#define HAVE_SYS_UIO_H 1
 
 /* Define to 1 if you have the <sys/un.h> header file. */
 #define HAVE_SYS_UN_H 1
@@ -1927,7 +1922,7 @@
 #define HAVE_TIDYOPTGETDOC 1
 
 /* do we have times? */
-/* #undef HAVE_TIMES */
+#define HAVE_TIMES 1
 
 /* Define to 1 if you have the <time.h> header file. */
 #define HAVE_TIME_H 1
@@ -1974,7 +1969,7 @@
 #define HAVE_UNSETENV 1
 
 /* */
-#define HAVE_UODBC 1
+/* #undef HAVE_UODBC */
 
 /* Define to 1 if you have the `usleep' function. */
 #define HAVE_USLEEP 1
@@ -1991,7 +1986,7 @@
 /* Define to 1 if `utime(file, NULL)' sets file's timestamp to the present. */
 #define HAVE_UTIME_NULL 1
 
-/* Wether struct utsname has domainname */
+/* Whether struct utsname has domainname */
 /* #undef HAVE_UTSNAME_DOMAINNAME */
 
 /* Define to 1 if you have the `vasprintf' function. */
@@ -2075,9 +2070,6 @@
 /* */
 /* #undef LINUX */
 
-/* */
-#define MAGIC_QUOTES 0
-
 /* Whether asctime_r is declared */
 /* #undef MISSING_ASCTIME_R_DECL */
 
@@ -2121,19 +2113,22 @@
 /* #undef NO_MINUS_C_MINUS_O */
 
 /* Define to the address where bug reports for this package should be sent. */
-/* #undef PACKAGE_BUGREPORT */
+#define PACKAGE_BUGREPORT ""
 
 /* Define to the full name of this package. */
-/* #undef PACKAGE_NAME */
+#define PACKAGE_NAME ""
 
 /* Define to the full name and version of this package. */
-/* #undef PACKAGE_STRING */
+#define PACKAGE_STRING ""
 
 /* Define to the one symbol short name of this package. */
-/* #undef PACKAGE_TARNAME */
+#define PACKAGE_TARNAME ""
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-/* #undef PACKAGE_VERSION */
+#define PACKAGE_VERSION ""
 
 /* */
 /* #undef PDO_MYSQL_UNIX_ADDR */
@@ -2154,7 +2149,7 @@
 #define PHP_BLOWFISH_CRYPT 1
 
 /* PHP build date */
-#define PHP_BUILD_DATE "2013-07-07"
+#define PHP_BUILD_DATE "2014-07-29"
 
 /* Define if your system has fork/vfork/CreateProcess */
 #define PHP_CAN_SUPPORT_PROC_OPEN 1
@@ -2166,10 +2161,13 @@
 #define PHP_EXT_DES_CRYPT 1
 
 /* fpm group name */
-/* #undef PHP_FPM_GROUP */
+#define PHP_FPM_GROUP "nobody"
+
+/* fpm systemd service type */
+#define PHP_FPM_SYSTEMD "simple"
 
 /* fpm user name */
-/* #undef PHP_FPM_USER */
+#define PHP_FPM_USER "nobody"
 
 /* Whether you have HP-UX 10.x */
 /* #undef PHP_HPUX_TIME_R */
@@ -2216,12 +2214,6 @@
 /* whether pwrite64 is default */
 /* #undef PHP_PWRITE_64 */
 
-/* */
-#define PHP_SAFE_MODE 0
-
-/* */
-#define PHP_SAFE_MODE_EXEC_DIR "/usr/local/php/bin"
-
 /* Whether the system supports SHA256 salt */
 #define PHP_SHA256_CRYPT 1
 
@@ -2231,14 +2223,11 @@
 /* */
 #define PHP_SIGCHILD 0
 
-/* Have PDO */
-#define PHP_SQLITE2_HAVE_PDO 1
-
 /* Whether the system supports standard DES salt */
 #define PHP_STD_DES_CRYPT 1
 
 /* uname -a output */
-#define PHP_UNAME "Darwin bowman.apple.com 12.0 Darwin Kernel Version 12.2.0: Sat Aug 25 00:48:52 PDT 2012; root:xnu-2050.18.24~1/RELEASE_X86_64 x86_64"
+#define PHP_UNAME "Darwin moonwalk.apple.com 13.0 Darwin Kernel Version 13.0.0: Wed Aug 28 10:22:44 PDT 2013; root:xnu-2422.1.53.1~1/RELEASE_X86_64 x86_64"
 
 /* Whether PHP has to use its own crypt_r for blowfish, des and ext des */
 #define PHP_USE_PHP_CRYPT_R 1
@@ -2266,9 +2255,6 @@
 
 /* The size of `char', as computed by sizeof. */
 #define SIZEOF_CHAR 1
-
-/* The size of `char *', as computed by sizeof. */
-#define SIZEOF_CHAR_P 8
 
 /* The size of `int', as computed by sizeof. */
 #define SIZEOF_INT 4
@@ -2303,14 +2289,11 @@
 /* */
 /* #undef SOLARIS */
 
+/* have sqlite3 with column metadata enabled */
+/* #undef SQLITE_ENABLE_COLUMN_METADATA */
+
 /* have sqlite3 with extension support */
 /* #undef SQLITE_OMIT_LOAD_EXTENSION */
-
-/* Size of a pointer */
-#define SQLITE_PTR_SZ SIZEOF_CHAR_P
-
-/* */
-#define SQLITE_UTF8 1
 
 /* Needed in sqlunix.h for wchar defs */
 /* #undef SS_FBX */
@@ -2329,6 +2312,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
+/* */
+/* #undef TCADB_INCLUDE_FILE */
+
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #define TIME_WITH_SYS_TIME 1
 
@@ -2339,10 +2325,7 @@
 /* #undef TSRM_ST */
 
 /* */
-/* #undef UCD_SNMP_HACK */
-
-/* */
-#define UNDEF_THREADS_HACK 
+#define UNDEF_THREADS_HACK /**/
 
 /* */
 /* #undef UNIXWARE */
@@ -2361,23 +2344,23 @@
 
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
-/* # undef _ALL_SOURCE */
+# define _ALL_SOURCE 1
 #endif
 /* Enable GNU extensions on systems that have them.  */
 #ifndef _GNU_SOURCE
-/* # undef _GNU_SOURCE */
+# define _GNU_SOURCE 1
 #endif
 /* Enable threading extensions on Solaris.  */
 #ifndef _POSIX_PTHREAD_SEMANTICS
-/* # undef _POSIX_PTHREAD_SEMANTICS */
+# define _POSIX_PTHREAD_SEMANTICS 1
 #endif
 /* Enable extensions on HP NonStop.  */
 #ifndef _TANDEM_SOURCE
-/* # undef _TANDEM_SOURCE */
+# define _TANDEM_SOURCE 1
 #endif
 /* Enable general extensions on Solaris.  */
 #ifndef __EXTENSIONS__
-/* # undef __EXTENSIONS__ */
+# define __EXTENSIONS__ 1
 #endif
 
 
@@ -2408,8 +2391,8 @@
 /* */
 #define ZEND_MM_ALIGNMENT_LOG2 3
 
-/* */
-#define ZEND_MULTIBYTE 1
+/* Use zend signal handling */
+/* #undef ZEND_SIGNALS */
 
 /* virtual machine dispatch method */
 #define ZEND_VM_KIND ZEND_VM_KIND_CALL
@@ -2452,7 +2435,8 @@
 /* #undef uint */
 
 /* Define to `unsigned long ' if <sys/types.h> does not define. */
-#define ulong unsigned long 
+#define ulong unsigned long
+
 
 #ifndef ZEND_ACCONFIG_H_NO_C_PROTOS
 
@@ -2533,34 +2517,5 @@ int zend_sprintf(char *buffer, const char *format, ...);
 #endif
 #endif
 
-/*
- * Darwin's GCC can generate multiple architectures in a single pass so the size and
- * byte order will only be accurate for the one architecture that happened to invoke
- * configure.
- */
-#ifdef __DARWIN_BYTE_ORDER
-#/* This symbol must be allowed to be cleared. */ undef WORDS_BIGENDIAN
-# if (__DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN)
-#  define WORDS_BIGENDIAN 1
-# endif
-#/* This symbol must be allowed to be cleared. */ undef SIZEOF_LONG
-#/* This symbol must be allowed to be cleared. */ undef SIZEOF_SIZE_T
-# ifdef __LP64__
-#/* This symbol should not be modified by configure. */  define SIZEOF_LONG 8
-#/* This symbol should not be modified by configure. */  define SIZEOF_SIZE_T 8
-# else
-#/* This symbol should not be modified by configure. */  define SIZEOF_LONG 4
-#/* This symbol should not be modified by configure. */  define SIZEOF_SIZE_T 4
-# endif
-#endif
-
-#endif	/* ZEND_API */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * indent-tabs-mode: t
- * End:
- */
 /* #undef PTHREADS */
+

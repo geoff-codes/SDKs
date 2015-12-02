@@ -1,5 +1,5 @@
 /*
- * Copyright © 2007, 2012 Apple Inc. All rights reserved.
+ * Copyright © 2007-2013 Apple Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -27,6 +27,7 @@
 #include	<IOKit/IOService.h>
 #include	<IOKit/usb/IOUSBController.h>
 #include	<IOKit/usb/IOUSBHubDevice.h>
+#include    <IOKit/usb/IOUSBUserClient.h>
 
 
 enum {
@@ -112,7 +113,10 @@ public:
     OSMetaClassDeclareReservedUsed(IOUSBHubPolicyMaker,  5);
 	virtual IOReturn					ReturnExtraPower(UInt32 portNum, UInt32 type, UInt32 returnedPower);
 
-    OSMetaClassDeclareReservedUnused(IOUSBHubPolicyMaker,  6);
+    OSMetaClassDeclareReservedUsed(IOUSBHubPolicyMaker,  6);
+    virtual IOReturn                    ProcessUSBNotification(UInt8 action, IOUSBNotification *note, UInt64 notificationToken);
+
+    
     OSMetaClassDeclareReservedUnused(IOUSBHubPolicyMaker,  7);
     OSMetaClassDeclareReservedUnused(IOUSBHubPolicyMaker,  8);
     OSMetaClassDeclareReservedUnused(IOUSBHubPolicyMaker,  9);

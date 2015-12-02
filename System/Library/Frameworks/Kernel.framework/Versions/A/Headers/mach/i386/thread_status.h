@@ -300,27 +300,5 @@ typedef struct x86_avx_state x86_avx_state_t;
 #define MACHINE_THREAD_STATE		x86_THREAD_STATE
 #define MACHINE_THREAD_STATE_COUNT	x86_THREAD_STATE_COUNT
 
-/*
- * when reloading the segment registers on
- * a return out of the kernel, we may take
- * a GeneralProtection or SegmentNotPresent
- * fault if one or more of the segment
- * registers in the saved state was improperly
- * specified via an x86_THREAD_STATE32 call
- * the frame we push on top of the existing
- * save area looks like this... we need to
- * carry this as part of the save area
- * in case we get hit so that we have a big
- * enough stack
- */
-struct x86_seg_load_fault32 {
-	uint16_t	trapno;
-	uint16_t	cpu;
-	uint32_t	err;
-	uint32_t	eip;
-	uint32_t	cs;
-	uint32_t	efl;
-};
-
 
 #endif	/* _MACH_I386_THREAD_STATUS_H_ */

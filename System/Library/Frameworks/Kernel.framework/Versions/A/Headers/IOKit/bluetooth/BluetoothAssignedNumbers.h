@@ -150,12 +150,12 @@ enum
 	kBluetoothDeviceClassMajorComputer						= 0x01, 	// [00001] Desktop, Notebook, PDA, Organizers, etc...
 	kBluetoothDeviceClassMajorPhone							= 0x02, 	// [00010] Cellular, Cordless, Payphone, Modem, etc...
 	kBluetoothDeviceClassMajorLANAccessPoint				= 0x03, 	// [00011] LAN Access Point
-	kBluetoothDeviceClassMajorAudio							= 0x04, 	// [00100] Headset, Speaker, Stereo, etc...
+    kBluetoothDeviceClassMajorAudio							= 0x04, 	// [00100] Headset, Speaker, Stereo, etc...
 	kBluetoothDeviceClassMajorPeripheral					= 0x05, 	// [00101] Mouse, Joystick, Keyboards, etc...
     kBluetoothDeviceClassMajorImaging						= 0x06,		// [00110] Printing, scanner, camera, display, etc...
 	kBluetoothDeviceClassMajorWearable						= 0x07,		// [00111] Wearable
-	kBluetoothDeviceClassMajoToy							= 0x08,		// [01000] Toy
-	kBluetoothDeviceClassMajoHealth							= 0x09,		// [01001] Health devices
+	kBluetoothDeviceClassMajorToy							= 0x08,		// [01000] Toy
+	kBluetoothDeviceClassMajorHealth						= 0x09,		// [01001] Health devices
 	kBluetoothDeviceClassMajorUnclassified					= 0x1F, 	// [11111] Specific device code not assigned
 	
 	// Range 0x06 to 0x1E Reserved for future use.
@@ -173,7 +173,7 @@ enum
 enum
 {
 	///
-	/// Computer Major Class
+	/// Computer Minor Class
 	///
 	
 	kBluetoothDeviceClassMinorComputerUnclassified			= 0x00, 	// [000000] Specific device code not assigned
@@ -188,7 +188,7 @@ enum
 	
     
 	///
-	/// Phone Major Class
+	/// Phone Minor Class
 	///
 	
 	kBluetoothDeviceClassMinorPhoneUnclassified				= 0x00, 	// [000000] Specific device code not assigned
@@ -202,7 +202,7 @@ enum
 	
     
 	///
-	/// LAN Access Point Major Class
+	/// LAN Access Point Minor Class
 	///
 	
 	// See the Bluetooth specification for LAN Access Point minor classes, which are broken into bits 5-7 for utilization and bits 2-4 for class.
@@ -331,6 +331,37 @@ enum
 // Peripheral devices bits 5 - 2
 #define BluetoothCoDMinorPeripheral2(minorClass) (minorClass & 0x0f)	
 		
+#pragma mark - LE Appearance
+enum {
+    kBluetoothGAPAppearanceUnknown                                  = 0,
+    kBluetoothGAPAppearanceGenericPhone                             = 64,
+    kBluetoothGAPAppearanceGenericComputer                          = 128,
+    kBluetoothGAPAppearanceGenericWatch                             = 192,
+    kBluetoothGAPAppearanceGenericClock                             = 256,
+    kBluetoothGAPAppearanceGenericDisplay                           = 320,
+    kBluetoothGAPAppearanceGenericRemoteControl                     = 384,
+    kBluetoothGAPAppearanceGenericEyeGlasses                        = 448,
+    kBluetoothGAPAppearanceGenericTag                               = 512,
+    kBluetoothGAPAppearanceGenericKeyring                           = 576,
+    kBluetoothGAPAppearanceGenericMediaPlayer                       = 640,
+    kBluetoothGAPAppearanceGenericBarcodeScanner                    = 704,
+    kBluetoothGAPAppearanceGenericThermometer                       = 768,
+    kBluetoothGAPAppearanceGenericHeartrateSensor                   = 832,
+    kBluetoothGAPAppearanceGenericBloodPressure                     = 896,
+    kBluetoothGAPAppearanceGenericHumanInterfaceDevice              = 960,
+    kBluetoothGAPAppearanceHumanInterfaceDeviceKeyboard             = 961,
+    kBluetoothGAPAppearanceHumanInterfaceDeviceMouse                = 962,
+    kBluetoothGAPAppearanceHumanInterfaceDeviceJoystick             = 963,
+    kBluetoothGAPAppearanceHumanInterfaceDeviceGamepad              = 964,
+    kBluetoothGAPAppearanceHumanInterfaceDeviceDigitizerTablet      = 965,
+    kBluetoothGAPAppearanceHumanInterfaceDeviceCardReader           = 966,
+    kBluetoothGAPAppearanceHumanInterfaceDeviceDigitalPen           = 967,
+    kBluetoothGAPAppearanceHumanInterfaceDeviceBarcodeScanner       = 968,
+    kBluetoothGAPAppearanceGenericGlucoseMeter                      = 1024,
+    kBluetoothGAPAppearanceGenericRunningWalkingSensor              = 1088,
+    kBluetoothGAPAppearanceGenericCycling                           = 1152,
+};
+        
 #pragma mark -
 #pragma mark === L2CAP ===
 

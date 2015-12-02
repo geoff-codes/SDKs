@@ -439,6 +439,7 @@ Completion Code         Error Returned              Description
 #define kIOUSBMessageEndpointCountExceeded			iokit_usb_msg(0x19)		// 0xe0004019  Message sent to a device when endpoints cannot be created because the USB controller ran out of resources
 #define kIOUSBMessageDeviceCountExceeded			iokit_usb_msg(0x1a)		// 0xe000401a  Message sent by a hub when a device cannot be enumerated because the USB controller ran out of resources
 #define kIOUSBMessageHubPortDeviceDisconnected      iokit_usb_msg(0x1b)		// 0xe000401b  Message sent by a built-in hub when a device was disconnected
+#define kIOUSBMessageUnsupportedConfiguration		iokit_usb_msg(0x1c)     // 0xe000401c  Message sent to the clients of the device when a device is not supported in the current configuration.  The message argument contains the locationID of the device
 /*! @/defineblock */
 
     
@@ -1094,12 +1095,13 @@ enum {
         };
 
 /*!
-    @enum kIOUSBVendorIDAppleComputer
-    @discussion USB Vendor ID for Apple Computer, Inc. 
+    @enum kIOUSBVendorIDApple
+    @discussion USB Vendor ID for Apple, Inc. 
 */
-enum {
-	kIOUSBVendorIDAppleComputer		= 0x05AC
-        };
+    enum {
+        kIOUSBVendorIDAppleComputer		= 0x05AC,
+        kIOUSBVendorIDApple             = 0x05AC
+    };
 
 	/*!
 	 @enum USBDeviceSpeed
@@ -1195,11 +1197,15 @@ typedef enum {
 // USB User Notification Types
 //
 enum {
-    kUSBNoUserNotificationType			= 0,
-    kUSBNotEnoughPowerNotificationType		= 1,
+    kUSBNoUserNotificationType                  = 0,
+    kUSBNotEnoughPowerNotificationType          = 1,
     kUSBIndividualOverCurrentNotificationType	= 2,
-    kUSBGangOverCurrentNotificationType		= 3,
-    kUSBiOSDeviceNotEnoughPowerNotificationType = 4
+    kUSBGangOverCurrentNotificationType         = 3,
+    kUSBiOSDeviceNotEnoughPowerNotificationType = 4,
+    kUSBNotEnoughPowerNoACNotificationType      = 5,
+    kUSBDeviceCountExceededNotificationType     = 6,
+    kUSBEndpointCountExceededNotificationType   = 7,
+    kUSBUnsupportedNotificationType             = 8
 };
 
 /*!
@@ -1308,7 +1314,34 @@ typedef enum {
 		kUSBPowerDuringWakeRevocable	= 6,
 		kUSBPowerDuringWakeUSB3			= 7
 	} USBPowerRequestTypes;
+
+
+	// these are not for a Public API, but are just the bits used below
+	enum {
+		kUSBNotificationPreForcedSuspendBit              =    0,
+		kUSBNotificationPostForcedSuspendBit             =    1,
+		kUSBNotificationPreForcedResumeBit               =    2,
+		kUSBNotificationPostForcedResumeBit              =    3,
+	};
 	
+		
+	/*!
+	 @enum USBNotificationTypes
+	 @discussion Used to register for USB notifications. These types may be OR'd together if more than one notification is desired. These notification are expected to be acknowledged before the process (e.g. system sleep or system wake) can be continued. See RegisterForNotification and AcknowledgeNotification in IOUSBDeviceInterface and IOUSBInterfaceInterface.
+	 @constant	kUSBNotificationPreForcedSuspend	A notification is sent prior to a forced suspend (e.g. system sleep).
+	 @constant	kUSBNotificationPostForcedSuspend	A notification is sent after a forced suspend has been completed (e.g. system sleep).
+	 @constant	kUSBNotificationPreForcedResume		A notification is sent before a resume which happens after a forced suspend (e.g. system wake).
+	 @constant	kUSBNotificationPostForcedResume	A notification is sent after a resume which happens after a forced suspend (e.g. system wake).
+	 */
+	typedef enum {
+		kUSBNotificationPreForcedSuspend             =    (1 << kUSBNotificationPreForcedSuspendBit),
+		kUSBNotificationPostForcedSuspend            =    (1 << kUSBNotificationPostForcedSuspendBit),
+		kUSBNotificationPreForcedResume              =    (1 << kUSBNotificationPreForcedResumeBit),
+		kUSBNotificationPostForcedResume             =    (1 << kUSBNotificationPostForcedResumeBit),
+	} USBNotificationTypes;
+	
+	
+
 	// Apple specific properties
 #define kAppleMaxPortCurrent				"AAPL,current-available"
 #define kAppleCurrentExtra					"AAPL,current-extra"
@@ -1317,10 +1350,12 @@ typedef enum {
 #define kAppleRevocableExtraCurrent			"AAPL,revocable-extra-current"
 #define kAppleExternalSuperSpeedPorts		"AAPL,ExternalSSPorts"
 #define kAppleUnconnectedSuperSpeedPorts	"AAPL,UnconnectedSSPorts"
+#define kAppleAcpiRootHubDepth				"AAPL,root-hub-depth"
 
 #define kAppleStandardPortCurrentInSleep	"AAPL,standard-port-current-in-sleep"
 
 #define kAppleInternalUSBDevice				"AAPL,device-internal"
+#define kAppleExternalConnectorBitmap       "AAPL,ExternalConnectorBitmap"
 #define kUSBBusID							"AAPL,bus-id"
 	
 	// Deprecated Names and/or values
@@ -1358,17 +1393,19 @@ enum {
 
 enum {
 	kXHCISSRootHubAddress	= kUSBMaxDevices,
-	kXHCIUSB2RootHubAddress = kUSBMaxDevices+1
+	kXHCIUSB2RootHubAddress = kUSBMaxDevices+1,
+    kSuperSpeedBusBitMask   = 0x01000000
 };
     
 #define ISROOTHUB(a) ((a == kXHCISSRootHubAddress) || (a == kXHCIUSB2RootHubAddress))
 
 // values (in nanoseconds) which are sent to requireMaxBusStall as appropriate
-#define kThunderboltMaxBusStall          25000
 #define kEHCIIsochMaxBusStall            25000
 #define kXHCIIsochMaxBusStall            25000
 #define kOHCIIsochMaxBusStall            25000
 #define kUHCIIsochMaxBusStall            10000
+#define kMaxBusStall10uS                 10000
+#define kMaxBusStall25uS                 25000
 
 #ifdef __cplusplus
 }       
