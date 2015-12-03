@@ -1,0 +1,34 @@
+#!/bin/sh
+
+allsdks(){
+  for i in $(git branch -r | grep sdk | sed s'|origin/||'); do
+    git branch -D $i >/dev/null 2>&1
+    echo $i
+  done
+}
+
+checkoutworktrees(){  
+  git checkout master >/dev/null 2>&1
+
+  for i in $(git branch -r | grep sdk | sed s'|origin/||'); do
+    git branch -D $i >/dev/null 2>&1
+    echo "Checking out $i"...
+    git checkout $i >/dev/null 2>&1
+  done
+
+  git checkout master >/dev/null 2>&1
+  git worktree prune
+
+  for i in $(git branch -l | grep sdk | sed s'|origin/||'); do
+    echo "Adding worktree for $i..."
+    [ ! -e ./$i ] && git worktree add ./$i $i >/dev/null 2>&1
+    echo "Complete."
+  done
+  git checkout master >/dev/null 2>&1
+}
+
+case "$1" in
+  list|ls) allsdks ;;
+  *) checkoutworktrees ;;
+  '') : ;;
+esac
