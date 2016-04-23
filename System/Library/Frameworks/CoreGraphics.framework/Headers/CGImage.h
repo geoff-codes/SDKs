@@ -32,8 +32,10 @@ typedef CF_ENUM(uint32_t, CGImageAlphaInfo) {
 
 typedef CF_OPTIONS(uint32_t, CGBitmapInfo) {
   kCGBitmapAlphaInfoMask = 0x1F,
+  
+  kCGBitmapFloatInfoMask = 0xF00,
   kCGBitmapFloatComponents = (1 << 8),
-    
+  
   kCGBitmapByteOrderMask = 0x7000,
   kCGBitmapByteOrderDefault = (0 << 12),
   kCGBitmapByteOrder16Little = (1 << 12),
@@ -264,4 +266,4 @@ CF_ASSUME_NONNULL_END
 
 CF_IMPLICIT_BRIDGING_DISABLED
 
-#endif	/* CGIMAGE_H_ */
+#endif  /* CGIMAGE_H_ */

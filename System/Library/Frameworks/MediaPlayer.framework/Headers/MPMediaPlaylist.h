@@ -46,6 +46,30 @@ MP_EXTERN NSString * const MPMediaPlaylistPropertyPlaylistAttributes;           
 MP_EXTERN NSString * const MPMediaPlaylistPropertySeedItems;
 @property (nonatomic, readonly, nullable) NSArray<MPMediaItem *> *seedItems NS_AVAILABLE_IOS(8_0);
 
+MP_EXTERN NSString * const MPMediaPlaylistPropertyDescriptionText NS_AVAILABLE_IOS(9_3);
+@property (nonatomic, readonly, nullable) NSString *descriptionText NS_AVAILABLE_IOS(9_3);
+
+MP_EXTERN NSString * const MPMediaPlaylistPropertyAuthorDisplayName NS_AVAILABLE_IOS(9_3);
+@property (nonatomic, readonly, nullable) NSString *authorDisplayName NS_AVAILABLE_IOS(9_3);
+
+- (void)addItemWithProductID:(NSString *)productID completionHandler:(nullable void (^)(NSError * __nullable error))completionHandler NS_AVAILABLE_IOS(9_3);
+- (void)addMediaItems:(NSArray<MPMediaItem *> *)mediaItems completionHandler:(nullable void (^)(NSError * __nullable error))completionHandler NS_AVAILABLE_IOS(9_3);
+
+@end
+
+MP_EXTERN_CLASS_AVAILABLE(9_3)
+__TVOS_PROHIBITED
+@interface MPMediaPlaylistCreationMetadata : NSObject
+
+- (id)init NS_UNAVAILABLE;
+- (instancetype)initWithName:(NSString *)name NS_DESIGNATED_INITIALIZER;
+
+/// The display name of the playlist.
+@property (nonatomic, readonly, copy) NSString *name;
+/// Defaults to the requesting app's display name.
+@property (null_resettable, nonatomic, copy) NSString *authorDisplayName;
+@property (nonatomic, copy) NSString *descriptionText;
+
 @end
 
 NS_ASSUME_NONNULL_END

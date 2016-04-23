@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/iAd.framework/iAd
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _ADAdSpaceContext_ModalInterstitial, _ADBannerContentSizeIdentifier320x50, 
@@ -17,8 +16,8 @@ exports:
                        _ADPortraitBannerSize, _ADPresentingViewControllerForView, 
                        _ADRectIsValidForPopoverPresentation, _ADSanitizedErrorForError, 
                        _ADViewControllerForView, __ADInternalAdTypeForPublicAdType, 
-                       __ADPaddedImageFromImage, _kADPolicyEngineAddChannelNotification, 
-                       _kADPolicyEngineHeartbeatTokenChangedNotification, 
+                       __ADPaddedImageFromImage, __UIApplicationHasNewsClientEntitlement, 
+                       _kADPolicyEngineAddChannelNotification, _kADPolicyEngineHeartbeatTokenChangedNotification, 
                        _kADPolicyEngineHideAdViewNotification, _kADPolicyEngineNoActionRequiredNotification, 
                        _kADPolicyEnginePlayVideoAdNotification, _kADPolicyEngineScheduleAudioAdNotification, 
                        _kADPolicyEngineSongBeganResponseNotification, _kADPolicyEngineSongBreakAdKey, 

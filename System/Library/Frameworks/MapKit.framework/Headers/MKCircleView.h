@@ -11,7 +11,7 @@
 #import <MapKit/MKOverlayPathView.h>
 
 // Prefer MKCircleRenderer
-MK_CLASS_AVAILABLE(NA, 4_0) __WATCHOS_PROHIBITED
+MK_CLASS_AVAILABLE(NA, 4_0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED
 @interface MKCircleView : MKOverlayPathView
 
 - (instancetype)initWithCircle:(MKCircle *)circle NS_DEPRECATED_IOS(4_0, 7_0);

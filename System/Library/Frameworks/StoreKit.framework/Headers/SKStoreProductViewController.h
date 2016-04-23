@@ -47,4 +47,7 @@ SK_EXTERN NSString * const SKStoreProductParameterCampaignToken NS_AVAILABLE_IOS
 // Analytics provider token (NSString)
 SK_EXTERN NSString * const SKStoreProductParameterProviderToken NS_AVAILABLE_IOS(8_3);
 
+// Advertising partner token (NSString)
+SK_EXTERN NSString * const SKStoreProductParameterAdvertisingPartnerToken NS_AVAILABLE_IOS(9_3);
+
 NS_ASSUME_NONNULL_END

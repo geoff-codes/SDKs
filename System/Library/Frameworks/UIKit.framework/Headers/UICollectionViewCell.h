@@ -2,7 +2,7 @@
 //  UICollectionViewCell.h
 //  UIKit
 //
-//  Copyright (c) 2011-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2015 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIView.h>

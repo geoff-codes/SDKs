@@ -2,7 +2,7 @@
 //  UIPopoverSupport.h
 //  UIKit
 //
-//  Copyright (c) 2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2014-2015 Apple Inc. All rights reserved.
 //
 
 typedef NS_OPTIONS(NSUInteger, UIPopoverArrowDirection) {

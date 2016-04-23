@@ -2,8 +2,7 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /usr/lib/libQLCharts.dylib
-current-version: 234.0
-objc-constraint: retain_release
+current-version: 235.1
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _DummyValueCallbacks, _OIAXisGetDrawMajorGridlines, 

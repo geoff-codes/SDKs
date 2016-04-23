@@ -1,6 +1,6 @@
 /* CoreAnimation - CABase.h
 
-   Copyright (c) 2006-2015, Apple Inc.
+   Copyright (c) 2006-2016, Apple Inc.
    All rights reserved. */
 
 #ifndef CABASE_H
@@ -65,6 +65,12 @@
 #endif
 #ifndef __IPHONE_9_2
 # define __IPHONE_9_2   90200
+#endif
+#ifndef __IPHONE_9_3
+# define __IPHONE_9_3   90300
+#endif
+#ifndef __IPHONE_10_0
+# define __IPHONE_10_0  100000
 #endif
 
 #ifdef CA_BUILDING_CA

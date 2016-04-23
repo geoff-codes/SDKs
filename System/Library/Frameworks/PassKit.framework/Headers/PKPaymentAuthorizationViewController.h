@@ -26,6 +26,10 @@ typedef NS_ENUM(NSInteger, PKPaymentAuthorizationStatus) {
     PKPaymentAuthorizationStatusInvalidShippingPostalAddress, // Merchant refuses service to this shipping address.
     PKPaymentAuthorizationStatusInvalidShippingContact,       // Supplied contact information is insufficient.
     
+    PKPaymentAuthorizationStatusPINRequired NS_ENUM_AVAILABLE(NA, 9_2),  // Transaction requires PIN entry.
+    PKPaymentAuthorizationStatusPINIncorrect NS_ENUM_AVAILABLE(NA, 9_2), // PIN was not entered correctly, retry.
+    PKPaymentAuthorizationStatusPINLockout NS_ENUM_AVAILABLE(NA, 9_2)    // PIN retry limit exceeded.
+    
 } NS_ENUM_AVAILABLE(NA, 8_0);
 
 @protocol PKPaymentAuthorizationViewControllerDelegate <NSObject>

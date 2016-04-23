@@ -17,8 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// developer might want to represent include song files, streaming audio URLs,
 /// or radio stations.
 MP_EXTERN_CLASS_AVAILABLE(7_1)
-__TVOS_PROHIBITED
 @interface MPContentItem : NSObject
+
+/// Designated initializer. A unique identifier is required to identify the item
+/// for later use.
+- (instancetype)initWithIdentifier:(NSString *)identifier NS_DESIGNATED_INITIALIZER;
 
 /// A unique identifier for this content item. (Required)
 @property (nonatomic, copy, readonly) NSString *identifier;
@@ -50,10 +53,6 @@ __TVOS_PROHIBITED
 /// 0.0 = not watched/listened/viewed, 1.0 = fully watched/listened/viewed
 /// Default is -1.0 (no progress indicator shown)
 @property (nonatomic, assign) float playbackProgress;
-
-/// Designated initializer. A unique identifier is required to identify the item
-/// for later use.
-- (instancetype)initWithIdentifier:(NSString *)identifier NS_DESIGNATED_INITIALIZER;
 
 @end
 

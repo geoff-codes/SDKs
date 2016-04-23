@@ -28,7 +28,7 @@ NS_CLASS_AVAILABLE(NA, 9_0) __WATCHOS_AVAILABLE(2.0) __TVOS_PROHIBITED
  *   was recorded in. This identifier will be monotonically increased
  *   for each new sensor batch recorded and can be used as an anchor for future queries.
  */
-@property(readonly) uint64_t identifier;
+@property (readonly) uint64_t identifier;
 
 /*
  * startDate
@@ -37,7 +37,7 @@ NS_CLASS_AVAILABLE(NA, 9_0) __WATCHOS_AVAILABLE(2.0) __TVOS_PROHIBITED
  *   Wall time for when this sensor sample is recorded.
  *
  */
-@property(readonly) NSDate *startDate;
+@property (readonly) NSDate *startDate;
 
 @end
 
@@ -45,14 +45,14 @@ NS_CLASS_AVAILABLE(NA, 9_0) __WATCHOS_AVAILABLE(2.0) __TVOS_PROHIBITED
  * CMSensorDataList
  *
  * Discussion:
- *   Allows retroactive access to sensor data via enumeration.
- *   If created with accelerometerDataSince: or accelerometerDataFrom:to:
+ *   Allows retrospective access to sensor data via enumeration.
+ *   If created with accelerometerDataFromDate:toDate:
  *   each enumeration will yield an object of type CMRecordedAccelerometerData.
  *   Due to the large number of samples that can be processed, the
  *   enumeration should not be run on the main/UI thread.
  */
 NS_CLASS_AVAILABLE(NA, 9_0) __WATCHOS_AVAILABLE(2.0) __TVOS_PROHIBITED
-@interface CMSensorDataList : NSObject<NSFastEnumeration>
+@interface CMSensorDataList : NSObject <NSFastEnumeration>
 @end
 
 /*
@@ -68,7 +68,7 @@ NS_CLASS_AVAILABLE(NA, 9_0) __WATCHOS_AVAILABLE(2.0) __TVOS_PROHIBITED
 @interface CMSensorRecorder : NSObject
 
 /*
- * isAccelerometerAvailable
+ * isAccelerometerRecordingAvailable
  *
  * Discussion:
  *   Determines whether accelerometer recording is available.
@@ -84,29 +84,24 @@ NS_CLASS_AVAILABLE(NA, 9_0) __WATCHOS_AVAILABLE(2.0) __TVOS_PROHIBITED
 + (BOOL)isAuthorizedForRecording;
 
 /*
- * accelerometerDataSince
+ * accelerometerDataFromDate:ToDate:
  *
  * Discussion:
- *    Gives access to recorded accelerometer samples based on batch id.
+ *    Gives access to recorded accelerometer samples given a time range (fromDate, toDate].
+ *    A total duration of 12 hours of data can be requested at any one time.  Data can be delayed
+ *    for up to 3 minutes before being available for retrieval.  An instance of CMSensorDataList
+ *    should only be enumerated from a single thread.
  */
-- (nullable CMSensorDataList *)accelerometerDataSince:(uint64_t)identifier;
+- (nullable CMSensorDataList *)accelerometerDataFromDate:(NSDate *)fromDate toDate:(NSDate *)toDate;
 
 /*
- * accelerometerDataFrom:To:
- *
- * Discussion:
- *    Gives access to recorded accelerometer samples given a time range (fromDate, toDate]
- */
-- (nullable CMSensorDataList *)accelerometerDataFrom:(NSDate *)fromDate to:(NSDate *)toDate;
-
-/*
- * recordAccelerometerFor:
+ * recordAccelerometerForDuration:
  *
  * Discussion:
  *    Starts recording accelerometer data for the duration given at 50hz.  Data can be recorded
  *    for up to 12 hours.
  */
-- (void)recordAccelerometerFor:(NSTimeInterval)duration;
+- (void)recordAccelerometerForDuration:(NSTimeInterval)duration;
 
 @end
 

@@ -2,7 +2,7 @@
 //  UISearchBar.h
 //  UIKit
 //
-//  Copyright (c) 2008-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -18,9 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, UISearchBarIcon) {
     UISearchBarIconSearch, // The magnifying glass
-    UISearchBarIconClear, // The circle with an x in it
-    UISearchBarIconBookmark, // The open book icon
-    UISearchBarIconResultsList, // The list lozenge icon
+    UISearchBarIconClear __TVOS_PROHIBITED, // The circle with an x in it
+    UISearchBarIconBookmark __TVOS_PROHIBITED, // The open book icon
+    UISearchBarIconResultsList __TVOS_PROHIBITED, // The list lozenge icon
 };
 
 typedef NS_ENUM(NSUInteger, UISearchBarStyle) {
@@ -48,11 +48,11 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISearchBar : UIView <UIBarPositioning, U
 @property(nullable,nonatomic,copy)   NSString               *text;                  // current/starting search text
 @property(nullable,nonatomic,copy)   NSString               *prompt;                // default is nil
 @property(nullable,nonatomic,copy)   NSString               *placeholder;           // default is nil
-@property(nonatomic)        BOOL                    showsBookmarkButton;   // default is NO
-@property(nonatomic)        BOOL                    showsCancelButton;     // default is NO
-@property(nonatomic)        BOOL                    showsSearchResultsButton NS_AVAILABLE_IOS(3_2); // default is NO
-@property(nonatomic, getter=isSearchResultsButtonSelected) BOOL searchResultsButtonSelected NS_AVAILABLE_IOS(3_2); // default is NO
-- (void)setShowsCancelButton:(BOOL)showsCancelButton animated:(BOOL)animated NS_AVAILABLE_IOS(3_0);
+@property(nonatomic)        BOOL                    showsBookmarkButton __TVOS_PROHIBITED;   // default is NO
+@property(nonatomic)        BOOL                    showsCancelButton __TVOS_PROHIBITED;     // default is NO
+@property(nonatomic)        BOOL                    showsSearchResultsButton NS_AVAILABLE_IOS(3_2) __TVOS_PROHIBITED; // default is NO
+@property(nonatomic, getter=isSearchResultsButtonSelected) BOOL searchResultsButtonSelected NS_AVAILABLE_IOS(3_2) __TVOS_PROHIBITED; // default is NO
+- (void)setShowsCancelButton:(BOOL)showsCancelButton animated:(BOOL)animated NS_AVAILABLE_IOS(3_0) __TVOS_PROHIBITED;
 
 /// Use this method to modify the contents of the Unified Content Bar, shown on top of the keyboard when search is engaged.
 /// You may modify the returned inputAssistantItem to add to or replace the existing items on the bar.
@@ -155,9 +155,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UISearchBar : UIView <UIBarPositioning, U
 - (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text NS_AVAILABLE_IOS(3_0); // called before text changes
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar;                     // called when keyboard search button pressed
-- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar;                   // called when bookmark button pressed
-- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar;                     // called when cancel button pressed
-- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar NS_AVAILABLE_IOS(3_2); // called when search results button pressed
+- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar __TVOS_PROHIBITED; // called when bookmark button pressed
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar __TVOS_PROHIBITED;   // called when cancel button pressed
+- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar NS_AVAILABLE_IOS(3_2) __TVOS_PROHIBITED; // called when search results button pressed
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope NS_AVAILABLE_IOS(3_0);
 

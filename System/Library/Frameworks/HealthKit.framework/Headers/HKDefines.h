@@ -9,10 +9,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define HK_EXTERN   extern __attribute__((visibility("default")))
+#if !defined(__cplusplus)
+#define HK_EXTERN extern __attribute__((visibility("default")))
+#else
+#define HK_EXTERN extern "C" __attribute__((visibility("default")))
+#endif
+
 #define HK_CLASS_AVAILABLE_IOS(_iOSIntro)    NS_CLASS_AVAILABLE_IOS(_iOSIntro)
 #define HK_AVAILABLE_WATCHOS_ONLY(_watchOSIntro)    __WATCHOS_AVAILABLE(_watchOSIntro) __IOS_UNAVAILABLE
 #define HK_CLASS_AVAILABLE_WATCHOS_ONLY(_watchOSIntro)    HK_EXTERN HK_AVAILABLE_WATCHOS_ONLY(_watchOSIntro)
+#define HK_CLASS_AVAILABLE_IOS_WATCHOS(_iOSIntro, _watchOSIntro)    NS_CLASS_AVAILABLE_IOS(_iOSIntro) __WATCHOS_AVAILABLE(_watchOSIntro)
+#define HK_ENUM_AVAILABLE_IOS_WATCHOS(_iOSIntro, _watchOSIntro)    NS_ENUM_AVAILABLE_IOS(_iOSIntro) __WATCHOS_AVAILABLE(_watchOSIntro)
+#define HK_AVAILABLE_IOS_WATCHOS(_iOSIntro, _watchOSIntro)    NS_AVAILABLE_IOS(_iOSIntro) __WATCHOS_AVAILABLE(_watchOSIntro)
 
 HK_EXTERN NSString * const HKErrorDomain NS_AVAILABLE_IOS(8_0);
 

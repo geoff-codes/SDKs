@@ -2,7 +2,7 @@
 //  UIEvent.h
 //  UIKit
 //
-//  Copyright (c) 2005-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -17,9 +17,7 @@ typedef NS_ENUM(NSInteger, UIEventType) {
     UIEventTypeTouches,
     UIEventTypeMotion,
     UIEventTypeRemoteControl,
-#ifndef SDK_HIDE_TIDE
     UIEventTypePresses NS_ENUM_AVAILABLE_IOS(9_0),
-#endif
 };
 
 typedef NS_ENUM(NSInteger, UIEventSubtype) {

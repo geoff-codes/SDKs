@@ -18,6 +18,7 @@ typedef NS_ENUM(NSInteger, WatchKitErrorCode)  {
     WatchKitInvalidArgumentError                                  = 3,  // invalid argument error
     WatchKitMediaPlayerError                                      = 4,  // media player error
     WatchKitDownloadError                                         = 5,  // download of resource failed
+    WatchKitRecordingFailedError                                  = 6,  // recording failed
 } NS_ENUM_AVAILABLE_IOS(8_2);
 
 NS_ASSUME_NONNULL_END

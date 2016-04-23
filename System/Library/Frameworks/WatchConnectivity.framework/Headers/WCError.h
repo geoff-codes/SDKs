@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WC_EXTERN NSString * const WCErrorDomain NS_AVAILABLE_IOS(9_0);
+WC_EXTERN NSString * const WCErrorDomain NS_AVAILABLE_IOS(9.0);
 
 /** These are the possible error codes that can be returned from the WatchConnectivity APIs. */
 typedef NS_ENUM(NSInteger, WCErrorCode) {
@@ -29,6 +29,8 @@ typedef NS_ENUM(NSInteger, WCErrorCode) {
 	WCErrorCodeFileAccessDenied                     = 7013,
 	WCErrorCodeDeliveryFailed                       = 7014,
 	WCErrorCodeInsufficientSpace                    = 7015,
-} NS_ENUM_AVAILABLE_IOS(9_0);
+	WCErrorCodeSessionInactive						__IOS_AVAILABLE(9.3) __WATCHOS_AVAILABLE(2.2) = 7016,
+	WCErrorCodeTransferTimedOut						__IOS_AVAILABLE(9.3) __WATCHOS_AVAILABLE(2.2) = 7017,
+} NS_ENUM_AVAILABLE_IOS(9.0);
 
 NS_ASSUME_NONNULL_END

@@ -11,14 +11,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class HKSampleType;
+@class HKObjectType;
 @class HKQuantity;
+@class HKSampleType;
 @class HKSource;
 
 HK_CLASS_AVAILABLE_IOS(8_0)
 @interface HKQuery : NSObject
 
-@property (readonly, strong) HKSampleType *sampleType;
+@property (readonly, strong, nullable) HKObjectType *objectType HK_AVAILABLE_IOS_WATCHOS(9_3, 2_2);
+@property (readonly, strong, nullable) HKSampleType *sampleType NS_DEPRECATED_IOS(8_0, 9_3, "Use objectType") __WATCHOS_DEPRECATED(2.0, 2.2, "Use objectType");
+
 @property (readonly, strong, nullable) NSPredicate *predicate;
 
 - (instancetype)init NS_UNAVAILABLE;
@@ -255,6 +258,34 @@ typedef NS_OPTIONS(NSUInteger, HKQueryOptions) {
                                 expression. The unit for this value should be of type Distance
  */
 + (NSPredicate *)predicateForWorkoutsWithOperatorType:(NSPredicateOperatorType)operatorType totalDistance:(HKQuantity *)totalDistance;
+
+@end
+
+@interface HKQuery (HKActivitySummaryPredicates)
+
+/*!
+ @method        predicateForActivitySummaryWithDateComponents:
+ @abstract      Creates a predicate for use with HKActivitySummaryQuery
+ @discussion    Creates a query predicate that matches HKActivitySummaries with the given date components.
+ 
+ @param         dateComponents  The date components of the activity summary. These date components should contain era, year, month,
+                and day components in the gregorian calendar.
+ */
++ (NSPredicate *)predicateForActivitySummaryWithDateComponents:(NSDateComponents *)dateComponents HK_AVAILABLE_IOS_WATCHOS(9_3, 2_2);
+
+/*!
+ @method        predicateForActivitySummariesBetweenStartDateComponents:endDateComponents:
+ @abstract      Creates a predicate for use with HKActivitySummaryQuery
+ @discussion    Creates a query predicate that matches HKActivitySummaries that fall between the given date components.
+ 
+ @param         startDateComponents The date components that define the beginning of the range. These date components should contain 
+                era, year, month, and day components in the gregorian calendar.
+ 
+ @param         endDateComponents   The date components that define the end of the range. These date components should contain era, 
+                year, month, and day components in the gregorian calendar.
+ */
++ (NSPredicate *)predicateForActivitySummariesBetweenStartDateComponents:(NSDateComponents *)startDateComponents endDateComponents:(NSDateComponents *)endDateComponents HK_AVAILABLE_IOS_WATCHOS(9_3, 2_2);
+
 @end
 
 NS_ASSUME_NONNULL_END

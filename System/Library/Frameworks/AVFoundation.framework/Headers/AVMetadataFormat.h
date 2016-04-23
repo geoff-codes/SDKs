@@ -314,6 +314,8 @@ AVF_EXPORT NSString *const AVMetadataIcyMetadataKeyStreamURL                    
 // HTTP Live Streaming metadata
 AVF_EXPORT NSString *const AVMetadataFormatHLSMetadata                                   NS_AVAILABLE(10_10, 8_0);
 // HLS Metadata does not define its own keySpace or keys. Use of the keySpace AVMetadataKeySpaceQuickTimeMetadata and its keys is recommended.
+AVF_EXPORT NSString *const AVMetadataKeySpaceHLSDateRange								NS_AVAILABLE(10_11_3, 9_3);
+
 
 // Extra attribute keys
 

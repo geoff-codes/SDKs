@@ -2,7 +2,7 @@
 //  UIImageView.h
 //  UIKit
 //
-//  Copyright (c) 2006-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2006-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -39,8 +39,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIImageView : UIView
 - (void)startAnimating;
 - (void)stopAnimating;
 - (BOOL)isAnimating;
-#ifndef SDK_HIDE_TIDE
-#ifndef RC_HIDE_TIDE
+
 // if YES, the UIImageView will display a focused appearance when any of its immediate or distant superviews become focused
 @property (nonatomic) BOOL adjustsImageWhenAncestorFocused UIKIT_AVAILABLE_TVOS_ONLY(9_0);
 
@@ -48,8 +47,6 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIImageView : UIView
 // this layout guide can be used to align other elements with the image view's focused frame.
 @property(readonly,strong) UILayoutGuide *focusedFrameGuide UIKIT_AVAILABLE_TVOS_ONLY(9_0);
 
-#endif
-#endif
 @end
 
 NS_ASSUME_NONNULL_END

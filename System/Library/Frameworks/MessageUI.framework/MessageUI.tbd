@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/MessageUI.framework/MessageUI
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _CSSString, _DisplayInfoCacheShouldParseDocumentKey, 
@@ -113,13 +112,14 @@ exports:
                        _MFModernAtomIconView, _MFModernAtomView, _MFModernComposeRecipientAtom, 
                        _MFModernLabelledAtomList, _MFMultiDragManager, 
                        _MFNameSearchOperation, _MFPhoneSearchOperation, 
-                       _MFPlaceholderMailDeliveryUI, _MFProgressView, _MFRecentComposeRecipient, 
-                       _MFRecentComposeRecipientGroup, _MFRecentsSearchOperation, 
-                       _MFRecipientListStringsLocalizationLocator, _MFRecipientTableViewCell, 
-                       _MFRecipientTableViewCellDetailView, _MFRecipientTableViewCellTitleView, 
-                       _MFReformattedAddress, _MFSearchInAccountWithIDOperation, 
-                       _MFSearchShadowView, _MFSecureMIMEPersonHeaderView, 
-                       _MFSoundController, _MFStringAccumulator, _MFVariableLayoutConstraint, 
+                       _MFPlaceholderMailDeliveryUI, _MFPlaceholderMessageRewriter, 
+                       _MFProgressView, _MFRecentComposeRecipient, _MFRecentComposeRecipientGroup, 
+                       _MFRecentsSearchOperation, _MFRecipientListStringsLocalizationLocator, 
+                       _MFRecipientTableViewCell, _MFRecipientTableViewCellDetailView, 
+                       _MFRecipientTableViewCellTitleView, _MFReformattedAddress, 
+                       _MFSearchInAccountWithIDOperation, _MFSearchShadowView, 
+                       _MFSecureMIMEPersonHeaderView, _MFSoundController, 
+                       _MFStringAccumulator, _MFVariableLayoutConstraint, 
                        _MFWebKitMainThread, __MFAtomContainerView, __MFAtomTextAttachment, 
                        __MFAtomTextSelectionRect, __MFAtomTextView, __MFAutocompleteResultsTableViewModel, 
                        __MFCRRecentContactABContext, __MFCountableMatchesContext, 
@@ -130,10 +130,10 @@ exports:
                        __MFMessageBodyDOMElement, __MFMessageBodyHTMLElement, 
                        __MFModernAddressAtomEffectButton, __MFParsedHTMLNode, 
                        __MFParsedHTMLTag, __MFParsedHTMLText, __MFPlaceholderComposeRecipient, 
-                       __MFPlaceholderMessageRewriter, __MFQuoteLevelPopoverViewController, 
-                       __MFSearchAddResultsOperation, __MFSearchProcessResultsOperation, 
-                       __MFSecureMIMEPersonHeaderBackgroundView, __MFSecureMIMEPersonHeaderLabel, 
-                       __MFTableCellAttributesCache, __MFValueTransformer ]
+                       __MFQuoteLevelPopoverViewController, __MFSearchAddResultsOperation, 
+                       __MFSearchProcessResultsOperation, __MFSecureMIMEPersonHeaderBackgroundView, 
+                       __MFSecureMIMEPersonHeaderLabel, __MFTableCellAttributesCache, 
+                       __MFValueTransformer ]
     objc-ivars:      [ _MFAttachmentImageGenerator._displayString, _MFAttachmentImageGenerator._image, 
                        _MFAttachmentImageGenerator._maxImageHeight, _MFAttachmentImageGenerator._textSize, 
                        _MFCalendarComposeRecipient._calAttendeeName, _MFCalendarComposeRecipient._participant, 

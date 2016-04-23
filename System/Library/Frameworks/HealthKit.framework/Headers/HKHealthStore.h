@@ -132,7 +132,7 @@ HK_CLASS_AVAILABLE_IOS(8_0)
 - (void)deleteObjects:(NSArray<HKObject *> *)objects withCompletion:(void(^)(BOOL success, NSError * __nullable error))completion NS_AVAILABLE_IOS(9_0);
 
 /*!
- @method        deleteObjectsMatchingQuery:withCompletion:
+ @method        deleteObjectsOfType:predicate:withCompletion:
  @abstract      Deletes all objects matching the given predicate from the HealthKit database.
  @discussion    An application may only delete objects that it previously saved.  This operation is performed
                 asynchronously and the completion will be executed on an arbitrary background queue.
@@ -162,8 +162,8 @@ HK_CLASS_AVAILABLE_IOS(8_0)
 /*!
  @method        splitTotalEnergy:startDate:endDate:resultsHandler:
  @abstract      For the time period specified, this method calculates the resting and active energy parts of the total
-                energy passed.
- @discussion    This method uses the users metrics like age, biological sex, body mass and height to determine
+                energy provided.
+ @discussion    This method uses the user's metrics like age, biological sex, body mass and height to determine
                 their basal metabolic rate. If the application does not have authorization to access these characteristics
                 or if the user has not entered their data then this method uses builtin default values.
  */

@@ -22,7 +22,8 @@ NS_CLASS_AVAILABLE_IOS(9_0) __WATCHOS_AVAILABLE(__WATCHOS_2_0)
 /*!
  * @brief Initializes a new characteristic event object
  *
- * @param characteristic The characteristic bound to the event.
+ * @param characteristic The characteristic bound to the event. The characteristic must 
+ *                       support notification. An exception will be thrown otherwise.
  *
  * @param triggerValue The value of the characteristic that triggers the event. 
  *                     Specifying nil as the trigger value corresponds to any change in the value of the

@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/CoreText.framework/CoreText
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _CTFontCollectionCreateCopyWithFontDescriptors, 
@@ -17,9 +16,10 @@ exports:
                        _CTFontCopyFamilyName, _CTFontCopyFeatureSettings, 
                        _CTFontCopyFeatures, _CTFontCopyFeaturesInternal, 
                        _CTFontCopyFontDescriptor, _CTFontCopyFullName, 
-                       _CTFontCopyGraphicsFont, _CTFontCopyLocalizedName, 
-                       _CTFontCopyLocalizedNameWithLanguages, _CTFontCopyLogicalCharacterSet, 
-                       _CTFontCopyName, _CTFontCopyNameForGlyph, _CTFontCopyOTFontFeatureTable, 
+                       _CTFontCopyGlyphCoverageForFeature, _CTFontCopyGraphicsFont, 
+                       _CTFontCopyLocalizedName, _CTFontCopyLocalizedNameWithLanguages, 
+                       _CTFontCopyLogicalCharacterSet, _CTFontCopyName, 
+                       _CTFontCopyNameForGlyph, _CTFontCopyOTFontFeatureTable, 
                        _CTFontCopyOTName, _CTFontCopyPostScriptName, _CTFontCopyQuickdrawInstances, 
                        _CTFontCopySampleString, _CTFontCopyStyledDefaultCascadeListForLanguages, 
                        _CTFontCopySupportedLanguages, _CTFontCopySystemUIFontExcessiveLineHeightCharacterSet, 

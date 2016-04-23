@@ -2,18 +2,16 @@
 //  UIGestureRecognizerSubclass.h
 //  UIKit
 //
-//  Copyright (c) 2008-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2015 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIGestureRecognizer.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-#ifndef SDK_HIDE_TIDE
 @class UIPressesEvent;
 @class UIPress;
 
-#endif
 // the extensions in this header are to be used only by subclasses of UIGestureRecognizer
 // code that uses UIGestureRecognizers must never call these
 
@@ -24,10 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)ignoreTouch:(UITouch*)touch forEvent:(UIEvent*)event; // if a touch isn't part of this gesture it can be passed to this method to be ignored. ignored touches won't be cancelled on the view even if cancelsTouchesInView is YES
 
-#ifndef SDK_HIDE_TIDE
 - (void)ignorePress:(UIPress *)button forEvent:(UIPressesEvent *)event NS_AVAILABLE_IOS(9_0);
 
-#endif
 // the following methods are to be overridden by subclasses of UIGestureRecognizer
 // if you override one you must call super
 
@@ -54,13 +50,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event;
 - (void)touchesEstimatedPropertiesUpdated:(NSSet * _Nonnull)touches NS_AVAILABLE_IOS(9_1);
 
-#ifndef SDK_HIDE_TIDE
 - (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event NS_AVAILABLE_IOS(9_0);
 - (void)pressesChanged:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event NS_AVAILABLE_IOS(9_0);
 - (void)pressesEnded:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event NS_AVAILABLE_IOS(9_0);
 - (void)pressesCancelled:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event NS_AVAILABLE_IOS(9_0);
 
-#endif
 @end
 
 NS_ASSUME_NONNULL_END

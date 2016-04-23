@@ -102,7 +102,7 @@ NS_CLASS_AVAILABLE(10_10, 8_0)
 
 /* Indicates that the notification should be sent with the "content-available" flag to allow for background downloads in the application. 
    Default value is NO. */
-@property (nonatomic, assign) BOOL shouldSendContentAvailable;
+@property (nonatomic, assign) BOOL shouldSendContentAvailable __TVOS_PROHIBITED;
 
 /* Optional property for the category to be sent with the push when this subscription fires. Categories allow you to present custom actions to the user on your push notifications. See UIMutableUserNotificationCategory for more information. */
 @property (nonatomic, copy, nullable) NSString *category NS_AVAILABLE(10_11, 9_0) __TVOS_PROHIBITED;

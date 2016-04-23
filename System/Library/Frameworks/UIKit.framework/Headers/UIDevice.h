@@ -2,7 +2,7 @@
 //  UIDevice.h
 //  UIKit
 //
-//  Copyright (c) 2007-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -31,9 +31,8 @@ typedef NS_ENUM(NSInteger, UIUserInterfaceIdiom) {
     UIUserInterfaceIdiomUnspecified = -1,
     UIUserInterfaceIdiomPhone NS_ENUM_AVAILABLE_IOS(3_2), // iPhone and iPod touch style UI
     UIUserInterfaceIdiomPad NS_ENUM_AVAILABLE_IOS(3_2), // iPad style UI
-#ifndef SDK_HIDE_TIDE
     UIUserInterfaceIdiomTV NS_ENUM_AVAILABLE_IOS(9_0), // Apple TV style UI
-#endif
+    UIUserInterfaceIdiomCarPlay NS_ENUM_AVAILABLE_IOS(9_0), // CarPlay style UI
 };
 
 static inline BOOL UIDeviceOrientationIsPortrait(UIDeviceOrientation orientation)  __TVOS_PROHIBITED {

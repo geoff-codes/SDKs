@@ -251,15 +251,16 @@ CF_ENUM(AudioUnitParameterID) {
 // Parameters for the AUMultiChannelMixer unit
 // these are available for both desktop and iphone
 CF_ENUM(AudioUnitParameterID) {
-		// Global, Linear Gain, 0->1, 1
+		// Global, Linear Gain, 0->1, 1. (the volume value can actually be any finite number, including negative.)
 	kMultiChannelMixerParam_Volume 	= 0,
 		// Global, Boolean, 0->1, 1
 	kMultiChannelMixerParam_Enable 	= 1,
-		// Global, Pan
+		// Global, Pan, -1->1, 0
 	kMultiChannelMixerParam_Pan     = 2,			// -1 - 0 - 1, only valid when output is not mono
-													// relationship to mix matrix: last one in wins
+													// setting kAudioUnitProperty_MatrixLevels overrides any
+													// previously set kMultiChannelMixerParam_Pan and vice versa
 
-		// read-only
+		// read-only, Input or Output scope.
 	// these report level in dB, as do the other mixers
 	kMultiChannelMixerParam_PreAveragePower		= 1000,
 	kMultiChannelMixerParam_PrePeakHoldLevel	= 2000,

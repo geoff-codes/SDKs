@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/OpenGLES.framework/OpenGLES
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _EAGLGetCurrentMacroContextPrivate, _EAGLGetVersion, 
@@ -170,7 +169,9 @@ exports:
                        _glVertexAttribI4uiv, _glVertexAttribIPointer, _glVertexAttribPointer, 
                        _glVertexPointer, _glViewport, _glWaitSync, _glWaitSyncAPPLE, 
                        _glWeightPointerOES, _kEAGLColorFormatRGB565, _kEAGLColorFormatRGBA8, 
-                       _kEAGLColorFormatSRGBA8, _kEAGLContextPropertyAccelerated, 
+                       _kEAGLColorFormatRGBA_XR10_64BPP, _kEAGLColorFormatSRGBA8, 
+                       _kEAGLColorFormatSRGBA_XR10_64BPP, _kEAGLColorFormatSRGB_XR10, 
+                       _kEAGLColorFormatSRGB_XR10_A8_2P, _kEAGLContextPropertyAccelerated, 
                        _kEAGLContextPropertyClientRetainRelease, _kEAGLContextPropertySharedWithCompute, 
                        _kEAGLContextPropertySharegroup, _kEAGLContextPropertyVisibleInDebugTools, 
                        _kEAGLDrawablePropertyColorFormat, _kEAGLDrawablePropertyRetainedBacking ]

@@ -727,10 +727,6 @@ CM_EXPORT const CFStringRef kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995 __OS
 #define kCMFormatDescriptionYCbCrMatrix_ITU_R_709_2				kCVImageBufferYCbCrMatrix_ITU_R_709_2			// CFString
 #define kCMFormatDescriptionYCbCrMatrix_ITU_R_601_4				kCVImageBufferYCbCrMatrix_ITU_R_601_4			// CFString
 #define kCMFormatDescriptionYCbCrMatrix_SMPTE_240M_1995			kCVImageBufferYCbCrMatrix_SMPTE_240M_1995		// CFString
-CM_EXPORT const CFStringRef kCMFormatDescriptionYCbCrMatrix_DCI_P3												// same as kCVImageBufferYCbCrMatrix_DCI_P3
-							__OSX_AVAILABLE_STARTING(__MAC_10_11,__IPHONE_9_0);
-CM_EXPORT const CFStringRef kCMFormatDescriptionYCbCrMatrix_P3_D65												// same as kCVImageBufferYCbCrMatrix_P3_D65
-							__OSX_AVAILABLE_STARTING(__MAC_10_11,__IPHONE_9_0);
 CM_EXPORT const CFStringRef kCMFormatDescriptionYCbCrMatrix_ITU_R_2020											// same as kCVImageBufferYCbCrMatrix_ITU_R_2020
 							__OSX_AVAILABLE_STARTING(__MAC_10_11,__IPHONE_9_0);
 

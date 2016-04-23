@@ -419,6 +419,7 @@ FOUNDATION_EXPORT double NSFoundationVersionNumber;
 #define NSFoundationVersionNumber_iOS_8_1 1141.1
 #define NSFoundationVersionNumber_iOS_8_2 1142.14
 #define NSFoundationVersionNumber_iOS_8_3 1144.17
+#define NSFoundationVersionNumber_iOS_8_4 1144.17
 #endif
 
 #if TARGET_OS_WIN32

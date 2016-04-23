@@ -83,7 +83,7 @@ typedef NS_OPTIONS(NSUInteger, NSStreamEvent) {
 
 @interface NSStream (NSSocketStreamCreationExtensions)
 
-+ (void)getStreamsToHostWithName:(NSString *)hostname port:(NSInteger)port inputStream:(NSInputStream * __nullable * __nullable)inputStream outputStream:(NSOutputStream * __nullable * __nullable)outputStream NS_AVAILABLE(10_10, 8_0);
++ (void)getStreamsToHostWithName:(NSString *)hostname port:(NSInteger)port inputStream:(NSInputStream * __nullable * __nullable)inputStream outputStream:(NSOutputStream * __nullable * __nullable)outputStream NS_AVAILABLE(10_10, 8_0) __WATCHOS_PROHIBITED;
 
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 + (void)getStreamsToHost:(NSHost *)host port:(NSInteger)port inputStream:(NSInputStream * __nullable * __nullable)inputStream outputStream:(NSOutputStream * __nullable * __nullable)outputStream NS_DEPRECATED_MAC(10_3, 10_10, "Please use getStreamsToHostWithName:port:inputStream:outputStream: instead");

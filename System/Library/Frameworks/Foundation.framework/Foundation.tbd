@@ -2,9 +2,8 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/Foundation.framework/Foundation
-current-version: 1241.14
+current-version: 1280.25
 compatibility-version: 300.0
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s ]
     symbols:         [ '$ld$add$os2.0$_OBJC_CLASS_$_NSURL', '$ld$add$os2.0$_OBJC_METACLASS_$_NSURL', 
@@ -817,6 +816,9 @@ exports:
                        _NSURLSessionTaskPriorityLow, _NSURLSessionTransferSizeUnknown, 
                        _NSUbiquitousKeyValueStoreChangeReasonKey, _NSUbiquitousKeyValueStoreChangedKeysKey, 
                        _NSUbiquitousKeyValueStoreDidChangeExternallyNotification, 
+                       _NSUbiquitousUserDefaultsCompletedInitialSyncNotification, 
+                       _NSUbiquitousUserDefaultsDidChangeAccountsNotification, 
+                       _NSUbiquitousUserDefaultsNoCloudAccountNotification, 
                        _NSUbiquityIdentityDidChangeNotification, _NSUnarchiveFromDataTransformerName, 
                        _NSUndefinedKeyException, _NSUnderlyingErrorKey, 
                        _NSUndoManagerCheckpointNotification, _NSUndoManagerDidCloseUndoGroupNotification, 
@@ -830,7 +832,8 @@ exports:
                        _NSUserActivityContentUserActionNavigate, _NSUserActivityContentUserActionPlay, 
                        _NSUserActivityContentUserActionRecord, _NSUserActivityContentUserActionSchedule, 
                        _NSUserActivityTypeBrowsingWeb, _NSUserDefaultsDidChangeNotification, 
-                       _NSUserName, _NSUserStringVariantErrorKey, _NSWeekDayNameArray, 
+                       _NSUserDefaultsSizeLimitExceededNotification, _NSUserName, 
+                       _NSUserStringVariantErrorKey, _NSWeekDayNameArray, 
                        _NSWillBecomeMultiThreadedNotification, _NSXMLParserErrorColumnKey, 
                        _NSXMLParserErrorDomain, _NSXMLParserErrorFileNameKey, 
                        _NSXMLParserErrorLineNumberKey, _NSXMLParserErrorMessageKey, 
@@ -992,8 +995,9 @@ exports:
                        _NSISEngine._automaticOptimizationDisabledCount, 
                        _NSISEngine._brokenConstraintNegativeErrors, _NSISEngine._brokenConstraintPositiveErrors, 
                        _NSISEngine._changeCountAtLastOptimization, _NSISEngine._delegate, 
-                       _NSISEngine._engineDelegateCallsDisabledCount, _NSISEngine._engineScalingCoefficients, 
-                       _NSISEngine._headForObjectiveRow, _NSISEngine._integralizationAdjustmentsForConstraintMarkers, 
+                       _NSISEngine._engineDelegateCallsDisabledCount, _NSISEngine._engineNeedsRebuildFromConstraints, 
+                       _NSISEngine._engineScalingCoefficients, _NSISEngine._headForObjectiveRow, 
+                       _NSISEngine._integralizationAdjustmentsForConstraintMarkers, 
                        _NSISEngine._lastOptimizationInvolvedIntegralization, 
                        _NSISEngine._pendingMarkerDelegates, _NSISEngine._pendingRemovals, 
                        _NSISEngine._pivotCount, _NSISEngine._recordedOperations, 

@@ -2,7 +2,7 @@
 //  UICollectionViewLayout.h
 //  UIKit
 //
-//  Copyright (c) 2011-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2015 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKitDefines.h>
@@ -58,8 +58,8 @@ typedef NS_ENUM(NSInteger, UICollectionUpdateAction) {
 
 NS_CLASS_AVAILABLE_IOS(6_0) @interface UICollectionViewUpdateItem : NSObject
 
-@property (nonatomic, readonly) NSIndexPath *indexPathBeforeUpdate; // nil for UICollectionUpdateActionInsert
-@property (nonatomic, readonly) NSIndexPath *indexPathAfterUpdate; // nil for UICollectionUpdateActionDelete
+@property (nonatomic, readonly, nullable) NSIndexPath *indexPathBeforeUpdate; // nil for UICollectionUpdateActionInsert
+@property (nonatomic, readonly, nullable) NSIndexPath *indexPathAfterUpdate; // nil for UICollectionUpdateActionDelete
 @property (nonatomic, readonly) UICollectionUpdateAction updateAction;
 
 @end

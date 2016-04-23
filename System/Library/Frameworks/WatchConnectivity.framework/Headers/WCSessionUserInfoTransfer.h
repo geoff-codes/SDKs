@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** Used to track a user info dictionary being transferred.
  */
-NS_CLASS_AVAILABLE_IOS(9_0)
+NS_CLASS_AVAILABLE_IOS(9.0)
 @interface WCSessionUserInfoTransfer : NSObject <NSSecureCoding>
 @property (nonatomic, readonly, getter=isCurrentComplicationInfo) BOOL currentComplicationInfo __WATCHOS_UNAVAILABLE;
 @property (nonatomic, readonly, copy) NSDictionary<NSString *, id> *userInfo;

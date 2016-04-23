@@ -2,7 +2,7 @@
 //  UISearchController.h
 //  UIKit
 //
-//  Copyright (c) 2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2014-2015 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -33,11 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_CLASS_AVAILABLE_IOS(8_0) @interface UISearchController : UIViewController <UIViewControllerTransitioningDelegate, UIViewControllerAnimatedTransitioning>
 
-#ifndef SDK_HIDE_TIDE
 // Pass nil if you wish to display search results in the same view that you are searching. This is not supported on tvOS; please provide a results controller on tvOS.
-#else
-// Pass nil if you wish to display search results in the same view that you are searching.
-#endif //SDK_HIDE_TIDE
 - (instancetype)initWithSearchResultsController:(nullable UIViewController *)searchResultsController;
 
 // The object responsible for updating the content of the searchResultsController.

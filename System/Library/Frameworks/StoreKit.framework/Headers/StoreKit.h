@@ -5,6 +5,7 @@
 //  Copyright 2009 Apple, Inc. All rights reserved.
 //
 
+#import <StoreKit/SKCloudServiceController.h>
 #import <StoreKit/SKDownload.h>
 #import <StoreKit/SKError.h>
 #import <StoreKit/SKPayment.h>

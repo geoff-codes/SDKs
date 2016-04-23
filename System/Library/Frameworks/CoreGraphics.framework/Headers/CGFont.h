@@ -301,7 +301,7 @@ CG_EXTERN const CFStringRef  kCGFontVariationAxisDefaultValue
 
 /* Obsolete; don't use these. */
 
-typedef CF_ENUM (int32_t, CGGlypDeprecatedEnum) {
+typedef CF_ENUM (int32_t, CGGlyphDeprecatedEnum) {
   CGGlyphMin __CG_DEPRECATED_ENUMERATOR,
   CGGlyphMax __CG_DEPRECATED_ENUMERATOR
 };

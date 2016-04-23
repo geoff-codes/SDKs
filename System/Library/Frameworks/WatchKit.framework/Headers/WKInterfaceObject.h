@@ -13,6 +13,7 @@
 #import <UIKit/UIAccessibility.h>
 #endif
 #import <WatchKit/WKDefines.h>
+#import <WatchKit/WKInterfaceDevice.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -37,6 +38,7 @@ WK_CLASS_AVAILABLE_IOS(8_2)
 
 - (void)setHidden:(BOOL)hidden;
 - (void)setAlpha:(CGFloat)alpha;
+- (void)setSemanticContentAttribute:(WKInterfaceSemanticContentAttribute)semanticContentAttribute WK_AVAILABLE_WATCHOS_ONLY(2.1);
 
 - (void)setHorizontalAlignment:(WKInterfaceObjectHorizontalAlignment)horizontalAlignment WK_AVAILABLE_WATCHOS_ONLY(2.0);
 - (void)setVerticalAlignment:(WKInterfaceObjectVerticalAlignment)verticalAlignment WK_AVAILABLE_WATCHOS_ONLY(2.0);

@@ -28,6 +28,7 @@
 #import <WatchKit/WKAudioFileAsset.h>
 #import <WatchKit/WKAudioFilePlayer.h>
 #import <WatchKit/WKAudioFilePlayerItem.h>
+#import <WatchKit/WKInterfaceActivityRing.h>
 #import <WatchKit/WKInterfaceMovie.h>
 #import <WatchKit/WKInterfacePicker.h>
 #import <WatchKit/WKAccessibility.h>

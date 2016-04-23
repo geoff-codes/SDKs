@@ -489,7 +489,7 @@ extern OSStatus
 AudioHardwareServiceGetPropertyDataSize(    AudioObjectID                       inObjectID,
                                             const AudioObjectPropertyAddress*   inAddress,
                                             UInt32                              inQualifierDataSize,
-                                            const void*                         inQualifierData,
+                                            const void* __nullable              inQualifierData,
                                             UInt32*                             outDataSize)        
                                                             __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_11, __IPHONE_NA, __IPHONE_NA);
 
@@ -521,7 +521,7 @@ extern OSStatus
 AudioHardwareServiceGetPropertyData(    AudioObjectID                       inObjectID,
                                         const AudioObjectPropertyAddress*   inAddress,
                                         UInt32                              inQualifierDataSize,
-                                        const void*                         inQualifierData,
+                                        const void* __nullable              inQualifierData,
                                         UInt32*                             ioDataSize,
                                         void*                               outData)                
                                                         __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_11, __IPHONE_NA, __IPHONE_NA);
@@ -555,7 +555,7 @@ extern OSStatus
 AudioHardwareServiceSetPropertyData(    AudioObjectID                       inObjectID,
                                         const AudioObjectPropertyAddress*   inAddress,
                                         UInt32                              inQualifierDataSize,
-                                        const void*                         inQualifierData,
+                                        const void* __nullable              inQualifierData,
                                         UInt32                              inDataSize,
                                         const void*                         inData)                 
                                                         __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_10_5,__MAC_10_11, __IPHONE_NA, __IPHONE_NA);

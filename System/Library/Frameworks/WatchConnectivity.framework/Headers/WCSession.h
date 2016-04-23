@@ -12,6 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 @class WCSessionFile, WCSessionFileTransfer, WCSessionUserInfoTransfer;
 @protocol WCSessionDelegate;
 
+typedef NS_ENUM(NSInteger, WCSessionActivationState) {
+	WCSessionActivationStateNotActivated  = 0,
+	WCSessionActivationStateInactive      = 1,
+	WCSessionActivationStateActivated     = 2,
+} __IOS_AVAILABLE(9.3) __WATCHOS_AVAILABLE(2.2);
 
 /** -------------------------------- WCSession ----------------------------------
  *  The default session is used to communicate between two counterpart apps
@@ -22,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  activate. This will allow the system to populate the state properties and
  *  deliver any outstanding background transfers.
  */
-NS_CLASS_AVAILABLE_IOS(9_0)
+NS_CLASS_AVAILABLE_IOS(9.0)
 @interface WCSession : NSObject
 
 /** Check if session is supported on this iOS device. Session is always available on WatchOS */
@@ -37,9 +42,11 @@ NS_CLASS_AVAILABLE_IOS(9_0)
 /** A delegate must exist before the session will allow sends. */
 @property (nonatomic, weak, nullable) id <WCSessionDelegate> delegate;
 
-/** The default session must be activated on startup before the session will begin receiving delegate callbacks. Calling activate without a delegate set is undefined. */
+/** The default session must be activated on startup before the session's properties contain correct values and will begin receiving delegate callbacks. Calling activate without a delegate set is undefined. If the WCSessionDelegate session:activationDidCompleteWithState:error: is implemented this method becomes an asynchronous call. */
 - (void)activateSession;
 
+/** The state of the current session */
+@property (nonatomic, readonly) WCSessionActivationState activationState __IOS_AVAILABLE(9.3) __WATCHOS_AVAILABLE(2.2);
 
 /** ------------------------- iOS App State For Watch ---------------------------
  *  State information that applies to Watch and is only available to the iOS app.
@@ -56,7 +63,7 @@ NS_CLASS_AVAILABLE_IOS(9_0)
 /** Check if the user has the Watch app's complication enabled */
 @property (nonatomic, readonly, getter=isComplicationEnabled) BOOL complicationEnabled __WATCHOS_UNAVAILABLE;
 
-/** Use this directory to persist any data specific to the Watch. This directory will be deleted upon next launch if the watch app is uninstalled. If the watch app is not installed value will be nil. */
+/** Use this directory to persist any data specific to the selected Watch. The location of the URL will change when the selected Watch changes. This directory will be deleted upon next launch if the watch app is uninstalled for the selected Watch, or that Watch is unpaired. If the watch app is not installed for the selected Watch the value will be nil. */
 @property (nonatomic, readonly, nullable) NSURL *watchDirectoryURL __WATCHOS_UNAVAILABLE;
 
 
@@ -70,7 +77,7 @@ NS_CLASS_AVAILABLE_IOS(9_0)
 @property (nonatomic, readonly, getter=isReachable) BOOL reachable;
 
 /** Reachability in the Watch app requires the paired iOS device to have been unlocked at least once after reboot. This property can be used to determine if the iOS device needs to be unlocked. If the reachable property is set to NO it may be because the iOS device has rebooted and needs to be unlocked. If this is the case, the Watch can show a prompt to the user suggesting they unlock their paired iOS device. */
-@property (nonatomic, readonly) BOOL iOSDeviceNeedsUnlockAfterRebootForReachability __IOS_UNAVAILABLE __WATCHOS_AVAILABLE(2_0);
+@property (nonatomic, readonly) BOOL iOSDeviceNeedsUnlockAfterRebootForReachability __IOS_UNAVAILABLE __WATCHOS_AVAILABLE(2.0);
 
 /** Clients can use this method to send messages to the counterpart app. Clients wishing to receive a reply to a particular message should pass in a replyHandler block. If the message cannot be sent or if the reply could not be received, the errorHandler block will be invoked with an error. If both a replyHandler and an errorHandler are specified, then exactly one of them will be invoked. Messages can only be sent while the sending app is running. If the sending app exits before the message is dispatched the send will fail. If the counterpart app is not running the counterpart app will be launched upon receiving the message (iOS counterpart app only). The message dictionary can only accept the property list types. */
 - (void)sendMessage:(NSDictionary<NSString *, id> *)message replyHandler:(nullable void (^)(NSDictionary<NSString *, id> *replyMessage))replyHandler errorHandler:(nullable void (^)(NSError *error))errorHandler;
@@ -121,11 +128,21 @@ NS_CLASS_AVAILABLE_IOS(9_0)
  *  to dispatch to another queue if neccessary.
  */
 @protocol WCSessionDelegate <NSObject>
+
 @optional
+
+/** Called when the session has completed activation. If session state is WCSessionActivationStateNotActivated there will be an error with more details. */
+- (void)session:(WCSession *)session activationDidCompleteWithState:(WCSessionActivationState)activationState error:(nullable NSError *)error __IOS_AVAILABLE(9.3) __WATCHOS_AVAILABLE(2.2);
 
 /** ------------------------- iOS App State For Watch ------------------------ */
 
-/** Called when any of the Watch state properties change */
+/** Called when the session can no longer be used to modify or add any new transfers and, all interactive messages will be cancelled, but delegate callbacks for background transfers can still occur. This will happen when the selected watch is being changed. */
+- (void)sessionDidBecomeInactive:(WCSession *)session __IOS_AVAILABLE(9.3) __WATCHOS_UNAVAILABLE;
+
+/** Called when all delegate callbacks for the previously selected watch has occurred. The session can be re-activated for the now selected watch using activateSession. */
+- (void)sessionDidDeactivate:(WCSession *)session __IOS_AVAILABLE(9.3) __WATCHOS_UNAVAILABLE;
+
+/** Called when any of the Watch state properties change. */
 - (void)sessionWatchStateDidChange:(WCSession *)session __WATCHOS_UNAVAILABLE;
 
 /** ------------------------- Interactive Messaging ------------------------- */

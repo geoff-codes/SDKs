@@ -2,10 +2,9 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /usr/lib/libAccessibility.dylib
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
-    symbols:         [ _AXCPCopySharedResourcesPreferencesDomainForDomain, 
+    symbols:         [ _AXBeginListeningToUserDefaultsChanges, _AXCPCopySharedResourcesPreferencesDomainForDomain, 
                        _AXLocalizedStringForLocale, _AXRetrieveSupportedAccessibilityLanguages, 
                        _AXSAccessibilityUtilitiesPath, __AXDarkenSystemColors, 
                        __AXSAXInspectorEnabled, __AXSAXInspectorSetEnabled, 
@@ -23,9 +22,10 @@ exports:
                        __AXSAutomationLocalizedStringLookupInfoSetEnabled, 
                        __AXSAutomationPreferredLocalization, __AXSAutomationSetFauxCollectionViewCellsEnabled, 
                        __AXSAutomationSetHitpointWarpingEnabled, __AXSButtonShapesEnabled, 
-                       __AXSCanDisableApplicationAccessibility, __AXSClosedCaptionsEnabled, 
-                       __AXSClosedCaptionsSetEnabled, __AXSCrashOnValidationErrors, 
-                       __AXSDefaultRouteForCall, __AXSDisableDomainSynching, 
+                       __AXSCachedValueForBrightnessFilter, __AXSCanDisableApplicationAccessibility, 
+                       __AXSClosedCaptionsEnabled, __AXSClosedCaptionsSetEnabled, 
+                       __AXSCrashOnValidationErrors, __AXSDefaultRouteForCall, 
+                       __AXSDisableDomainSynching, __AXSDisableScreenFilters, 
                        __AXSEarpieceNoiseCancellationEnabled, __AXSEarpieceNoiseCancellationSetEnabled, 
                        __AXSEnhanceBackgroundContrastEnabled, __AXSEnhanceTextLegibilityEnabled, 
                        __AXSEnhanceTextTrackingEnabled, __AXSForcePreferenceUpdate, 
@@ -52,8 +52,10 @@ exports:
                        __AXSQuickSpeakSetPreferredLocaleForLanguage, __AXSReduceMotionEnabled, 
                        __AXSReduceWhitePointEnabled, __AXSReportScreenshots, 
                        __AXSReportValidationErrors, __AXSScreenContrast, 
-                       __AXSSetAccessibilityEnabled, __AXSSetAutomationEnabled, 
-                       __AXSSetButtonShapesEnabled, __AXSSetCrashOnValidationErrors, 
+                       __AXSScreenFilterApplied, __AXSScreenFilterSetShowInitialAlert, 
+                       __AXSScreenFilterShowInitialAlert, __AXSSetAccessibilityEnabled, 
+                       __AXSSetAutomationEnabled, __AXSSetButtonShapesEnabled, 
+                       __AXSSetCacheForBrightnessFilter, __AXSSetCrashOnValidationErrors, 
                        __AXSSetDarkenSystemColors, __AXSSetDefaultRouteForCall, 
                        __AXSSetEnhanceBackgroundContrastEnabled, __AXSSetEnhanceTextLegibilityEnabled, 
                        __AXSSetEnhanceTextTrackingEnabled, __AXSSetForceTouchEnabled, 
@@ -117,12 +119,15 @@ exports:
                        _kAXSAutomationHitpointWarpingEnabledPreference, 
                        _kAXSAutomationLocalizedStringLookupInfoEnabledPreference, 
                        _kAXSAutomationPreferredLanguagePreference, _kAXSButtonShapesEnabledNotification, 
-                       _kAXSButtonShapesEnabledPreference, _kAXSClosedCaptioningChangedNotification, 
-                       _kAXSClosedCaptioningEnabledByiTunesPreference, 
+                       _kAXSButtonShapesEnabledPreference, _kAXSCachedBrightnessFiltersPreference, 
+                       _kAXSCachedBrightnessFiltersPreferenceChangedNotification, 
+                       _kAXSClosedCaptioningChangedNotification, _kAXSClosedCaptioningEnabledByiTunesPreference, 
                        _kAXSCrashOnValidationErrorsNotification, _kAXSCrashOnValidationErrorsPreference, 
                        _kAXSDarkenSystemColorsEnabledNotification, _kAXSDarkenSystemColorsEnabledPreference, 
                        _kAXSDefaultRouteChangedNotification, _kAXSDefaultRouteForCallPreference, 
-                       _kAXSEarpieceNoiseCancellationEnabledNotification, 
+                       _kAXSDisableBrightnessFilterAlertMessageKey, _kAXSDisableBrightnessFilterAlertStringsTableKey, 
+                       _kAXSDisableBrightnessFilterAlertTitleKey, _kAXSDisplayFilterShowInitialAlertPreference, 
+                       _kAXSDisplayShowInitialAlertNotification, _kAXSEarpieceNoiseCancellationEnabledNotification, 
                        _kAXSEarpieceNoiseCancellationPreference, _kAXSEnhanceBackgroundContrastChangedNotification, 
                        _kAXSEnhanceBackgroundContrastPreference, _kAXSEnhanceTextLegibilityChangedNotification, 
                        _kAXSEnhanceTextLegibilityPreference, _kAXSEnhanceTextTrackingPreference, 
@@ -205,4 +210,11 @@ exports:
                        _kAXSZoomTouchToSpeakEnabledPreference, _kAXSZoomTouchToggledByPreferenceSwitchPreference, 
                        _kAXSZoomTouchToggledByVoiceOverPreference, _kAXSiTunesAccessibilityStatusChangedNotification, 
                        _kAXVoiceAssetsInstalledNotification ]
+    objc-classes:    [ _AXDefaultsObserverExecuteBlockNotificationAction, 
+                       _AXDefaultsObserverPostDarwinNotificationAction, 
+                       _AXSupportDefaultsObserver ]
+    objc-ivars:      [ _AXSupportDefaultsObserver._actionLastNotifications, 
+                       _AXSupportDefaultsObserver._actions, _AXSupportDefaultsObserver._axDomain, 
+                       _AXSupportDefaultsObserver._lastNotificationsQueue, 
+                       _AXSupportDefaultsObserver._observedPrefs ]
 ...

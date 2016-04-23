@@ -82,6 +82,7 @@ __TVOS_PROHIBITED
 // Call -play to begin playback after setting an item queue source. Setting a query will implicitly use MPMediaGroupingTitle.
 - (void)setQueueWithQuery:(MPMediaQuery *)query;
 - (void)setQueueWithItemCollection:(MPMediaItemCollection *)itemCollection;
+- (void)setQueueWithStoreIDs:(NSArray<NSString *> *)storeIDs NS_AVAILABLE_IOS(9_3);
 
 // Skips to the next item in the queue. If already at the last item, this will end playback.
 - (void)skipToNextItem;

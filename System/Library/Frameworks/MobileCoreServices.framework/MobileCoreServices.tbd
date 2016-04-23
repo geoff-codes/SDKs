@@ -2,8 +2,7 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/MobileCoreServices.framework/MobileCoreServices
-current-version: 727.5.16
-objc-constraint: retain_release
+current-version: 727.8.38
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _CSIdentityAuthorityCopyLocalizedName, _CSIdentityAuthorityGetTypeID, 
@@ -74,8 +73,8 @@ exports:
                        __CSIdentityAuthorityCopyIdentityWithName, __CSIdentityUpdateLinkedIdentityProvisioning, 
                        __CSIsComputerToComputerEnabled, __CSIsWirelessAccessPointEnabled, 
                        __CSIsWirelessP2PEnabled, __CSRemoveAppleIDAccount, 
-                       __LSAdvertisementBytesKind, __LSCompareHashedBytesFromAdvertisingStrings, 
-                       __LSCopyActivityTypesClaimedHashedAdvertisingStrings, 
+                       __LSAdvertisementBytesKind, __LSAppRemovalServiceXPCInterface, 
+                       __LSCompareHashedBytesFromAdvertisingStrings, __LSCopyActivityTypesClaimedHashedAdvertisingStrings, 
                        __LSCopyAdvertisementStringForTeamIdentifierAndActivityType, 
                        __LSCopyClaimedActivityIdentifiersAndDomains, __LSCopyPackedDataForObject, 
                        __LSCopyUnpackedObjectFromData, __LSCopyUserActivityDomainNamesForBundleID, 
@@ -197,5 +196,5 @@ exports:
                        _LSResumableActivitiesControlManager, _LSUserActivity, 
                        _LSUserActivityDebuggingManager, _LSUserActivityInfo, 
                        _LSUserActivityManager, _LSVPNPluginProxy, _NSUserActivity, 
-                       __LSAppLinkPlugIn ]
+                       __LSAppLinkPattern, __LSAppLinkPlugIn, __LSDefaults ]
 ...

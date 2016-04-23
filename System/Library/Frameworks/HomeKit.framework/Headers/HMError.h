@@ -100,6 +100,7 @@ typedef NS_ENUM(NSInteger, HMErrorCode) {
     HMErrorCodeCannotRemoveBuiltinActionSet            NS_ENUM_AVAILABLE_IOS(9_0) = 83,
     HMErrorCodeLocationForHomeDisabled                 NS_ENUM_AVAILABLE_IOS(9_0) = 84,
     HMErrorCodeNotAuthorizedForLocationServices        NS_ENUM_AVAILABLE_IOS(9_0) = 85,
+    HMErrorCodeReferToUserManual                       NS_ENUM_AVAILABLE_IOS(9_3) = 86,
 } NS_AVAILABLE_IOS(8_0) __WATCHOS_AVAILABLE(__WATCHOS_2_0);
 
 NS_ASSUME_NONNULL_END

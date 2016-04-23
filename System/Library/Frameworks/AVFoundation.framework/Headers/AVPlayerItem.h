@@ -687,6 +687,36 @@ AV_INIT_UNAVAILABLE
 
 @end
 
+@class AVPlayerItemMediaDataCollector;
+
+@interface AVPlayerItem (AVPlayerItemMediaDataCollectors)
+
+/*!
+ @method		addMediaDataCollector:
+ @abstract		Adds the specified instance of AVPlayerItemMediaDataCollector to the receiver's collection of mediaDataCollectors.
+ @discussion
+	This method may incur additional I/O to collect the requested media data asynchronously.
+ @param			collector
+				An instance of AVPlayerItemMediaDataCollector
+*/
+- (void)addMediaDataCollector:(AVPlayerItemMediaDataCollector *)collector NS_AVAILABLE(10_11_3, 9_3);
+
+/*!
+ @method		removeMediaDataCollector:
+ @abstract		Removes the specified instance of AVPlayerItemMediaDataCollector from the receiver's collection of mediaDataCollectors.
+ @param			collector
+				An instance of AVPlayerItemMediaDataCollector
+*/
+- (void)removeMediaDataCollector:(AVPlayerItemMediaDataCollector *)collector NS_AVAILABLE(10_11_3, 9_3);
+
+/*!
+ @property		mediaDataCollectors
+ @abstract		The collection of associated mediaDataCollectors.
+*/
+@property (nonatomic, readonly) NSArray<AVPlayerItemMediaDataCollector *> *mediaDataCollectors NS_AVAILABLE(10_11_3, 9_3);;
+
+@end
+
 @class AVPlayerItemAccessLogEvent;
 
 /*!

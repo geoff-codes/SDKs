@@ -13,13 +13,15 @@ NS_ASSUME_NONNULL_BEGIN
 SK_EXTERN NSString * const SKErrorDomain NS_AVAILABLE_IOS(3_0);
 
 // error codes for the SKErrorDomain
-enum {
+typedef NS_ENUM(NSInteger,SKErrorCode) {
     SKErrorUnknown,
-    SKErrorClientInvalid,               // client is not allowed to issue the request, etc.
-    SKErrorPaymentCancelled,            // user cancelled the request, etc.
-    SKErrorPaymentInvalid,              // purchase identifier was invalid, etc.
-    SKErrorPaymentNotAllowed,           // this device is not allowed to make the payment
-    SKErrorStoreProductNotAvailable,    // Product is not available in the current storefront
+    SKErrorClientInvalid,                                                     // client is not allowed to issue the request, etc.
+    SKErrorPaymentCancelled,                                                  // user cancelled the request, etc.
+    SKErrorPaymentInvalid,                                                    // purchase identifier was invalid, etc.
+    SKErrorPaymentNotAllowed,                                                 // this device is not allowed to make the payment
+    SKErrorStoreProductNotAvailable,                                          // Product is not available in the current storefront
+    SKErrorCloudServicePermissionDenied NS_ENUM_AVAILABLE_IOS(9_3),           // user has not allowed access to cloud service information
+    SKErrorCloudServiceNetworkConnectionFailed NS_ENUM_AVAILABLE_IOS(9_3),    // the device could not connect to the nework
 };
 
 NS_ASSUME_NONNULL_END

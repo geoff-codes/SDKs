@@ -2,7 +2,7 @@
 //  UITableView.h
 //  UIKit
 //
-//  Copyright (c) 2005-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -70,14 +70,13 @@ NS_CLASS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED @interface UITableViewRowAction : 
 
 @end
 
-#ifndef SDK_HIDE_TIDE
 NS_CLASS_AVAILABLE_IOS(9_0) @interface UITableViewFocusUpdateContext : UIFocusUpdateContext
 
 @property (nonatomic, strong, readonly, nullable) NSIndexPath *previouslyFocusedIndexPath;
 @property (nonatomic, strong, readonly, nullable) NSIndexPath *nextFocusedIndexPath;
 
 @end
-#endif
+
 //_______________________________________________________________________________________________________________
 // this represents the display and behaviour of the cells.
 
@@ -160,14 +159,13 @@ NS_CLASS_AVAILABLE_IOS(9_0) @interface UITableViewFocusUpdateContext : UIFocusUp
 - (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender NS_AVAILABLE_IOS(5_0);
 - (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender NS_AVAILABLE_IOS(5_0);
 
-#ifndef SDK_HIDE_TIDE
 // Focus
 
 - (BOOL)tableView:(UITableView *)tableView canFocusRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0);
 - (BOOL)tableView:(UITableView *)tableView shouldUpdateFocusInContext:(UITableViewFocusUpdateContext *)context NS_AVAILABLE_IOS(9_0);
 - (void)tableView:(UITableView *)tableView didUpdateFocusInContext:(UITableViewFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator NS_AVAILABLE_IOS(9_0);
 - (nullable NSIndexPath *)indexPathForPreferredFocusedViewInTableView:(UITableView *)tableView NS_AVAILABLE_IOS(9_0);
-#endif
+
 @end
 
 UIKIT_EXTERN NSString *const UITableViewSelectionDidChangeNotification;
@@ -285,11 +283,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding>
 - (void)registerNib:(nullable UINib *)nib forHeaderFooterViewReuseIdentifier:(NSString *)identifier NS_AVAILABLE_IOS(6_0);
 - (void)registerClass:(nullable Class)aClass forHeaderFooterViewReuseIdentifier:(NSString *)identifier NS_AVAILABLE_IOS(6_0);
 
-#ifndef SDK_HIDE_TIDE
 // Focus
 
 @property (nonatomic) BOOL remembersLastFocusedIndexPath NS_AVAILABLE_IOS(9_0); // defaults to NO. If YES, when focusing on a table view the last focused index path is focused automatically. If the table view has never been focused, then the preferred focused index path is used.
-#endif
 
 @end
 

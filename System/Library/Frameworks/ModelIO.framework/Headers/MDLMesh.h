@@ -248,7 +248,7 @@ MDL_EXPORT
  @param inwardNormals If true, generated normals will face inwards. Useful for 
         generating a skydome.
  @param geometryType Must be  Must be MDLGeometryTypeTriangles
- @param hemisphere If true, only top half of elipsoid will be generated. The 
+ @param hemisphere If true, only top half of ellipsoid will be generated. The
         actual nubmer of vertical slices will be half of 'vertical' segments
  @param allocator A mesh buffer allocator used to allocate memory to back buffers 
         for the returned mesh.  If nil, a default allocator will be used
@@ -307,15 +307,15 @@ MDL_EXPORT
 
 /*!
  @method newEllipticalConeWithHeight:radii:radialSegments:verticalSegments:inwardNormals:allocator:
- @abstract Factory method for generating a mesh with an elipticalCone shape.
+ @abstract Factory method for generating a mesh with an ellipticalCone shape.
  @return MDLMesh cone with desired attributes
- @param height Height of elipticalCone from point to base.
+ @param height Height of ellipticalCone from point to base.
  @param radii Radii of base in X and Z directions.  Values of vector should be 
         equal to create a true cone.
  @param radialSegments Number of pie slices :)
  @param verticalSegments Number of slices along Y axis
  @param geometryType Must be MDLGeometryTypeTriangles
- @param inwardNormals Normals point toward center of elipticalCone
+ @param inwardNormals Normals point toward center of ellipticalCone
  @param allocator A mesh buffer allocator used to allocate memory to back buffers 
         for the returned mesh.  If nil, a default allocator will be used
  @discussion Point of cone at (0, 0, 0) while base of cone is -Y. 
@@ -344,7 +344,7 @@ MDL_EXPORT
  @method newPlaneWithDimensions:segments:geometryType:allocator:
  @abstract Factory method for generating a mesh with an planar shape
  @return MDLMesh plane with desired attributes
- @param dimensions Dimensions of  of elipticalCone in X and Z directions.
+ @param dimensions Dimensions of the plane in X and Z directions.
  @param segments Number of segements in the X and Y dimensions
  @param geometryType Can be MDLGeometryTypeLines, MDLGeometryTypeQuads, or MDLGeometryTypeTriangles
  @param allocator A mesh buffer allocator used to allocate memory to back buffers 

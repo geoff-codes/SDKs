@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/CoreBluetooth.framework/CoreBluetooth
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _CBATTErrorDomain, _CBAdvertisementDataAppleBeaconKey, 
@@ -29,8 +28,9 @@ exports:
                        _CBCentralManagerScanOptionZonesKey, _CBConnectPeripheralOptionNotifyOnConnectionKey, 
                        _CBConnectPeripheralOptionNotifyOnDisconnectionKey, 
                        _CBConnectPeripheralOptionNotifyOnNotificationKey, 
-                       _CBErrorDomain, _CBInternalErrorDomain, _CBPairingAgentPairingDataOOBTKKey, 
-                       _CBPairingAgentPairingDataPasskeyKey, _CBPeripheralManagerOptionRestoreIdentifierKey, 
+                       _CBErrorDomain, _CBInternalErrorDomain, _CBOriginalPeerIdentifierErrorKey, 
+                       _CBPairingAgentPairingDataOOBTKKey, _CBPairingAgentPairingDataPasskeyKey, 
+                       _CBPeripheralManagerOptionRestoreIdentifierKey, 
                        _CBPeripheralManagerOptionShowPowerAlertKey, _CBPeripheralManagerRestoredStateAdvertisementDataKey, 
                        _CBPeripheralManagerRestoredStateServicesKey, _CBUUIDAMSEntityAttributeCharacteristicString, 
                        _CBUUIDAMSEntityUpdateCharacteristicString, _CBUUIDAMSRemoteCommandCharacteristicString, 

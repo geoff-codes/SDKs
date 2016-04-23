@@ -58,6 +58,7 @@
 #import <AVFoundation/AVOutputSettingsAssistant.h>
 #import <AVFoundation/AVPlayer.h>
 #import <AVFoundation/AVPlayerItem.h>
+#import <AVFoundation/AVPlayerItemMediaDataCollector.h>
 #import <AVFoundation/AVPlayerItemOutput.h>
 #if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
 #import <AVFoundation/AVPlayerItemProtectedContentAdditions.h>

@@ -59,11 +59,11 @@ HK_CLASS_AVAILABLE_IOS(8_0)
 //
 // [Volume]
 // fl_oz_us  (US customary fluid ounces)= 0.0295735295625 L
-// fl_oz_imp (Imperial fluid ounces)    = 0.028413075 L
+// fl_oz_imp (Imperial fluid ounces)    = 0.0284130625 L
 // pt_us     (US customary pint)        = 0.473176473 L
-// pt_imp    (Imperial pint)            = 0.5682815 L
+// pt_imp    (Imperial pint)            = 0.56826125 L
 // cup_us    (US customary cup)         = 0.2365882365 L
-// cup_imp   (Imperial cup)             = 0.28413075 L
+// cup_imp   (Imperial cup)             = 0.284130625 L
 
 // [Time]
 // min  (minutes) = 60 s

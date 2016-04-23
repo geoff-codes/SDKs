@@ -410,6 +410,8 @@ CF_EXPORT double kCFCoreFoundationVersionNumber;
 #define kCFCoreFoundationVersionNumber_iOS_8_0 1140.1
 #define kCFCoreFoundationVersionNumber_iOS_8_1 1141.14
 #define kCFCoreFoundationVersionNumber_iOS_8_2 1142.16
+#define kCFCoreFoundationVersionNumber_iOS_8_3 1144.17
+#define kCFCoreFoundationVersionNumber_iOS_8_4 1145.15
 #endif
 
 #if __LLP64__

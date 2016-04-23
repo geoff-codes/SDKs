@@ -2,8 +2,7 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/CoreLocation.framework/CoreLocation
-current-version: 1861.0.15
-objc-constraint: retain_release
+current-version: 1861.3.25
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _CLAppResetChangedNotification, _CLAppStatusChangedNotification, 
@@ -22,13 +21,13 @@ exports:
                        _CLClientLog, _CLClientLogDump, _CLClientMarkAsHavingReceivedLocation, 
                        _CLClientRequestAuthorization, _CLClientRetrieveAuthorizationStatus, 
                        _CLClientRetrieveData, _CLClientRetrieveLocation, 
-                       _CLClientRetrieveLocationWithDynamicAccuracyReduction, 
+                       _CLClientRetrieveLocationWithDynamicAccuracyReductionAndAlteredAccessoryLocations, 
                        _CLClientSetAllowsMapCorrection, _CLClientSetCallback, 
                        _CLClientSetCallbackInternal, _CLClientSetProductionTest, 
                        _CLClientSetProxyForRemoteClient, _CLClientSetShowLocationPrompt, 
                        _CLClientShowHeadingCalibration, _CLClientShutdownDaemon, 
                        _CLClientStartHeadingUpdates, _CLClientStartLocationUpdates, 
-                       _CLClientStartLocationUpdatesAll, _CLClientStartLocationUpdatesWithDynamicAccuracyReduction, 
+                       _CLClientStartLocationUpdatesAll, _CLClientStartLocationUpdatesWithDynamicAccuracyReductionAndAlteredAccessoryLocations, 
                        _CLClientStartVehicleHeadingUpdates, _CLClientStartVehicleSpeedUpdates, 
                        _CLClientStopHeadingUpdates, _CLClientStopLocationUpdates, 
                        _CLClientStopVehicleHeadingUpdates, _CLClientStopVehicleSpeedUpdates, 

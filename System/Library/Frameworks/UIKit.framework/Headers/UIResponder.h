@@ -2,7 +2,7 @@
 //  UIResponder.h
 //  UIKit
 //
-//  Copyright (c) 2005-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,11 +11,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#ifndef SDK_HIDE_TIDE
 @class UIPress;
 @class UIPressesEvent;
 
-#endif
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UIResponder : NSObject
 
 - (nullable UIResponder*)nextResponder;
@@ -39,7 +37,6 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIResponder : NSObject
 - (void)touchesCancelled:(nullable NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event;
 - (void)touchesEstimatedPropertiesUpdated:(NSSet * _Nonnull)touches NS_AVAILABLE_IOS(9_1);
 
-#ifndef SDK_HIDE_TIDE
 // Generally, all responders which do custom press handling should override all four of these methods.
 // Your responder will receive either pressesEnded:withEvent or pressesCancelled:withEvent: for each
 // press it is handling (those presses it received in pressesBegan:withEvent:).
@@ -52,7 +49,6 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIResponder : NSObject
 - (void)pressesEnded:(NSSet<UIPress *> *)presses withEvent:(nullable UIPressesEvent *)event NS_AVAILABLE_IOS(9_0);
 - (void)pressesCancelled:(NSSet<UIPress *> *)presses withEvent:(nullable UIPressesEvent *)event NS_AVAILABLE_IOS(9_0);
 
-#endif
 - (void)motionBegan:(UIEventSubtype)motion withEvent:(nullable UIEvent *)event NS_AVAILABLE_IOS(3_0);
 - (void)motionEnded:(UIEventSubtype)motion withEvent:(nullable UIEvent *)event NS_AVAILABLE_IOS(3_0);
 - (void)motionCancelled:(UIEventSubtype)motion withEvent:(nullable UIEvent *)event NS_AVAILABLE_IOS(3_0);

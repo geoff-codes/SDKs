@@ -6,8 +6,20 @@ exports:
   - archs:           [ armv7, armv7s ]
     weak-def-symbols: [ __ZTINSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE, 
                         __ZTINSt3__119basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE, 
+                        __ZTINSt3__120__shared_ptr_pointerIPN5eUICC13ValidatePerso8ResponseENS_14default_deleteIS3_EENS_9allocatorIS3_EEEE, 
+                        __ZTINSt3__120__shared_ptr_pointerIPN5eUICC16AuthPersoSession8ResponseENS_14default_deleteIS3_EENS_9allocatorIS3_EEEE, 
+                        __ZTINSt3__120__shared_ptr_pointerIPN5eUICC16InitPersoSession8ResponseENS_14default_deleteIS3_EENS_9allocatorIS3_EEEE, 
+                        __ZTINSt3__120__shared_ptr_pointerIPN5eUICC20FinalizePersoSession8ResponseENS_14default_deleteIS3_EENS_9allocatorIS3_EEEE, 
+                        __ZTSNSt3__114default_deleteIN5eUICC13ValidatePerso8ResponseEEE, 
+                        __ZTSNSt3__114default_deleteIN5eUICC16AuthPersoSession8ResponseEEE, 
+                        __ZTSNSt3__114default_deleteIN5eUICC16InitPersoSession8ResponseEEE, 
+                        __ZTSNSt3__114default_deleteIN5eUICC20FinalizePersoSession8ResponseEEE, 
                         __ZTSNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE, 
-                        __ZTSNSt3__119basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE ]
+                        __ZTSNSt3__119basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE, 
+                        __ZTSNSt3__120__shared_ptr_pointerIPN5eUICC13ValidatePerso8ResponseENS_14default_deleteIS3_EENS_9allocatorIS3_EEEE, 
+                        __ZTSNSt3__120__shared_ptr_pointerIPN5eUICC16AuthPersoSession8ResponseENS_14default_deleteIS3_EENS_9allocatorIS3_EEEE, 
+                        __ZTSNSt3__120__shared_ptr_pointerIPN5eUICC16InitPersoSession8ResponseENS_14default_deleteIS3_EENS_9allocatorIS3_EEEE, 
+                        __ZTSNSt3__120__shared_ptr_pointerIPN5eUICC20FinalizePersoSession8ResponseENS_14default_deleteIS3_EENS_9allocatorIS3_EEEE ]
   - archs:           [ arm64 ]
     symbols:         [ _lz4_decode_fast, _lz4_decode_safe ]
   - archs:           [ armv7, armv7s, arm64 ]
@@ -284,12 +296,20 @@ exports:
                        __ZN18ETLFirmwareVersion23createWithVersionStringERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE, 
                        __ZN18ETLFirmwareVersionC1Ev, __ZN18ETLFirmwareVersionC2Ev, 
                        __ZN18ETLFirmwareVersionD1Ev, __ZN18ETLFirmwareVersionD2Ev, 
-                       __ZNK18ETLFirmwareVersion11getAsStringEv, __ZNK18ETLFirmwareVersion11isNewerThanERKS_, 
-                       __ZNK18ETLFirmwareVersion6equalsERKS_, __ZTI18ETLFirmwareVersion, 
-                       __ZTS18ETLFirmwareVersion, __ZTV18ETLFirmwareVersion, 
-                       _crc16_table, _crc30_table, _crc32_table, _crc_16_calc, 
-                       _crc_16_l_calc, _crc_16_l_step, _crc_16_l_table, 
-                       _crc_16_step, _crc_30_calc, _crc_30_step, _crc_32_calc, 
-                       _gModeId, _kDefaultIMEIs, _kDefaultMEID, _kETLQfpromFuseDataLength, 
-                       _lz4_decode ]
+                       __ZN5eUICC10StreamAPDU7PerformERKNS0_7RequestE, 
+                       __ZN5eUICC10SwitchMode7PerformERKNS0_7RequestE, 
+                       __ZN5eUICC13DeleteProfile7PerformERKNS0_7RequestE, 
+                       __ZN5eUICC13InstallTicket7PerformERKNS0_7RequestE, 
+                       __ZN5eUICC13ValidatePerso7PerformERKNS0_7RequestE, 
+                       __ZN5eUICC16AuthPersoSession7PerformERKNS0_7RequestE, 
+                       __ZN5eUICC16InitPersoSession7PerformERKNS0_7RequestE, 
+                       __ZN5eUICC20FinalizePersoSession7PerformERKNS0_7RequestE, 
+                       __ZN5eUICC7GetData7PerformERKNS0_7RequestE, __ZNK18ETLFirmwareVersion11getAsStringEv, 
+                       __ZNK18ETLFirmwareVersion11isNewerThanERKS_, __ZNK18ETLFirmwareVersion6equalsERKS_, 
+                       __ZTI18ETLFirmwareVersion, __ZTS18ETLFirmwareVersion, 
+                       __ZTV18ETLFirmwareVersion, _crc16_table, _crc30_table, 
+                       _crc32_table, _crc_16_calc, _crc_16_l_calc, _crc_16_l_step, 
+                       _crc_16_l_table, _crc_16_step, _crc_30_calc, _crc_30_step, 
+                       _crc_32_calc, _gModeId, _kDefaultIMEIs, _kDefaultMEID, 
+                       _kETLQfpromFuseDataLength, _lz4_decode ]
 ...

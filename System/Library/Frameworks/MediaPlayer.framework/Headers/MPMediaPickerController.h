@@ -31,6 +31,8 @@ __TVOS_PROHIBITED
 
 @property (nonatomic) BOOL showsCloudItems NS_AVAILABLE_IOS(6_0); // default is YES
 
+@property (nonatomic) BOOL showsItemsWithProtectedAssets NS_AVAILABLE_IOS(9_2); // default is YES
+
 @property (nonatomic, copy, nullable) NSString *prompt; // displays a prompt for the user above the navigation bar buttons
 
 @end

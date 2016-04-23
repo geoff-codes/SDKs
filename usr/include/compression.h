@@ -54,7 +54,7 @@ extern "C" {
  
  - LZ4 is an extremely high-performance compressor.  The open source version
    is already one of the fastest compressors of which we are aware, and we
-   have optimzied it still further in our implementation.  The encoded format
+   have optimized it still further in our implementation.  The encoded format
    we produce and consume is compatible with the open source version, except
    that we add a very simple frame to the raw stream to allow some additional
    validation and functionality.
@@ -106,14 +106,14 @@ extern "C" {
 typedef enum {
 
     /* Commonly-available encoders */
-    COMPRESSION_LZ4     __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0) = 0x100,
-    COMPRESSION_ZLIB    __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0) = 0x205,
-    COMPRESSION_LZMA    __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0) = 0x306,
+    COMPRESSION_LZ4     = 0x100,       // available starting OS X 10.11, iOS 9.0
+    COMPRESSION_ZLIB    = 0x205,       // available starting OS X 10.11, iOS 9.0
+    COMPRESSION_LZMA    = 0x306,       // available starting OS X 10.11, iOS 9.0
 
-    COMPRESSION_LZ4_RAW __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0) = 0x101,
+    COMPRESSION_LZ4_RAW = 0x101,       // available starting OS X 10.11, iOS 9.0
 
     /* Apple-specific encoders */
-    COMPRESSION_LZFSE   __OSX_AVAILABLE_STARTING(__MAC_10_11, __IPHONE_9_0) = 0x801,
+    COMPRESSION_LZFSE    = 0x801,      // available starting OS X 10.11, iOS 9.0
 
 } compression_algorithm;
 

@@ -10,12 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class HKUnit;
-@class HKQuantityType;
+@class HKActivitySummaryType;
 @class HKCategoryType;
-@class HKWorkoutType;
 @class HKCharacteristicType;
 @class HKCorrelationType;
+@class HKQuantityType;
+@class HKUnit;
+@class HKWorkoutType;
 
 /*!
  @class         HKObjectType
@@ -38,6 +39,7 @@ HK_CLASS_AVAILABLE_IOS(8_0)
 + (nullable HKCharacteristicType *)characteristicTypeForIdentifier:(NSString *)identifier;
 + (nullable HKCorrelationType *)correlationTypeForIdentifier:(NSString *)identifier;
 + (HKWorkoutType *)workoutType;
++ (HKActivitySummaryType *)activitySummaryType NS_AVAILABLE_IOS(9_3);
 
 @end
 
@@ -109,6 +111,14 @@ HK_CLASS_AVAILABLE_IOS(8_0)
  */
 HK_CLASS_AVAILABLE_IOS(8_0)
 @interface HKWorkoutType : HKSampleType
+@end
+
+/*!
+ @class         HKActivitySummaryType
+ @abstract      Represents an HKActivitySummary
+ */
+HK_CLASS_AVAILABLE_IOS_WATCHOS(9_3, 2_2)
+@interface HKActivitySummaryType : HKObjectType
 @end
 
 NS_ASSUME_NONNULL_END

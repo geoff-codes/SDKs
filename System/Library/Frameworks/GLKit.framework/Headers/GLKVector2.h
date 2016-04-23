@@ -312,7 +312,7 @@ GLK_INLINE GLKVector2 GLKVector2Minimum(GLKVector2 vectorLeft, GLKVector2 vector
    
 GLK_INLINE bool GLKVector2AllEqualToVector2(GLKVector2 vectorLeft, GLKVector2 vectorRight)
 {
-#if defined(__ARM_NEON_)
+#if defined(__ARM_NEON__)
     float32x2_t v1 = *(float32x2_t *)&vectorLeft;
     float32x2_t v2 = *(float32x2_t *)&vectorRight;
     uint32x2_t vCmp = vceq_f32(v1, v2);
@@ -330,7 +330,7 @@ GLK_INLINE bool GLKVector2AllEqualToVector2(GLKVector2 vectorLeft, GLKVector2 ve
 
 GLK_INLINE bool GLKVector2AllEqualToScalar(GLKVector2 vector, float value)
 {
-#if defined(__ARM_NEON_)
+#if defined(__ARM_NEON__)
     float32x2_t v1 = *(float32x2_t *)&vector;
     float32x2_t v2 = vdup_n_f32(value);
     uint32x2_t vCmp = vceq_f32(v1, v2);
@@ -348,7 +348,7 @@ GLK_INLINE bool GLKVector2AllEqualToScalar(GLKVector2 vector, float value)
 
 GLK_INLINE bool GLKVector2AllGreaterThanVector2(GLKVector2 vectorLeft, GLKVector2 vectorRight)
 {
-#if defined(__ARM_NEON_)
+#if defined(__ARM_NEON__)
     float32x2_t v1 = *(float32x2_t *)&vectorLeft;
     float32x2_t v2 = *(float32x2_t *)&vectorRight;
     uint32x2_t vCmp = vcgt_f32(v1, v2);
@@ -366,7 +366,7 @@ GLK_INLINE bool GLKVector2AllGreaterThanVector2(GLKVector2 vectorLeft, GLKVector
 
 GLK_INLINE bool GLKVector2AllGreaterThanScalar(GLKVector2 vector, float value)
 {
-#if defined(__ARM_NEON_)
+#if defined(__ARM_NEON__)
     float32x2_t v1 = *(float32x2_t *)&vector;
     float32x2_t v2 = vdup_n_f32(value);
     uint32x2_t vCmp = vcgt_f32(v1, v2);
@@ -384,7 +384,7 @@ GLK_INLINE bool GLKVector2AllGreaterThanScalar(GLKVector2 vector, float value)
 
 GLK_INLINE bool GLKVector2AllGreaterThanOrEqualToVector2(GLKVector2 vectorLeft, GLKVector2 vectorRight)
 {
-#if defined(__ARM_NEON_)
+#if defined(__ARM_NEON__)
     float32x2_t v1 = *(float32x2_t *)&vectorLeft;
     float32x2_t v2 = *(float32x2_t *)&vectorRight;
     uint32x2_t vCmp = vcge_f32(v1, v2);
@@ -402,7 +402,7 @@ GLK_INLINE bool GLKVector2AllGreaterThanOrEqualToVector2(GLKVector2 vectorLeft, 
 
 GLK_INLINE bool GLKVector2AllGreaterThanOrEqualToScalar(GLKVector2 vector, float value)
 {
-#if defined(__ARM_NEON_)
+#if defined(__ARM_NEON__)
     float32x2_t v1 = *(float32x2_t *)&vector;
     float32x2_t v2 = vdup_n_f32(value);
     uint32x2_t vCmp = vcge_f32(v1, v2);

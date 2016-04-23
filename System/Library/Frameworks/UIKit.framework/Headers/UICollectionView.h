@@ -2,7 +2,7 @@
 //  UICollectionView.h
 //  UIKit
 //
-//  Copyright (c) 2011-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2011-2015 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIScrollView.h>
@@ -37,14 +37,13 @@ typedef NS_OPTIONS(NSUInteger, UICollectionViewScrollPosition) {
 
 // layout transition block signature
 typedef void (^UICollectionViewLayoutInteractiveTransitionCompletion)(BOOL completed, BOOL finished);
-#ifndef SDK_HIDE_TIDE
+
 NS_CLASS_AVAILABLE_IOS(9_0) @interface UICollectionViewFocusUpdateContext : UIFocusUpdateContext
 
 @property (nonatomic, strong, readonly, nullable) NSIndexPath *previouslyFocusedIndexPath;
 @property (nonatomic, strong, readonly, nullable) NSIndexPath *nextFocusedIndexPath;
 
 @end
-#endif
 
 @protocol UICollectionViewDataSource <NSObject>
 @required
@@ -101,13 +100,12 @@ NS_CLASS_AVAILABLE_IOS(9_0) @interface UICollectionViewFocusUpdateContext : UIFo
 
 // support for custom transition layout
 - (nonnull UICollectionViewTransitionLayout *)collectionView:(UICollectionView *)collectionView transitionLayoutForOldLayout:(UICollectionViewLayout *)fromLayout newLayout:(UICollectionViewLayout *)toLayout;
-#ifndef SDK_HIDE_TIDE
+
 // Focus
 - (BOOL)collectionView:(UICollectionView *)collectionView canFocusItemAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0);
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldUpdateFocusInContext:(UICollectionViewFocusUpdateContext *)context NS_AVAILABLE_IOS(9_0);
 - (void)collectionView:(UICollectionView *)collectionView didUpdateFocusInContext:(UICollectionViewFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator NS_AVAILABLE_IOS(9_0);
 - (nullable NSIndexPath *)indexPathForPreferredFocusedViewInCollectionView:(UICollectionView *)collectionView NS_AVAILABLE_IOS(9_0);
-#endif
 
 - (NSIndexPath *)collectionView:(UICollectionView *)collectionView targetIndexPathForMoveFromItemAtIndexPath:(NSIndexPath *)originalIndexPath toProposedIndexPath:(NSIndexPath *)proposedIndexPath NS_AVAILABLE_IOS(9_0);
 
@@ -196,10 +194,9 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface UICollectionView : UIScrollView
 - (void)endInteractiveMovement NS_AVAILABLE_IOS(9_0);
 - (void)cancelInteractiveMovement NS_AVAILABLE_IOS(9_0);
 
-#ifndef SDK_HIDE_TIDE
 // Support for Focus
 @property (nonatomic) BOOL remembersLastFocusedIndexPath NS_AVAILABLE_IOS(9_0); // defaults to NO. If YES, when focusing on a collection view the last focused index path is focused automatically. If the collection view has never been focused, then the preferred focused index path is used.
-#endif
+
 @end
 
 @interface NSIndexPath (UICollectionViewAdditions)

@@ -15,7 +15,7 @@
 
 // MKReverseGeocoder is now deprecated.
 // Use CLGeocoder in CoreLocation instead.
-MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0) __WATCHOS_PROHIBITED
+MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED
 @interface MKReverseGeocoder : NSObject
 
 - (instancetype)initWithCoordinate:(CLLocationCoordinate2D)coordinate NS_DEPRECATED_IOS(3_0,5_0);
@@ -32,7 +32,7 @@ MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0) __WATCHOS_PROHIBITED
 
 @end
 
-MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0) __WATCHOS_PROHIBITED
+MK_CLASS_DEPRECATED(NA, NA, 3_0, 5_0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED
 @protocol MKReverseGeocoderDelegate <NSObject>
 @required
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark NS_DEPRECATED_IOS(3_0,5_0);

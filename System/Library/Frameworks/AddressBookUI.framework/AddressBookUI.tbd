@@ -3,7 +3,6 @@ archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/AddressBookUI.framework/AddressBookUI
 current-version: 33.0
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     re-exports:      [ /System/Library/Frameworks/Contacts.framework/Contacts ]
@@ -38,8 +37,8 @@ exports:
                        _ABPersonSocialProfilesProperty, _ABPersonTextToneProperty, 
                        _ABPersonUrlAddressesProperty, _ABUIAppIsOldFMF, 
                        _ABUIIsBlurSupported, _ABUIIsContacts, _ABUIIsDDActionsService, 
-                       _ABUIIsFaceTime, _ABUIIsFirstParty, _ABUIIsMobilePhone, 
-                       _ABUIOldAppsUseModernUI, _ABUIPixelAlignedPoint, 
+                       _ABUIIsFaceTime, _ABUIIsFirstParty, _ABUIIsGameCenterFriendRequestExtension, 
+                       _ABUIIsMobilePhone, _ABUIOldAppsUseModernUI, _ABUIPixelAlignedPoint, 
                        _ABUIPixelAlignedRect, _ABUIPixelAlignedSize, _ABUIRoundToViewScale, 
                        _ABUISetUseSiriLocalization, _ABUIShouldUseLegacyUI, 
                        _ABUIShouldUseSiriLocalization, _BoldTextAttributesKey, 

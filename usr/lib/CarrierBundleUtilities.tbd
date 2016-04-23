@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /usr/lib/CarrierBundleUtilities.dylib
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s ]
     weak-def-symbols: [ __ZTI15DigestGenerator, __ZTINSt3__120__shared_ptr_emplaceI18DigestGenerator160NS_9allocatorIS1_EEEE, 

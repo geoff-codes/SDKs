@@ -2,7 +2,7 @@
 //  UIKit.h
 //  UIKit
 //
-//  Copyright (c) 2005-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2015 Apple Inc. All rights reserved.
 //
 
 #import <UIKit/UIKitDefines.h>
@@ -88,10 +88,8 @@
 
 #import <UIKit/UIApplicationShortcutItem.h>
 #import <UIKit/UIUserNotificationSettings.h>
-#ifndef SDK_HIDE_TIDE
 #import <UIKit/UIFocus.h>
 #import <UIKit/UIFocusAnimationCoordinator.h>
-#endif
 #import <UIKit/UILocalizedIndexedCollation.h>
 #import <UIKit/UILongPressGestureRecognizer.h>
 #import <UIKit/UIManagedDocument.h>
@@ -110,10 +108,8 @@
 #import <UIKit/UIPinchGestureRecognizer.h>
 #import <UIKit/UIPopoverController.h>
 #import <UIKit/UIPopoverBackgroundView.h>
-#ifndef SDK_HIDE_TIDE
 #import <UIKit/UIPress.h>
 #import <UIKit/UIPressesEvent.h>
-#endif
 #import <UIKit/UIPrinter.h>
 #import <UIKit/UIPrinterPickerController.h>
 #import <UIKit/UIPrintError.h>

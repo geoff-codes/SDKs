@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/TextInput/TextInput_fr.bundle/TextInput_fr
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ __ZN22TICandQualityFilter_fr16custom_filteringERKN2KB9CandidateE, 

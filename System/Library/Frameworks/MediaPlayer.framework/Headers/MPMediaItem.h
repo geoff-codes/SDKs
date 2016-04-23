@@ -123,6 +123,9 @@ MP_EXTERN NSString * const MPMediaItemPropertyAssetURL NS_AVAILABLE_IOS(4_0);
 MP_EXTERN NSString * const MPMediaItemPropertyIsCloudItem NS_AVAILABLE_IOS(6_0);                // filterable
 @property (nonatomic, readonly, getter = isCloudItem) BOOL cloudItem NS_AVAILABLE_IOS(8_0);
 
+MP_EXTERN NSString * const MPMediaItemPropertyHasProtectedAsset NS_AVAILABLE_IOS(9_2);          // filterable
+@property (nonatomic, readonly, getter = hasProtectedAsset) BOOL protectedAsset NS_AVAILABLE_IOS(9_2);
+
 MP_EXTERN NSString * const MPMediaItemPropertyPodcastTitle;                                     // filterable
 @property (nonatomic, readonly, nullable) NSString *podcastTitle NS_AVAILABLE_IOS(7_0);
 

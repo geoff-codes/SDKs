@@ -2,7 +2,7 @@
 //  UIView.h
 //  UIKit
 //
-//  Copyright (c) 2005-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,9 +13,7 @@
 #import <UIKit/UIDynamicBehavior.h>
 #import <UIKit/NSLayoutConstraint.h>
 #import <UIKit/UITraitCollection.h>
-#ifndef SDK_HIDE_TIDE
 #import <UIKit/UIFocus.h>
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -140,11 +138,7 @@ typedef NS_ENUM(NSInteger, UIUserInterfaceLayoutDirection) {
 
 @class UIBezierPath, UIEvent, UIWindow, UIViewController, UIColor, UIGestureRecognizer, UIMotionEffect, CALayer, UILayoutGuide;
 
-#ifndef SDK_HIDE_TIDE
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UIView : UIResponder <NSCoding, UIAppearance, UIAppearanceContainer, UIDynamicItem, UITraitEnvironment, UICoordinateSpace, UIFocusEnvironment>
-#else
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UIView : UIResponder <NSCoding, UIAppearance, UIAppearanceContainer, UIDynamicItem, UITraitEnvironment, UICoordinateSpace>
-#endif
 
 + (Class)layerClass;                        // default is [CALayer class]. Used when creating the underlying layer for the view.
 
@@ -155,10 +149,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UIView : UIResponder <NSCoding, UIAppeara
 @property(nonatomic)                                 NSInteger tag;                // default is 0
 @property(nonatomic,readonly,strong)                 CALayer  *layer;              // returns view's layer. Will always return a non-nil value. view is layer's delegate
 
-#ifndef SDK_HIDE_TIDE
 - (BOOL)canBecomeFocused NS_AVAILABLE_IOS(9_0); // NO by default
 @property (readonly, nonatomic, getter=isFocused) BOOL focused NS_AVAILABLE_IOS(9_0);
-#endif
+
 + (UIUserInterfaceLayoutDirection)userInterfaceLayoutDirectionForSemanticContentAttribute:(UISemanticContentAttribute)attribute NS_AVAILABLE_IOS(9_0);
 @property (nonatomic) UISemanticContentAttribute semanticContentAttribute NS_AVAILABLE_IOS(9_0);
 @end

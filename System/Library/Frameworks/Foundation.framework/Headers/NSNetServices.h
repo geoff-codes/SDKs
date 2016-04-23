@@ -77,6 +77,7 @@ typedef NS_OPTIONS(NSUInteger, NSNetServiceOptions) {
 
 #pragma mark -
 
+__WATCHOS_PROHIBITED
 @interface NSNetService : NSObject {
 @private
     id _netService;
@@ -189,6 +190,7 @@ If publish: is called on an NSNetService instance initialized with this method, 
 
 #pragma mark -
 
+__WATCHOS_PROHIBITED
 @interface NSNetServiceBrowser : NSObject {
 @private
     id _netServiceBrowser;
@@ -231,6 +233,7 @@ If publish: is called on an NSNetService instance initialized with this method, 
 
 #pragma mark -
 
+__WATCHOS_PROHIBITED
 @protocol NSNetServiceDelegate <NSObject>
 @optional
 
@@ -283,6 +286,7 @@ If publish: is called on an NSNetService instance initialized with this method, 
 
 #pragma mark -
 
+__WATCHOS_PROHIBITED
 @protocol NSNetServiceBrowserDelegate <NSObject>
 @optional
 

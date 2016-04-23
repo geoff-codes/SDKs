@@ -203,12 +203,12 @@ NS_CLASS_AVAILABLE(NSURLSESSION_AVAILABLE, 7_0)
 
 /* Creates a bidirectional stream task to a given host and port.
  */
-- (NSURLSessionStreamTask *)streamTaskWithHostName:(NSString *)hostname port:(NSInteger)port NS_AVAILABLE(10_11, 9_0);
+- (NSURLSessionStreamTask *)streamTaskWithHostName:(NSString *)hostname port:(NSInteger)port NS_AVAILABLE(10_11, 9_0) __WATCHOS_PROHIBITED;
 
 /* Creates a bidirectional stream task with an NSNetService to identify the endpoint.
  * The NSNetService will be resolved before any IO completes.
  */
-- (NSURLSessionStreamTask *)streamTaskWithNetService:(NSNetService *)service NS_AVAILABLE(10_11, 9_0);
+- (NSURLSessionStreamTask *)streamTaskWithNetService:(NSNetService *)service NS_AVAILABLE(10_11, 9_0) __WATCHOS_PROHIBITED;
 
 @end
 

@@ -2,7 +2,7 @@
 //  UITableViewCell.h
 //  UIKit
 //
-//  Copyright (c) 2005-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2005-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -36,12 +36,10 @@ typedef NS_ENUM(NSInteger, UITableViewCellSelectionStyle) {
     UITableViewCellSelectionStyleDefault NS_ENUM_AVAILABLE_IOS(7_0)
 };
 
-#ifndef SDK_HIDE_TIDE
 typedef NS_ENUM(NSInteger, UITableViewCellFocusStyle) {
     UITableViewCellFocusStyleDefault,
     UITableViewCellFocusStyleCustom
 } NS_ENUM_AVAILABLE_IOS(9_0);
-#endif
 
 typedef NS_ENUM(NSInteger, UITableViewCellEditingStyle) {
     UITableViewCellEditingStyleNone,
@@ -116,9 +114,7 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableViewCell : UIView <NSCoding, UIGes
 
 @property(nonatomic, readonly) BOOL                   showingDeleteConfirmation;  // currently showing "Delete" button
 
-#ifndef SDK_HIDE_TIDE
 @property (nonatomic) UITableViewCellFocusStyle       focusStyle NS_AVAILABLE_IOS(9_0) UI_APPEARANCE_SELECTOR;
-#endif
 
 // These methods can be used by subclasses to animate additional changes to the cell when the cell is changing state
 // Note that when the cell is swiped, the cell will be transitioned into the UITableViewCellStateShowingDeleteConfirmationMask state,

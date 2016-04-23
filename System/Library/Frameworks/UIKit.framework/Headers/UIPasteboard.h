@@ -2,7 +2,7 @@
 //  UIPasteboard.h
 //  UIKit
 //
-//  Copyright (c) 2008-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -46,8 +46,6 @@ NS_CLASS_AVAILABLE_IOS(3_0) __TVOS_PROHIBITED @interface UIPasteboard : NSObject
 // Multiple items
 
 @property(readonly,nonatomic) NSInteger numberOfItems;
-// The next two property generics update is waiting on clang front end fix. See <rdar://problem/20824785>
-// - (nullable NSArray<NSString *> *)pasteboardTypesForItemSet:(nullable NSIndexSet*)itemSet;
 - (nullable NSArray *)pasteboardTypesForItemSet:(nullable NSIndexSet*)itemSet;
 
 - (BOOL)containsPasteboardTypes:(NSArray<NSString *> *)pasteboardTypes inItemSet:(nullable NSIndexSet *)itemSet;

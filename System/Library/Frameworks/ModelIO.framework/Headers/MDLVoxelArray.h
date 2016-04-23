@@ -110,7 +110,7 @@ MDL_EXPORT
  @discussion the allowAny parameters can be used to wildcard any dimensions. This 
              is useful to perform queries such as determining if any voxel 
              exists on the XY plane at a certain Z, or if any voxel exists at 
-             any X, Y, Z, but a particular shell, and so on.
+             any X, Y, Z, or a particular shell, and so on.
  */
 - (BOOL)voxelExistsAtIndex:(MDLVoxelIndex)index
                  allowAnyX:(BOOL)allowAnyX allowAnyY:(BOOL)allowAnyY allowAnyZ:(BOOL)allowAnyZ

@@ -173,5 +173,10 @@ HM_EXTERN NSString * const HMCharacteristicMetadataUnitsArcDegree NS_AVAILABLE_I
  */
 HM_EXTERN NSString * const HMCharacteristicMetadataUnitsSeconds NS_AVAILABLE_IOS(8_3) __WATCHOS_AVAILABLE(__WATCHOS_2_0);
 
+/*!
+ * @brief Describes that the unit of the characteristic is Lux (illuminance).
+ */
+HM_EXTERN NSString * const HMCharacteristicMetadataUnitsLux NS_AVAILABLE_IOS(9_3) __WATCHOS_AVAILABLE(2.2);
+
 
 NS_ASSUME_NONNULL_END

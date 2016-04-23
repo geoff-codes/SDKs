@@ -88,3 +88,8 @@ HM_EXTERN NSString * const HMAccessoryCategoryTypeWindow NS_AVAILABLE_IOS(9_0) _
  * @brief Category type for Window Covering.
  */
 HM_EXTERN NSString * const HMAccessoryCategoryTypeWindowCovering NS_AVAILABLE_IOS(9_0) __WATCHOS_AVAILABLE(__WATCHOS_2_0);
+
+/*!
+ * @brief Category type for Range Extender
+ */
+HM_EXTERN NSString * const HMAccessoryCategoryTypeRangeExtender NS_AVAILABLE_IOS(9_3) __WATCHOS_AVAILABLE(2.2);

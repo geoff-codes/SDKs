@@ -3,7 +3,6 @@ archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/ContactsUI.framework/ContactsUI
 current-version: 33.0
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _ABAddressBookBundle, _ABAddressBookGetDefaultRotationContentSettings, 
@@ -25,11 +24,11 @@ exports:
                        _CNUIContactActionTypeLink, _CNUIContactActionTypeSendMessage, 
                        _CNUIContactActionTypeShare, _CNUIContactActionTypeTapProperty, 
                        _CNUIContactActionTypeUnlink, _CNUIIsContacts, _CNUIIsDDActionsService, 
-                       _CNUIIsFaceTime, _CNUIIsFirstParty, _CNUIIsMobilePhone, 
-                       _CNUIIsWatchCompanion, _CNUIPixelAlignedPoint, _CNUIPixelAlignedRect, 
-                       _CNUIPixelAlignedSize, _CNUIRoundToViewScale, _CNUISetLoggingBlock, 
-                       _CNUISetUseSiriLocalization, _CNUIShouldUseSiriLocalization, 
-                       __CNUILog ]
+                       _CNUIIsFaceTime, _CNUIIsFirstParty, _CNUIIsMessages, 
+                       _CNUIIsMobilePhone, _CNUIIsWatchCompanion, _CNUIPixelAlignedPoint, 
+                       _CNUIPixelAlignedRect, _CNUIPixelAlignedSize, _CNUIRoundToViewScale, 
+                       _CNUISetLoggingBlock, _CNUISetUseSiriLocalization, 
+                       _CNUIShouldUseSiriLocalization, __CNUILog ]
     objc-classes:    [ _CNAvatarCardController, _CNAvatarView, _CNCapabilitiesManager, 
                        _CNCardActionGroupItem, _CNCardGroup, _CNCardGroupItem, 
                        _CNCardPropertyGroup, _CNContactAction, _CNContactCell, 

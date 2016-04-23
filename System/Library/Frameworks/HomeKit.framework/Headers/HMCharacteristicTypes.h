@@ -27,6 +27,10 @@ HM_EXTERN NSString * const HMCharacteristicPropertyReadable NS_AVAILABLE_IOS(8_0
  */
 HM_EXTERN NSString * const HMCharacteristicPropertyWritable NS_AVAILABLE_IOS(8_0) __WATCHOS_AVAILABLE(__WATCHOS_2_0);
 
+/*!
+ * @brief This constant specifies that the characteristic should be hidden from the user.
+ */
+HM_EXTERN NSString * const HMCharacteristicPropertyHidden NS_AVAILABLE_IOS(9_3) __WATCHOS_AVAILABLE(2.2);
 
 /*!
  * @group Accessory Service Characteristic Types

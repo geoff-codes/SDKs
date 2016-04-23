@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** Contains file information, such as the file's location and optional user info
  */
-NS_CLASS_AVAILABLE_IOS(9_0)
+NS_CLASS_AVAILABLE_IOS(9.0)
 @interface WCSessionFile : NSObject
 @property (nonatomic, readonly) NSURL *fileURL;
 @property (nonatomic, copy, readonly, nullable) NSDictionary<NSString *, id> *metadata;
@@ -19,7 +19,7 @@ NS_CLASS_AVAILABLE_IOS(9_0)
 
 /** Used to track a file being transferred.
  */
-NS_CLASS_AVAILABLE_IOS(9_0)
+NS_CLASS_AVAILABLE_IOS(9.0)
 @interface WCSessionFileTransfer : NSObject
 @property (nonatomic, readonly) WCSessionFile *file;
 @property (nonatomic, readonly, getter=isTransferring) BOOL transferring;

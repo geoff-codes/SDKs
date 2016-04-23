@@ -1,4 +1,3 @@
-#ifndef SDK_HIDE_TIDE
 //
 //  UIFocus.h
 //  UIKit
@@ -72,4 +71,3 @@ NS_CLASS_AVAILABLE_IOS(9_0) @interface UIFocusGuide : UILayoutGuide
 @end
 
 NS_ASSUME_NONNULL_END
-#endif

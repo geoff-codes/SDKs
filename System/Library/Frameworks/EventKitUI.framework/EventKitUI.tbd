@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/EventKitUI.framework/EventKitUI
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _AcceptedImage, _AddressBookIDForIdentity, _AdjustedColorForColor, 
@@ -220,8 +219,9 @@ exports:
                        _CalendarMessageUIProxy, _CalendarModel, _CalendarNotesCell, 
                        _CalendarOccurrencesCollection, _CalendarPreferences, 
                        _CalendarPreferencesTable, _CalendarPublishingActivityViewController, 
-                       _ColorBarView, _CrossFadeView, _EKCalendarAbstractSwitchEditItem, 
-                       _EKCalendarChooser, _EKCalendarChooserCell, _EKCalendarChooserCellLayoutManager, 
+                       _ColorBarView, _CrossFadeView, _EKAlarmsViewModel, 
+                       _EKCalendarAbstractSwitchEditItem, _EKCalendarChooser, 
+                       _EKCalendarChooserCell, _EKCalendarChooserCellLayoutManager, 
                        _EKCalendarColorEditItem, _EKCalendarDeleteButtonEditItem, 
                        _EKCalendarEditor, _EKCalendarIgnoreAlertsEditItem, 
                        _EKCalendarIgnoreSharedCalendarResourceChangeNotificationsEditItem, 

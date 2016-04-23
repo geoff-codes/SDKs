@@ -1,4 +1,3 @@
-#ifndef SDK_HIDE_TIDE
 //
 //  UIFocusAnimationCoordinator.h
 //  UIKit
@@ -26,4 +25,3 @@ NS_CLASS_AVAILABLE_IOS(9_0) @interface UIFocusAnimationCoordinator : NSObject
 @end
 
 NS_ASSUME_NONNULL_END
-#endif

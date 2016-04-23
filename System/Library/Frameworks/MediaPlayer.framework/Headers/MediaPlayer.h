@@ -7,6 +7,7 @@
 
 #import <MediaPlayer/MediaPlayerDefines.h>
 #import <MediaPlayer/MPContentItem.h>
+#import <MediaPlayer/MPError.h>
 #import <MediaPlayer/MPMediaItem.h>
 #import <MediaPlayer/MPMediaItemCollection.h>
 #import <MediaPlayer/MPMediaLibrary.h>

@@ -2,7 +2,7 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/MultipeerConnectivity.framework/MultipeerConnectivity
-objc-constraint: retain_release
+current-version: 87.1
 exports:         
   - archs:           [ armv7, armv7s ]
     weak-def-symbols: [ __ZTI13AGPSetElement, __ZTI20AGPReceiveSetElement, 

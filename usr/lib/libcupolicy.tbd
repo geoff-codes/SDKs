@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /usr/lib/libcupolicy.dylib
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ __ZN30cellular_usage_policy_client_sC1Ev, __ZN30cellular_usage_policy_client_sC2Ev, 

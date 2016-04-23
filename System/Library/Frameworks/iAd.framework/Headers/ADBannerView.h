@@ -75,6 +75,10 @@ typedef NS_ENUM(NSInteger, ADError) {
 #if __IPHONE_6_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
     ADErrorAdUnloaded = 7,
 #endif
+#if __IPHONE_9_3 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+    ADErrorAssetLoadFailure = 8,
+#endif
+
 } NS_ENUM_AVAILABLE_IOS(4_0);
 
 /*!

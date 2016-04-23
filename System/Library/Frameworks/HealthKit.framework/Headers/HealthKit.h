@@ -5,6 +5,8 @@
 //  Copyright (c) 2013-2014 Apple Inc. All rights reserved.
 //
 
+#import <HealthKit/HKActivitySummary.h>
+#import <HealthKit/HKActivitySummaryQuery.h>
 #import <HealthKit/HKAnchoredObjectQuery.h>
 #import <HealthKit/HKCategorySample.h>
 #import <HealthKit/HKCorrelation.h>

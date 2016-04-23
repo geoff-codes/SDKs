@@ -539,7 +539,11 @@ typedef VIMAGE_OPTIONS_ENUM(vImage_Flags, uint32_t)
 
     /* Use methods that are HDR-aware, capable of providing correct results for input images with pixel values
        outside the otherwise limited (typically [-2,2]) range. This may be slower. */
-    kvImageHDRContent                VIMAGE_ENUM_AVAILABLE_STARTING( __MAC_10_11, __IPHONE_9_0 )    =  1024
+    kvImageHDRContent                VIMAGE_ENUM_AVAILABLE_STARTING( __MAC_10_11, __IPHONE_9_0 )    =  1024,
+
+    /* Pass to disable clamping is some conversions to floating point formats. Use this if the input data
+     may describe values outside [0,1] which should be preserved.. */
+    kvImageDoNotClamp                 VIMAGE_ENUM_AVAILABLE_STARTING( __MAC_10_12, __IPHONE_9_3 )   =   2048
 };
     
 /*!

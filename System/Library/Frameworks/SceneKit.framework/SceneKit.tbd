@@ -3,7 +3,6 @@ archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/SceneKit.framework/SceneKit
 current-version: 186.0
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _C3DAllocatorCreate, _C3DAllocatorDelete, _C3DAllocatorFree, 

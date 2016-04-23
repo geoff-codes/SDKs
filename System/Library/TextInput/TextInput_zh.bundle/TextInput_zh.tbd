@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/TextInput/TextInput_zh.bundle/TextInput_zh
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _kDefaultLayoutTag, _kFacemarkLookupKey, _kGB18030LookupKey, 

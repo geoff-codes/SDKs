@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/GameplayKit.framework/GameplayKit
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s ]
     symbols:         [ __ZTv0_n12_N9OpenSteer15PolylinePathway14mapPointToPathERKNS_4Vec3ERS1_Rf, 

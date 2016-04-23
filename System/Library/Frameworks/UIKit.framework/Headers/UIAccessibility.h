@@ -2,7 +2,7 @@
 //  UIAccessibility.h
 //  UIKit
 //
-//  Copyright (c) 2008-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2008-2015 Apple Inc. All rights reserved.
 //
 
 #import <CoreGraphics/CoreGraphics.h>
@@ -160,7 +160,6 @@ UIKIT_EXTERN UIBezierPath *UIAccessibilityConvertPathToScreenCoordinates(UIBezie
  default == UIAccessibilityNavigationStyleAutomatic
  */
 @property (nonatomic) UIAccessibilityNavigationStyle accessibilityNavigationStyle NS_AVAILABLE_IOS(8_0);
-#ifndef SDK_HIDE_TIDE
 
 /*
  The elements considered to be the headers for this element. May be set on an instance of
@@ -169,7 +168,6 @@ UIKIT_EXTERN UIBezierPath *UIAccessibilityConvertPathToScreenCoordinates(UIBezie
  To avoid retain cycles, a weak copy of the elements will be held.
  */
 @property(nullable, nonatomic, copy) NSArray *accessibilityHeaderElements UIKIT_AVAILABLE_TVOS_ONLY(9_0);
-#endif
 
 @end
 

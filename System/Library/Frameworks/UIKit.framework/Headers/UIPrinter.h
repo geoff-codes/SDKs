@@ -2,7 +2,7 @@
 //  UIPrinter.h
 //  UIKit
 //
-//  Copyright (c) 2013-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2013-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

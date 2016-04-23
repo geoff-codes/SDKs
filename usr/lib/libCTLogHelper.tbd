@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /usr/lib/libCTLogHelper.dylib
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ __ZN21CTLogHelperController13dumpLogs_syncEbb, __ZN21CTLogHelperController13enableLoggingEb, 

@@ -64,10 +64,10 @@ typedef NS_ENUM(NSInteger, WKVideoGravity)  {
 /*
  The following presets can be specified to indicate the desired output sample rate. The resulting bit rate depends on the preset and the audio format. The audio file type is inferred from the output URL extension. The audio format is inferred from the audio file type. Supported file types include .wav, .mp4, and .m4a. When the URL extension is .wav, the audio format is LPCM. It is AAC for all other cases.
  */
-typedef NS_ENUM(NSInteger, WKAudioRecordingPreset) {
-	WKAudioRecordingPresetNarrowBandSpeech,	// @8kHz, LPCM 128kbps, AAC 24kbps
-	WKAudioRecordingPresetWideBandSpeech,	// @16kHz, LPCM 256kbps, AAC 32kbps
-	WKAudioRecordingPresetHighQualityAudio	// @44.1kHz, LPCM 705.6kbps, AAC 96kbps
+typedef NS_ENUM(NSInteger, WKAudioRecorderPreset) {
+	WKAudioRecorderPresetNarrowBandSpeech,	// @8kHz, LPCM 128kbps, AAC 24kbps
+	WKAudioRecorderPresetWideBandSpeech,	// @16kHz, LPCM 256kbps, AAC 32kbps
+	WKAudioRecorderPresetHighQualityAudio	// @44.1kHz, LPCM 705.6kbps, AAC 96kbps
 } WK_AVAILABLE_WATCHOS_ONLY(2.0);
 
 WK_CLASS_AVAILABLE_IOS(8_2)
@@ -120,8 +120,13 @@ WKI_EXTERN NSString *const WKMediaPlayerControllerOptionsLoopsKey WK_AVAILABLE_W
 - (void)presentMediaPlayerControllerWithURL:(NSURL *)URL options:(nullable NSDictionary *)options completion:(void(^)(BOOL didPlayToEnd, NSTimeInterval endTime, NSError * __nullable error))completion WK_AVAILABLE_WATCHOS_ONLY(2.0);
 - (void)dismissMediaPlayerController WK_AVAILABLE_WATCHOS_ONLY(2.0);
 
-- (void)presentAudioRecordingControllerWithOutputURL:(NSURL *)URL preset:(WKAudioRecordingPreset)preset maximumDuration:(NSTimeInterval)maximumDuration actionTitle:(nullable NSString *)actionTitle completion:(void (^)(BOOL didSave, NSError * __nullable error))completion WK_AVAILABLE_WATCHOS_ONLY(2.0);
-- (void)dismissAudioRecordingController WK_AVAILABLE_WATCHOS_ONLY(2.0);
+WKI_EXTERN NSString *const WKAudioRecorderControllerOptionsActionTitleKey WK_AVAILABLE_WATCHOS_ONLY(2.0);           // NSString (default is "Save")
+WKI_EXTERN NSString *const WKAudioRecorderControllerOptionsAlwaysShowActionTitleKey WK_AVAILABLE_WATCHOS_ONLY(2.0); // NSNumber containing BOOL (default is NO)
+WKI_EXTERN NSString *const WKAudioRecorderControllerOptionsAutorecordKey WK_AVAILABLE_WATCHOS_ONLY(2.0);            // NSNumber containing BOOL (default is YES)
+WKI_EXTERN NSString *const WKAudioRecorderControllerOptionsMaximumDurationKey WK_AVAILABLE_WATCHOS_ONLY(2.0);       // NSNumber containing NSTimeInterval
+
+- (void)presentAudioRecorderControllerWithOutputURL:(NSURL *)URL preset:(WKAudioRecorderPreset)preset options:(nullable NSDictionary *)options completion:(void (^)(BOOL didSave, NSError * __nullable error))completion WK_AVAILABLE_WATCHOS_ONLY(2.0);
+- (void)dismissAudioRecorderController WK_AVAILABLE_WATCHOS_ONLY(2.0);
 
 - (nullable id)contextForSegueWithIdentifier:(NSString *)segueIdentifier;
 - (nullable NSArray *)contextsForSegueWithIdentifier:(NSString *)segueIdentifier;

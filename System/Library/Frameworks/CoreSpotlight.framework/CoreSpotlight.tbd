@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/CoreSpotlight.framework/CoreSpotlight
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _CSAccountTypeExchangeActiveSync, _CSAccountTypeExchangeWebServices, 
@@ -141,7 +140,8 @@ exports:
     objc-classes:    [ _CSCoder, _CSCustomAttributeKey, _CSDecoder, _CSExtensionJobThrottle, 
                        _CSIndexExtensionRequestHandler, _CSIndexJob, _CSIndexingQueue, 
                        _CSLocalizedString, _CSPerson, _CSPowerLog, _CSSearchableIndex, 
-                       _CSSearchableIndexXPCProxy, _CSSearchableItem, _CSSearchableItemAttributeSet, 
+                       _CSSearchableIndexRequest, _CSSearchableIndexXPCProxy, 
+                       _CSSearchableItem, _CSSearchableItemAttributeSet, 
                        _CSSearchableItemCodedArray, _CSSubscriptionManager, 
                        _CSUserAction, _CSUserActivityTuple, _CoreSpotlightUtils, 
                        _MDCustomAttributeKey, _MDIndexExtensionRequestHandler, 

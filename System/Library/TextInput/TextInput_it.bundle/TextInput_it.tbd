@@ -2,7 +2,6 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/TextInput/TextInput_it.bundle/TextInput_it
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ __ZN22TICandQualityFilter_it35get_non_retrocorrection_boost_ratioEv, 

@@ -739,7 +739,7 @@ vImage_Error vImageOverwriteChannels_ARGB8888(	const vImage_Buffer *newSrc,     
  *          origSrc->data must be equal to dest->data and origSrc->rowBytes >= dest->rowBytes
  *          If overlapping origSrc has a different rowBytes from dest, kvImageDoNotTile must be also passed in the flags
  *
- * This function may be used with other channel orderings (e.g. origSrc -> a RGBA8888 buffer) by adjusting the order of the bits in the copyMask.
+ * This function may be used with other channel orderings (e.g. origSrc -> a RGBAFFFF buffer) by adjusting the order of the bits in the copyMask.
  */
 vImage_Error vImageOverwriteChannels_ARGBFFFF(	const vImage_Buffer *newSrc,       /* A planar buffer */
                                                 const vImage_Buffer *origSrc,      /* A ARGB interleaved buffer */

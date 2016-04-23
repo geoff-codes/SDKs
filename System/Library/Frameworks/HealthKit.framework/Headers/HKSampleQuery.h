@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 // The query returns all samples that match the given sampleType and predicate.
-#define HKObjectQueryNoLimit (0)
+static const NSUInteger HKObjectQueryNoLimit = 0;
 
 /*!
  @class         HKSampleQuery

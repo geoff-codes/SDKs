@@ -2,7 +2,7 @@
 //  UIViewController.h
 //  UIKit
 //
-//  Copyright (c) 2007-2014 Apple Inc. All rights reserved.
+//  Copyright (c) 2007-2015 Apple Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,9 +11,7 @@
 #import <UIKit/UIApplication.h>
 #import <UIKit/UIStateRestoration.h>
 #import <UIKit/UITraitCollection.h>
-#ifndef SDK_HIDE_TIDE
 #import <UIKit/UIFocus.h>
-#endif
 
 /*
   UIViewController is a generic controller base class that manages a view.  It has methods that are called
@@ -92,11 +90,7 @@ typedef NS_ENUM(NSInteger, UIModalPresentationStyle) {
 // Sometimes view controllers that are using showViewController:sender and showDetailViewController:sender: will need to know when the split view controller environment above it has changed. This notification will be posted when that happens (for example, when a split view controller is collapsing or expanding). The NSNotification's object will be the view controller that caused the change.
 UIKIT_EXTERN NSString *const UIViewControllerShowDetailTargetDidChangeNotification NS_AVAILABLE_IOS(8_0);
 
-#ifndef SDK_HIDE_TIDE
 NS_CLASS_AVAILABLE_IOS(2_0) @interface UIViewController : UIResponder <NSCoding, UIAppearanceContainer, UITraitEnvironment, UIContentContainer, UIFocusEnvironment>
-#else
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UIViewController : UIResponder <NSCoding, UIAppearanceContainer, UITraitEnvironment, UIContentContainer>
-#endif
 
 /*
   The designated initializer. If you subclass UIViewController, you must call the super implementation of this

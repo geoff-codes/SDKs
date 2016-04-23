@@ -88,8 +88,7 @@ NS_CLASS_AVAILABLE(NA, 5_0)
 - (void)deleteDrawable;
 
 /*
- Returns a UIImage of the resulting draw. Snapshot should never be called from within the draw method or from a
- thread other than the main thread.
+ Returns a UIImage of the resulting draw. Snapshot should never be called from within the draw method.
  */
 @property (readonly, strong) UIImage *snapshot;
 

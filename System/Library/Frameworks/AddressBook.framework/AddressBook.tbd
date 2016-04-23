@@ -3,7 +3,6 @@ archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/AddressBook.framework/AddressBook
 current-version: 30.0
-objc-constraint: retain_release
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _ABAccountAddTypeToCache, _ABAccountClass, _ABAccountCopyIdentifier, 
@@ -87,10 +86,10 @@ exports:
                        _ABAddressBookGetRecordWithAssistantID, _ABAddressBookGetSearchCollator, 
                        _ABAddressBookGetSequenceNumber, _ABAddressBookGetSequenceNumberAndRecordIDOfLastDeletedBasicChanges, 
                        _ABAddressBookGetSharedAddressFormatsDictionary, 
-                       _ABAddressBookGetSortCollator, _ABAddressBookGetSourceWithRecordID, 
-                       _ABAddressBookGetWordTokenizer, _ABAddressBookHasUnsavedChanges, 
-                       _ABAddressBookInvalidateCaches, _ABAddressBookIsAccessPermitted, 
-                       _ABAddressBookIsAccessPermittedForAccessStatus, 
+                       _ABAddressBookGetSortCollator, _ABAddressBookGetSourceCountIncludingDisabled, 
+                       _ABAddressBookGetSourceWithRecordID, _ABAddressBookGetWordTokenizer, 
+                       _ABAddressBookHasUnsavedChanges, _ABAddressBookInvalidateCaches, 
+                       _ABAddressBookIsAccessPermitted, _ABAddressBookIsAccessPermittedForAccessStatus, 
                        _ABAddressBookIsAvailable, _ABAddressBookIsCallbackRegistered, 
                        _ABAddressBookIsNeverAvailable, _ABAddressBookMapPeopleMatchingString, 
                        _ABAddressBookMergeRecordsInSourceIntoSource, _ABAddressBookMoveAllRecordsInSourceToSource, 

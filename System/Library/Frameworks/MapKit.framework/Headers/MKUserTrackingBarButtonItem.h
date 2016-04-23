@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-MK_CLASS_AVAILABLE(NA, 5_0) __WATCHOS_PROHIBITED
+MK_CLASS_AVAILABLE(NA, 5_0) __TVOS_PROHIBITED __WATCHOS_PROHIBITED
 @interface MKUserTrackingBarButtonItem : UIBarButtonItem
 
 - (instancetype)initWithMapView:(nullable MKMapView *)mapView NS_DESIGNATED_INITIALIZER;

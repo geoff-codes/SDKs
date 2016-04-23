@@ -2,8 +2,7 @@
 archs:           [ armv7, armv7s, arm64 ]
 platform:        ios
 install-name:    /System/Library/Frameworks/WatchConnectivity.framework/WatchConnectivity
-current-version: 47.1
-objc-constraint: retain_release
+current-version: 79.6
 exports:         
   - archs:           [ armv7, armv7s, arm64 ]
     symbols:         [ _LZ4_compress, _LZ4_compressBound, _LZ4_compress_continue, 
@@ -24,16 +23,16 @@ exports:
                        _LZ4_slideInputBuffer, _LZ4_uncompress, _LZ4_uncompress_unknownOutputSize, 
                        _LZ4_versionNumber, _PizBufGenerate, _PizBufGenerateCompressed, 
                        _PizBufGenerateRaw, _PizBufParse, _PizBufParseRaw, 
-                       _WCApplicationContextFileName, _WCCompicationUserInfoIDFileName, 
-                       _WCCurrentComplicationIdentifierSuffix, _WCDDebugInfoRequested, 
-                       _WCDProtoUserInfoTransferReadFrom, _WCErrorDomain, 
-                       _WCFileTransferDataFileName, _WCFileTransferResultErrorKey, 
+                       _WCApplicationContextFileName, _WCCompactStringFromCollection, 
+                       _WCCompicationUserInfoIDFileName, _WCCurrentComplicationIdentifierSuffix, 
+                       _WCDDebugInfoRequested, _WCDIndexFileName, _WCDProtoUserInfoTransferReadFrom, 
+                       _WCErrorDomain, _WCFileTransferDataFileName, _WCFileTransferResultErrorKey, 
                        _WCFileTransferResultsFileName, _WCInternalErrorDomain, 
-                       _WCPayloadSizeLimitApplicationContext, _WCPayloadSizeLimitFile, 
-                       _WCPayloadSizeLimitMessage, _WCPayloadSizeLimitUserInfo, 
-                       _WCPrivateServiceComplicationsManagerEntitlement, 
-                       _WCPrivateServiceShouldConnectNotification, _WCServiceListenerResumedNotification, 
-                       _WCSessionActivationTimeout, _WCSessionFilePersistentFileName, 
+                       _WCPayloadSizeLimitApplicationContext, _WCPayloadSizeLimitMessage, 
+                       _WCPayloadSizeLimitUserInfo, _WCPrivateServiceComplicationsManagerEntitlement, 
+                       _WCPrivateServiceShouldConnectNotification, _WCPrivateServiceTestToolEntitlement, 
+                       _WCQueueMessageMaxRetries, _WCServiceListenerResumedNotification, 
+                       _WCSessionFilePersistentFileName, _WCSessionLegacyActivationTimeout, 
                        _WCUserInfoTransferObjectFileName, _WCUserInfoTransferResultErrorKey, 
                        _WCUserInfoTransferResultsFileName, _WCUserInfoTransferWireDataFileName, 
                        _WatchConnectivityVersionNumber, _WatchConnectivityVersionString, 
@@ -46,7 +45,8 @@ exports:
                        _sessionFilesURLInContainer, _transferIdentifierFromComplicationIdentifier, 
                        _transferredFilesURLInContainer, _transferredUserInfoInboxURLInContainer, 
                        _userInfoTransfersInContainer, _watchDirectoryLocationInContainer ]
-    objc-classes:    [ _WCActiveAppManager, _WCComplicationManager, _WCDProtoUserInfoTransfer, 
+    objc-classes:    [ _WCActiveAppManager, _WCActiveDeviceSwitchTask, 
+                       _WCComplicationManager, _WCContentIndex, _WCDProtoUserInfoTransfer, 
                        _WCDataMessageRecord, _WCDictionaryMessageRecord, 
                        _WCFileStorage, _WCLogger, _WCMessage, _WCMessageRecord, 
                        _WCMessageRequest, _WCMessageResponse, _WCPrivateXPCManager, 
